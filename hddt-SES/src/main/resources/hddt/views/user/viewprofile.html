@@ -1,0 +1,351 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="container-fluid style-main-content" id="divMainContent">
+				<div>
+					<div class="row page-titles">
+						<div class="col-md-12 col-12 align-self-center p-l-0">
+							<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">THÔNG TIN NGƯỜI DÙNG</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+						
+							<div class="card">
+								<div class="card-body">
+									<div class="row m-b-16">
+										<div class="col-12">
+											<span
+												class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+												tin công ty</span>
+													<center><p th:if="${message!=null}">
+								<span class="text-middle fw-800 text-uppercase text-decoration-underline color-ses" th:text="${message}"></span>
+				</p></center>
+</div>
+</div>
+								
+									<form  id="f-tkhai-crud" name="f-tkhai-crud"  method="post">
+										<div class="form-group row">
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-12">
+														<div class="custom-field m-b-16">
+															<div class="c-f__wrapper">
+																<input class="form-control form-control-sm c-f__textbox"
+																	type="text" autocomplete="off" th:path="${TaxCode}"
+																id="t"	name="t" th:value="${TaxCode}" th:readonly="true" />
+																<div class="input-group-append">
+																	<button class="btn btn-sm btn-success" type="button"
+																		title="Kiểm tra mã số thuế" >
+																		<i class="mdi mdi-account-plus"></i>
+																	</button>
+																</div>
+																<fieldset aria-hidden="true" class="c-f__set">
+																	<legend class="c-f__legend">
+																		<label>Mã số thuế</label>
+																	</legend>
+																</fieldset>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="n"	name="n" th:value="${Name}" type="text" required="true"
+															readonly	autocomplete="off" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tên đơn vị<span class="text-danger">*</span></label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+
+												<div class="row m-b-16">
+													<div class="col-12">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															readonly  required="true" id="a"	name="a" type="text" autocomplete="off" 
+															th:value="${Address}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Địa chỉ<span class="text-danger">*</span></label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+											
+											
+											
+											
+											
+											
+											
+											
+											
+											
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper c-service__related">
+												
+								
+								
+<input class="form-control form-control-sm c-f__textbox" th:value="${TThanhName}" readonly type="text" autocomplete="off"  />
+									
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Tỉnh/Thành phố<span class="text-danger">*</span></label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper c-service__related">
+								
+								
+								<input class="form-control form-control-sm c-f__textbox" th:value="${CQThueName}" readonly  type="text" autocomplete="off"  />
+								
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Cơ quan thuế<span class="text-danger">*</span></label>
+															</legend>
+														</fieldset>
+
+													</div>
+												</div>
+											</div>
+				
+										
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox" readonly
+															type="text" autocomplete="off"  th:value="${MainUser}"  id="boss" name="boss" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Người đại diện</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"  th:value="${Position}"  id="cv" name="cv" 
+														readonly	type="text" autocomplete="off"  />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Chức vụ</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+											</div>
+											
+													<div class="row">
+												<div class="col-12 col-sm-12 col-md-12 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" readonly autocomplete="off"  th:value="${MaCQT}"  id="maCQT" name="maCQT" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Mã doanh nghiệp<span class="text-danger"> (đối với hóa đơn máy tính tiền)</span> </label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+										
+											</div>
+										</div>
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-12 col-sm-12 col-md-6 m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="p"	name="p" type="text" autocomplete="off"
+														readonly		th:value="${Phone}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số điện thoại</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="f"	name="f" type="text" autocomplete="off"
+														readonly		th:value="${Fax}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số fax</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+												<div class="row m-b-16">
+													<div class="col-6 col-sm-6 col-md-6">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															readonly	id="e" name="e" autocomplete="off" th:value="${Email}"
+																type="email" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Email</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-6 custom-field">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															readonly	id="w" name="w" type="text" autocomplete="off"
+																th:value="${Website}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Website</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="ac"	name="ac" type="text" autocomplete="off"
+															readonly	th:value="${AccountNumber}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số tài khoản</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+											<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="an"	name="an" type="text" autocomplete="off"
+															readonly	th:value="${AccountName}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tên tài khoản</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="bn"	name="bn" type="text" autocomplete="off"
+															readonly	th:value="${BankName}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tại ngân hàng</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+											<div class="row m-b-16">
+										<div class="col-12">
+											<span
+												class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+												tin liên hệ</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 col-sm-12 col-md-6">
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												readonly  th:value="${NameUser}" name="ng" 	id="ng"	autocomplete="off" />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Người liên hệ
+																</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												readonly th:value="${EmailUser}" name="eng" id="eng" autocomplete="off"  />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Email
+																</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-sm-12 col-md-6">
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												readonly th:value="${PhoneUser}" name="png"	id="png"	autocomplete="off"  />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Số điện thoại
+															</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												readonly		autocomplete="off" 
+														 th:value="${EmailUserLh}" name="englh"	id="englh" />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Email nhận thông tin</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+										</div>
+									</div>
+										
+										<div class="row">
+											<div
+												class="col-12 button-group d-flex justify-content-between">
+
+												<a href="/hddt/main"
+													class="btns btns-search_auto__ses hover-up__ses"
+													role="button" aria-pressed="true" style="padding-top: 7px;">Quay lại</a>
+												
+											</div>
+										</div>
+									</form>
+
+									<div class="row">
+										<div class="col-12">
+											<hr style="margin: 0 0 10px 0" />
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+						</div>	
+
+						</div>
+				</div>
+			</div>
+			
+	</th:block>
+</body>
+</html>

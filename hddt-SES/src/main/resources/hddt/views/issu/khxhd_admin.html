@@ -1,0 +1,372 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+			<style>
+		.text-blue123{
+		color: #7753f8;
+		}
+		</style>
+	<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách khách hàng có xuất hóa đơn</h3>
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-12">
+				<form id="f-khxhd" name="f-khxhd" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" type="text" id="mst" name="mst"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>								
+								</div>
+							
+								<div class="col-erp-5">
+								<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="name" name="name"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên đơn vị</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									</div>
+									
+								<div class="col-erp-5">
+								<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									</div>
+									
+									
+											<div class="col-erp-5">
+										<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+									</div>
+									
+									<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-6 p-l-0">
+										
+                            		</div>
+                            		<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
+                            			<div class="button-group text-right">
+                                       				
+                            			
+                            				<button
+									      type="button"
+									      title="Xuất danh sách excel"
+									      data-action="khxhd-export"
+									      class="btns btns-export__ses hover-up__ses"
+									      th:if="${#strings.contains(UserFullPathRight,'|khxhd-export|')}"
+									      >
+									   <i class="mdi mdi-microsoft-excel"> </i
+									      ><span class="d-none d-md-inline">
+									   Xuất danh sách excel</span
+									      >
+									   </button>	
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div> 
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+				
+				<script type="text/javascript">
+				_gridMain = $('#f-khxhd').find('#grid');
+				</script>
+				
+				<script type="text/javascript">
+				$(function(){
+					dateInputFormat($('#f-khxhd').find('#from-date'));
+					dateInputFormat($('#f-khxhd').find('#to-date'));
+					
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/khxhd/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+						filterable: false, resizable: true,
+						serverSorting: false,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+							{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+				  			{field: 'MST', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Name', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},			
+							{field: 'Address', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+					
+							{field: 'Email', width: '180px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email</a>',
+								attributes: {'class': 'table-cell', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+				
+						],
+						dataBound: function(e) {
+							
+							$("#f-khxhd").find('button[data-action="issu-contract-detail"]').prop('disabled', true);
+							
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+								e.preventDefault();/*e.stopPropagation();*/
+								
+								var $obj = $(this);
+								var $tr = $obj.closest('tr');
+								var subAction = $obj.attr('data-sub-action');
+								
+								var indexRow = $tr.index();
+								var rowData = null;
+								var objData = {};
+								var objURL = {};
+						
+							
+							});
+							
+						}
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+						var $tr = $(this).closest("tr");
+						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+						$("#f-khxhd").find('button[data-action="issu-contract-detail"]').prop('disabled', false);		
+						
+						
+					
+					
+					
+					});
+					
+					
+					
+					
+					$("#f-khxhd").find('button[data-action]').click(function (event) {
+						_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+						event.preventDefault();/*event.stopPropagation();*/
+					var dataAction = $(this).data('action');
+						
+						var $obj = $(this);
+						
+						var rowData = null;
+						var actionCheck = '|issu-edit|issu-detail|';
+						
+						var entityGrid = _gridMain.data("kendoGrid");
+						var selectedItem = entityGrid.dataItem(entityGrid.select());
+						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
+							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+							return;
+						}
+						
+						var objData = {};
+						switch (dataAction) {		
+						case 'khxhd-check':
+							showPopupWithURLAndData(ROOT_PATH + '/main/khxhd-check/checkdb', objData, true, function(e){
+							});
+							break;
+													
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;
+						case 'khxhd-export':	
+							objData = getDataSearch();
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/khxhd/check-data-export',
+								  data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res.errorCode == 0) {
+										var responseData = res.responseData;
+										
+										tokenTransaction = responseData['TOKEN'];															
+											window.open(ROOT_PATH + '/main/khxhd/export-excel/' + tokenTransaction,'_blank');													
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+						default:
+							break;
+						}
+					});
+					
+				});
+
+			
+				
+				
+				
+				
+				
+				
+				
+				function getDataSearch(){
+					var dataPost = {};
+					dataPost['from-date'] = $('#f-khxhd #from-date').val() == null? '': $('#f-khxhd #from-date').val();
+					dataPost['to-date'] = $('#f-khxhd #to-date').val() == null? '': $('#f-khxhd #to-date').val();
+					dataPost['mst'] = $('#f-khxhd #mst').val() == null? '': $('#f-khxhd #mst').val();
+					dataPost['name'] = $('#f-khxhd #name').val() == null? '': $('#f-khxhd #name').val();
+					return dataPost;
+				}
+
+				function setTemplateForGridMAIN(key, data){
+					var acti = data['IsActive'];
+					var eInvoiceStatus = data['EInvoiceStatus'];
+				
+					var text = '';
+					
+					switch (key) {
+					case 'func':
+						if('Chưa Hoạt động' == acti){
+							text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';						
+							
+							text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';		
+						}
+						else{
+							text += '<i title="Hủy kích hoạt" class="mdi mdi-close-circle fs-25 text-blue123 c-pointer" data-sub-action="deactive" ></i>';						
+						}
+						break;
+					case 'StatusDesc':
+						if('DELETED' == data['EInvoiceStatus']){
+							text = '<div style="background: red;color: white;">' + data['StatusDesc'] + '</div>';
+						}else{
+							text = data['StatusDesc'];
+						}
+						break;
+					default:
+						break;
+					}
+					
+					return text;
+				}
+			
+				</script>			
+			</div>
+		</div>		
+		
+		
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách khách hàng</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-customer" name="f-customer" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-r-0 p-l-0">
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="tax-code" name="tax-code" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="company-name" name="company-name" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên đơn vị</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="customer-name" name="customer-name" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên người mua hàng</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-2 m-b-10">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+                        		
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+											<button type="button" title="Import danh sách" data-action="import" class="btns btns-detail__ses btns-import__ses-1 hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-import|')}">
+												<i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline"> Import danh sách</span>
+											</button>
+											<button type="button" title="Thêm mới" data-action="cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-cre|')}">
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
+                            				</button>
+                            				<button type="button" title="Chi tiết" data-action="detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-detail|')}" th:disabled="true" >
+                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
+                            				</button>
+                            				<button type="button" title="Thay đổi" data-action="edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-edit|')}" th:disabled="true" >
+                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
+                            				</button>
+                            				<button type="button" title="Xóa" data-action="delete" class="btns btns-delete__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-del|')}" th:disabled="true" >
+                            					<i class="mdi mdi-close-box"> </i><span class="d-none d-md-inline">Xóa</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+							<div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+							
+						</div>
+					</div>
+					
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-customer').find('#grid');
+				</script>
+				<script th:src="@{/static/function/dm/customer.js(v=1.3) }"></script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

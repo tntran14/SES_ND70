@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+		<form id="f-tbhdssot-crud" name="f-tbhdssot-crud" method="post" enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body" th:if="${messageError != null}">
+					<div class="row text-danger m-b-10 fw-500 col-12">
+						<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center" th:utext="${messageError}"></div>
+						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại" 
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+
+						</div>
+					</div>
+				</div>
+				
+				<div class="card-body" th:if="${messageError == null}">
+				<div class="row"><div class="col-12"><hr style="margin: 0 0 16px 0" /></div></div>
+					<div class="row mT-0 mB-5">
+						
+						<div class="col-3 col-sm-6 text-right">
+							<button type="button" data-action="add-inv" class="btn-sm btn-primary btn-ses" title="Thêm hóa đơn" th:if="${_isedit_}" ><i class="mdi mdi-plus fs-15"></i></button>
+						</div>
+					</div>
+					<div class="col-12 p-0 has-min-height-grid-prd">
+						<div id="grid_inv"></div>
+					</div>
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại" 
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+							
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+<script type="text/javascript">
+		var vIsEdit = [[${_isedit_}]];
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		_gridSub01 = $('#f-tbhdssot-crud').find('#grid_inv');
+		</script>
+		<script type="text/javascript" th:if="${_action_ == 'CHANGE'}">
+		var strJson = '[[${DSHDon}]]';
+		rowsTMP = [];
+		try{
+			rowsTMP = decodeBase64UTF8ToObj(strJson);
+		}catch(err){}
+		</script>
+		<script type="text/javascript">
+		$(function(){
+			if($('#f-tbhdssot-crud').find('#NTBCCQT').length > 0)
+				dateInputFormat($('#f-tbhdssot-crud').find('#NTBCCQT'));
+			if(vIsEdit){
+				if($('#f-tbhdssot-crud').find('#tinh-thanh').length > 0)
+					initComboSearchLocal('#f-tbhdssot-crud', '#tinh-thanh');
+				if($('#f-tbhdssot-crud').find('#CQTQLy').length > 0)
+					initComboSearchLocal('#f-tbhdssot-crud', '#CQTQLy');
+			}
+			
+			_gridSub01.kendoGrid({
+				dataSource: {
+					data: rowsTMP,
+					pageSize: 999999,
+					serverPaging: false,
+					serverSorting: false,
+		           	serverFiltering: false
+				},
+				selectable: true, scrollable: true, 
+				sortable: false,
+				filterable: false, resizable: true,
+				serverSorting: false,
+				pageable: {
+					refresh: false,
+					pageSizes: false,
+					numeric: false,
+					previousNext: false
+				},
+				dataBinding: function () {
+		            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+		        },
+		    	columns: [
+					{field: 'STT', title: 'STT', width: '30px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+		  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
+		  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+		  				, template: '#: ++record #',
+		  			},
+		  			{field: 'SHD', title: '', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+						attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					},
+					{field: 'MS', title: '', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số</a>',
+						attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					},
+					{field: 'MTDiepCU', title: '', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã thông điệp cũ</a>',
+						attributes: {'class': 'table-cell text-center '}, headerAttributes: {'class': 'table-header-cell text-center'},
+					},
+					{field: 'MTDiep', title: '', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã thông điệp mới</a>',
+						attributes: {'class': 'table-cell text-center'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					},
+				
+				
+				],
+				dataBound: function(e) {
+					_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').undelegate('i[data-sub-action]', 'click');
+					_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').delegate('i[data-sub-action]', 'click', function(e){
+						event.preventDefault();/*event.stopPropagation();*/
+						
+						var $obj = $(this);
+						var $tr = $obj.closest('tr');
+						var subAction = $obj.attr('data-sub-action');
+						
+						var indexRow = $tr.index();
+						switch (subAction) {
+						case 'remove':
+							alertConfirm('Bạn có muốn xóa dòng ' + (indexRow + 1) + ' không?',
+								function(e){
+									var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+									if(indexRow < objDataJson.length && indexRow > -1){
+										objDataJson.splice(indexRow, 1);
+										_gridSub01.data("kendoGrid").dataSource.data(objDataJson);	
+									}
+								},
+								function(e){}
+							)
+							break;
+
+						default:
+							break;
+						}
+					});
+					
+				}
+			});
+			
+			_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid', 'change');
+			_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid', 'change', function(e){
+				var $obj = $(this);
+				var _name = $obj.attr('name');
+				var $tr = $obj.closest('tr');
+				
+				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+				try{
+					var indexRow = $tr.index();
+					var rowData = objDataJson[indexRow];
+					rowData[_name] = $obj.val();
+				}catch(err){
+					console.log(err);
+				}
+				
+			});
+			
+		
+			
+			$('#f-tbhdssot-crud').find('button[data-action]').click(function (event) {
+				event.preventDefault();/*event.stopPropagation();*/
+				var dataAction = $(this).data('action');
+				
+				var $obj = $(this);
+				var objDataSend = null;
+				
+				switch (dataAction) {
+				case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function(){$(this).empty();});
+					try{
+						if($('#f-tbhdssot').find('#grid').length > 0)
+							$('#f-tbhdssot').find('#grid').data("kendoGrid").dataSource.read();
+					}catch(err){}
+					break;
+
+				default:
+					break;
+				}
+			});
+			
+		});
+
+	
+	
+		</script>
+	</div>
+</div>
+</html> 

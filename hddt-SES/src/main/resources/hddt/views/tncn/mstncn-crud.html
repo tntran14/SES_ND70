@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-mstncn-crud" name="f-mstncn-crud" method="post" enctype="multipart/form-data">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row p-r-0 p-l-0 justify-content-center">
+                      <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+                         <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                             	<select class="form-control form-control-sm c-f__textbox" id="loaihd" name="loaihd"  th:readonly="${!_isedit_}" >
+										<option value=""></option>
+										<th:block th:if="${map_loaihd != null}" >
+											<option th:each="entry : ${map_loaihd.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${LoaiHD == entry.key}" > </option>
+										</th:block>
+									</select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Loại hóa đơn</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+     
+ 
+       
+
+                        <div class="row">
+                          <div class="col-12">
+                        
+                            <div class="row">
+                              <div
+                                class="col-6 col-sm-6 col-md-3 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Ký hiệu</div>
+                                <input
+                                  type="text"
+                                    th:value="${KyHieu}"
+                                  class="rm-default form-control form-control-sm text-center"
+                                  id="macty" name="macty"
+                                  autocomplete="off"
+                                  maxlength="2"
+                                   th:readonly="${!_isedit_}"
+                                />
+                              </div>
+                              <div
+                                class="col-6 col-sm-6 col-md-3 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Số lượng</div>
+                                <input
+                                  type="text"
+                                    th:value="${SoLuong}"
+                                  class="rm-default form-control form-control-sm text-center"
+                                  id="sl" name="sl"
+                                  autocomplete="off"
+                               
+                                   th:readonly="${!_isedit_}"
+                                />
+                              </div>
+                              <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Mẫu số</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                           	
+                                id="khhd" name="khhd"
+                                  autocomplete="off"
+                                  value="CTT56"
+                               
+                                     readonly="readonly"
+                                />
+                              </div>
+                               
+                               <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">NĂM</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                                 
+                                   id="yearCreated" name="yearCreated"
+                                  autocomplete="off"
+                                  value="2022"
+                                 
+                                     readonly="readonly"
+                                />
+                              </div>
+                              
+                             <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Chứng từ</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                                 
+                                   id="yearCreated" name="yearCreated"
+                                  autocomplete="off"
+                                  value="E"
+                                 
+                                     readonly="readonly"
+                                />
+                              </div>
+                            
+                             
+                            </div>
+                          </div>
+                        </div>
+                   
+                   
+                   
+                    <div class="row">
+                          <div
+                            class="col-8 col-sm-8 col-md-10 custom-field m-b-16"
+                          >
+                            <div class="c-f__wrapper">
+                             	<input class="form-control form-control-sm c-f__textbox" th:value="${PhoiHD}" th:readonly="true" th:if="${!_isedit_}" type="text" autocomplete="off"  />
+									<select class="form-control form-control-sm c-f__textbox" id="phoi" name="phoi" th:if="${_isedit_}" >
+										<option value=""></option>
+										<th:block th:if="${map_phoi != null}">
+											<option th:each="entry : ${map_phoi.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${PhoiHDCode == entry.key}" > </option>
+										</th:block>
+									</select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Phôi hóa đơn</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                          <div
+                            class="col-4 col-sm-4 col-md-2 none-padding-left"
+                          >
+                       
+<button type="button"  data-action="viewimg" class="btns btns-search_auto__ses hover-up__ses w-100p m-t-0 m-b-0"
+  title="Xem hình ảnh mẫu hóa đơn" data-toggle="modal" data-target="#form">   Xem ảnh</button>
+
+
+
+                          </div>
+                        </div>
+                   
+                   
+                   
+                   
+                   
+                   
+                        <div class="form-group row m-t-16">
+                          <div
+                            class="offset-0 col-12 offset-md-3 col-sm-12 text-danger small font-italic m-b-5"
+                          >
+                            Vui lòng chọn tập tin có dung lượng nhỏ hơn 200 KB
+                          </div>
+                          <label class="col-12 col-sm-3 form-control-label"
+                            >Logo doanh nghiệp
+                          </label>
+                          <div class="col-12 col-sm-9">
+                            <div class="form-file m-b-14">
+                              <input
+                             
+                                type="file"
+                               name="logoFile" id="logoFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+  
+                             <input type="text" class="form-control form-control-sm "    th:value="${LoGo}" id="logoFileName" readonly="readonly" >
+							<input type="hidden" class="form-control form-control-sm " id="logoFileNameSystem" name="logoFileNameSystem" readonly="readonly" >   
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                     data-action="delete"	
+                                  data-target="logoFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" style="display: none">
+                            <div class="col-12">
+                              <div class="progress progress-striped active">
+                                <div
+                                  style="width: 0%"
+                                  class="progress-bar primary"
+                                >
+                                  0%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                     
+                        <div class="row">
+                          <div class="col-12">
+                            <hr style="margin: 12px 0 0 0" />
+                          </div>
+                        </div>
+
+                        <div class="row justify-content-between">
+                          <div class="col-6 m-t-12">
+                          <button type="button" id="btBack" title="Quay lại"
+									data-action="back"	class="btn btn-sm btn-primary btn-ses">
+										Quay lại</button>
+                          </div>
+                          <div class="col-6 m-t-12 d-flex justify-content-end">
+                          <button type="button" id="btAccept"  th:if="${('CREATE' == _action_ || 'EDIT' == _action_)}"
+										data-action="accept" class="btn btn-sm btn-primary btn-ses" title="Chấp nhận">
+										Chấp nhận</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" name="_id" th:value="${_id}" >
+              </form>
+              <script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-mstncn-crud').find('#grid');
+		</script>
+		
+	 <script>
+$(document).ready(function(){
+	
+$("#kh").on("change",function(){
+   var GetValue=$("#kh").val();
+   $("#khttt").val(GetValue);
+});
+
+});
+</script>	
+
+	<script>
+		let currentYear = new Date().getFullYear().toString()
+		  $('#yearCreated').val(currentYear);
+		</script>	
+	<script type="text/javascript">
+		$('#f-mstncn-crud #loaihd').change(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var _val = $(this).val();
+			
+			$('#f-mstncn-crud').find('#phoi').empty();
+			$('#f-mstncn-crud').find('#phoi').append($("<option></option>").text('').val(''));
+			
+			if('' == _val || _val == undefined) return;
+			
+	
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/common/get-phoi',
+				data: {"loaihd_ma": _val},
+				beforeSend: function(req) {
+					initAjaxJsonArrayRequest(req);
+				},
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-mstncn-crud').find('#phoi').append(
+								$("<option></option>").text(item['Name']).val(item['Images'])
+							);
+						});
+						
+					}
+				
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+		});
+
+</script>
+
+
+	<script>
+	$(function(){
+		$('#f-mstncn-crud').find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+			
+			var $obj = $(this);
+			var objDataSend = null;
+			
+			switch (dataAction) {
+			case 'delete':				
+					objURL['check'] = ROOT_PATH + '/main/mstncn-del/check-data';
+					objURL['exec'] = ROOT_PATH + '/main/mstncn-del/exec-data';
+				rowData = _gridMain.data("kendoGrid").dataItem($tr);
+				objData['_id'] = rowData['_id'];
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: objURL['check'],
+					data: objData,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res) {
+							if(res.errorCode == 0) {
+								var responseData = res.responseData;
+								
+								var confirmText = responseData['CONFIRM'];
+								tokenTransaction = responseData['TOKEN'];
+								
+								objData['tokenTransaction'] = tokenTransaction;
+								
+								alertConfirm(confirmText,
+									function(e){
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: objURL['exec'],
+											data: objData,
+											beforeSend: function(req) {
+												initAjaxJsonRequest(req);
+									        	showLoading();
+											},
+											success:function(res) {
+												hideLoading();
+												if(res) {
+													if(res.errorCode == 0) {
+														_gridMain.data("kendoGrid").dataSource.read();
+													}else{
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+												}else{
+													alertDLSuccess('unknown error!!!', function(){});
+													hideLoading();
+												}
+											},
+											error:function (xhr, ajaxOptions, thrownError){
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+									            hideLoading();
+									        }
+										});
+									},
+									function(e){}
+								);
+							}else{
+								alertDLSuccess(createObjectError(res).html(), function(){});
+							}
+						}else{
+							alertDLSuccess('unknown error!!!', function(){});
+							hideLoading();
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+
+			case 'back':
+				$('#divMainContent').show();
+				$('#divSubContent').hide(function(){$(this).empty();});
+				try{
+					if($('#f-mstncn-crud').find('#grid').length > 0)
+						$('#f-mstncn-crud').find('#grid').data("kendoGrid").dataSource.read();
+				}catch(err){}
+				break;
+			case 'viewimg':
+				var objData = {}; 
+				objData['phoi'] = $('#f-mstncn-crud').find('#phoi').find('option:selected').text();
+	              showPopupWithURLAndData(ROOT_PATH + '/main/mauhd-cre/viewimg', objData, true, function(e){
+	              });
+	              break;
+			
+			case 'accept':
+				objDataSend = getDataToSave();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+					data: objDataSend,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							alertConfirm(confirmText,
+								function(e){
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													$('#f-mstncn-crud').find('button[data-action="back"]').trigger('click');
+													location.reload();
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								},
+								function(e){}
+							);
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						$obj.prop('disabled', false);
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+			
+			default:
+				break;
+			}
+		});
+		
+		
+		$("#f-mstncn-crud").find('#logoFile, #backgroundFile').fileupload({
+		dataType: 'json',
+		url: ROOT_PATH + '/main/' + transactionMain + '/processUploadFile',
+		formData: {
+			_csrf: _csrf_value
+		},
+		sequentialUploads: true,
+		singleFileUploads: true,
+		beforeSend: function(xhr, data) {
+			initAjaxJsonRequest(xhr);
+		},
+		add: function (e, data) {
+			var id = $(this).attr('id');
+			$('#' + id + 'Name, #' + id + 'NameSystem').val('');
+			data.submit();
+		},
+		progressall: function (e, data) {
+		},
+		done: function (e, data) {
+		},
+		success:function(res) {
+			if(res) {
+				if(res.errorCode == 0) {
+					$('#' + res.responseData.id).val(res.responseData.value);
+					$('#' + res.responseData.id + 'System').val(res.responseData.valueSystem);
+				}
+			}
+		},
+		processfail: function (e, data) {
+	    },
+		error: function (e, data) {
+			alertConfirm('Lỗi');
+		}
+	});
+	
+		$("#f-mstncn-crud").find('button[name="btDeleteImage"]').click(function (event) {
+		event.preventDefault();event.stopPropagation();
+		
+		var typeImage = $(this).attr('data-target');
+		alertConfirm('Bạn có chắc muốn xóa không', function (result) {
+			if(result){
+				var dataPost = 'typeImage=' + typeImage + '&';
+				dataPost += _csrf_name + '=' + _csrf_value;
+				
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/deleteImage',
+					data: dataPost,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res) {
+							if(res.errorCode == 0) {
+								$('#' + typeImage + 'Name, #' + typeImage + 'NameSystem').val('');
+								alertConfirm('Xóa thành công.', function(){	
+								});
+							}else{
+								alertConfirm(createObjectError(res).html());
+							}
+						}else{
+							alertConfirm('unknown error!!!');
+							hideLoading();
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alertConfirm(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+			}
+		});
+	
+	});
+	
+		
+		
+	});
+	
+	
+   function getDataToSave(){
+            		var dataPost = {};
+            		dataPost['_id'] = $('#f-mstncn-crud').find('input[name="_id"]').val();
+            		dataPost['khhd'] = $('#f-mstncn-crud').find('#khhd').val();
+            		dataPost['phoict'] = $('#f-mstncn-crud').find('#phoi').val();
+            		dataPost['phoict-text'] = $('#f-mstncn-crud').find('#phoi').find('option:selected').text();
+            		
+            		dataPost['sl'] = $('#f-mstncn-crud').find('#sl').val();
+            		dataPost['macqt'] = $('#f-mstncn-crud').find('#macqt').val();
+            		dataPost['yearCreated'] = $('#f-mstncn-crud').find('#yearCreated').val();
+            		dataPost['kh'] = $('#f-mstncn-crud').find('#kh').val();
+            		dataPost['macty'] = $('#f-mstncn-crud').find('#macty').val();           	
+            		dataPost['logoFileNameSystem'] = $('#f-mstncn-crud').find('#logoFileNameSystem').val();
+            		return dataPost;	
+            	}
+
+
+	</script>
+	
+		
+	</div>
+</div>
+
+</html>

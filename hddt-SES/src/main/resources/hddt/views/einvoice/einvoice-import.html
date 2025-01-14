@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-einvoice-import" name="f-einvoice-import" method="post" enctype="multipart/form-data" >
+			<div class="row" >
+				<div class="col-sm-12">
+					<div class="form-group m-b-5">
+						<div class="row">
+							<div class="col-12 p-l-0 p-r-0">
+								<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline">Hướng dẫn Import</span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 p-l-0 p-r-0">
+								<ul class="list-group">
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">1. Tải tập tin mẫu từ hệ thống.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">2. Nhập thông tin dữ liệu cần import.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">3. chọn tập tin dữ liệu là tập tin vừa nhập.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">4. Click Chấp nhận để thực hiện Import.</li>
+								</ul>
+							</div>
+								<div class="col-12 p-l-0 p-r-0">											
+                            		  <input type="button" class="btns btns-export__ses hover-up__ses" value="Tải excel mẫu tại đây"  onclick="DownloadFile('MauUploadHD-TT78.xlsx')" ></input>
+                            	</div>
+						</div>
+						<div class="row mt-3">			
+						<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">							
+										<select id="mau-so-hdon" name="mau-so-hdon" class="form-control form-control-sm c-f__textbox">
+											<option value=""></option>
+											<th:block th:if="${map_mausokyhieu != null}">
+												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${MauSoHD == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Chọn mẫu số<span class="text-danger">*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>					
+						</div>
+	                                       
+					</div>
+					<div class="row"><div class="col-12 p-l-0"><hr style="margin: 0 0 0px 0;"></div></div>
+					<div class="form-group m-b-0">
+						<div class="row m-b-0">														
+							<div class="col-12 p-l-0 p-r-0">
+								<label class="control-label m-b-0 m-t-5 p-l-0 ">Tập tin chứa dữ liệu <span class="text-danger">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<button type="button" data-action="download-template-file" title="Táº£i táº­p tin máº«u" 
+											class="btn btn-sm btn-warning p-t-1 p-b-1" ><i class="mdi mdi-download"> </i></button>
+									</div>
+									<input type="text" class="form-control form-control-sm" name="attachFileName" maxlength="50" readonly="readonly" >
+									<div class="form-file m-t-xs">
+										<input type="file" name="attachFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+										<button class="btn btn-sm btn-success fw-700" title="Chá»�n file..."><i class="mdi mdi-upload"> </i><span class="d-none d-md-inline"> Chọn file...</span></button>
+									</div>
+								</div>
+								<div class="dis-none">
+									<input type="text" class="form-control form-control-sm" name="attachFileNameSystem" maxlength="50" readonly="readonly" >
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+
+
+ <script type="text/javascript">
+        function DownloadFile(fileName) {
+            //Set the File URL.
+            var url = ROOT_PATH+ "/static/einvoices/" + fileName;
+ 
+            //Create XMLHTTP Request.
+            var req = new XMLHttpRequest();
+            req.open("GET", url, true);
+            req.responseType = "blob";
+            req.onload = function () {
+                //Convert the Byte Data to BLOB object.
+                var blob = new Blob([req.response], { type: "application/octetstream" });
+ 
+                //Check the Browser type and download the File.
+                var isIE = false || !!document.documentMode;
+                if (isIE) {
+                    window.navigator.msSaveBlob(blob, fileName);
+                } else {
+                    var url = window.URL || window.webkitURL;
+                    link = url.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.setAttribute("download", fileName);
+                    a.setAttribute("href", link);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            };
+            req.send();
+        };
+    </script>
+<script type="text/javascript">
+transactionSub = '[[${transaction}]]';
+$(function(){
+	var objTmp = null;
+	$("#f-einvoice-import").find('input[type="file"][name="attachFile"]').fileupload({
+		dataType: 'json',
+		url: ROOT_PATH + '/common/processUploadFile',
+		sequentialUploads: true,
+		singleFileUploads: true,
+		beforeSend: function(xhr, data) {
+			initAjaxJsonRequest(xhr);
+			showLoading();
+		},
+		add: function (e, data) {
+			data.submit();
+			
+			objTmp = this;
+			$(objTmp).closest("div.col-12").find('input[type="text"]').val('');
+		},
+		progressall: function (e, data) {
+		},
+		done: function (e, data) {
+		},
+		success:function(res) {
+			hideLoading();
+			if(res) {
+				if(res.errorCode == 0) {
+// 					alert(JSON.stringify(res));
+					if($.isArray(res.responseData) && res.responseData.length > 0){
+						var item = res.responseData[0];
+						$(objTmp).closest("div.col-12").find('input[type="text"][name$="FileName"]').val(item['OriginalFilename']);
+						$(objTmp).closest("div.col-12").find('input[type="text"][name$="FileNameSystem"]').val(item['SystemFilename']);
+					}
+				}else{
+					alertDLSuccess(createObjectError(res).html());
+				}				
+			}else{
+				alertDLSuccess('unknown error!!!', function(){});
+				hideLoading();
+			}
+		},
+		processfail: function (e, data) {
+			hideLoading();
+	    },
+		error: function (e, data) {
+			hideLoading();
+			alertDLSuccess('Lỗi trong quá trình lấy tập tin...', function(){});
+		}
+	});
+	
+	$('div.modal-footer').find('button[data-action="accept"]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var $obj = $(this);
+		
+		var objDataSend = getPopupDataToSave();
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/main/' + transactionSub + '/check-data-import',
+			data: objDataSend,
+			beforeSend: function(req) {
+				initAjaxJsonRequest(req);
+	        	showLoading();
+			},
+			success:function(res) {
+				$obj.prop('disabled', false);
+				hideLoading();
+				if(res) {
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						
+						alertConfirm(confirmText,
+							function(e) {
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/' + transactionSub + '/import',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$obj.prop('disabled', true);
+												disabledAllControlsInForm('f-einvoice-import');
+												$('div.modal-footer').find('button[data-action="accept"]').prop('disabled', true);
+// 												alertDLSuccess(createObjectError(res).html(), function(){
+													try{
+														if(typeof _gridMain !== 'undefined')
+															_gridMain.data("kendoGrid").dataSource.read();
+													}catch(e){}
+													
+													$('#f-einvoice-import').closest("div.modal").modal("hide");
+													$('#f-einvoice-import').closest("div.modal").find('.modal-content').empty();
+// 												});
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e) {
+								
+							}
+						);
+						
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				}else{
+					alertDLSuccess('unknown error!!!', function(){});
+					hideLoading();
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				$obj.prop('disabled', false);
+				alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	            hideLoading();
+	        }
+		});
+	});
+	
+});
+
+function getPopupDataToSave(){
+	var dataPost = {};
+	dataPost['mau-so-hdon'] = $('#f-einvoice-import').find('#mau-so-hdon').val();
+	dataPost['dataFileName'] = $("#f-einvoice-import").find('input[name="attachFileNameSystem"]').val();
+	
+	return dataPost;
+
+}
+
+</script>
+
+</html>

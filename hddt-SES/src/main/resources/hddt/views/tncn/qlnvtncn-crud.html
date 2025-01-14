@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid">
+		<form id="f-cus-crud" name="f-cus-crud" method="post" enctype="multipart/form-data" >
+			<div class="row text-danger m-b-10 fw-500 " th:if="${messageError != null}">
+				<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center" th:utext="${messageError}"></div>
+			</div>
+			<div class="row" th:if="${messageError == null}">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tax-code" name="tax-code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${TaxCode}" type="text" autocomplete="off" th:readonly="${'CREATE' != _action_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số thuế </label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12">
+									<span class="small text-danger fs-i">(Nếu là khách hàng cá nhân. Vui lòng nhập MST bắt đầu 'CN')</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="code" name="code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${Code}" type="text" autocomplete="off" th:readonly="${'CREATE' != _action_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã nhân viên </label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12">
+									<span class="small text-danger fs-i">(Hệ thống tự phát sinh nếu không nhập)</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+						<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="name" name="name" class="form-control form-control-sm c-f__textbox" th:value="${Name}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên nhân viên<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="department" name="department" class="form-control form-control-sm c-f__textbox" th:value="${Department}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên phòng ban<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+	<div class="row m-b-15">
+								<div class="col-6 ">
+									<div class="c-f__wrapper">
+										<input id="cccd" name="cccd" class="form-control form-control-sm c-f__textbox" th:value="${CCCD}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>CMND-CCCD<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+									<div class="col-6 ">
+									<div class="c-f__wrapper">
+										<input id="cccddate" name="cccddate" class="form-control form-control-sm c-f__textbox" th:value="${CCCDDATE}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Ngày Cấp<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="cccdaddress" name="cccdaddress" class="form-control form-control-sm c-f__textbox" th:value="${CCCDADDRESS}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Nơi Cấp<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							
+							</div>
+							
+							
+						</div>
+						<div class="col-md-6">
+					
+					<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="address" name="address" class="form-control form-control-sm c-f__textbox" th:value="${Address}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Địa chỉ <span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							
+							</div>
+						<div class="row m-b-15">
+						<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="phone" name="phone" class="form-control form-control-sm c-f__textbox" th:value="${Phone}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Điện thoại</label></legend>
+										</fieldset>
+									</div>
+								</div>
+						</div>
+						<div class="row m-b-15">
+						<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="qt" name="qt" class="form-control form-control-sm c-f__textbox" th:value="${QuocTich}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Quốc tịch</label></legend>
+										</fieldset>
+									</div>
+								</div>
+						</div>
+						
+						<div class="row m-b-15">
+						<div class="col-12 ">
+									<div class="c-f__wrapper form-control form-control-sm c-f__textbox" >
+										
+										
+										<!-- <input id="qt" name="qt" class="form-control form-control-sm c-f__textbox" th:value="${QuocTich}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										 -->
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Cá nhân cư trú</label></legend>
+										</fieldset>
+										<div  class="acb">
+										<label class=" custom-control custom-radio d-inline-block m-r-10 m-b-0 ">
+											<input name="optHTHDon" type="radio" class="custom-control-input" value="CCT" th:checked="${'CCT' == optHTHDon}" th:disabled="${!_isedit_}" />
+											<span class="custom-control-label p-t-5">có</span>
+										</label>
+										<label class="custom-control custom-radio d-inline-block m-r-10 m-b-0 ">
+											<input name="optHTHDon" type="radio" class="custom-control-input" value="KCT" th:checked="${'CCT' != optHTHDon}" th:disabled="${!_isedit_}" />
+											<span class="custom-control-label p-t-5">không</span>
+										</label>
+										</div>
+									
+									
+									</div>
+								</div>
+						</div>
+						
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+		<style>
+		div.acb {
+  margin-left: 100px;
+}
+		</style>
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var vIsEdit = [[${_isedit_}]];
+		</script>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<!-- <script th:src="@{/static/function/dm/customer-crud.js(v=1.1) }"></script> -->
+<script type="text/javascript">
+$(function(){
+	dateInputFormat($('#f-cus-crud').find('#cccddate'));
+	if(vIsEdit){
+		if($('#f-cus-crud').find('#province').length > 0)
+			initComboSearchLocalWithParent('#f-cus-crud', '#province', '#modelPopupMedium');
+	}
+
+	$('div.modal-footer').find('button[data-action="accept"]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var $obj = $(this);
+		var objDataSend = getPopupDataToSave();
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+			data: objDataSend,
+			beforeSend: function(req) {
+				initAjaxJsonRequest(req);
+	        	showLoading();
+			},
+			success:function(res) {
+				hideLoading();
+				if(res) {
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						
+						alertConfirm(confirmText,
+							function(e){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$('#f-customer').find('button[data-action="back"]').trigger('click');
+												location.reload();
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e){}
+						);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				}else{
+					alertDLSuccess('unknown error!!!', function(){});
+					hideLoading();
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	            hideLoading();
+	        }
+		});
+		
+	});
+
+});
+
+function getPopupDataToSave(){
+	var dataPost = {};
+	dataPost['_id'] = $('#f-cus-crud').find('input[name="_id"]').val();
+	dataPost['tax-code'] = $('#f-cus-crud').find('#tax-code').val();
+	dataPost['code'] = $('#f-cus-crud').find('#code').val();
+	dataPost['name'] = $('#f-cus-crud').find('#name').val();
+	dataPost['phone'] = $('#f-cus-crud').find('#phone').val();
+	dataPost['address'] = $('#f-cus-crud').find('#address').val();
+	dataPost['cccd'] = $('#f-cus-crud').find('#cccd').val();
+	dataPost['cccddate'] = $('#f-cus-crud').find('#cccddate').val();
+	dataPost['cutru'] = $('#f-cus-crud').find('input[name="optHTHDon"]:checked').val();
+	dataPost['cccdaddress'] = $('#f-cus-crud').find('#cccdaddress').val();
+	dataPost['qt'] = $('#f-cus-crud').find('#qt').val();
+	dataPost['department'] = $('#f-cus-crud').find('#department').val();
+	return dataPost;
+}
+</script>
+</html>

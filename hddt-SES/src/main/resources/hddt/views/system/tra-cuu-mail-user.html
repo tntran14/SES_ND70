@@ -1,0 +1,307 @@
+ <html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		
+	<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách Email đã gửi</h3>
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-12">
+				<form id="f-issu" name="f-issu" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+						  <div class="row">
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                              <input
+                                class="form-control form-control-sm c-f__textbox"
+                                type="text"
+                                id="en"
+                                name="en"
+                                value=""
+                                autocomplete="off"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Email nhận</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm-6 col-md-4">
+                        <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                              <input
+                                class="form-control form-control-sm c-f__textbox"
+                                type="text"
+                                id="mst"
+                                name="mst"
+                                value=""
+                                autocomplete="off"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Tiêu đề mail</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="custom-field m-b-16">
+                              <div class="c-f__wrapper">
+                                <select
+                                  class="form-control form-control-sm c-f__textbox"
+                                  id="acti"
+                                  name="acti"
+                                  tabindex="-1"
+                                  aria-hidden="true"
+                                >
+                                  <option value="" selected="selected"></option>
+                                  <option value="2">Gửi lỗi</option>
+
+                                  <option value="1">Đã gửi</option>
+                                </select>
+                                <fieldset aria-hidden="true" class="c-f__set">
+                                  <legend class="c-f__legend">
+                                    <label>Trạng thái</label>
+                                  </legend>
+                                </fieldset>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm-6 col-md-2">
+                        <div class="row">
+                          <div class="col-12 m-b-10">
+                 
+	<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+						
+				
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div> 
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-issu').find('#grid');
+				</script>
+				
+			<script type="text/javascript">
+				$(function(){
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/tra-cuu-mail-user/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+						filterable: false, resizable: true,
+						serverSorting: false,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+		                   	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+		             				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+		             				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+		             			},
+		             		 	{field: 'func', title: '', width: '50px', encoded: false
+		              				, headerTemplate: '&nbsp;'
+		            				, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
+		            				, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+									, template: '#= window.setTemplateForGridMAIN("func", data) #'
+		            			}, 
+		            			 {field: 'SHD', title: 'Số hóa đơn', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+			           				attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+			           				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+			           			}, 
+		             				{field: 'Title', title: 'Tiêu đề', width: '300px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiêu đề</a>',
+		           				attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+		           				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+		           			},
+		           			{field: 'Email', title: 'Email nhận', width: '300px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email nhận</a>',
+		           				attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+		           				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+		           			},
+		           		/* 	{field: 'MailCheck', title: 'Trạng thái gửi mail', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái mail</a>',
+		           				attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+		           				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+		           			}, */
+		           			
+		           			{field: 'IsActive', title: 'Trạng thái', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+		           				attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+		           				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+		           			}
+		           			
+		               	],
+		        		dataBound: function(e) {
+
+							
+							$("#f-issu").find('button[data-action="issu-detail"], button[data-action="issu-edit"]').prop('disabled', true);
+							
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+								e.preventDefault();/*e.stopPropagation();*/
+								
+								var $obj = $(this);
+								var $tr = $obj.closest('tr');
+								var subAction = $obj.attr('data-sub-action');
+								
+								var indexRow = $tr.index();
+								var rowData = null;
+								var objData = {};
+								var objURL = {};
+								
+								switch (subAction) {	
+								case 'viewmail':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									showPopupWithURLAndData(ROOT_PATH + '/main/viewmail/init', objData, false, function(e){
+									});
+									break;
+								default:
+									break;
+								}
+							});
+							
+						}
+					});
+					
+					
+					$("#f-issu").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						var $obj = $(this);
+						var rowData = null;
+						var actionCheck = '|issu-edit|issu-contract-cre|issu-detail|';
+						
+						var entityGrid = _gridMain.data("kendoGrid");
+						var selectedItem = entityGrid.dataItem(entityGrid.select());
+					
+											
+						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
+							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+							return;
+						}
+						
+						var objData = {};
+						switch (dataAction) {
+		
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;
+					
+						default:
+							break;
+						}
+					});
+					
+				});
+				  function getDataSearch(){
+			           	var dataPost = {};
+			           	dataPost['en'] = $('#f-issu #en').val() == null? '': $('#f-issu #en').val();
+			           	dataPost['tt'] = $('#f-issu #mst').val() == null? '': $('#f-issu #tt').val();
+			           	dataPost['acti'] = $('#f-issu #acti').val() == null? '': $('#f-issu #acti').val();
+			           	return dataPost;
+			           }
+				
+				  function setTemplateForGridMAIN(key, data){
+						var text = '';
+						
+						switch (key) {
+						case 'func':
+								text += '<center><i title="Xem email đã gửi" class="mdi mdi-email-open fs-25 text-danger c-pointer" data-sub-action="viewmail" ></i></center>';
+							break;
+						
+						default:
+							break;
+						}
+						
+						return text;
+					}
+
+				</script>			
+					
+			
+			
+			</div>
+		</div>		
+		
+		
+	</th:block>
+</body>
+</html>

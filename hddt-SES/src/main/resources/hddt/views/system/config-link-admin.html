@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Cấu hình link</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form name="f-config-email-server" id="f-config-email-server" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-l p-r">
+								<div class="col-sm-12 offset-md-2 col-md-8 b-a m-b-sm background-frame-brown ">
+		
+									<div class="email-normal"> 
+								
+									
+									
+									<div class="input-group-sm m-b-14">
+										<label>Link Login Gửi Đến Khách Hàng</label>
+										<input type="text" class="form-control form-control-sm has-value" id="LinkLogin" name="LinkLogin" th:value="${LinkLogin}" />
+									</div>
+									<div class="input-group-sm m-b-14">
+										<label>Link Portal Tra Cứu</label>
+										<input type="text" class="form-control form-control-sm has-value" id="LinkPortal" name="LinkPortal" th:value="${LinkPortal}" />
+									</div>
+									
+									
+									</div>
+									<div class="email-service hide"></div>
+									<div class="input-group-sm p-b-sm p-r-xs">
+										<div class="text-md-left text-sm-left text-left" ></div>
+										<div class="text-md-right text-sm-right text-right">
+											<button type="button" data-action="accept" class="btnadd btns btns-blue__ses" title="Chấp nhận" th:if="${null == messageError}" >
+												<i class="mdi mdi-check-all"></i>
+												<span class="d-none d-md-inline">Chấp nhận</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="_id" th:value="${_id}" >
+				</form>
+				<script type="text/javascript">
+				transactionMain = '[[${transaction}]]';
+				</script>
+				
+		
+				<!-- <script th:src="@{/static/function/system/config-email-server.js(v=1.0) }"></script> -->
+				<script type="text/javascript">
+				 $('#f-config-email-server')
+			        .find('input[type="radio"][name="reset-by"]')
+			        .change(function (event) {
+			          showHideResetBy($(this).val())
+			        })
+			      function showHideResetBy(val) {
+			        $('#f-config-email-server')
+			          .find('div.email-normal, div.email-service')
+			          .addClass('hide')
+			        $('#f-config-email-server')
+			          .find('div.' + val)
+			          .removeClass('hide')
+			      }
+				$(function(){
+					inputFilterInteger($('#f-config-email-server').find('#smtp-port'))
+					
+					$('#f-config-email-server').find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var $obj = $(this);
+						var objDataSend = null;
+						
+						switch (dataAction) {
+						case 'accept':
+							objDataSend = getDataToSave();
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res.errorCode == 0) {
+										var responseData = res.responseData;
+										
+										var confirmText = responseData['CONFIRM'];
+										tokenTransaction = responseData['TOKEN'];
+										
+										objDataSend['tokenTransaction'] = tokenTransaction;
+										alertConfirm(confirmText,
+											function(e){
+												$.ajax({
+													type: "POST",
+													datatype: "json",
+													url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+													data: objDataSend,
+													beforeSend: function(req) {
+														initAjaxJsonRequest(req);
+											        	showLoading();
+													},
+													success:function(res) {
+														hideLoading();
+														if(res) {
+															if(res.errorCode == 0) {
+																location.reload();
+															}else{
+																alertDLSuccess(createObjectError(res).html(), function(){});
+															}
+														}else{
+															alertDLSuccess('unknown error!!!', function(){});
+															hideLoading();
+														}
+													},
+													error:function (xhr, ajaxOptions, thrownError){
+														alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+											            hideLoading();
+											        }
+												});
+											},
+											function(e){}
+										);
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+
+						default:
+							break;
+						}
+					});
+					
+				});
+
+				function getDataToSave(){
+					var dataPost = {};							
+					dataPost['_id'] = $('#f-config-email-server').find('input[name="_id"]').val();
+
+					dataPost['LinkLogin'] = $('#f-config-email-server').find('#LinkLogin').val();
+					dataPost['LinkPortal'] = $('#f-config-email-server').find('#LinkPortal').val();
+				
+					return dataPost;
+				}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

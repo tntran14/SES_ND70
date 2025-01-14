@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách sản phẩm</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-prd" name="f-prd" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-r-0 p-l-0">
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="code" name="code" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mã sản phẩm</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="name" name="name" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên sản phẩm</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<select class="form-control form-control-sm c-f__textbox" id="stock" name="stock" >
+													<option value=""></option>
+													<th:block th:if="${map_stock != null}">
+														<option th:each="entry : ${map_stock.entrySet()}"
+															th:value="${entry.key}" th:utext="${entry.value}" > </option>
+													</th:block>
+												</select>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Kho hàng</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-2 m-b-10">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+                        		
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+											<button type="button" title="Import danh sách" data-action="prd-import" class="btns btns-detail__ses btns-import__ses-1 hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-import|')}"  >
+												<i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline"> Import danh sách</span>
+											</button>
+											<button type="button" title="Xuất Excel" data-action="prd-exp" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-exp|')}" >
+                            					<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất Excel</span>
+                            				</button>
+											<button type="button" title="Thêm mới" data-action="prd-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-cre|')}"  >
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
+                            				</button>
+                            				<button type="button" title="Copy" data-action="prd-copy" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-copy|')}" th:disabled="true">
+                            					<i class="mdi mdi-content-copy"> </i><span class="d-none d-md-inline">Copy</span>
+                            				</button>
+                            				<button type="button" title="Chi tiết" data-action="prd-detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-detail|')}" th:disabled="true" >
+                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
+                            				</button>
+                            				<button type="button" title="Thay đổi" data-action="prd-edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-edit|')}" th:disabled="true" >
+                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
+                            				</button>
+                            				<button type="button" title="Xóa" data-action="prd-delete" class="btns btns-delete__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmproduct-del|')}" th:disabled="true" >
+                            					<i class="mdi mdi-close-box"> </i><span class="d-none d-md-inline">Xóa</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+							<div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+							
+						</div>
+					</div>
+					
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-prd').find('#grid');
+				</script>
+				<script th:src="@{/static/function/dm/product.js(v=1.8) }"></script>
+			</div>
+		</div>
+		
+	</th:block>
+</body>

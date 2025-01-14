@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+	
+<div class="modal-header">
+<center>	
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+	</center>
+</div>
+
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-einvoice-import" name="f-einvoice-import" method="post" enctype="multipart/form-data" >
+			<div class="row" >
+				<div class="col-sm-12">
+				
+				<!-- 	<img alt="" src="data:image/jpeg;base64, ${invoiceTemplate}"> -->
+		<img th:src="*{'data:realCaptcha/jpg;base64,'+ invoiceTemplate }" />
+				</div>
+				
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+
+
+</html>

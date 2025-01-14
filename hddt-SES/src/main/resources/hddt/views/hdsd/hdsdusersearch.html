@@ -1,0 +1,192 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+	   <div class="container-fluid style-main-content" id="divMainContent">
+	   <style>
+	   .find{
+	       margin-top: 10px;
+    margin-bottom: 5px;
+	   }
+	   </style>
+          <div class="card">
+                 <div class="card-body">
+                    <form
+                class="authform" 
+                id="fSearchTasks"
+                name="fSearchTasks"
+                method="post"
+                enctype="multipart/form-data"
+              >
+              <div class="row">
+                <div class="col-12 col-sm-12 col-md-3">
+                  <div class="siderbar__wrapper m-b-16">
+                    <ul class="sidebar-menu">
+                      <li class="sidebar-header">
+                        <div class="custom-field">
+                          <div class="c-f__wrapper find">
+                            <input
+                              class="form-control-sm c-f__textbox"
+                              type="text"
+                              id="finduser"
+                              name="finduser"
+                              autocomplete="off"
+                            />
+                            <div class="input-group-append">
+                              <button
+                                type="button"
+                                data-action="search"
+                                class="btn btn-sm btn-ses p-t-1 p-b-1"
+                                title="Tìm kiếm"
+                              >
+                                <i class="mdi mdi-account-search-outline"> </i>
+                              </button>
+                            </div>
+                            <fieldset aria-hidden="true" class="c-f__set">
+                              <legend class="c-f__legend">
+                                <label>Tìm kiếm</label>
+                              </legend>
+                            </fieldset>
+                          </div>
+                        </div>
+                      </li>                 
+                      <!--  <li class="table-active">                                
+                          <span class="" th:text="${Chude}"></span>                               
+                       </li> -->
+                         <li th:each="_list: ${List_Search}">
+                        <a th:href="@{${_list._id}}" > <span> [[${_list.Chude}]]</span></a>
+                      </li>
+                          
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-9">
+                  <div class="text-right download__wrapper">
+                  		<th:block  th:if="${Check_ != 0}">
+                    <button
+                      class="btns"
+                      data-action="download-file"
+                      th:value="${File}"
+                      type="button"                    
+                      name="filename"
+                    >
+                      <i class="fa fa-download"></i
+                      ><a class="download download-support__ses"
+                        >Tải file hướng dẫn
+                      </a>
+                    </button>
+                    </th:block>
+                  </div>
+                  <div class="m-t-10">                  
+              
+						<div class="row">
+								<div class="col-12">
+								<th:block  th:if="${Check_ != 0}">
+								 <div class="post-detail__content ">
+          								<textarea id="content"  th:value="${Content}" name="content" rows="10" class="form-control">[[${Content}]]</textarea>
+         						 </div>
+         						 </th:block>
+								</div>
+							</div> 
+						
+                
+                  </div>
+                </div>
+              </div>
+              
+           	<script>
+			  var dataEditor;			 			   
+			 ClassicEditor
+			 .create( document.querySelector( '#content' ),{  language: 'vi',} 			
+			 )
+			 .then( editor => {
+			        const toolbarElement = editor.ui.view.toolbar.element;
+			                toolbarElement.style.display = 'none'; 						  
+			    } )
+			    .catch( error => {
+		
+			    } );
+                </script>
+         <script>
+          $.sidebarMenu($('.sidebar-menu'))
+          </script>
+          
+          	<script>
+					$(document).ready(function(event) {
+						
+						$('.authform').find('button[data-action]').click(function (event) {
+							event.preventDefault();/*event.stopPropagation();*/
+							var dataAction = $(this).data('action');
+							var $obj = $(this);
+				
+							var filename = $('.authform').find('button[name="filename"]').val().trim();
+						
+							
+							var objData = {};
+							var find = {};
+							switch(dataAction){
+							case 'download-file':
+								objData = {};
+								objData['name'] = filename;
+								window.open(ROOT_PATH + '/main/hdsduser/dowloadfile/' + encodeObjJsonBase64UTF8(objData),'_blank');
+								break;
+							case 'search':
+								find['find'] =	$('#fSearchTasks #finduser').val();
+								window.open(ROOT_PATH + '/main/hdsduser/search/' + encodeObjJsonBase64UTF8(find),'_blank');
+								break;
+							default:
+								break;
+							}
+						});					
+					});
+					</script>
+     			</form>
+            </div>
+       
+         
+          </div>
+        
+        
+         
+         
+          <div class="row"></div>
+          <script type="text/javascript">
+            function DownloadFile(fileName) {
+              //Set the File URL.
+              var url = ROOT_PATH + '/static/sign-msi/' + fileName
+
+              //Create XMLHTTP Request.
+              var req = new XMLHttpRequest()
+              req.open('GET', url, true)
+              req.responseType = 'blob'
+              req.onload = function () {
+                //Convert the Byte Data to BLOB object.
+                var blob = new Blob([req.response], {
+                  type: 'application/octetstream',
+                })
+
+                //Check the Browser type and download the File.
+                var isIE = false || !!document.documentMode
+                if (isIE) {
+                  window.navigator.msSaveBlob(blob, fileName)
+                } else {
+                  var url = window.URL || window.webkitURL
+                  link = url.createObjectURL(blob)
+                  var a = document.createElement('a')
+                  a.setAttribute('download', fileName)
+                  a.setAttribute('href', link)
+                  document.body.appendChild(a)
+                  a.click()
+                  document.body.removeChild(a)
+                }
+              }
+              req.send()
+            }
+          </script>
+        </div>
+	
+	</th:block>
+</body>
+</html>

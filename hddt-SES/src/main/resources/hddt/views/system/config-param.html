@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="container-fluid style-main-content" id="divMainContent">
+			<div class="row page-titles">
+				<div class="col-md-12 col-12 align-self-center p-l-0">
+					<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Cấu
+						hình tham số hóa đơn</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<form name="f-config-param" id="f-config-param" method="post"
+						enctype="multipart/form-data">
+						<div class="card">
+							<div class="card-body config__parameters--h">
+								<div class="row p-l p-r m-t-20">
+									<div
+										class="col-sm-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8 b-a m-b-sm background-frame-brown p-t-sm">
+										<!-- box-header -->
+										
+										
+										
+										
+										<div class="input-group-sm row m-b-16">
+											<label class="col-5 col-sm-3 form-control-label">Chỉ
+												hiển thị số hóa đơn</label>
+											<div class="col-7 col-sm-9">
+												<div class="row">
+													<div class="col-sm-12 d-flex align-items-center">
+														<div class="offset-3 col-9 offset-sm-1 col-sm-11">
+															<label class="ui-switch m-r m-t-sm dark"> <input
+																type="checkbox" class="has-value" id="view-shd"
+																name="view-shd"
+																th:checked="${CheckSHD != null && CheckSHD }" /> <i></i>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+											
+											<div class="input-group-sm row m-b-16">
+											<label class="col-5 col-sm-3 form-control-label">Ẩn Footer Mail</label>
+											<div class="col-7 col-sm-9">
+												<div class="row">
+													<div class="col-sm-12 d-flex align-items-center">
+														<div class="offset-3 col-9 offset-sm-1 col-sm-11">
+															<label class="ui-switch m-r m-t-sm dark"> <input
+																type="checkbox" class="has-value" id="footermail"
+																name="footermail"
+																th:checked="${CheckMail != null && CheckMail }" /> <i></i>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										
+											<div class="input-group-sm row m-b-16">
+											<label class="col-5 col-sm-3 form-control-label">Hiển thị số tiền bằng chữ âm</label>
+											<div class="col-7 col-sm-9">
+												<div class="row">
+													<div class="col-sm-12 d-flex align-items-center">
+														<div class="offset-3 col-9 offset-sm-1 col-sm-11">
+															<label class="ui-switch m-r m-t-sm dark"> <input
+																type="checkbox" class="has-value" id="viewmoney"
+																name="viewmoney"
+																th:checked="${ViewMoney != null && ViewMoney}" /> <i></i>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										
+									<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Cấu hình số thập phân cho đơn vị tiền tệ VND <br><span class="text-danger"> (Tối đa là 8 số thập phân)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${VND != null}">
+													<input type="number" min="0" max="10"
+														class="form-control form-control-sm has-value" id="vnd"
+														name="vnd" th:value="${VND}" />
+												</th:block>
+												<th:block th:if="${VND == null}">
+													<input type="number" min="0" max="10"
+														class="form-control form-control-sm has-value" id="vnd"
+														name="vnd" th:value="2" />
+												</th:block>
+
+											</div>
+										</div> 
+
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Cấu hình số thập phân cho đơn vị tiền tệ USD, EUR, AUD  <br><span class="text-danger"> (Tối đa là 8 số thập phân)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${USD != null}">
+													<input type="number" min="0" max="10"
+														class="form-control form-control-sm has-value" id="usd"
+														name="usd" th:value="${USD}" />
+												</th:block>
+												<th:block th:if="${USD == null}">
+													<input type="number" min="0" max="10"
+														class="form-control form-control-sm has-value" id="usd"
+														name="usd" th:value="2" />
+												</th:block>
+											</div>
+										</div>
+											<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Gán tên người chuyển đổi </label>
+											</div>
+											<div class="col-md-3">
+											  <input type="text" class="form-control form-control-sm has-value"   id="namecd"  name="namecd" autocomplete="off" th:value="${NameCD}"  />
+											
+											</div>
+										</div>
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Loại thuế suất mặc định</label>
+											</div>
+											<div class="col-md-3">											
+												<select id="tax_invoice" name="tax_invoice" class=" form-control form-control-sm  " >
+													<option value=""></option>
+													<th:block th:if="${map_tax_invoice != null}">
+													<option th:each="entry : ${map_tax_invoice.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${DefaultTaxAdmin == entry.key}" > </option>
+													</th:block>
+												</select>											
+											</div>
+										</div>
+
+										<div class="b b-b m-b-16"></div>
+										<div class="input-group-sm p-b-sm p-r">
+											<div
+												class="col-12 text-md-right text-sm-right text-right p-r-0">
+												<button type="button" data-action="accept"
+													class="btns btns-search_auto__ses hover-up__ses">
+													Chấp nhận</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<!--   <script type="text/javascript">
+                transactionMain = 'config-email-server'
+              </script> -->
+
+				<script>
+				var DefaultTaxAdmin = '[[${DefaultTaxAdmin}]]';
+				console.log(DefaultTaxAdmin)
+				</script>
+
+					<script>
+						$(function() {
+							$('#f-config-param')
+									.find('button[data-action]')
+									.click(
+											function(event) {
+												event.preventDefault();/*event.stopPropagation();*/
+												var dataAction = $(this).data(
+														'action');
+
+												var $obj = $(this);
+												var objDataSend = null;
+
+												switch (dataAction) {
+												case 'accept':
+													objDataSend = getDataToSave();
+													$
+															.ajax({
+																type : "POST",
+																datatype : "json",
+																url : ROOT_PATH
+																		+ '/main/config-param/check-data-save',
+																data : objDataSend,
+																beforeSend : function(
+																		req) {
+																	initAjaxJsonRequest(req);
+																	showLoading();
+																},
+																success : function(
+																		res) {
+																	hideLoading();
+																	if (res.errorCode == 0) {
+																		var responseData = res.responseData;
+
+																		var confirmText = responseData['CONFIRM'];
+																		tokenTransaction = responseData['TOKEN'];
+
+																		objDataSend['tokenTransaction'] = tokenTransaction;
+																		alertConfirm(
+																				confirmText,
+																				function(
+																						e) {
+																					$
+																							.ajax({
+																								type : "POST",
+																								datatype : "json",
+																								url : ROOT_PATH
+																										+ '/main/config-param/save-data',
+																								data : objDataSend,
+																								beforeSend : function(
+																										req) {
+																									initAjaxJsonRequest(req);
+																									showLoading();
+																								},
+																								success : function(
+																										res) {
+																									hideLoading();
+																									if (res) {
+																										if (res.errorCode == 0) {
+																											//$('#f-config-param').find('button[data-action="back"]').trigger('click');
+																											location
+																													.reload();
+																										} else {
+																											alertDLSuccess(
+																													createObjectError(
+																															res)
+																															.html(),
+																													function() {
+																													});
+																										}
+																									} else {
+																										alertDLSuccess(
+																												'unknown error!!!',
+																												function() {
+																												});
+																										hideLoading();
+																									}
+																								},
+																								error : function(
+																										xhr,
+																										ajaxOptions,
+																										thrownError) {
+																									alertDLSuccess(
+																											xhr.status
+																													+ " - "
+																													+ xhr.responseText,
+																											function() {
+																											});
+																									hideLoading();
+																								}
+																							});
+																				},
+																				function(
+																						e) {
+																				});
+																	} else {
+																		alertDLSuccess(
+																				createObjectError(
+																						res)
+																						.html(),
+																				function() {
+																				});
+																	}
+																},
+																error : function(
+																		xhr,
+																		ajaxOptions,
+																		thrownError) {
+																	$obj
+																			.prop(
+																					'disabled',
+																					false);
+																	alertDLSuccess(
+																			xhr.status
+																					+ " - "
+																					+ xhr.responseText,
+																			function() {
+																			});
+																	hideLoading();
+																}
+															});
+													break;
+
+												default:
+													break;
+												}
+											});
+
+						});
+
+						function getDataToSave() {
+							var dataPost = {};
+							var _tmp = '';
+							var _tmp1 = '';
+							var _tmp2 = '';
+							dataPost['vnd'] = $('#f-config-param').find('#vnd').val();
+							dataPost['namecd'] = $('#f-config-param').find('#namecd').val();
+							dataPost['usd'] = $('#f-config-param').find('#usd').val();
+							dataPost['tax_invoice'] = $('#f-config-param').find('#tax_invoice').val();
+							_tmp = $('#f-config-param').find(
+									'input[type="checkbox"][name="view-shd"]')
+									.prop('checked') ? 'Y' : 'N';													
+							dataPost['view-shd'] = _tmp;
+						
+							
+
+							_tmp1 = $('#f-config-param').find(
+							'input[type="checkbox"][name="footermail"]')
+							.prop('checked') ? 'Y' : 'N';			
+						
+							dataPost['footermail'] = _tmp1;
+							
+							_tmp2 = $('#f-config-param').find(
+							'input[type="checkbox"][name="viewmoney"]')
+							.prop('checked') ? 'Y' : 'N';			
+						
+							dataPost['viewmoney'] = _tmp2;
+					
+							return dataPost;
+						}
+					</script>
+
+
+
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+	</th:block>
+</body>
+</html>

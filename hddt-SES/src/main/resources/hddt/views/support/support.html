@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="card">
+						<div class="card-body">
+							
+							<div class="row" th:if="false"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12" th:each="list_: ${_support}">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-12 p-l-0" >
+										<p class=" inline p-0 download-support__ses--wrap text-info m-b-0">
+                            				<i class="fa fa-download"></i><a class="m-l-10 download download-support__ses" th:href="@{'/common/get-file/'+ ${list_.ImageLogoOriginalFilename}+ '/'+ ${list_.ImageLogo}}">[[${list_.Title}]]</a>
+                            			</p>
+                            		</div>                            	
+                            	</div>
+                            </div>
+                            
+							<div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+						</div>
+					</div>
+		<div class="row"></div>
+		<script type="text/javascript">
+			function DownloadFile(fileName) {
+				//Set the File URL.
+				var url = ROOT_PATH + "/static/sign-msi/" + fileName;
+
+				//Create XMLHTTP Request.
+				var req = new XMLHttpRequest();
+				req.open("GET", url, true);
+				req.responseType = "blob";
+				req.onload = function() {
+					//Convert the Byte Data to BLOB object.
+					var blob = new Blob([ req.response ], {
+						type : "application/octetstream"
+					});
+
+					//Check the Browser type and download the File.
+					var isIE = false || !!document.documentMode;
+					if (isIE) {
+						window.navigator.msSaveBlob(blob, fileName);
+					} else {
+						var url = window.URL || window.webkitURL;
+						link = url.createObjectURL(blob);
+						var a = document.createElement("a");
+						a.setAttribute("download", fileName);
+						a.setAttribute("href", link);
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+					}
+				};
+				req.send();
+			};
+		</script>
+	</th:block>
+</body>
+</html>

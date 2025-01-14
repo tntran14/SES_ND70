@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header container-fluid">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-search" name="f-search" method="post" enctype="multipart/form-data" >
+			<div class="row"  >
+				<div class="col-sm-12">
+					<div class="row p-r-0 p-l-0">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="tax-code" name="tax-code" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="company-name" name="company-name" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên đơn vị</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="customer-name" name="customer-name" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên người mua hàng</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-2 m-b-10">
+							<div class="row">
+								<div class="col-12">
+									<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+										<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+									</button>
+								</div>
+							</div>
+						</div>
+                      		
+					</div>
+					                        <div class="wrapper">
+                          <div class="tab-wrapper">
+                            <ul class="tabs">
+                              <li class="tab-link active" data-tab="1">
+                               Danh sách khách hàng
+                              </li>
+                              <li class="tab-link" data-tab="2">Danh sách lịch sử khách hàng</li>
+                            </ul>
+                          </div>
+
+                          <div class="content-wrapper">
+                            <div id="tab-1" class="tab-content active">
+                              <div class="form-group row m-b-5 m-t-7" >
+									<div class="col-12 has-min-height-grid">
+										<div id="grid" ></div>
+									</div>
+								</div>
+                            </div>
+
+                            <div id="tab-2" class="tab-content">
+                              <div class="form-group row m-b-5 m-t-7" >
+									<div class="col-12 has-min-height-grid">
+										<div id="grid1"></div>
+									</div>
+								</div>
+                            </div>
+                          </div>
+                        </div>
+					
+	           					
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer p-t-10 p-b-5">
+	<div class="button-group text-right">
+		<button type="button" data-action="select" class="btns btns-search_auto__ses" ><i class="mdi mdi-check-bold"> </i> Chọn</button>
+		<button type="button" class="btn btn-sm btn-outline-secondary " data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>
+	</div>
+</div>
+<script type="text/javascript">
+	var _gridMainSearch = $('#f-search').find('#grid');
+	
+	
+	var _gridMainSearch1 = $('#f-search').find('#grid1');
+	
+	 $('.tab-link').click(function () {
+         var tabID = $(this).attr('data-tab')
+
+         $(this).addClass('active').siblings().removeClass('active')
+
+         $('#tab-' + tabID)
+           .addClass('active')
+           .siblings()
+           .removeClass('active')
+       })
+</script>
+<!-- <script th:src="@{/static/function/common/search-customer-update.js(v=1.1) }"></script> -->
+
+<script>
+
+$(function(){	
+	_gridMainSearch.kendoGrid({
+		dataSource: new kendo.data.DataSource({
+			transport: {
+				read: {
+					type: 'POST',
+					url: ROOT_PATH + '/common/search-customer',
+                    dataType: 'json',
+                    data: function(){return getDataSearchPopup();},
+                    beforeSend: function(req){
+                    	initAjaxJsonGridRequest(req);
+                	},
+				}
+			},
+			requestEnd: function (e) {
+               	if (e.type === "read" && e.response) {
+               		if(e.response.errorCode == 0){
+               		}else{
+               	//		notificationDLSuccess(createObjectError(e.response).html(), function(){});
+               		}
+               	}
+           	},
+            schema: {
+				data: "rows",
+                total: "total",
+                model: {
+					fields: {
+					}
+				}
+			},
+			pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+			serverPaging: true,
+			serverSorting: true,
+           	serverFiltering: true,
+           	change: function(e) {
+            },
+		}),
+		selectable: true, scrollable: true, 
+ 		sortable: {mode: "single", allowUnsort: true},
+		sortable: true,
+// 		filterable: { mode: "row"},
+		filterable: false, resizable: true,
+		serverSorting: false,
+//		height: kendoGridHeight,
+		pageable: {
+			refresh: true,
+			pageSizes: true,
+			buttonCount: KENDOUI_BUTTONCOUNT,
+			messages: {
+				itemsPerPage: kendoGridMessages.itemsPerPage,
+				previous: kendoGridMessages.previous,
+				next: kendoGridMessages.next,
+				refresh: kendoGridMessages.refresh,
+				last: kendoGridMessages.last,
+				first: kendoGridMessages.first,
+				empty: kendoGridMessages.empty,
+				display: kendoGridMessages.display
+			},
+			pageSizes: KENDOUI_PAGESIZES,
+			numeric: true
+		},
+		dataBinding: function () {
+            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+        },
+        columns: [
+        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+  			},
+			{field: 'TaxCode', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerCode', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã khách hàng</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CompanyName', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerName', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'Address', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'Email', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'EmailCC', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">EmailCC</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'ProvinceName', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tỉnh/Thành phố</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup1Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 1</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup2Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 2</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup3Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 3</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			}
+    	],
+    	dataBound: function(e) {
+    	}
+	});
+	
+	$("#f-search").find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		
+		switch (dataAction) {
+		case 'search':
+			_gridMainSearch.data("kendoGrid").dataSource.page(1);
+			break;
+
+		default:
+			break;
+		}
+	});
+	
+	$('div.modal-footer').find('button[data-action="select"]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		
+		var grid = _gridMainSearch.data("kendoGrid");
+    	var rowData = grid.dataItem(grid.select());
+    	if(null == rowData){
+    	//	alertDLSuccess('Vui lòng chọn dòng dữ liệu để thực hiện.', function(){});
+    		return;
+    	}
+		
+		if(callback) callback(rowData);
+		$('#f-search').closest("div.modal").modal("hide");
+		$('#f-search').closest("div.modal").find('.modal-content').empty();
+	});
+	
+});
+
+function getDataSearchPopup(){
+	var dataPost = {};
+	
+	dataPost['tax-code'] = $('#f-search #tax-code').val() == null? '': $('#f-search #tax-code').val();
+	dataPost['company-name'] = $('#f-search #company-name').val() == null? '': $('#f-search #company-name').val();
+	dataPost['customer-name'] = $('#f-search #customer-name').val() == null? '': $('#f-search #customer-name').val();
+	
+	return dataPost;
+}
+
+</script>
+
+
+<script>
+
+$(function(){	
+	_gridMainSearch1.kendoGrid({
+		dataSource: new kendo.data.DataSource({
+			transport: {
+				read: {
+					type: 'POST',
+					url: ROOT_PATH + '/common/search-customer-update',
+                    dataType: 'json',
+                    data: function(){return getDataSearchPopup();},
+                    beforeSend: function(req){
+                    	initAjaxJsonGridRequest(req);
+                	},
+				}
+			},
+			requestEnd: function (e) {
+               	if (e.type === "read" && e.response) {
+               		if(e.response.errorCode == 0){
+               		}else{
+               		//	notificationDLSuccess(createObjectError(e.response).html(), function(){});
+               		}
+               	}
+           	},
+            schema: {
+				data: "rows",
+                total: "total",
+                model: {
+					fields: {
+					}
+				}
+			},
+			pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+			serverPaging: true,
+			serverSorting: true,
+           	serverFiltering: true,
+           	change: function(e) {
+            },
+		}),
+		selectable: true, scrollable: true, 
+ 		sortable: {mode: "single", allowUnsort: true},
+		sortable: true,
+// 		filterable: { mode: "row"},
+		filterable: false, resizable: true,
+		serverSorting: false,
+//		height: kendoGridHeight,
+		pageable: {
+			refresh: true,
+			pageSizes: true,
+			buttonCount: KENDOUI_BUTTONCOUNT,
+			messages: {
+				itemsPerPage: kendoGridMessages.itemsPerPage,
+				previous: kendoGridMessages.previous,
+				next: kendoGridMessages.next,
+				refresh: kendoGridMessages.refresh,
+				last: kendoGridMessages.last,
+				first: kendoGridMessages.first,
+				empty: kendoGridMessages.empty,
+				display: kendoGridMessages.display
+			},
+			pageSizes: KENDOUI_PAGESIZES,
+			numeric: true
+		},
+		dataBinding: function () {
+            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+        },
+        columns: [
+        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+  			},
+			{field: 'TaxCode', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerCode', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã khách hàng</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CompanyName', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerName', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'Address', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'Email', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'EmailCC', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">EmailCC</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'ProvinceName', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tỉnh/Thành phố</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup1Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 1</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup2Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 2</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CustomerGroup3Name', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm KH 3</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			}
+    	],
+    	dataBound: function(e) {
+    	}
+	});
+	
+	$("#f-search").find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		
+		switch (dataAction) {
+		case 'search':
+			_gridMainSearch1.data("kendoGrid").dataSource.page(1);
+			break;
+
+		default:
+			break;
+		}
+	});
+	
+	$('div.modal-footer').find('button[data-action="select"]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		
+		var grid = _gridMainSearch1.data("kendoGrid");
+    	var rowData = grid.dataItem(grid.select());
+    	if(null == rowData){
+    	//	alertDLSuccess('Vui lòng chọn dòng dữ liệu để thực hiện.', function(){});
+    		return;
+    	}
+		
+		if(callback) callback(rowData);
+		$('#f-search').closest("div.modal").modal("hide");
+		$('#f-search').closest("div.modal").find('.modal-content').empty();
+	});
+	
+});
+
+function getDataSearchPopup(){
+	var dataPost = {};
+	
+	dataPost['tax-code'] = $('#f-search #tax-code').val() == null? '': $('#f-search #tax-code').val();
+	dataPost['company-name'] = $('#f-search #company-name').val() == null? '': $('#f-search #company-name').val();
+	dataPost['customer-name'] = $('#f-search #customer-name').val() == null? '': $('#f-search #customer-name').val();
+	
+	return dataPost;
+}
+
+</script>
+</html>

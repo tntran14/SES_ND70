@@ -1,0 +1,490 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="container-fluid style-main-content" id="divMainContent">
+				<div>
+					<div class="row page-titles">
+						<div class="col-md-12 col-12 align-self-center p-l-0">
+							<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">THÔNG TIN NGƯỜI DÙNG</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+						
+							<div class="card">
+								<div class="card-body">
+									<div class="row m-b-16">
+										<div class="col-12">
+											<span
+												class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+												tin công ty</span>
+													<center><p th:if="${message!=null}">
+								<span class="text-middle fw-800 text-uppercase text-decoration-underline color-ses" th:text="${message}"></span>
+				</p></center>
+</div>
+</div>
+								
+									<form  id="f-tkhai-crud" name="f-tkhai-crud"  method="post">
+										<div class="form-group row">
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-12">
+														<div class="custom-field m-b-16">
+															<div class="c-f__wrapper">
+																<input class="form-control form-control-sm c-f__textbox"
+																	type="text" autocomplete="off" th:path="${TaxCode}"
+																id="t"	name="t" th:value="${TaxCode}" th:readonly="true" />
+																<div class="input-group-append">
+																	<button class="btn btn-sm btn-success" type="button"
+																		title="Kiểm tra mã số thuế" >
+																		<i class="mdi mdi-account-plus"></i>
+																	</button>
+																</div>
+																<fieldset aria-hidden="true" class="c-f__set">
+																	<legend class="c-f__legend">
+																		<label>Mã số thuế</label>
+																	</legend>
+																</fieldset>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="n"	name="n" th:value="${Name}" type="text" required="true"
+																autocomplete="off" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tên đơn vị<span class="text-danger">*</span></label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+
+												<div class="row m-b-16">
+													<div class="col-12">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															 required="true" id="a"	name="a" type="text" autocomplete="off" 
+															th:value="${Address}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Địa chỉ<span class="text-danger">*</span></label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+											
+											
+											
+											
+											
+											
+											
+											
+											
+											
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper c-service__related">
+												
+								
+								
+							<select class="form-control form-control-sm c-f__textbox" id="tinh-thanh" name="tinh-thanh" >
+										<option value=""></option>
+										<th:block th:if="${map_dmtinhthanh != null}" >
+											<option th:each="entry : ${map_dmtinhthanh.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+										</th:block>
+									</select>
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Tỉnh/Thành phố<span class="text-danger">*</span></label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper c-service__related">
+								
+								
+							
+								<select class="form-control form-control-sm c-f__textbox" id="CQTQLy" name="CQTQLy">
+										<option value=""></option>
+										<th:block th:if="${map_cucthue != null}">
+											<option th:each="entry : ${map_cucthue.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${CQThueCode == entry.key}" > </option>
+										</th:block>
+									</select>
+								
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Cơ quan thuế<span class="text-danger">*</span></label>
+															</legend>
+														</fieldset>
+
+													</div>
+												</div>
+											</div>
+				
+										
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" autocomplete="off"  th:value="${MainUser}"  id="boss" name="boss" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Người đại diện</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"  th:value="${Position}"  id="cv" name="cv" 
+															type="text" autocomplete="off"  />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Chức vụ</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+											</div>
+											
+												<div class="row">
+												<div class="col-12 col-sm-12 col-md-12 custom-field m-b-16">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" autocomplete="off"  th:value="${MaCQT}"  id="maCQT" name="maCQT" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Mã doanh nghiệp<span class="text-danger"> (đối với hóa đơn máy tính tiền)</span> </label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+										
+											</div>
+										</div>
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-12 col-sm-12 col-md-6 m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="p"	name="p" type="text" autocomplete="off"
+																th:value="${Phone}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số điện thoại</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="f"	name="f" type="text" autocomplete="off"
+																th:value="${Fax}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số fax</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+												<div class="row m-b-16">
+													<div class="col-6 col-sm-6 col-md-6">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+																id="e" name="e" autocomplete="off" th:value="${Email}"
+																type="email" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Email</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-6 custom-field">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+																id="w" name="w" type="text" autocomplete="off"
+																th:value="${Website}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Website</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="ac"	name="ac" type="text" autocomplete="off"
+																th:value="${AccountNumber}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Số tài khoản</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+											<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="an"	name="an" type="text" autocomplete="off"
+																th:value="${AccountName}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tên tài khoản</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+													<div class="col-12 custom-field m-b-16">
+														<div class="c-f__wrapper">
+															<input class="form-control form-control-sm c-f__textbox"
+															id="bn"	name="bn" type="text" autocomplete="off"
+																th:value="${BankName}" />
+															<fieldset aria-hidden="true" class="c-f__set">
+																<legend class="c-f__legend">
+																	<label>Tại ngân hàng</label>
+																</legend>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+											<div class="row m-b-16">
+										<div class="col-12">
+											<span
+												class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+												tin liên hệ</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 col-sm-12 col-md-6">
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												 th:value="${NameUser}" name="ng" 	id="ng"	autocomplete="off" />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Người liên hệ
+																</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												 th:value="${EmailUser}" name="eng" id="eng" autocomplete="off"  />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Email
+																</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-sm-12 col-md-6">
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+												 th:value="${PhoneUser}" name="png"	id="png"	autocomplete="off"  />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Số điện thoại
+															</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div class="custom-field m-b-16">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox" type="text"
+														autocomplete="off" 
+														 th:value="${EmailUserLh}" name="englh"	id="englh" />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Email nhận thông tin</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+										</div>
+									</div>
+										
+										<div class="row">
+											<div
+												class="col-12 button-group d-flex justify-content-between">
+
+												<a href="/hddt/main"
+													class="btns btns-search_auto__ses hover-up__ses"
+													role="button" aria-pressed="true" style="padding-top: 7px;">Quay lại</a>
+												<button title="Lưu" data-action="accept"
+													class="btns btns-search_auto__ses hover-up__ses"
+											 type="submit">Thay Đổi</button>
+											</div>
+										</div>
+									</form>
+
+									<div class="row">
+										<div class="col-12">
+											<hr style="margin: 0 0 10px 0" />
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+						</div>	
+	
+		<script type="text/javascript">
+		$('#f-tkhai-crud #tinh-thanh').change(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var _val = $(this).val();
+			
+			$('#f-tkhai-crud').find('#CQTQLy').empty();
+			$('#f-tkhai-crud').find('#CQTQLy').append($("<option></option>").text('').val(''));
+			
+			if('' == _val || _val == undefined) return;
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/common/get-chi-cuc-thue',
+				data: {"tinhthanh_ma": _val},
+				beforeSend: function(req) {
+					initAjaxJsonArrayRequest(req);
+				},
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-tkhai-crud').find('#CQTQLy').append(
+								$("<option></option>").text(item['name']).val(item['code'])
+							);
+						});
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+		});
+
+</script>
+
+<script type="text/javascript">
+		$(function(){
+				if($('#f-tkhai-crud').find('#tinh-thanh').length > 0)
+					initComboSearchLocal('#f-tkhai-crud', '#tinh-thanh');
+				if($('#f-tkhai-crud').find('#CQTQLy').length > 0)
+					initComboSearchLocal('#f-tkhai-crud', '#CQTQLy');
+			$('#f-tkhai-crud').find('button[data-action]').click(function (event) {
+				event.preventDefault();/*event.stopPropagation();*/
+				var dataAction = $(this).data('action');
+				
+				var $obj = $(this);
+				var objDataSend = null;
+				
+				switch (dataAction) {
+				case 'add-to-grid':
+					var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+					objDataJson.push({});
+					_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+					break;
+				case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function(){$(this).empty();});
+					try{
+						if($('#f-tkhai').find('#grid').length > 0)
+							$('#f-tkhai').find('#grid').data("kendoGrid").dataSource.read();
+					}catch(err){}
+					break;
+				case 'accept':
+					objDataSend = getDataToSave();
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/changeprofile/save-data',
+						data: objDataSend,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res) {
+								if(res.errorCode == 0) {
+									alertDLSuccess('Thành Công', function(){});
+								
+								}else{
+									alertDLSuccess(createObjectError(res).html(), function(){});
+								}
+							}else{
+								alertDLSuccess('unknown error!!!', function(){});
+								hideLoading();
+							}
+						},
+
+						error:function (xhr, ajaxOptions, thrownError){
+							$obj.prop('disabled', false);
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					});
+					break;
+
+				default:
+					break;
+				}
+			});
+			
+		});
+
+		function getDataToSave(){
+			var dataPost = {};
+			dataPost['t'] = $('#f-tkhai-crud').find('#t').val();	
+			dataPost['n'] = $('#f-tkhai-crud').find('#n').val();
+			dataPost['a'] = $('#f-tkhai-crud').find('#a').val();
+			dataPost['p'] = $('#f-tkhai-crud').find('#p').val();
+			dataPost['f'] = $('#f-tkhai-crud').find('#f').val();	
+			dataPost['e'] = $('#f-tkhai-crud').find('#e').val();
+			dataPost['w'] = $('#f-tkhai-crud').find('#w').val();
+			dataPost['ac'] = $('#f-tkhai-crud').find('#ac').val();
+			dataPost['an'] = $('#f-tkhai-crud').find('#an').val();	
+			dataPost['bn'] = $('#f-tkhai-crud').find('#bn').val();
+			dataPost['tinh-thanh'] = $('#f-tkhai-crud').find('#tinh-thanh').val();
+			dataPost['CQTQLy'] = $('#f-tkhai-crud').find('#CQTQLy').val();
+			dataPost['boss'] = $('#f-tkhai-crud').find('#boss').val();	
+			dataPost['cv'] = $('#f-tkhai-crud').find('#cv').val();
+			dataPost['ng'] = $('#f-tkhai-crud').find('#ng').val();
+			dataPost['eng'] = $('#f-tkhai-crud').find('#eng').val();
+			dataPost['png'] = $('#f-tkhai-crud').find('#png').val();	
+			dataPost['englh'] = $('#f-tkhai-crud').find('#englh').val();
+			dataPost['maCQT'] = $('#f-tkhai-crud').find('#maCQT').val();
+			return dataPost;
+		}
+		</script>
+					</div>
+				</div>
+			</div>
+			
+	</th:block>
+</body>
+</html>

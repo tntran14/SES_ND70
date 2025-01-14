@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase"
+			th:text="${_header_}"></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-thhdon-crud" name="f-thhdon-crud" method="post"
+			enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500 col-12"
+						th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0">
+							<hr class="m-t-5 m-b-5">
+						</div>
+					</div>
+					<div class="form-group row m-b-6"
+						th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
+										Thu hồi số hóa đơn</span>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="" name=""
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${TSHDon}" type="text" autocomplete="off"
+											th:readonly="true" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tổng số hóa đơn</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="" name=""
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" readonly="readonly" th:value="${SHDDD}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số hóa đơn đã sử dụng</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+				
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="" name=""
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" readonly="readonly" th:value="${SHDCL}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số hóa đơn còn lại</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="shd-th" name="shd-th"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off"/>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số hóa đơn muốn thu hồi</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin chi tiết mẫu số đã chọn</span>
+								</div>
+							</div>		
+									<div class="row m-b-16">
+								<div class="col-12">
+								<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" th:value="${MauSoHdon}" type="text" autocomplete="off" th:readonly="true" />
+										<select id="mau-so-hdon" name="mau-so-hdon" class="form-control form-control-sm c-f__textbox" th:disabled="true" >
+											<option value=""></option>
+											<th:block th:if="${map_mausokyhieu != null}">
+												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${MauSoHD == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mẫu số</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="" name=""
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${TenMau}" th:readonly="true"
+											 />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên mẫu</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="" name=""
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${MaMau}" th:readonly="true"
+											 />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Mã mẫu</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="kh-dia-chi" name="kh-dia-chi"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${FileName}" th:readonly="true"
+											 />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên file mẫu</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					
+						
+				
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-blue__ses" title="Lưu thông tin"
+								>
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Lưu thông tin</span>
+							</button>						
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}">
+		</form>
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-thhdon-crud').find('#grid');
+		</script>
+
+		<script type="text/javascript" th:if="${_action_ == 'CREATE' && false}"></script>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$('#f-thhdon-crud').find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		
+		var $obj = $(this);
+		var objDataSend = null;
+		
+		switch (dataAction) {
+		
+		case 'back':
+			$('#divMainContent').show();
+			$('#divSubContent').hide(function(){$(this).empty();});
+			try{
+				if($('#f-thhdon').find('#grid').length > 0)
+					$('#f-thhdon').find('#grid').data("kendoGrid").dataSource.read();
+			}catch(err){}
+			break;
+
+		case 'accept':
+			objDataSend = getDataToSave();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/thhd-edit/check-data-save',
+				data: objDataSend,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						alertConfirm(confirmText,
+							function(e){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/thhd-edit/save-data',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$('#f-thhdon-crud').find('button[data-action="back"]').trigger('click');
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e){}
+						);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					$obj.prop('disabled', false);
+					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		            hideLoading();
+		        }
+			});
+			break;
+
+		default:
+			break;
+		}
+	});
+	
+});
+
+
+function getDataToSave(){
+	var dataPost = {};
+	
+	dataPost['_id'] = $('#f-thhdon-crud').find('input[name="_id"]').val();
+	dataPost['shd-th'] = $('#f-thhdon-crud').find('#shd-th').val();	
+
+
+	
+	return dataPost;
+}
+</script>
+	</div>
+</div>
+
+</html>

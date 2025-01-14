@@ -1,0 +1,437 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+			  <div class="container-fluid style-main-content" id="divMainContent">
+          <div class="container__dashboard">
+            <div class="row page-titles m-t-32 m-b-32">
+              <div class="col-md-12 col-12 align-self-center p-l-0">
+                <h2 class="font-bold m-b-0 m-t-0 text-uppercase text-center">
+                  TÌNH HÌNH SỬ DỤNG HÓA ĐƠN
+                </h2>
+     
+              </div>
+            </div>
+            <div class="row">
+				
+		
+			<!--FOREACH HOA DON VAT-->
+             <div th:if="${MauSoVAT != null and MauSoVAT.size() > 0}" class="col-12 rm-padding__mobile">
+				  <div>
+                      <div class="s-invoice__wrapper m-b-24">
+                        <div class="s-invoice__heading">
+                        Mẫu số Hóa đơn giá trị gia tăng
+                        </div>
+                        <div class="row chart-group__main">
+							
+						<!--FOREACH CHO MOI HOA DON-->	
+                          <div class="col-12 col-sm-6 col-md-6" th:each="vat: ${MauSoVAT}">
+                            <div class="s-invoice__item m-b-16">
+                              <div class="chart-group px-2">
+                                <div class="chart-group__header">
+                                  <i class="mdi mdi-folder"></i>
+                                  <div
+                                    class="chart-group__title m-l-4 m-r-4 font-weight-bold"
+                                  >
+                                    [[${vat.MSHD}]]
+                                  </div>
+                                  
+                                </div>
+                                <div class="chart-group-bars m-t-4">
+                                  <div class="chart-line chart-line__thin">
+                                    <div
+                                      class="chart-progress-bar progress-bar"
+                                      role="progressbar" th:id="'percent-' + ${vat.MSHD}"
+                                      style="                                    
+                                        background-color: var(--progress-color);
+                                      "
+                                    ></div>    
+                            <script>
+								var percent = '[[${vat.PERCENT_CL}]]' + '%';
+								var element = document.getElementById("percent-" + '[[${vat.MSHD}]]');
+            					element.style.width = percent;
+							</script>                       
+                                  </div>
+                                </div>
+                                <div class="chart-group__content">
+                                  <div class="chart-group__list row">
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Đã dùng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                          [[${vat.DD}]]
+                                          <span class="chart-group__percent"
+                                            >([[${vat.PERCENT_DD}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Còn lại:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${vat.CL}]]
+                                          <span class="chart-group__percent"
+                                            >([[${vat.PERCENT_CL}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Tổng cộng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${vat.SL}]]
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                          </div>
+                        <!--END FOREACH CHO MOI HOA DON-->	
+                        
+                        </div>
+                      </div>
+                    </div>				 
+			 </div>
+           	<!--END FOREACH HOA DON VAT-->
+           
+           
+           	<!--FOREACH HOA DON BAN HANG-->
+             <div th:if="${MauSoBH != null and MauSoBH.size() > 0}" class="col-12 rm-padding__mobile">
+				  <div>
+                      <div class="s-invoice__wrapper m-b-24">
+                        <div class="s-invoice__heading">
+                        Mẫu số Hóa đơn bán hàng
+                        </div>
+                        <div class="row chart-group__main">
+							
+						<!--FOREACH CHO MOI HOA DON-->	
+                          <div class="col-12 col-sm-6 col-md-6" th:each="bh: ${MauSoBH}">
+                            <div class="s-invoice__item m-b-16">
+                              <div class="chart-group px-2">
+                                <div class="chart-group__header">
+                                  <i class="mdi mdi-folder"></i>
+                                  <div
+                                    class="chart-group__title m-l-4 m-r-4 font-weight-bold"
+                                  >
+                                    [[${bh.MSHD}]]
+                                  </div>
+                                  
+                                </div>
+                                <div class="chart-group-bars m-t-4">
+                                  <div class="chart-line chart-line__thin">
+                                    <div
+                                      class="chart-progress-bar progress-bar"
+                                      role="progressbar" th:id="'percent-' + ${bh.MSHD}"
+                                      style="                                    
+                                        background-color: var(--progress-color);
+                                      "
+                                    ></div>    
+                            <script>
+								var percent = '[[${bh.PERCENT_CL}]]' + '%';
+								var element = document.getElementById("percent-" + '[[${bh.MSHD}]]');
+            					element.style.width = percent;
+							</script>                       
+                                  </div>
+                                </div>
+                                <div class="chart-group__content">
+                                  <div class="chart-group__list row">
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Đã dùng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                          [[${bh.DD}]]
+                                          <span class="chart-group__percent"
+                                            >([[${bh.PERCENT_DD}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Còn lại:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${bh.CL}]]
+                                          <span class="chart-group__percent"
+                                            >([[${bh.PERCENT_CL}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Tổng cộng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${bh.SL}]]
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                          </div>
+                        <!--END FOREACH CHO MOI HOA DON-->	
+                        
+                        </div>
+                      </div>
+                    </div>				 
+			 </div>
+           	<!--END FOREACH HOA BAN HANG-->
+           
+           
+             <!--FOREACH PXK NOI BO-->
+             <div th:if="${MauSoPXK != null and MauSoPXK.size() > 0}" class="col-12 rm-padding__mobile">
+				  <div>
+                      <div class="s-invoice__wrapper m-b-24">
+                        <div class="s-invoice__heading">
+                       Mẫu số Hóa đơn Phiếu xuất kho(Kiêm vận chuyển nội bộ) 
+                        </div>
+                        <div class="row chart-group__main">
+							
+						<!--FOREACH CHO MOI HOA DON-->	
+                          <div class="col-12 col-sm-6 col-md-6" th:each="pxknb: ${MauSoPXK}">
+                            <div class="s-invoice__item m-b-16">
+                              <div class="chart-group px-2">
+                                <div class="chart-group__header">
+                                  <i class="mdi mdi-folder"></i>
+                                  <div
+                                    class="chart-group__title m-l-4 m-r-4 font-weight-bold"
+                                  >
+                                    [[${pxknb.MSHD}]]
+                                  </div>
+                                  
+                                </div>
+                                <div class="chart-group-bars m-t-4">
+                                  <div class="chart-line chart-line__thin">
+                                    <div
+                                      class="chart-progress-bar progress-bar"
+                                      role="progressbar" th:id="'percent-' + ${pxknb.MSHD}"
+                                      style="                                    
+                                        background-color: var(--progress-color);
+                                      "
+                                    ></div>    
+                            <script>
+								var percent = '[[${pxknb.PERCENT_CL}]]' + '%';
+								var element = document.getElementById("percent-" + '[[${pxknb.MSHD}]]');
+            					element.style.width = percent;
+							</script>                       
+                                  </div>
+                                </div>
+                                <div class="chart-group__content">
+                                  <div class="chart-group__list row">
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Đã dùng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                          [[${pxknb.DD}]]
+                                          <span class="chart-group__percent"
+                                            >([[${pxknb.PERCENT_DD}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Còn lại:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${pxknb.CL}]]
+                                          <span class="chart-group__percent"
+                                            >([[${pxknb.PERCENT_CL}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Tổng cộng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${pxknb.SL}]]
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                          </div>
+                        <!--END FOREACH CHO MOI HOA DON-->	
+              
+                        </div>
+                      </div>
+                    </div>				 
+			 </div>
+           	<!--END FOREACH PXK NOI BO-->
+     
+     
+        <!--FOREACH PXK DAI LY-->
+             <div th:if="${MauSoPXKDL != null and MauSoPXKDL.size() > 0}" class="col-12 rm-padding__mobile">
+				  <div>
+                      <div class="s-invoice__wrapper m-b-24">
+                        <div class="s-invoice__heading">
+                       Mẫu số Hóa đơn Phiếu xuất kho(Hàng bán ký gửi đại lý) 
+                        </div>
+                        <div class="row chart-group__main">
+							
+						<!--FOREACH CHO MOI HOA DON-->	
+                          <div class="col-12 col-sm-6 col-md-6" th:each="pxkdl: ${MauSoPXKDL}">
+                            <div class="s-invoice__item m-b-16">
+                              <div class="chart-group px-2">
+                                <div class="chart-group__header">
+                                  <i class="mdi mdi-folder"></i>
+                                  <div
+                                    class="chart-group__title m-l-4 m-r-4 font-weight-bold"
+                                  >
+                                    [[${pxkdl.MSHD}]]
+                                  </div>
+                                  
+                                </div>
+                                <div class="chart-group-bars m-t-4">
+                                  <div class="chart-line chart-line__thin">
+                                    <div
+                                      class="chart-progress-bar progress-bar"
+                                      role="progressbar" th:id="'percent-' + ${pxkdl.MSHD}"
+                                      style="                                    
+                                        background-color: var(--progress-color);
+                                      "
+                                    ></div>    
+                            <script>
+								var percent = '[[${pxkdl.PERCENT_CL}]]' + '%';
+								var element = document.getElementById("percent-" + '[[${pxkdl.MSHD}]]');
+            					element.style.width = percent;
+							</script>                       
+                                  </div>
+                                </div>
+                                <div class="chart-group__content">
+                                  <div class="chart-group__list row">
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Đã dùng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                          [[${pxkdl.DD}]]
+                                          <span class="chart-group__percent"
+                                            >([[${pxkdl.PERCENT_DD}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Còn lại:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${pxkdl.CL}]]
+                                          <span class="chart-group__percent"
+                                            >([[${pxkdl.PERCENT_CL}]] %)</span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      class="col-12 col-sm-12 col-md-4 chart-group__items"
+                                    >
+                                      <div
+                                        class="chart-group__wrapper d-flex align-items-center"
+                                      >
+                                        <div class="chart-group__heading">
+                                          Tổng cộng:
+                                        </div>
+                                        <div class="chart-group__number">
+                                           [[${pxkdl.SL}]]
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        
+                          </div>
+                        <!--END FOREACH CHO MOI HOA DON-->	
+              
+                        </div>
+                      </div>
+                    </div>				 
+			 </div>
+           	<!--END FOREACH PXK DAI LY-->
+     
+            </div>
+          </div>
+        </div>
+	
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-mauhd-crud" name="f-mauhd-crud" method="post" enctype="multipart/form-data">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row p-r-0 p-l-0 justify-content-center">
+                      <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+                        <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                             	<select class="form-control form-control-sm c-f__textbox" id="loaihd" name="loaihd"  th:readonly="${!_isedit_}" th:disabled="${'EDIT' == _action_ || 'DETAIL' == _action_}">
+										<option value=""></option>
+										<th:block th:if="${map_loaihd != null}" >
+											<option th:each="entry : ${map_loaihd.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${LoaiHD == entry.key}" > </option>
+										</th:block>
+									</select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Loại hóa đơn</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+     
+  <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                             		<select class="form-control form-control-sm c-f__textbox" id="kh" name="kh"  th:readonly="${!_isedit_}" th:disabled="${'EDIT' == _action_ || 'DETAIL' == _action_}">
+										<option value=""></option>
+										<th:block th:if="${map_kh != null}" >
+											<option th:each="entry : ${map_kh.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${KH == entry.key}" > </option>
+										</th:block>
+									</select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Chọn ký hiệu</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div
+                            class="col-8 col-sm-8 col-md-10 custom-field m-b-16"
+                          >
+                            <div class="c-f__wrapper">
+                             	<input class="form-control form-control-sm c-f__textbox" th:value="${PhoiHD}" th:readonly="true" th:if="${!_isedit_}" type="text" autocomplete="off"  />
+									<select class="form-control form-control-sm c-f__textbox" id="phoi" name="phoi" th:if="${_isedit_}" >
+										<option value=""></option>
+										<th:block th:if="${map_phoi != null}">
+											<option th:each="entry : ${map_phoi.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${PhoiHDCode == entry.key}" > </option>
+										</th:block>
+									</select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Phôi hóa đơn</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                          <div
+                            class="col-4 col-sm-4 col-md-2 none-padding-left"
+                          >
+                       
+<button type="button"  data-action="viewimg" class="btns btns-search_auto__ses hover-up__ses w-100p m-t-0 m-b-0"
+  title="Xem hình ảnh mẫu hóa đơn" data-toggle="modal" data-target="#form">   Xem ảnh</button>
+
+
+
+                          </div>
+                        </div>
+                   
+
+                        <div class="row">
+                          <div class="col-12">
+                        
+                            <div class="row">
+                              <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">HÓA ĐƠN</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                               th:value="${LoaiHD}"
+                                id="khhd" name="khhd"
+                                  autocomplete="off"
+                                  value=""
+                                  maxlength="1"
+                                     readonly="readonly"
+                                />
+                              </div>
+                                <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">MÃ CQT</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                               
+                                   id="macqt" name="macqt"
+                                  autocomplete="off"
+                                  value="C"
+                                  maxlength="1"
+                                  readonly="readonly"
+                                />
+                              </div>
+                               <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">NĂM</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                                    th:value="${Nam}"
+                                   id="yearCreated" name="yearCreated"
+                                  autocomplete="off"
+                                  value=""
+                                  maxlength="1"
+                                     readonly="readonly"
+                                />
+                              </div>
+                               <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">KÝ HIỆU</div>  
+                             	    <input
+                                  type="text"
+                                    th:value="${KH}"
+                                  class="rm-default form-control form-control-sm text-center"
+                                   id="khttt"
+                                  autocomplete="off"
+                                  value=""
+                                  maxlength="1"
+                                      readonly="readonly"
+                                />
+                                
+                                
+                              </div>
+                            
+                              <div
+                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">MÃ CTY</div>
+                                <input
+                                  type="text"
+                                    th:value="${MaCTY}"
+                                  class="rm-default form-control form-control-sm text-center"
+                                  id="macty" name="macty"
+                                  autocomplete="off"
+                                  maxlength="2"
+                                   th:readonly="${!_isedit_}"
+                                />
+                              </div>
+                             
+                            </div>
+                          </div>
+                        </div>
+                   
+                   
+                   
+                   
+                   
+                       <div class="row">
+                          <div class="col-12">
+                        
+                            <div class="row">
+                              <div class="col-4 col-sm-4 col-md-4 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Số hàng trên 1 trang</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                               th:value="${RowsInPage}"
+                                id="r1p" name="r1p"
+                                  autocomplete="off"
+                                  value=""
+                                  maxlength="2"
+                                   
+                                />
+                              </div>
+                                <div  class="col-4 col-sm-4 col-md-26 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Số hàng trên nhiều trang</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                                  th:value="${RowInPageMultiPage}"
+                                   id="rnp" name="rnp"
+                                  autocomplete="off"
+                                  maxlength="2"
+                              
+                                />
+                              </div>
+                       
+                         <div  class="col-4 col-sm-4 col-md-26 custom-field m-b-16"
+                              >
+                                  <div class="m-b-16">Ký tự trên 1 hàng(50->60)</div>
+                                <input
+                                  type="text"
+                                  class="rm-default form-control form-control-sm text-center"
+                                  th:value="${CharsInRow}"
+                                   id="CharsInRow" name="CharsInRow"
+                                  autocomplete="off"
+                                  maxlength="2"
+                              
+                                />
+                              </div>
+                              
+                             
+                            </div>
+                          </div>
+                        </div>
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                        <div class="form-group row m-t-16">
+                          <div
+                            class="offset-0 col-12 offset-md-3 col-sm-12 text-danger small font-italic m-b-5"
+                          >
+                            Vui lòng chọn tập tin có dung lượng nhỏ hơn 200 KB
+                          </div>
+                          <label class="col-12 col-sm-3 form-control-label"
+                            >Logo doanh nghiệp
+                          </label>
+                          <div class="col-12 col-sm-9">
+                            <div class="form-file m-b-14">
+                              <input
+                             
+                                type="file"
+                               name="logoFile" id="logoFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+  
+                             <input type="text" class="form-control form-control-sm "    th:value="${Logo}" id="logoFileName" readonly="readonly" >
+							<input type="hidden" class="form-control form-control-sm " id="logoFileNameSystem" name="logoFileNameSystem" readonly="readonly" >   
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                     data-action="delete"	
+                                  data-target="logoFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" style="display: none">
+                            <div class="col-12">
+                              <div class="progress progress-striped active">
+                                <div
+                                  style="width: 0%"
+                                  class="progress-bar primary"
+                                >
+                                  0%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                          <label class="col-12 col-sm-3 form-control-label"
+                            >Hình nền hóa đơn
+                          </label>
+                          <div class="col-12 col-sm-9">
+                            <div class="form-file m-b-14">
+                              <input
+                                type="file"
+                                name="backgroundFile"
+                                id="backgroundFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+                                <input
+                                  type="text"
+                                     th:value="${Bg}"
+                                  class="rm-default form-control form-control-sm"
+                                  id="backgroundFileName"
+                                  readonly="readonly"
+                                />
+                                <input
+                                  type="hidden"
+                                  class="form-control form-control-sm"
+                                  id="backgroundFileNameSystem"
+                                  name="backgroundFileNameSystem"
+                                  readonly="readonly"
+                                />
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                  data-action="delete"	
+                                  data-target="backgroundFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                            <div class="row" style="display: none">
+                              <div class="col-12">
+                                <div class="progress progress-striped active">
+                                  <div
+                                    style="width: 25%"
+                                    class="progress-bar primary"
+                                  >
+                                    25%
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                            <div class="form-group row m-t-16">
+       
+                          <label class="col-12 col-sm-3 form-control-label"
+                            >QR doanh nghiệp
+                          </label>
+                          <div class="col-12 col-sm-9">
+                            <div class="form-file m-b-14">
+                              <input
+                             
+                                type="file"
+                               name="qaFile" id="qaFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+  
+                             <input type="text" class="form-control form-control-sm "    th:value="${QA}" id="qaFileName" readonly="readonly" >
+							<input type="hidden" class="form-control form-control-sm " id="qaFileNameSystem" name="qaFileNameSystem" readonly="readonly" >   
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                     data-action="delete"	
+                                  data-target="qaFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" style="display: none">
+                            <div class="col-12">
+                              <div class="progress progress-striped active">
+                                <div
+                                  style="width: 0%"
+                                  class="progress-bar primary"
+                                >
+                                  0%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                          <div class="form-group row m-t-16">
+       
+                          <label class="col-12 col-sm-3 form-control-label"
+                            >Viền hóa đơn
+                          </label>
+                          <div class="col-12 col-sm-9">
+                            <div class="form-file m-b-14">
+                              <input
+                             
+                                type="file"
+                               name="vienFile" id="vienFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+  
+                             <input type="text" class="form-control form-control-sm "    th:value="${Vien}" id="vienFileName" readonly="readonly" >
+							<input type="hidden" class="form-control form-control-sm " id="vienFileNameSystem" name="vienFileNameSystem" readonly="readonly" >   
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                     data-action="delete"	
+                                  data-target="vienFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" style="display: none">
+                            <div class="col-12">
+                              <div class="progress progress-striped active">
+                                <div
+                                  style="width: 0%"
+                                  class="progress-bar primary"
+                                >
+                                  0%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="row">
+                          <div class="col-12">
+                            <hr style="margin: 12px 0 0 0" />
+                          </div>
+                        </div>
+
+                        <div class="row justify-content-between">
+                          <div class="col-6 m-t-12">
+                          <button type="button" id="btBack" title="Quay lại"
+									data-action="back"	class="btn btn-sm btn-primary btn-ses">
+										Quay lại</button>
+                          </div>
+                          <div class="col-6 m-t-12 d-flex justify-content-end">
+                          <button type="button" id="btAccept"  th:if="${('CREATE' == _action_ || 'EDIT' == _action_)}"
+										data-action="accept" class="btn btn-sm btn-primary btn-ses" title="Chấp nhận">
+										Chấp nhận</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" name="_id" th:value="${_id}" >
+              </form>
+              <script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-mauhd-crud').find('#grid');
+		</script>
+		
+	 <script>
+$(document).ready(function(){
+	
+$("#kh").on("change",function(){
+   var GetValue=$("#kh").val();
+   $("#khttt").val(GetValue);
+});
+
+});
+</script>	
+ <script>
+$(document).ready(function(){
+	
+$("#loaihd").on("change",function(){
+   var GetValue=$("#loaihd").val();
+   $("#khhd").val(GetValue);
+});
+
+});
+</script>
+
+ <script type="text/javascript">
+		$('#f-mauhd-crud #phoi').one('click',function (event) {
+			event.preventDefault();
+			var map = $('#f-mauhd-crud').find('#khhd').val();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/common/get-phoi',
+				data: {"loaihd_ma": map},
+				beforeSend: function(req) {
+					initAjaxJsonArrayRequest(req);
+				},
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-mauhd-crud').find('#phoi').append(
+								$("<option></option>").text(item['Name']).val(item['Images'])
+							);
+						});
+						
+					}
+				
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+		});
+
+</script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			 $('#phoi').one('click',function(){
+			  
+			    });
+			     setTimeout(function(){
+			        $('#phoi').trigger('click');
+			    }, 1000);
+			});
+		</script>
+	<script>
+		let currentYear = new Date().getFullYear().toString().slice(2)
+		  $('#yearCreated').val(currentYear);
+		</script>	
+        
+	<script type="text/javascript">
+		$('#f-mauhd-crud #loaihd').change(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var _val = $(this).val();
+			
+			$('#f-mauhd-crud').find('#phoi').empty();
+			$('#f-mauhd-crud').find('#phoi').append($("<option></option>").text('').val(''));
+			
+			if('' == _val || _val == undefined) return;
+			
+	
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/common/get-phoi',
+				data: {"loaihd_ma": _val},
+				beforeSend: function(req) {
+					initAjaxJsonArrayRequest(req);
+				},
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-mauhd-crud').find('#phoi').append(
+								$("<option></option>").text(item['Name']).val(item['Images'])
+							);
+						});
+						
+					}
+				
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+		});
+
+</script>
+
+
+
+
+	<script>
+	$(function(){
+		$('#f-mauhd-crud').find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+			
+			var $obj = $(this);
+			var objDataSend = null;
+			
+			switch (dataAction) {
+			
+			case 'back':
+				$('#divMainContent').show();
+				$('#divSubContent').hide(function(){$(this).empty();});
+				try{
+					if($('#f-mauhd').find('#grid').length > 0)
+						$('#f-mauhd').find('#grid').data("kendoGrid").dataSource.read();
+				}catch(err){}
+				break;
+			case 'viewimg':
+				var objData = {}; 
+				objData['phoi'] = $('#f-mauhd-crud').find('#phoi').find('option:selected').text();
+	              showPopupWithURLAndData(ROOT_PATH + '/main/' + transactionMain + '/viewimg', objData, true, function(e){
+	              });
+	              break;
+			case 'accept':
+				objDataSend = getDataToSave();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+					data: objDataSend,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							alertConfirm(confirmText,
+								function(e){
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													$('#f-mauhd-crud').find('button[data-action="back"]').trigger('click');
+													location.reload();
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								},
+								function(e){}
+							);
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						$obj.prop('disabled', false);
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+			
+			default:
+				break;
+			}
+		});
+		
+		
+		$("#f-mauhd-crud").find('#logoFile, #backgroundFile,#qaFile,#vienFile').fileupload({
+		dataType: 'json',
+		url: ROOT_PATH + '/main/' + transactionMain + '/processUploadFile',
+		formData: {
+			_csrf: _csrf_value
+		},
+		sequentialUploads: true,
+		singleFileUploads: true,
+		beforeSend: function(xhr, data) {
+			initAjaxJsonRequest(xhr);
+		},
+		add: function (e, data) {
+			var id = $(this).attr('id');
+			$('#' + id + 'Name, #' + id + 'NameSystem').val('');
+			data.submit();
+		},
+		progressall: function (e, data) {
+		},
+		done: function (e, data) {
+		},
+		success:function(res) {
+			if(res) {
+				if(res.errorCode == 0) {
+					$('#' + res.responseData.id).val(res.responseData.value);
+					$('#' + res.responseData.id + 'System').val(res.responseData.valueSystem);
+				}
+			}
+		},
+		processfail: function (e, data) {
+	    },
+		error: function (e, data) {
+			alertConfirm('Lỗi');
+		}
+	});
+	
+		$("#f-mauhd-crud").find('button[name="btDeleteImage"]').click(function (event) {
+		event.preventDefault();event.stopPropagation();
+		
+		var typeImage = $(this).attr('data-target');
+		alertConfirm('Bạn có chắc muốn xóa không', function (result) {
+			if(result){
+				var dataPost = 'typeImage=' + typeImage + '&';
+				dataPost += _csrf_name + '=' + _csrf_value;
+				
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/deleteImage',
+					data: dataPost,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res) {
+							if(res.errorCode == 0) {
+								$('#' + typeImage + 'Name, #' + typeImage + 'NameSystem').val('');
+								alertConfirm('Xóa thành công.', function(){	
+								});
+							}else{
+								alertConfirm(createObjectError(res).html());
+							}
+						}else{
+							alertConfirm('unknown error!!!');
+							hideLoading();
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alertConfirm(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+			}
+		});
+	
+	});
+	
+		
+		
+	});
+	
+	
+   function getDataToSave(){
+            		var dataPost = {};
+            		dataPost['_id'] = $('#f-mauhd-crud').find('input[name="_id"]').val();
+            		dataPost['loaihd'] = $('#f-mauhd-crud').find('#loaihd').val();
+            		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoi').val();
+            		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoi').find('option:selected').text();
+            		dataPost['khhd'] = $('#f-mauhd-crud').find('#khhd').val();
+            		dataPost['macqt'] = $('#f-mauhd-crud').find('#macqt').val();
+            		dataPost['yearCreated'] = $('#f-mauhd-crud').find('#yearCreated').val();
+            		dataPost['kh'] = $('#f-mauhd-crud').find('#kh').val();
+            		dataPost['macty'] = $('#f-mauhd-crud').find('#macty').val();
+            		dataPost['r1p'] = $('#f-mauhd-crud').find('#r1p').val();
+            		dataPost['rnp'] = $('#f-mauhd-crud').find('#rnp').val();
+            			dataPost['CharsInRow'] = $('#f-mauhd-crud').find('#CharsInRow').val();
+            		dataPost['logoFileNameSystem'] = $('#f-mauhd-crud').find('#logoFileNameSystem').val();
+            		dataPost['backgroundFileNameSystem'] = $('#f-mauhd-crud').find('#backgroundFileNameSystem').val();
+            		dataPost['qaFileNameSystem'] = $('#f-mauhd-crud').find('#qaFileNameSystem').val();
+            		dataPost['vienFileNameSystem'] = $('#f-mauhd-crud').find('#vienFileNameSystem').val();
+            		
+            		return dataPost;	
+            	}
+
+
+	</script>
+	
+		
+	</div>
+</div>
+
+</html>

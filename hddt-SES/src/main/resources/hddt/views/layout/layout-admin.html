@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Favicon icon -->
+<link rel="icon" type="image/png" sizes="16x16"
+	th:href="@{/favicon.ico}">
+
+<title>[[${_TitleView_ == null? 'HĐĐT - Quản lý': _TitleView_}]]</title>
+
+<!-- Bootstrap Core CSS -->
+<link
+	th:href="@{/static/assets/plugins/bootstrap/css/bootstrap.min.css}"
+	rel="stylesheet">
+
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+<link
+	th:href="@{/static/css/icons/font-awesome/css/fontawesome-all.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/static/css/icons/simple-line-icons/css/simple-line-icons.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/static/css/icons/weather-icons/css/weather-icons.min.css}"
+	rel="stylesheet">
+<link th:href="@{/static/css/icons/linea-icons/linea.css}"
+	rel="stylesheet">
+<link th:href="@{/static/css/icons/themify-icons/themify-icons.css}"
+	rel="stylesheet">
+<link th:href="@{/static/css/icons/flag-icon-css/flag-icon.min.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/static/css/icons/material-design-iconic-font/css/materialdesignicons.min.css}"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+<link th:href="@{/static/css/spinners.css}" rel="stylesheet">
+<link th:href="@{/static/css/animate.css}" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link th:href="@{/static/css/style.css(v=1.0)}" rel="stylesheet">
+
+<!-- You can change the theme colors from here -->
+<link th:href="@{/static/css/colors/blue.css(v=1.0)}" id="theme"
+	rel="stylesheet">
+<!-- 	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.9.55/css/materialdesignicons.min.css"> -->
+<link
+	th:href="@{/static/css/icons/material-design-5.9.55/css/materialdesignicons.min.css}"
+	id="theme" rel="stylesheet">
+<link th:href="@{/static/css/icons/themify-icons/themify-icons.css}"
+	id="theme" rel="stylesheet">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+<link th:href="@{/static/assets/alertify/alertify.min.css}"
+	rel="stylesheet">
+
+<link th:href="@{/static/KendoUI/css/kendo.common.min.css}"
+	rel="stylesheet">
+<!-- 		<link th:href="@{/static/KendoUI/css/kendo.default.min.css}" rel="stylesheet"> -->
+<link th:href="@{/static/KendoUI/css/kendo.rtl.min.css}"
+	rel="stylesheet">
+<link th:href="@{/static/KendoUI/css/kendo.mobile.all.min.css}"
+	rel="stylesheet">
+<link th:href="@{/static/KendoUI/css/all.css}" rel="stylesheet">
+
+<!-- WYSIWYG -->
+<!-- quill -->
+<link th:href="@{/static/quill/quill.snow.css(v=1.0)}" rel="stylesheet">
+<!-- end quill -->
+
+<!-- Import Trumbowyg -->
+<link th:href="@{/static/assets/plugins/trumbowyg/ui/trumbowyg.min.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/static/assets/plugins/trumbowyg/plugins/table/ui/trumbowyg.table.min.css}"
+	rel="stylesheet">
+<!-- END Import Trumbowyg -->
+
+<!-- virtual-select -->
+<link
+	th:href="@{/static/assets/plugins/virtual-select/virtual-select.min.css}"
+	rel="stylesheet">
+<!-- end - virtual-select -->
+
+<link th:href="@{/static/select2-4.0.7/css/select2.min.css}"
+	rel="stylesheet">
+
+<link th:href="@{/static/datetimepicker/jquery.datetimepicker.min.css}"
+	rel="stylesheet">
+
+<link rel="stylesheet"
+	th:href="@{/static/zTree/css/zTreeStyle/zTreeStyle.css}"
+	type="text/css">
+
+<link th:href="@{/static/sumoselect/sumoselect.min.css}"
+	rel="stylesheet">
+
+<!-- using notification -->
+<link
+	th:href="@{/static/assets/plugins/toast-master/css/jquery.toast.css}"
+	rel="stylesheet">
+
+<link th:href="@{/static/css/style.custom.css(v=1.0)}" rel="stylesheet">
+
+<link th:href="@{/static/css/style-util.css(v=1.0)}" rel="stylesheet">
+<link th:href="@{/static/css/style-admin.css(v=1.0)}" rel="stylesheet">
+<link th:href="@{/static/css/css-mobile.css(v=1.0)}" rel="stylesheet">
+<link th:href="@{/static/css/style-admin-custom.css(v=1.0)}"
+	rel="stylesheet">
+
+<link th:href="@{/static/css/style-fullscreen-modals.css(v=1.0)}"
+	rel="stylesheet">
+<link th:href="@{/static/jquery-ui-1.12.1/jquery-ui.min.css}"
+	rel="stylesheet">
+
+<link th:href="@{/static/css/main.css(v=1.0)}" rel="stylesheet">
+
+<link th:href="@{/static/assets/plugins/tribute/tribute.css(v=1.0)}"
+	rel="stylesheet">
+<link th:href="@{/static/css/all-styles.css(v=1.2)}" rel="stylesheet">
+
+<!-- ============================================================== -->
+<!-- All Jquery -->
+<!-- ============================================================== -->
+<script th:src="@{/static/assets/plugins/jquery/jquery.min.js}"></script>
+<!--     <script th:src="@{/static/assets/plugins/jquery/jquery-migrate-3.1.0.min.js}"></script> -->
+<script th:src="@{/static/assets/plugins/jquery/jquery-migrate.min.js}"></script>
+<!-- Bootstrap tether Core JavaScript -->
+<script th:src="@{/static/assets/plugins/popper/popper.min.js}"></script>
+<script th:src="@{/static/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
+
+<!-- slimscrollbar scrollbar JavaScript -->
+<script th:src="@{/static/js/jquery.slimscroll.js}"></script>
+<!--Wave Effects -->
+<script th:src="@{/static/js/waves.js}"></script>
+<!--Menu sidebar -->
+<script th:src="@{/static/js/sidebarmenu.js}"></script>
+<!--stickey kit -->
+<script
+	th:src="@{/static/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/sparkline/jquery.sparkline.min.js}"></script>
+<!--Custom JavaScript -->
+<script th:src="@{/static/js/customs.js(v=1.0)}"></script>
+<!-- ============================================================== -->
+<!-- Style switcher -->
+<!-- ============================================================== -->
+<script th:src="@{/static/assets/alertify/alertify.min.js}"></script>
+
+<script th:src="@{/static/KendoUI/js/kendo.all.min.js}"></script>
+<script th:src="@{/static/KendoUI/js/console.js}"></script>
+<script th:src="@{/static/select2-4.0.7/js/select2.full.min.js}"></script>
+
+<script type="text/javascript"
+	th:src="@{/static/zTree/js/jquery.ztree.core.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/zTree/js/jquery.ztree.excheck.js}"></script>
+
+<script th:src="@{/static/datetimepicker/jquery.datetimepicker.full.js}"></script>
+
+<script th:src="@{/static/js/base64.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/jq.tmpl/jquery.tmpl.min.js}"></script>
+<script th:src="@{/static/js/jquery.customupload.js}"></script>
+
+<!-- FILE UPLOAD -->
+<script th:src="@{/static/jQuery-File-Upload/jquery.ui.widget.js}"></script>
+<script
+	th:src="@{/static/jQuery-File-Upload/jquery.iframe-transport.js}"></script>
+<script th:src="@{/static/jQuery-File-Upload/jquery.fileupload.js}"></script>
+<!-- END FILE UPLOAD -->
+
+<script type="text/javascript"
+	th:src="@{/static/tinymce/js/tinymce/tinymce.min.js}"></script>
+<!-- using notification -->
+<script
+	th:src="@{/static/assets/plugins/toast-master/js/jquery.toast.js}"></script>
+
+<!-- SUMO -->
+<script type="text/javascript"
+	th:src="@{/static/sumoselect/jquery.sumoselect.min.js}"></script>
+<!-- numeral -->
+<script type="text/javascript"
+	th:src="@{/static/numeral/numeral.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/static/jquery-ui-1.12.1/jquery-ui.min.js}"></script>
+
+<!--  -->
+<script type="text/javascript" th:src="@{/static/js/autoNumeric.min.js}"></script>
+
+<script th:src="@{/static/js/custom.hddt.js(v=1.23)}"></script>
+<script th:src="@{/static/js/plugin.sign.crm.js(v=1.1)}"></script>
+<!-- WYSIWYG -->
+<!-- quill -->
+<script th:src="@{/static/quill/quill.min.js(v=1.0)}"></script>
+<!-- end quill -->
+
+<script
+	src="//rawcdn.githack.com/RickStrahl/jquery-resizable/0.35/dist/jquery-resizable.min.js"></script>
+<!-- Import Trumbowyg -->
+<script th:src="@{/static/assets/plugins/trumbowyg/trumbowyg.min.js}"></script>
+<script th:src="@{/static/assets/plugins/trumbowyg/langs/vi.min.js}"></script>
+<!-- end Import Trumbowyg -->
+<!-- 	Import Trumbowyg plugins... -->
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/pasteimage/trumbowyg.pasteimage.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/allowtagsfrompaste/trumbowyg.allowtagsfrompaste.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/base64/trumbowyg.base64.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/colors/trumbowyg.colors.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/fontfamily/trumbowyg.fontfamily.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/fontsize/trumbowyg.fontsize.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/history/trumbowyg.history.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/lineheight/trumbowyg.lineheight.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/table/trumbowyg.table.min.js}"></script>
+<script
+	th:src="@{/static/assets/plugins/trumbowyg/plugins/resizimg/trumbowyg.resizimg.min.js}"></script>
+
+<!-- virtual-select -->
+<script
+	th:src="@{/static/assets/plugins/virtual-select/virtual-select.min.js}"></script>
+<!-- end - virtual-select -->
+<script th:src="@{/static/assets/plugins/tribute/tribute.js}"></script>
+
+
+
+
+<!-- EDITOR -->
+<script th:src="@{/static/ckeditor/build/translations/vi.js(v=1.0)}"></script>
+<script th:src="@{/static/ckeditor/build/ckeditor.js(v=1.0)}"></script>
+
+<!-- EDITOR -->
+</head>
+<body class="fix-header card-no-border logo-center">
+	<!-- ============================================================== -->
+	<!-- Preloader - style you can find in spinners.css -->
+	<!-- ============================================================== -->
+	<div class="preloader">
+		<svg class="circular" viewbox="25 25 50 50">
+			<circle class="path" cx="50" cy="50" r="20" fill="none"
+				stroke-width="2" stroke-miterlimit="10"></circle> </svg>
+	</div>
+	<!-- ============================================================== -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- ============================================================== -->
+	<div id="main-wrapper">
+		<!-- ============================================================== -->
+		<!-- Topbar header - style you can find in pages.scss -->
+		<!-- ============================================================== -->
+		<header class="topbar">
+			<!-- th:style = "'background: rgb(40 167 69);'" -->
+			<nav class="navbar top-navbar navbar-expand-md navbar-light">
+				<!-- ============================================================== -->
+				<!-- toggle and nav items -->
+				<!-- ============================================================== -->
+				<ul class="navbar-nav mt-md-0 navbar-nav__menu">
+					<!-- This is  -->
+					<li class="nav-item"><a
+						class="nav-link nav-toggler text-muted waves-effect waves-dark"
+						href="javascript:void(0)"> <i
+							class="mdi mdi-chevron-double-right"></i></a></li>
+					<!-- ============================================================== -->
+				</ul>
+				<!-- ============================================================== -->
+				<!-- Logo -->
+				<!-- ============================================================== -->
+				<div class="navbar-header" style="width: auto; position: unset;">
+					<a class="navbar-brand"
+						th:href="${null != _UserView_ && _UserView_? 'javascript:void(0)': #httpServletRequest.getContextPath() + '/main'}">
+						<!-- Logo text -->
+						<div>
+							<!-- Light Logo text -->
+							<img th:src="*{'data:realCaptcha/jpg;base64,'+ LOGO }"
+								class="light-logo" />
+						</div>
+					</a>
+				</div>
+				<div class="support support-nav">
+					<div>
+						<span class="support-label">Hỗ trợ:</span> <span
+							class="support-data" th:text="${PHONE}"></span><span
+							class="support-label"> | </span><span class="support-label">Email:</span>
+						<span class="support-data" th:text="${EMAIL}"></span>
+					</div>
+				</div>
+				<!-- ============================================================== -->
+				<!-- End Logo -->
+				<!-- ============================================================== -->
+				<div class="navbar-collapse justify-content-end navbar-right">
+					<!-- ============================================================== -->
+					<!-- ============================================================== -->
+					<!-- User profile and search -->
+					<!-- ============================================================== -->
+					<ul class="navbar-nav my-lg-0">
+						<!-- ============================================================== -->
+						<!-- Profile -->
+						<!-- ============================================================== -->
+						<li class="nav-item dropdown"><a
+							class="dropdown-toggle text-muted text-center d-flex align-items-center user-profile__show"
+							href="" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false" style="line-height: 20px !important;">
+								<img th:src="@{/static/images/user-icon-04.jpg}" alt="user"
+								class="profile-pic mr-2">
+						</a>
+							<div class="dropdown-menu dropdown-menu-right scale-up">
+								<ul class="dropdown-user">						
+									<li>
+									<a  href="https://hoadon78.sesgroup.vn/hddt/main/changepassAdmin/init" class="pT-5 pB-5"><i
+											class="ti-unlock"></i> Thay đổi mật khẩu</a>
+									</li> 
+									<li role="separator" class="divider m-0"></li>
+									<li><a th:href="@{/logout}" class="pT-5 pB-5"><i
+											class="mdi mdi-logout"></i> Logout</a></li>
+								</ul>
+							</div></li>
+						<!-- ============================================================== -->
+					</ul>
+				</div>
+			</nav>
+		</header>
+		<!-- ============================================================== -->
+		<!-- End Topbar header -->
+		<div class="left-sidebar">
+			<div class="scroll-sidebar">
+				<div class="sidebar-nav">
+					<ul id="sidebarnav">
+						<span><i class="mdi mdi-chevron-double-left"></i></span>
+						<div class="sidebar-nav__logo active">
+							<a href="https://hoadon78.sesgroup.vn/hddt/main"
+								class="sidebar-nav__logo--link active"> <img
+								th:src="@{'/static/images/ses.jpg'}" class="light-logo"
+								alt="homepage" />
+							</a>
+						</div>
+
+						<li class="nav-small-cap">KH</li>
+						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Quản lý khách hàng </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|issu|'): false}"><a th:href="@{/main/issu/init}">Danh sách khách hàng</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tthdon|'): false}"><a th:href="@{/main/tthdon/init}">Quản lý trạng thái hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|role_api|'): false}"><a th:href="@{/main/role_api/init}">Set Role API</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|session_key|'): false}"><a th:href="@{/main/session_key/init}">Set API Key khách hàng</a></li>
+							</ul>
+						</li>
+						<li class="nav-small-cap">PERSONAL</li>
+						<li><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-bookmark-outline"></i><span class="hide-menu">Quản lý hợp đồng </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|issu-contract|'): false}"><a th:href="@{/main/issu-contract/init}">Danh sách hợp đồng</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|issu-contract-expires|'): false}"><a th:href="@{/main/issu-contract-expires/init}">Quản lý hợp đồng hết hạn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ca_invoice|'): false}"><a th:href="@{/main/ca_invoice/init}">Danh sách CA Invoice</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|thhd|'): false}"><a th:href="@{/main/thhd/init}">Thu hồi hóa đơn đã cấp</a></li>
+							</ul>
+						</li>
+						<li class="nav-small-cap">MS</li>
+						<li><a class="has-arrow" aria-expanded="false"><i
+								class="mdi mdi-content-paste"></i><span class="hide-menu">Quản lý phôi hóa đơn </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qly-mauhd|'): false}"><a th:href="@{/main/qly-mauhd/init}">Danh sách phôi hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-phoihd|'): false}"><a th:href="@{/main/ql-phoihd/init}">Quản lý phôi hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Quản lý mẫu số hóa đơn KH</a></li>
+								
+							</ul>
+						</li>
+						<li class="nav-small-cap">STATISTIC REPORT</li>
+						<li><a class="has-arrow" aria-expanded="false"><i
+								class="mdi mdi-google-analytics"></i><span class="hide-menu">Thống kê báo cáo </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|dsnmua|'): false}"><a th:href="@{/main/dsnmua/init}">Quản lý danh sách người mua</a></li>
+ 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tax_invoice|'): false}"><a th:href="@{/main/email-send-hd/init}">Danh sách Email gửi hóa đơn</a></li> 
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|statistic-report|'): false}"><a th:href="@{/main/statistic-report/init}">Thống kê email theo hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|khxhd|'): false}"><a th:href="@{/main/khxhd/init}">Quản lý danh sách KH có xuất hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qlxml|'): false}"><a th:href="@{/main/qlxml/init}">Quản lý danh sách XML</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|xml_thue|'): false}"><a th:href="@{/main/xml_thue/init}">Lấy XML từ thuế</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd_admin|'): false}"><a th:href="@{/main/mauhd_admin/init}">Cập nhật mẫu số theo các năm</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd_update_admin|'): false}"><a th:href="@{/main/mauhd_update_admin/init}">Quản lý danh sách lệch SHĐ</a></li>	
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|sl-access-users|'): false}"><a th:href="@{/main/sl-access-users/init}">Số lượng khách hàng truy cập</a></li>
+							</ul>
+						</li>
+						<li class="nav-small-cap">PARAM</li>
+						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-memory"></i><span class="hide-menu">Tham số hệ thống</span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|user_check|'): false}"><a th:href="@{/main/user_check/init}">USER- CHECK</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-user-check|'): false}"><a th:href="@{/main/ql-user-check/init}">Quản lý User Check</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|change_color|'): false}"><a th:href="@{/main/change_color/init}">Quản lý màu	sắc các nút trong hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|hdsd|'): false}"><a th:href="@{/main/hdsd/init}">Upload file Hướng dẫn sử dụng</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tra-cuu-mail|'): false}"><a th:href="@{/main/tra-cuu-mail/init}">Tra cứu Email đã gửi</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|config-email-server-admin|'): false}"><a th:href="@{/main/config-email-server-admin/init}">Cấu hình email server</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|config-mailjet|'): false}"><a th:href="@{/main/config-mailjet/init}">Cấu hình Mailjet</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tax_invoice|'): false}"><a th:href="@{/main/tax_invoice/init}">Danh sách thuế suất</a></li> 
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-tinh|'): false}"><a th:href="@{/main/ql-tinh/init}">Quản lý tỉnh thành</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-cqt|'): false}"><a th:href="@{/main/ql-cqt/init}">Quản lý cơ quan thuế</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-mstk|'): false}"><a th:href="@{/main/ql-mstk/init}">Quản lý mẫu số trong tờ khai</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-httk|'): false}"><a th:href="@{/main/ql-httk/init}">Quản lý hình thức thêm trong tờ khai</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-lhd|'): false}"><a th:href="@{/main/ql-lhd/init}">Quản lý danh sách loại hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-ttweb|'): false}"><a th:href="@{/main/ql-ttweb/init}">Quản lý thông tin website</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-tinweb|'): false}"><a th:href="@{/main/ql-tinweb/init}">Quản lý tin tức website</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-footerweb|'): false}"><a th:href="@{/main/ql-footerweb/init}">Quản lý footer website</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-link|'): false}"><a th:href="@{/main/ql-link/init}">Quản lý link</a></li> 		
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|param-admin|'): false}"><a th:href="@{/main/param-admin/init}">Cấu hình tham số</a></li> 																													
+							</ul>
+						</li>			
+
+						<li class="nav-small-cap">Hỗ trợ</li>
+						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-account-settings-variant"></i><span class="hide-menu">Hỗ trợ </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|support_admin|'): false}"><a th:href="@{/main/support_admin/init}">Phần mềm hỗ trợ</a></li>					
+							</ul>
+						</li>
+
+
+
+
+						<li class="nav-small-cap">PHAN QUYEN</li>
+						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-security"></i><span class="hide-menu">Phân quyền </span></a>
+							<ul aria-expanded="false" class="collapse">
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|createUserAdmin|'): false}"><a th:href="@{/main/createUserAdmin/init}">Tạo tài khoản người dùng</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'roleManagerAdmin|'): false}"><a th:href="@{/main/roleManagerAdmin/init}">Phân quyền tài khoản người dùng</a></li>
+							</ul>
+						</li>
+						<!--  -->
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid hide style-main-content"
+				id="divSubContent02"></div>
+			<div class="container-fluid hide style-main-content"
+				id="divSubContent"></div>
+			<div class="container-fluid style-main-content" id="divMainContent">
+				<th:block layout:fragment="contentadmin"></th:block>
+			</div>
+
+			<div id="modelPopup" class="modal modal-fullscreen-xl" tabindex="-1"
+				role="dialog" data-backdrop="static" aria-hidden="true"
+				data-keyboard="false"
+				style="display: none; padding-left: 8px; padding-right: 0px;">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content"></div>
+				</div>
+			</div>
+
+			<div id="modelPopupMedium" class="modal modal-fullscreen-sm"
+				tabindex="-1" role="dialog" data-backdrop="static"
+				aria-hidden="true" data-keyboard="false" style="display: none;">
+				<div class="modal-dialog custom-dialog__ses" role="document">
+					<div class="modal-content"></div>
+				</div>
+			</div>
+		</div>
+		<footer class="footer">&copy; HĐĐT</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<div class="overlay-wrap"></div>
+		<!-- ============================================================== -->
+		<!-- End Page wrapper  -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Wrapper -->
+	<!-- ============================================================== -->
+	<script>
+		$.datetimepicker.setLocale('vi');
+		ROOT_PATH = '[[${#httpServletRequest.getContextPath()}]]';
+		_csrf_value = '[[${_csrf.token}]]';
+		_csrf_name = '[[${_csrf.parameterName}]]';
+
+		/*REMOVE ITEM NOT RIGHT*/
+		var lis = $('ul#sidebarnav').children('li');
+		lis.each(function(index, obj) {
+			if ($(obj).children('ul').length > 0
+					&& $(obj).children('ul').children('li').length == 0) {
+				$(obj).remove();
+			}
+		});
+
+		$(function() {
+			// Set height mobile
+			var cardHeight = function() {
+				var topOffset = 80
+				var height = (window.innerHeight > 0 ? window.innerHeight
+						: this.screen.height) - 1;
+				height = height - topOffset;
+				$('.card-wrapper__ses').css('min-height', height + 'px');
+			}
+			$(window).ready(cardHeight);
+			$(window).on('resize', cardHeight);
+			// End set height mobile
+
+			$("header.topbar")
+					.find('li a[action-link]')
+					.click(
+							function(event) {
+								var _actionLink = $(this).attr('action-link');
+
+								switch (_actionLink) {
+								case 'viewProfile':
+									showPopupWithURLAndData(
+											ROOT_PATH
+													+ '/Main?transaction=common&method=viewProfile',
+											{}, true);
+									break;
+								case 'changePassword':
+									showPopupWithURLAndData(
+											ROOT_PATH
+													+ '/Main?transaction=common&method=showChangePassword',
+											{}, true);
+									break;
+								default:
+									break;
+								}
+
+								return;
+							});
+
+			$(document).on("submit", "form", function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			});
+
+		});
+	</script>
+	
+</body>
+
+</html>

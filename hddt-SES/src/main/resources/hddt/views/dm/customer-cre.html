@@ -1,0 +1,236 @@
+<!-- <!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid">
+		<form id="f-cus-crud" name="f-cus-crud" method="post" enctype="multipart/form-data" >
+			<div class="row text-danger m-b-10 fw-500 " th:if="${messageError != null}">
+				<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center" th:utext="${messageError}"></div>
+			</div>
+			<div class="row" th:if="${messageError == null}">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tax-code" name="tax-code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${TaxCode}" type="text" autocomplete="off" th:readonly="${'CREATE' != _action_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số thuế <span class="text-danger" th:if="${'CREATE' == _action_}">*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12">
+									<span class="small text-danger fs-i">(Nếu là khách hàng cá nhân. Vui lòng nhập MST bắt đầu 'CN')</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="customer-code" name="customer-code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${CustomerCode}" type="text" autocomplete="off" th:readonly="true" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã khách hàng </label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12">
+									<span class="small text-danger fs-i">(Hệ thống tự phát sinh nếu không nhập)</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="company-name" name="company-name" class="form-control form-control-sm c-f__textbox" th:value="${CompanyName}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên đơn vị </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="customer-name" name="customer-name" class="form-control form-control-sm c-f__textbox" th:value="${CustomerName}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên người mua hàng <span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="address" name="address" class="form-control form-control-sm c-f__textbox" th:value="${Address}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Địa chỉ <span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="email" name="email" class="form-control form-control-sm c-f__textbox" th:value="${Email}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Email </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="phone" name="phone" class="form-control form-control-sm c-f__textbox" th:value="${Phone}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Điện thoại </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="fax" name="fax" class="form-control form-control-sm c-f__textbox" th:value="${Fax}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Fax </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="website" name="website" class="form-control form-control-sm c-f__textbox" th:value="${Website}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Website </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						<div class="col-md-6">
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox" id="province" name="province" th:disabled="${!_isedit_}" >
+											<option value=""></option>
+											<th:block th:if="${map_dmtinhthanh != null}" >
+												<option th:each="entry : ${map_dmtinhthanh.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tỉnh/Thành phố </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="account-number" name="account-number" class="form-control form-control-sm c-f__textbox" th:value="${AccountNumber}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số tài khoản </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="account-bank-name" name="account-bank-name" class="form-control form-control-sm c-f__textbox" th:value="${AccountBankName}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tại ngân hàng </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox" id="customer-group-1" name="customer-group-1" th:disabled="${!_isedit_}" >
+											<option value=""></option>
+											<th:block th:if="${map_customergroup != null}" >
+												<option th:each="entry : ${map_customergroup.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Nhóm KH 1 </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox" id="customer-group-2" name="customer-group-2" th:disabled="${!_isedit_}" >
+											<option value=""></option>
+											<th:block th:if="${map_customergroup != null}" >
+												<option th:each="entry : ${map_customergroup.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Nhóm KH 2 </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox" id="customer-group-3" name="customer-group-3" th:disabled="${!_isedit_}" >
+											<option value=""></option>
+											<th:block th:if="${map_customergroup != null}" >
+												<option th:each="entry : ${map_customergroup.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Nhóm KH 3 </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="remark" name="remark" class="form-control form-control-sm c-f__textbox" th:value="${Remark}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Ghi chú </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var vIsEdit = [[${_isedit_}]];
+		</script>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<script th:src="@{/static/function/dm/customer-crud.js(v=1.0) }"></script>
+</html> -->

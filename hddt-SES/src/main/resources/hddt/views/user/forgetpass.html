@@ -1,0 +1,416 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-reset}">
+<body>
+	<th:block layout:fragment="content">
+		<section id="wrapper"
+			style="position: absolute !important; -ms-transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%;">
+			<!--         <div class="login-register" style="background-image:url(../assets/images/background/login-register.jpg);"> -->
+			<div class="login-register"
+				style="background-color:#f0f0f0; position: unset">
+				<div class="login-box card" style="height: 465px">
+					<div class="card-body">
+						<form class="form-horizontal form-material authform" 
+							name="fResetPassword" id="fResetPassword" method="post"
+							enctype="application/x-www-form-urlencoded">
+							<input type="hidden" name="_csrf"
+								value="c679a3ce-af1b-4865-85fa-81ca092edced" />
+							<h3 class="box-title m-b-10 text-uppercase font-bold">QUÊN
+								MẬT KHẨU?</h3>
+							<hr class="m-t-sm m-b-sm" />
+							<div class="m-t-10 m-b-10">
+								<span class="_700">Xác nhận qua</span>
+							</div>
+							<div class="d-flex align-items-center">
+								<div>
+									<label
+										class="custom-control custom-radio d-inline-block m-r-10 m-b-0">
+										<input name="reset-by" type="radio" value="use-token"
+										class="custom-control-input" checked="checked" /> <span
+										class="custom-control-label p-t-5">Chữ ký số</span>
+									</label>
+								</div>
+								<div class="m-l-40">
+									<label
+										class="custom-control custom-radio d-inline-block m-r-10 m-b-0">
+										<input name="reset-by" type="radio" value="use-email"
+										class="custom-control-input" /> <span
+										class="custom-control-label p-t-5">Email</span>
+									</label>
+								</div>
+							</div>
+							<hr class="m-t-sm m-b-xs" />
+							<div class="use-email hide">
+								<div class="form-group">
+									<div class="col-xs-12">
+										<input name="rp_username" id="rp_username"
+											class="form-control" type="text" required=""
+											placeholder="Tên đăng nhập" autocomplete="given-name" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-12">
+										<input type="text" class="form-control form-control-sm"
+											required="" placeholder="Email" name="rp_email" id="rp_email" />
+									</div>
+								</div>
+							</div>
+							<div class="use-token">
+								<div class="m-b-xs">
+									<p class="small _700 text-danger m-t-xs m-b-xs">1. Nhập tên
+										đăng nhập đã cấp và mã kiểm tra.</p>
+									<p class="small _700 text-danger m-t-xs m-b-xs">2. Click
+										chấp nhận, chọn chữ ký số.</p>
+									<p class="small _700 text-danger m-t-xs m-b-xs">3. Hệ thống
+										trả thông tin về cho người dùng.</p>
+								</div>
+								<hr class="m-t-sm m-b-xs" />
+								<div class="form-group">
+									<div class="col-xs-12">
+										<input id="tk_username" name="tk_username"
+											class="form-control" type="text" required=""
+											placeholder="Tên đăng nhập" autocomplete="given-name" />
+									</div>
+								</div>
+
+								<div class="xs-form-group none">
+					<label for="invoiceNumber">Mật mã mới </label>
+					<input type="text" value="" id="newPass" name="newPass" class="form-control form-control-sm _700" readonly="readonly" >
+        		</div>
+							</div>
+							 <div class="form-group captcha">
+								<div class="md-form-group float-label p-t-xs">
+									<div class="input-group">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="input-group-btn dropdown">
+												<img class="imgCap" alt="Captcha" id="idImageCap"
+													th:src="*{'data:realCaptcha/jpg;base64,'+ realCaptcha}" />
+														
+											</div>
+											</div>
+											<div class="col-md-6">
+												<input class="form-control md-input text-center _700"
+													type="text" placeholder="Mã kiểm tra" name="codeCaptcha">
+											</div>
+										</div>
+									</div>
+									<div class="input-group">
+										<span role="button" id="spanChangeCaptcha" class=""
+											style="color: #0059B3; position: absolute; left: 20px; top: 100%; font-size: 10px;"></span>
+									</div>
+								</div>
+							</div> 
+   
+							<div class="form-group text-center m-t-20">
+								<div class="col-xs-12">
+									<button
+										class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light login p-t-4 p-b-4"
+										data-action="reset_pass" type="button" id="bSendInfo">Chấp
+										nhận</button>
+								</div>
+							</div>
+							<div class="p-v-lg text-center">
+								Trở về trang <a href="https://hoadon78.sesgroup.vn/hddt/login"
+									class="text-primary _600">Đăng nhập</a>
+							</div>
+							<input type="hidden" name="${_csrf.parameterName}"
+								value="${_csrf.token}" />
+						</form>
+
+						<script type="text/javascript">
+							transactionMain = '[[${transaction}]]';
+						</script>
+						
+						<script type="text/javascript">
+						var  timeoutID;
+						  timeoutID = setTimeout(myFunction, 100);
+						  
+						  $(function() {
+								
+								refreshCaptcha($('.authform').find('#idImageCap'));
+								
+							});
+						  
+						  function myFunction() {						
+							   $('#spanChangeCaptcha').trigger('click'); 
+							}
+						  function clearAlert() {
+							  clearTimeout(timeoutID);
+							}
+							function clearAlert() {
+								  clearTimeout(timeoutID2);
+								}
+						</script>
+				
+						<script>
+							refreshCaptcha($('#fResetPassword').find(
+									'#idImageCap'));
+							$('#fResetPassword').find(
+									'#idImageCap, #spanChangeCaptcha').click(
+									function(event) {
+										event.preventDefault();/* event.stopPropagation(); */
+										refreshCaptcha($('#fResetPassword')
+												.find('#idImageCap'));
+									});
+							$('#fResetPassword').find(
+									'input[type="radio"][name="reset-by"]')
+									.change(function(event) {
+										showHideResetBy($(this).val())
+									})
+							function showHideResetBy(val) {
+								$('#fResetPassword').find(
+										'div.use-token, div.use-email')
+										.addClass('hide')
+								$('#fResetPassword').find('div.' + val)
+										.removeClass('hide')
+							}
+
+							$("#fResetPassword")
+									.find('#bSendInfo')
+									.click(
+											function(event) {
+												event.preventDefault();
+												var _resetBy = $(
+														"#fResetPassword")
+														.find(
+																'input[type="radio"][name="reset-by"]:checked')
+														.val();
+												if ('use-token' == _resetBy) {
+
+													resetPassUsingToken();
+												} else {
+
+													resetPassUsingEmail();
+												}
+
+											});
+
+							function resetPassUsingEmail() {
+								var objDataSend = null;
+								objDataSend = getDataToSend();
+								$
+										.ajax({
+											type : "POST",
+											datatype : "json",
+											url : ROOT_PATH
+													+ '/forgotpass/checkDataToSend',
+											data : objDataSend,
+											beforeSend : function(req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success : function(res) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+
+														$
+																.ajax({
+																	type : "POST",
+																	datatype : "json",
+
+																	url : ROOT_PATH
+																			+ '/forgotpass/getToken',
+																	data : objDataSend,
+																	beforeSend : function(
+																			a) {
+																		initAjaxJsonRequest(a);
+																		showLoading();
+																	},
+																	success : function(
+																			res) {
+																		hideLoading();
+																		if (res) {
+																			if (res.errorCode == 0) {
+																				refreshCaptcha($(
+																						'#fResetPassword')
+																						.find(
+																								'#idImageCap'));
+																				var objJson = {};
+																				objJson[_csrf_name] = _csrf_value;
+																				objJson['tokenConfirm'] = null == res.responseData ? ''
+																						: res.responseData;
+																				showPopupWithURLAndData(
+																						ROOT_PATH
+																								+ '/forgotpass/confirmPassword',
+																						objJson,
+																						'MD');
+																				//														
+																			} else {
+																				alertDLSuccess(createObjectError(
+																						res)
+																						.html());
+																				refreshCaptcha($(
+																						'#fResetPassword')
+																						.find(
+																								'#idImageCap'));
+																			}
+																		} else {
+																			alertDLSuccess('unknown error!!!');
+																			hideLoading();
+																			refreshCaptcha($(
+																					'#fResetPassword')
+																					.find(
+																							'#idImageCap'));
+																		}
+																	},
+																	error : function(
+																			xhr,
+																			ajaxOptions,
+																			thrownError) {
+																		alertDLSuccess(
+																				xhr.status
+																						+ " - "
+																						+ xhr.responseText,
+																				function() {
+																				});
+																		hideLoading();
+																		refreshCaptcha($(
+																				'#fResetPassword')
+																				.find(
+																						'#idImageCap'));
+																	}
+																});
+													} else {
+														alertDLSuccess(createObjectError(
+																res).html());
+														refreshCaptcha($(
+																'#fResetPassword')
+																.find(
+																		'#idImageCap'));
+													}
+												} else {
+													alertDLSuccess('unknown error!!!');
+													hideLoading();
+													refreshCaptcha($(
+															'#fResetPassword')
+															.find('#idImageCap'));
+												}
+											},
+											error : function(xhr, ajaxOptions,
+													thrownError) {
+												alertDLSuccess(xhr.status
+														+ " - "
+														+ xhr.responseText,
+														function() {
+														});
+												hideLoading();
+												refreshCaptcha($(
+														'#fResetPassword')
+														.find('#idImageCap'));
+											}
+										});
+							}
+							
+							
+						//using token
+					function resetPassUsingToken(){
+					var v_rp_username = $("#fResetPassword").find('input[name="tk_username"]').val();
+					if(null == v_rp_username) v_rp_username = '';
+					var v_captcha = $("#fResetPassword").find('input[name="codeCaptcha"]').val();
+					if(null == v_captcha) v_captcha = '';
+					if('' == v_rp_username || '' == v_captcha){
+						alertDLSuccess('<span class="text-danger">Vui lòng nhập đầy đủ tên đăng nhập và mã kiểm tra.</span>');
+						return;
+					}
+				
+					var vToken = '';
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/forgotpass/checkDataToSendTK',
+						data: getDataToSend(),
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							refreshCaptcha($('#fResetPassword').find('#idImageCap'));
+							if(res) {
+								if(res.errorCode == 0) {
+									vToken = res.responseData;
+									getCert(function(e){
+										if(null == e) {
+											alertDLSuccess('Lấy chữ ký số không thành công.', function(){});
+											hideLoading();
+											  $('#spanChangeCaptcha').trigger('click');
+										}
+										
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/forgotpass/changePassTK',
+											data: getDataToSend() + '&vToken=' + vToken + '&certificate=' + base64Cert.replace(/\+/g, "@"),
+											beforeSend: function(req) {
+												initAjaxJsonRequest(req);
+									        	showLoading();
+											},
+											success:function(res) {
+												hideLoading();
+												if(res) {
+													if(res.errorCode == 0) {
+														$("#fResetPassword").find('input[name="newPass"]').closest('div.xs-form-group').removeClass('none');
+														$("#fResetPassword").find('input[name="newPass"]').val(res.responseData['secureKey']);
+														alertDLSuccess(res.responseData['info'], function(){});
+													}else{
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+												}else{
+													alertDLSuccess('unknown error!!!');
+													hideLoading();
+												}
+											},
+											error:function (xhr, ajaxOptions, thrownError){
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+									            hideLoading();
+									        }
+										});
+									});
+								}else{
+									alertDLSuccess(createObjectError(res).html());
+									refreshCaptcha($('#fResetPassword').find('#idImageCap'));
+								}
+							}else{
+								alertDLSuccess('unknown error!!!');
+								hideLoading();
+								refreshCaptcha($('#fResetPassword').find('#idImageCap'));
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				            refreshCaptcha($('#fResetPassword').find('#idImageCap'));
+				        }
+					});
+				}
+						
+						//end using token
+
+							refreshCaptcha($('#fResetPassword').find(
+									'#idImageCap'));
+							$('#fResetPassword').find(
+									'#idImageCap, #spanChangeCaptcha').click(
+									function(event) {
+										event.preventDefault();/* event.stopPropagation(); */
+										refreshCaptcha($('#fResetPassword')
+												.find('#idImageCap'));
+									});
+
+							function getDataToSend() {
+								var dataPost = $("#fResetPassword")
+										.serializeIncludeDisabled()
+										+ '&';
+								dataPost += _csrf_name + '=' + _csrf_value;
+								return dataPost;
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+		</section>
+	</th:block>
+</body>
+</html>

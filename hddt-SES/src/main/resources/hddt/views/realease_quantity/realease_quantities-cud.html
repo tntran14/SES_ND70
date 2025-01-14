@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase"
+			th:text="${_header_}"></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-quantity-crud" name="f-quantity-crud" method="post"
+			enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500 col-12"
+						th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0">
+							<hr class="m-t-5 m-b-5">
+						</div>
+					</div>
+					<div class="form-group row m-b-6"
+						th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin phát hành</span>
+								</div>
+							</div>
+							<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox"
+										th:value="${MauSoHdon}" type="text" autocomplete="off"
+										th:if="${!_isedit_}" th:readonly="true" /> <select
+										id="mausohdon" name="mausohdon"
+										class="form-control form-control-sm c-f__textbox"
+										th:if="${_isedit_}" th:disabled="${'EDIT' == _action_}">
+										<option value=""></option>
+										<th:block th:if="${map_mausokyhieu != null}">
+											<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}"
+												th:selected="${MauSoHD == entry.key}"></option>
+										</th:block>
+									</select>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend">
+											<label>Mẫu số<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="row m-b-16">
+									<div class="col-12">
+										<div class="c-f__wrapper">
+											<input id="quantity" name="quantity"
+												class="form-control form-control-sm c-f__textbox "
+												type="text" autocomplete="off" th:value="${Quantity}"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Số lượng</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>								
+							</div>
+						</div>
+
+
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin chi tiết</span>
+								</div>
+							</div>					
+										<div class="row m-b-16">
+									<div class="col-12">
+										<div class="c-f__wrapper">
+											<input id="name" name="name"
+												class="form-control form-control-sm c-f__textbox "
+												type="text" autocomplete="off" th:value="${NamePhoi}"
+												th:readonly="true" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Tên phôi</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+										<div class="row m-b-16">
+									<div class="col-12">
+										<div class="c-f__wrapper">
+											<input id="nlap" name="nlap"
+												class="form-control form-control-sm c-f__textbox "
+												type="text" autocomplete="off" th:value="${NLap}"
+												th:readonly="true" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Ngày lập</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+										<div class="row m-b-16">
+									<div class="col-12">
+										<div class="c-f__wrapper">
+											<input id="tuso" name="tuso"
+												class="form-control form-control-sm c-f__textbox "
+												type="text" autocomplete="off" th:value="${TuSo}"
+												th:readonly="true" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Từ số</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+								<div class="row m-b-16">
+									<div class="col-12">
+										<div class="c-f__wrapper">
+											<input id="denso" name="denso"
+												class="form-control form-control-sm c-f__textbox "
+												type="text" autocomplete="off" th:value="${DenSo}"
+												th:readonly="true" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Đến số</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-blue__ses" title="Cháº¥p nháº­n"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Chấp nhận</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}">
+		</form>
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-quantity-crud');
+		</script>
+		<script
+			th:src="@{/static/function/quantity/quantity-crud.js(v=1.47) }"></script>
+	</div>
+</div>
+
+</html>

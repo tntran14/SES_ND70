@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase"
+			th:text="${_header_}"></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-export-crud" name="f-export-crud" method="post"
+			enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500 col-12"
+						th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0">
+							<hr class="m-t-5 m-b-5">
+						</div>
+					</div>
+						<div class="row">
+					<div class="col-6"></div>
+									<div class="col-6 m-b-3 "><span class="  color-ses"><span id="AlertMessage" class="warning__text-title text-uppercase text-decoration-underline text-danger font-weight-bold"></span></span></div>														
+					
+					</div>
+					<div class="form-group row m-b-6"
+						th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
+										Thông tin phiếu xuất kho</span>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="nban-ten" name="nban-ten"
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${NbanTen}" type="text" autocomplete="off"
+											th:readonly="true" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên đơn vị</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="nban-dchi" name="nban-dchi"
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${NbanDchi}" type="text" autocomplete="off"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Địa chỉ xuất kho<span class="text-danger" style="font-size:15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="ten-loai-hd" name="ten-loai-hd"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" readonly="readonly" th:value="${THDon}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên hóa đơn</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${MauSoHdon}" type="text" autocomplete="off"
+											th:if="${!_isedit_}" th:readonly="true" /> <select
+											id="mau-so-hdon" name="mau-so-hdon"
+											class="form-control form-control-sm c-f__textbox"
+											th:if="${_isedit_}" th:disabled="${'EDIT' == _action_}">
+											<option value=""></option>
+											<th:block th:if="${map_mausokyhieu != null}">
+												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${MauSoHD == entry.key}"></option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+                                			<legend class="c-f__legend">
+                                 		 <label>Mẫu số<span class="text-danger" style="font-size:15px">(*)</span></label>
+                                		</legend>
+                              </fieldset>
+									</div>
+								</div>
+								<div class=" col-12 col-sm-6 col-md-6 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class=" form-control form-control-sm c-f__textbox "
+											id="ngay-lap" name="ngay-lap" type="text" autocomplete="off"
+											th:value="${NLap}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Ngày lập</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row" th:if="${'DETAIL' == _action_}">
+								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${SHDon}" type="text" autocomplete="off"
+											th:readonly="true" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số hóa đơn</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class=" col-12 col-sm-6 col-md-6 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${MCCQT}"
+											th:readonly="true" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Mã CQT</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-6 custom-field pl-mobile__ses">
+										<div class="c-f__wrapper">
+										<input id="kh-ho-ten-ng-dd" name="kh-ho-ten-ng-dd"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NBanNDD}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Của<span class="text-danger" style="font-size:15px">(*)</span> </label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6 custom-field pl-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="ty-gia" name="ty-gia"
+											class="form-control form-control-sm c-f__textbox text-number text-left"
+											th:if="${!_isedit_}" th:value="${DVTTe}"
+											th:readonly="${!_isedit_}" type="text" autocomplete="off" />
+										<select id="loai-tien-tt" name="loai-tien-tt"
+											class=" form-control form-control-sm c-f__textbox "
+											th:if="${_isedit_}">
+											<option value=""></option>
+											<th:block th:if="${map_currencies != null}">
+												<option th:each="entry : ${map_currencies.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${DVTTe == entry.key}"></option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>loại tiền thanh toán</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+					
+							<div class="row m-b-16" th:if="false">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<select id="hinh-thuc-thanh-toan" name="hinh-thuc-thanh-toan"
+											class="form-control form-control-sm c-f__textbox">
+											<option value=""></option>
+											<th:block th:if="${map_paymenttype != null}">
+												<option th:each="entry : ${map_paymenttype.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}">
+												</option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Hinh thức thanh toán</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+								<div class="row m-b-16">
+								<div class="col-6">
+									<div class="c-f__wrapper">
+										<input id="kh-ho-ten-ng-vc" name="kh-ho-ten-ng-vc"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NBanTNVChuyen}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên người vận chuyển</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6">
+									<div class="c-f__wrapper">
+										<input id="kh-hds" name="kh-hds"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NBanHDS}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Hợp đồng số</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+							<div class="row m-b-16">
+								<div class="col-6 col-sm-6 col-md-6 custom-field pr-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-lenh-dd-noi-bo" name="kh-lenh-dd-noi-bo"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NBanLDDNBo}"
+											th:readonly="${!_isedit_}"/>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Lệnh điều động nội bộ<span class="text-danger" style="font-size:15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6 custom-field pl-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-pt-vc" name="kh-pt-vc"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NBanPTVChuyen}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Phương tiện vận chuyển<span class="text-danger" style="font-size:15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row" th:if="false">
+								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-12">
+									<label
+										class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
+										<input type="checkbox" name="chk-xuat-theo-loai-tien-tt"
+										class="custom-control-input" /><span
+										class="custom-control-label p-t-5">Xuất theo loại tiền thanh toán</span>
+									</label>
+								</div>
+							</div>
+							<div class="row m-b-16" th:if="${null != _notice}">
+								<div class="col-12 p-t-0">
+									<span class="fw-800 text-danger fs-i fs-12" th:text="${_notice}"></span>
+								</div>
+								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}" >
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<span
+										class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin người nhập hàng</span>
+								</div>
+							</div>		
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<div class="input-group">
+											<input id="kh-mst" name="kh-mst" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaMST}" th:readonly="${!_isedit_}" />
+											<div class="input-group-append" >
+												<button type="button" data-action="kh-check-mst" class="btn btn-sm btn-info p-t-1 p-b-1" title="Tìm kiếm trong danh mục khách hàng"><i class="mdi mdi-account-check-outline"> </i></button>
+											</div>
+												<div class="input-group-append" >
+												<button type="button" data-action="kh-history" class="btn btn-sm btn-primary p-t-1 p-b-1" title="Tìm kiếm trong lịch sử khách hàng"><i class="mdi mdi-history"> </i></button>
+											</div>
+											  <div class="input-group-append">
+												<button type="button" data-action="kh_searchol" class="btn btn-sm btn-warning p-t-1 p-b-1" title="Tìm kiếm tự động"><i class="mdi mdi-account-search-outline"> </i></button>
+											</div> 
+											
+											<div class="input-group-append"  >
+												<button type="button" data-action="kh-add" class="btn btn-sm btn-primary p-t-1 p-b-1" title="Lưu thông tin người mua"><i class="mdi mdi-content-save"> </i></button>
+											</div>
+											<div class="input-group-append">
+												<button type="button" data-action="kh-refresh" class="btn btn-sm btn-warning p-t-1 p-b-1" title="Xóa nội dung người mua đã nhập"><i class="mdi mdi-refresh"> </i></button>
+											</div>
+											 	
+											<div class="input-group-append">
+												<button type="button" data-action="kh_search" class="btn btn-sm btn-info p-t-1 p-b-1" title="Danh sách khách hàng"><i class="mdi mdi-format-list-bulleted-type"> </i></button>
+											</div>  
+
+										
+										</div>										
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số thuế người nhập</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="kh-ho-ten-ng-xuat" name="kh-ho-ten-ng-xuat"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaHVTNMHang}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Họ và tên người nhập</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="kh-ten-don-vi" name="kh-ten-don-vi"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaTen}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tên đơn vị</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="kh-dia-chi" name="kh-dia-chi"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaDChi}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Địa chỉ nhập kho<span class="text-danger" style="font-size:15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="kh-ve-viec" name="kh-ve-viec"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaVeViec}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Về việc</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-6 col-sm-6 col-md-6 custom-field pr-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-email" name="kh-email"
+											class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaDCTDTu}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Email</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6 custom-field pl-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-so-dt" name="kh-so-dt"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSDThoai}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số điện thoại</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-6 col-sm-6 col-md-6 custom-field pr-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-so-tk" name="kh-so-tk"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSTKNHang}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số tài khoản</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6 custom-field pl-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-tk-tai-ngan-hang" name="kh-tk-tai-ngan-hang"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaTNHang}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tại ngân hàng</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12">
+							<div class="row mT-0 mB-5">
+								<div class="col-9 col-sm-6 p-t-8">
+									<span
+										class="text-middle fw-800 text-uppercase text-decoration-underline color-ses ">Danh mục hàng hóa, dịch vụ</span>
+								</div>
+								<div class="col-3 col-sm-6 text-right">
+									<button type="button" data-action="add-to-grid"
+										class="btn-sm btn-primary btn-ses"
+										title="Thêm sản phẩm và dịch vụ" th:if="${_isedit_}">
+										<i class="mdi mdi-plus fs-15"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 has-min-height-grid-prd m-b-15">
+							<div id="grid"></div>
+						</div>
+
+						<div class="col-md-6"></div>
+						<div class="col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tong-tien-truoc-thue" name="tong-tien-truoc-thue"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TgTCThue}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tổng tiền trước thuế</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="ty-gia" name="ty-gia"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TGia}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tỷ giá</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tong-tien-thue-gtgt" name="tong-tien-thue-gtgt"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TgTThue}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tổng tiền thuế GTGT</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tong-tien-da-co-thue" name="tong-tien-da-co-thue"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TgTTTBSo}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Tổng tiền đã có thuế GTGT</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+						<div class="col-md-12">
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="tien-bang-chu" name="tien-bang-chu"
+											class="form-control form-control-sm c-f__textbox "
+											th:value="${TgTTTBChu}" th:readonly="${!_isedit_}"
+											type="text" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số tiền viết bằng chữ</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay láº¡i"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-blue__ses" title="Lưu thông tin"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Lưu thông tin</span>
+							</button>
+							<button type="button" data-action="sign"
+								class="btnadd btns btns-blue__ses" title="Kí hóa đơn"
+								th:if="${null == messageError && 'SIGN' == _action_}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Kí hóa đơn</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}">
+		</form>
+		
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-export-crud').find('#grid');
+		var AlertMessage = null;
+		</script>
+
+		<script type="text/javascript" th:if="${_action_ == 'CREATE' && false}"></script>
+		<script type="text/javascript" th:if="${null == DSHHDVu}">
+		$.each(new Array(5),
+			function(n){
+				rowsTMP.push({});
+			}
+		);
+		</script>
+	<script type="text/javascript" th:if="${null != DSHHDVu}">
+		var strJson = '[[${DSHHDVu}]]';
+		rowsTMP = [];
+		try{
+// 			var parser = new DOMParser;
+// 			var dom = parser.parseFromString('<!doctype html><body>' + strJson, 'text/html');
+// 			var decodedString = dom.body.textContent;
+			
+// 			rowsTMP = JSON.parse(decodedString);
+			rowsTMP = decodeBase64UTF8ToObj(strJson);
+		}catch(err){}
+		</script> 
+		
+		
+			<script type="text/javascript" th:if="${null != userconfig_usd}">
+		var usd_ = '[[${userconfig_usd}]]';
+		
+	</script>
+		<script type="text/javascript" th:if="${null != userconfig_vnd}">
+		var vnd_ = '[[${userconfig_vnd}]]';
+	</script> 
+	
+		
+	<script type="text/javascript"
+			th:if="${_action_ == 'DETAIL' || _action_ =='EDIT' || _action_ =='SIGN'}">
+		var strJson = '[[${DSHHDVu}]]';
+		rowsTMP = [];
+		try{
+			var parser = new DOMParser;
+			var dom = parser.parseFromString('<!doctype html><body>' + strJson, 'text/html');
+			var decodedString = dom.body.textContent;
+			
+			rowsTMP = decodeBase64UTF8ToObj(strJson);
+		}catch(err){}
+		</script> 
+
+<!-- 	<script th:src="@{/static/function/export/export-crud.js(v=2.3)}"></script> -->
+<script type="text/javascript">
+$(function(){
+	if(vIsEdit){
+		initInputNumber('#f-export-crud .text-number');
+		dateInputFormat($('#f-export-crud').find('#ngay-lap'));
+	}
+	
+	_gridSub01.kendoGrid({
+		dataSource: {
+			data: rowsTMP,
+			pageSize: 999999,
+			serverPaging: false,
+			serverSorting: false,
+           	serverFiltering: false
+		},
+		selectable: !vIsEdit, scrollable: true, 
+		sortable: false,
+		filterable: false, resizable: true,
+		serverSorting: false,
+		pageable: {
+			refresh: false,
+			pageSizes: false,
+			numeric: false,
+			previousNext: false
+		},
+		dataBinding: function () {
+            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+        },
+		columns: [
+			{field: 'STT', title: 'STT', width: '80px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
+  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+//  				, template: '<input type="text" name="STT" value="' + '#: ++record #' + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" style="border: none;" >',
+  				, template: '#= window.setTemplateForGrid("STT", data) #'
+  				
+  			},
+  			{field: 'func', title: '', width: '60px', encoded: false, hidden: !vIsEdit
+//				, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+  				, headerTemplate: '&nbsp;'
+				, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+				, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+//				, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
+//				, template: '<i class="mdi mdi-close-box fs-25 text-black"></i>'
+				, template: '#= window.setTemplateForGrid("func", data) #'
+			},
+			{field: 'ProductName', title: '', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên hàng hóa, dịch vụ</a>',
+				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("ProductName", data) #'
+			},
+			{field: 'ProductCode', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã SP</a>',
+				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("ProductCode", data) #'
+			},
+			{field: 'Unit', title: '', width: '70px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đơn vị<br>tính</a>',
+				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Unit", data) #'
+			},
+			{field: 'Quantity', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng thực xuất</a>',
+				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Quantity", data) #'
+			},
+			{field: 'TNhap', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng thực nhập</a>',
+				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("TNhap", data) #'
+			},
+			{field: 'Price', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đơn giá</a>',
+				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Price", data) #'
+			},
+		
+			{field: 'Total', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Thành tiền</a>',
+				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Total", data) #'
+			},
+		
+			{field: 'Amount', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
+				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Amount", data) #'
+			},
+			{field: 'Feature', title: '', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tính chất</a>',
+				attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+				template: '#= window.setTemplateForGrid("Feature", data) #'
+			},
+		],
+		dataBound: function(e) {
+			initInputNumber('#f-export-crud #grid .input-grid-number');
+			
+			autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('input[name="ProductName"]'), function(e){
+				var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + rowSelect + ')');
+				$tr.find('input[name="ProductName"]').val(e.Name);
+				$tr.find('input[name="ProductCode"]').val(e.Code);
+				$tr.find('input[name="Unit"]').val(e.Unit);
+				$tr.find('input[name="Price"]').val(e.Price);		
+				$tr.find('input[name="Quantity"]').trigger('keyup');
+				$tr.find('input[name="TNhap"]').trigger('keyup');
+			});
+			
+//			rowSelect
+			
+			/*ACTION IN GRID*/
+			_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').undelegate('i[data-sub-action]', 'click');
+			_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').delegate('i[data-sub-action]', 'click', function(e){
+				event.preventDefault();/*event.stopPropagation();*/
+				
+				var $obj = $(this);
+				var $tr = $obj.closest('tr');
+				var subAction = $obj.attr('data-sub-action');
+
+				var indexRow = $tr.index();
+				switch (subAction) {
+				case 'delete':
+					alertConfirm('Bạn có muốn xóa dòng ' + (indexRow + 1) + ' không?',
+						function(e){
+							var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+							if(indexRow < objDataJson.length && indexRow > -1){
+								objDataJson.splice(indexRow, 1);
+								_gridSub01.data("kendoGrid").dataSource.data(objDataJson);	
+								setSTTinGrid();
+								calcSTTInGrid();
+							}
+							calcTotalAmount();
+						},
+						function(e){}
+					)
+					break;
+				default:
+					break;
+				}
+			});
+			
+			_gridSub01.find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"][name="chkSTT"]', 'click');
+			_gridSub01.find('tbody[role="rowgroup"]').delegate('input[type="checkbox"][name="chkSTT"]', 'click', function(e){
+				setSTTinGrid();
+				calcAmountInGrid($(this));
+			});
+			
+			_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-feature, select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change');
+			_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-feature, select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change', function(e){
+				//những sự kiện này thay đổi thì thực hiện 2 hàm ở dưới
+				calcAmountInGrid($(this));
+				calcTotalAmount();
+			});
+			
+			_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-feature', 'keyup');
+			_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-feature', 'keyup', function(e){
+				var code = e.keyCode || e.which;
+//				console.log(code)
+				//9: Tab
+				//16: Shift Tab
+				if(code == 9 || code == 16) return;
+				calcAmountInGrid($(this));
+				calcTotalAmount();
+			});
+			/*END - ACTION IN GRID*/
+			
+		}
+        
+	});
+	
+	setReadonlyTGia();
+	$('#f-export-crud').find('#loai-tien-tt').change(function(e){
+		event.preventDefault();/*event.stopPropagation();*/
+		$('#f-export-crud').find('#ty-gia').val('1');
+		setReadonlyTGia();
+		calcTienQuyDoi();
+	});
+	
+	$('#f-export-crud').undelegate('#ty-gia, #tong-tien-da-co-thue', 'keyup');
+	$('#f-export-crud').delegate('#ty-gia, #tong-tien-da-co-thue', 'keyup', function(e){
+		var code = e.keyCode || e.which;
+//		console.log(code)
+		//9: Tab
+		//16: Shift Tab
+		if(code == 9 || code == 16) return;
+		calcTienQuyDoi();
+	});
+	
+	$('#f-export-crud').find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		
+		var $obj = $(this);
+		var objDataSend = null;
+		
+		switch (dataAction) {
+		case 'kh-refresh':
+			$('#f-export-crud').find('#kh-mst,#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+			$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+			break;
+		case 'kh-check-mst':
+			
+			var dataMST = {};				
+			dataMST['mst'] = $('#f-export-crud').find('#kh-mst').val();
+			var mst = dataMST['mst'];			
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/export_check_mst/check-mst',
+				data: dataMST,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res) {
+						if(res.errorCode == 0) {
+							
+							if(mst.startsWith('CN') || mst.length < 10)
+								mst = '';
+							var responseData = res.responseData;								
+							$('#f-export-crud').find('#kh-mst').val(mst);
+							$('#f-export-crud').find('#kh-makhachhang').val(responseData['ma_kh']);
+							$('#f-export-crud').find('#kh-ten-don-vi').val(responseData['tendv']);
+							$('#f-export-crud').find('#kh-ho-ten-ng-xuat').val(responseData['hvtnmh']);
+							$('#f-export-crud').find('#kh-dia-chi').val(responseData['dchi']);
+							$('#f-export-crud').find('#kh-email').val(responseData['email']);
+							$('#f-export-crud').find('#kh-emailcc').val(responseData['emailcc']);
+							$('#f-export-crud').find('#kh-so-dt').val(responseData['sdt']);
+							$('#f-export-crud').find('#kh-so-tk').val(responseData['stk']);
+							$('#f-export-crud').find('#kh-tk-tai-ngan-hang').val(responseData['tnh']);
+						}else{
+							alertDLSuccess("Không tìm thấy khách hàng", function(){});
+							$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+							$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+						}
+					}else{
+						alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					alertDLSuccess("Không tìm thấy khách hàng", function(){});
+		            hideLoading();
+		        }
+			});
+			break;		
+		case 'kh-history':
+			
+			var dataMST = {};				
+			dataMST['mst'] = $('#f-export-crud').find('#kh-mst').val();
+			var mst = dataMST['mst'];			
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/export_check_mst/check-history-mst',
+				data: dataMST,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res) {
+						if(res.errorCode == 0) {
+							
+							if(mst.startsWith('CN') || mst.length < 10)
+								mst = '';
+							var responseData = res.responseData;								
+							$('#f-export-crud').find('#kh-mst').val(mst);
+							$('#f-export-crud').find('#kh-makhachhang').val(responseData['ma_kh']);
+							$('#f-export-crud').find('#kh-ten-don-vi').val(responseData['tendv']);
+							$('#f-export-crud').find('#kh-ho-ten-nguoi-mua').val(responseData['hvtnmh']);
+							$('#f-export-crud').find('#kh-dia-chi').val(responseData['dchi']);
+							$('#f-export-crud').find('#kh-email').val(responseData['email']);
+							$('#f-export-crud').find('#kh-emailcc').val(responseData['emailcc']);
+							$('#f-export-crud').find('#kh-so-dt').val(responseData['sdt']);
+							$('#f-export-crud').find('#kh-so-tk').val(responseData['stk']);
+							$('#f-export-crud').find('#kh-tk-tai-ngan-hang').val(responseData['tnh']);
+						}else{
+							alertDLSuccess("Không tìm thấy khách hàng", function(){});
+							$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+							$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+						}
+					}else{
+						alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					alertDLSuccess("Không tìm thấy khách hàng", function(){});
+		            hideLoading();
+		        }
+			});
+			break;	
+		case 'kh-add':				
+			var dataMST = {};				
+			dataMST['mst'] = $('#f-export-crud').find('#kh-mst').val();	
+			dataMST['kh-makhachhang'] = $('#f-export-crud').find('#kh-makhachhang').val();
+			dataMST['kh-ho-ten-ng-xuat'] = $('#f-export-crud').find('#kh-ho-ten-ng-xuat').val();
+			dataMST['kh-ten-don-vi'] = $('#f-export-crud').find('#kh-ten-don-vi').val();
+			dataMST['kh-dia-chi'] = $('#f-export-crud').find('#kh-dia-chi').val();
+			dataMST['kh-email'] = $('#f-export-crud').find('#kh-email').val();
+			dataMST['kh-emailcc'] = $('#f-export-crud').find('#kh-emailcc').val();
+			dataMST['kh-so-dt'] = $('#f-export-crud').find('#kh-so-dt').val();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/export_save_nmua/save-nmua',
+				data: dataMST,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res) {
+						if(res.errorCode == 0) {
+							alertDLSuccess("Cập nhật thành công", function(){});	 						
+						}else{
+							alertDLSuccess("Không thành công", function(){});								
+						}
+					}else{
+						alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					alertDLSuccess("Không thành công", function(){});
+		            hideLoading();
+		        }
+			});
+			break;		
+		case 'kh_searchol':
+			var dataMST = {};			
+			var _taxcode = $('#f-export-crud').find('#kh-mst').val();				
+			if('' == _taxcode || undefined == _taxcode) return;
+			$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+			$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+			dataMST['mst'] = encodeURIComponent(_taxcode);
+	        $.ajax({
+	          type: "POST",
+	          datatype: "json",
+		      	url: ROOT_PATH + '/main/common/detailMaSoThue',
+			data: dataMST,
+	          beforeSend: function(req) {
+	            initAjaxJsonRequest(req);
+	                showLoading();
+	          },
+	          success:function(res) {
+	      
+	            hideLoading();
+	            if(res) {		           
+	              if(res.errorCode == 0) {
+	            	var responseData = res.responseData;	  
+	                $('#f-export-crud').find('#kh-ten-don-vi').val(res.responseData['ten_cong_ty']);
+	                $('#f-export-crud').find('#kh-dia-chi').val(res.responseData['dia_chi']);
+	               /*  $('#f-export-crud').find('#kh-ho-ten-ng-xuat').val(res.responseData['ChuSoHuu']); */
+	                $("#AlertMessage").html("Lưu ý đây là thông tin gợi ý. Xin quý khách vui lòng kiểm tra lại thông tin !!!");
+	                AlertMessage = 123;
+	              }else{
+	            		$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+	    				$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+	                alertDLSuccess("Không tìm thấy thông tin khách hàng!!!");
+	                $("#AlertMessage").html("");
+	              }
+	            }else{
+	            	$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
+					$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+	              alertDLSuccess('unknown error!!!');
+	              hideLoading();
+	            }
+	          },
+	          error:function (xhr, ajaxOptions, thrownError){
+	            alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	                  hideLoading();
+	              }
+	        });
+	        break;	
+		case 'kh_search':
+			objDataSend = {};
+			showPopupWithURLAndData(ROOT_PATH + '/common/show-search-customer-update', objDataSend, false, function(e){
+				if('object' ==jQuery.type(e)){
+					var mst = e['TaxCode'] == null? '': e['TaxCode'];
+					if(mst.startsWith('CN') || mst.length < 10)
+						mst = '';
+					$('#f-export-crud').find('#kh-mst').val(mst);
+					$('#f-export-crud').find('#kh-makhachhang').val(e['CustomerCode'] == null? '': e['CustomerCode']);
+					$('#f-export-crud').find('#kh-ho-ten-ng-xuat').val(e['CustomerName'] == null? '': e['CustomerName']);
+					$('#f-export-crud').find('#kh-ten-don-vi').val(e['CompanyName'] == null? '': e['CompanyName']);
+					$('#f-export-crud').find('#kh-dia-chi').val(e['Address'] == null? '': e['Address']);
+					$('#f-export-crud').find('#kh-email').val(e['Email'] == null? '': e['Email']);
+					$('#f-export-crud').find('#kh-emailcc').val(e['EmailCC'] == null? '': e['EmailCC']);
+					$('#f-export-crud').find('#kh-so-dt').val(e['Phone'] == null? '': e['Phone']);
+					$('#f-export-crud').find('#kh-so-tk').val(e['AccountNumber'] == null? '': e['AccountNumber']);
+					$('#f-export-crud').find('#kh-tk-tai-ngan-hang').val(e['AccountBankName'] == null? '': e['AccountBankName']);
+				}
+			});
+			break;
+		case 'add-to-grid':
+			var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+			objDataJson.push({});
+			_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+			break;
+		case 'back':
+			$('#divMainContent').show();
+			$('#divSubContent').hide(function(){$(this).empty();});
+			try{
+				if($('#f-export').find('#grid').length > 0)
+					$('#f-export').find('#grid').data("kendoGrid").dataSource.read();
+			}catch(err){}
+			break;
+		case 'sign':
+			objDataSend = {};
+			objDataSend['_id'] = $('#f-export-crud').find('input[name="_id"]').val();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/export-sign/check-data-sign',
+				data: objDataSend,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					if(res) {
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							tokenTransaction = responseData['TOKEN'];
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							getCert(function(e){
+								if(null == e) {
+									alertDLSuccess('Lấy chữ ký số không thành công.', function(){});
+									hideLoading();
+									return;
+								}
+								serialNumber = '';
+								//KIEM TRA THONG TIN CERT
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/common/check-cert',
+									data: {'cert': base64Cert.replace(/\+/g, "@")},
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												serialNumber = res.responseData;
+												//LAY NOI DUNG FILE XML
+												jQuery.ajax({
+													url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+											        cache:false,
+											        xhr:function(){// Seems like the only way to get access to the xhr object
+											            var xhr = new XMLHttpRequest();
+											            xhr.responseType= 'blob'
+											            return xhr;
+											        },
+											        success:function(data, textStatus, xhr) {
+//											        	hideLoading();
+												    	if(xhr.status == 200){
+												    		var blob = new Blob([data], { type: 'octet/stream' });
+												    		var postEnc = new FormData();
+												    		postEnc.append('SerialNumber', serialNumber);
+												    		postEnc.append('xmlFile', blob);
+												    		
+												    		var xhrSign = new XMLHttpRequest();
+												    		xhrSign.onreadystatechange = function(e) {
+												    			if(4 == this.readyState) {
+												    				if(this.status == 200){	
+												    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
+												    					blob = new Blob( [this.response], { type : "octet/stream" } );
+												    					showLoading();
+												    					
+												    					formData = new FormData();
+																		formData.append("XMLFileSigned", blob);
+																		formData.append('certificate', base64Cert.replace(/\+/g, "@"));
+												    					
+																		xhrSign = new XMLHttpRequest();
+																		xhrSign.upload.addEventListener('progress', function(e) {
+																			
+																		});
+																		if(xhrSign.upload) {
+																			
+																		};
+																		xhrSign.onreadystatechange = function(e) {
+																			if(4 == this.readyState && this.status == 200) {
+																				var res = xhrSign.response;
+																				if(res){
+																					if(res.errorCode == 0) { 
+																						hideLoading();
+																						$('#f-export-crud').find('button[data-action="back"]').trigger('click');
+																					}else{
+																            			alertDLSuccess(createObjectError(res).html(), function(){});
+																            			hideLoading();
+																            		}
+																				}else{
+																					alertDLSuccess('unknown error!!!', function(){});
+																					hideLoading();
+																            	}
+																			}
+																		}
+																		xhrSign.onerror = function() {
+																			
+																		}
+																		xhrSign.ontimeout = function() {
+																			
+																		}
+																		
+																		var urlPost = ROOT_PATH + '/main/export-sign/signFile';
+																		xhrSign.open("POST", urlPost, true);
+																		xhrSign.responseType = 'json';
+																		xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+																		xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+																		
+																		xhrSign.setRequestHeader("Cache-Control", "no-cache");
+																		xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+																		xhrSign.send(formData);
+												    				}else{
+																		hideLoading();
+																		alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function(){});
+																	}
+												    			}
+												    		}
+												    		
+												    		xhrSign.open('POST', urlPluginSign + signXML, true);
+															xhrSign.timeout = 5 * 60 * 1000;
+															xhrSign.responseType = 'blob';	//or arraybuffer
+															xhrSign.send(postEnc);
+												    	}else{
+												    		hideLoading();
+												    		alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function(){});
+														}
+											        },
+											        error:function(){
+											            
+											        }
+												});
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							});
+						}else{
+							hideLoading();
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					}else{
+						alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		            hideLoading();
+		        }
+			});
+			break;
+		case 'accept':
+			objDataSend = getDataToSave();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+				data: objDataSend,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						alertConfirm(confirmText,
+							function(e){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$('#f-export-crud').find('button[data-action="back"]').trigger('click');
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e){}
+						);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					$obj.prop('disabled', false);
+					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		            hideLoading();
+		        }
+			});
+			break;
+
+		default:
+			break;
+		}
+	});
+	
+});
+
+function setTemplateForGrid(key, data){
+	if(!vIsEdit) return data[key] == null? '': data[key];
+	
+	var text = '';
+	if('func' == key){
+		text = '<div>';
+		text += '<i class="mdi mdi-close-box fs-25 text-black" data-sub-action="delete"></i>';
+		text += '</div>';
+		return text;
+	}
+	
+	var _valTmp = '';
+	text = '<div class="form-row m-l-1 m-r-1">';
+	switch (key) {
+	case 'Quantity':
+	case 'TNhap':
+	case 'Price':
+	case 'Total':
+	case 'Amount':		
+		text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" >';
+		break;	
+	case 'Feature':
+		_valTmp = null == data[key]? '': data[key];
+		if('' == _valTmp) _valTmp = '';
+		
+		text += '<select class="input-grid form-control form-control-sm input-grid-feature" name="' + key + '" style="height: 100%;" >';
+		$.each(objFeature, function(k, v){
+			text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + ' >' + v + '</option>';
+		});
+		text += '</select>';
+		break;
+	case 'STT':
+		text += '<div class="input-group">';
+		text += '	<div class="input-group-prepend">';		
+		text += '		<label class="custom-control custom-checkbox">';
+		text += '			<input type="checkbox" name="chkSTT" class="custom-control-input" ' + (null != data[key] && '' != data[key]? 'checked="checked"': '') + ' >';
+		text += '			<span class="custom-control-label">&nbsp;</span>';
+		text += '		</label>';		
+		text += '	</div>';
+		text += '	<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right" style="border: none;" >';
+		text += '</div>';
+		break;
+	default:
+		text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm" >';
+		break;
+	}
+	text += '</div>';
+	return text;
+}
+
+function calcAmountInGrid($obj){
+	var $tr = $obj.closest('tr');
+	var _name = $obj.prop('name');
+	var _val = '';
+	var _numeral = null;
+	var loai_tien_tt = $('#f-export-crud').find('#loai-tien-tt').val();
+	
+	var dblQuantity = 0;
+	var dblPrice = 0;
+	var dblTotal = 0;
+	var dblAmount = 0;
+	
+	var VND_ = parseInt(vnd_, 10);
+	
+	var USD_ = parseInt(usd_, 10);
+	
+	switch (_name) {
+	case 'Quantity':	
+	
+	case 'Price':
+		_numeral = numeral($tr.find('input[name="Quantity"]').val());
+		dblQuantity = _numeral == null? 0: _numeral.value();
+		_numeral = numeral($tr.find('input[name="Price"]').val());
+		dblPrice = _numeral == null? 0: _numeral.value();
+		
+		
+		dblTotal = dblQuantity * dblPrice;
+		
+		
+		
+//		$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+//		FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+		if(loai_tien_tt=="VND"){		
+			$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+						
+			break;
+			}
+		if(loai_tien_tt=="USD"){		
+			$tr.find('input[name="Total"]').val(dblTotal.toFixed(USD_))	
+				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+			break;
+			}
+		
+		break;
+	case 'Total':
+		$tr.find('input[name="Quantity"],input[name="Price"]').val('');
+		
+		_numeral = numeral($tr.find('input[name="Total"]').val());
+		dblTotal = _numeral == null? 0: _numeral.value();
+		
+	
+		break;
+	
+	
+	case 'Feature':
+		$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"], input[name="Total"], input[name="Amount"]').prop('readonly', false);
+		
+		_val = $obj.val();
+		switch (_val) {
+		case '1':
+			$tr.find('input[name="Amount"]').val('');
+			break;
+		case '4':
+			$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"]').val('');
+			$tr.find('input[name="Total"]').val('');
+			
+			$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"], input[name="Total"], input[name="Amount"]').prop('readonly', true);
+			
+			
+			break;
+		default:
+			break;
+		}
+		break;
+	case 'ProductName':
+		_val = $obj.val();
+		if('' == _val){
+			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', false);
+		}else{
+			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', true);
+		}
+		setSTTinGrid();
+		break;
+	default:
+		break;
+	}
+	
+	_numeral = numeral($tr.find('input[name="Total"]').val());
+	dblTotal = _numeral == null? 0: _numeral.value();
+	
+	dblAmount = dblTotal+ 0;
+	$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
+	FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
+	
+	/*LAY THONG TIN UPDATE LAI DATASOURCE*/
+	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+	try{
+		var indexRow = $tr.index();
+		var rowData = objDataJson[indexRow];
+		
+		rowData['STT'] = $tr.find('input[name="STT"]').val();
+		rowData['ProductName'] = $tr.find('input[name="ProductName"]').val();
+		rowData['ProductCode'] = $tr.find('input[name="ProductCode"]').val();
+		rowData['Unit'] = $tr.find('input[name="Unit"]').val();
+		rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
+		rowData['TNhap'] = $tr.find('input[name="TNhap"]').val();
+		rowData['Price'] = $tr.find('input[name="Price"]').val();
+		rowData['Total'] = $tr.find('input[name="Total"]').val();
+		rowData['Amount'] = $tr.find('input[name="Amount"]').val();
+		rowData['Feature'] = $tr.find('select[name="Feature"]').val();
+		
+		_gridSub01.data("kendoGrid").dataSource.data()[indexRow] = rowData;
+	}catch(err){
+		console.log(err);
+	}
+}
+
+function setSTTinGrid(){
+	var $tr = null;
+	var stt = 0;
+	_gridSub01.find('table[role="grid"]').find('tbody[role="rowgroup"]').find('tr').each(function(i, v) {
+		$tr = $(this);
+		if($tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked')
+			&& $tr.find('input[type="text"][name="ProductName"]').val() != ''
+		){
+			$tr.find('input[type="text"][name="STT"]').val(++stt);
+		
+		}else{
+			$tr.find('input[type="text"][name="STT"]').val('');
+		}
+	});
+}
+
+function calcTotalAmount(){
+	var loai_tien_tt = $('#f-export-crud').find('#loai-tien-tt').val();
+	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+	var USD_ = parseInt(usd_, 10);
+	/*TINH TIEN TRUOC THUE - TIEN THUE - TONG TIEN SAU THUE*/
+	var sumAmount = 0;
+	var sumAmountVAT = 0;
+	var sumAmountAfterTax = 0;
+	var tmp = '';
+	var tmp2 = '';
+	jQuery.each(objDataJson, function(index, item) {
+		tmp = item['ProductName'] == null? '': item['ProductName'].trim();
+		if('' != tmp){
+			_val = item['Feature'] == null? '': item['Feature'].trim();
+			_numeral = numeral(item['Total']);
+			sumAmount += _numeral.value() == null? 0: _numeral.value();
+			
+			switch (_val) {
+			case '4':		//GHI CHU - KHONG XU LY TIEN
+				break;
+			case '3':		//CK: TRU TIEN THUE VA TONG TIEN
+	
+				_numeral = numeral(item['Amount']);
+				sumAmountAfterTax -= _numeral.value() == null? 0: _numeral.value();
+				break;
+			case '2':		//KM: CHI CONG TONG TIEN
+				break;
+			default:
+	
+				_numeral = numeral(item['Amount']);
+				sumAmountAfterTax += _numeral.value() == null? 0: _numeral.value();
+				break;
+			}
+		}
+	});
+	
+/* 	$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+	FormatCurrency($('#f-export-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+	$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+	FormatCurrency($('#f-export-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+	$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+	FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+	
+	$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt)); */
+	
+	
+	
+	if(loai_tien_tt=="VND"){
+		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+		FormatCurrency($('#f-export-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(1))
+		FormatCurrency($('#f-export-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+		FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+		
+		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+		
+		calcTienQuyDoi();
+	}
+	if(loai_tien_tt=="USD"){
+		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
+	
+		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
+	
+		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
+		
+		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+		
+		calcTienQuyDoi();
+	}	
+}
+
+function calcSTTInGrid(){
+	var $tr = null;
+	_gridSub01.find('table[role="grid"]').find('tbody[role="rowgroup"]').find('tr').each(function(i, v) {
+		$tr = $(this);
+		/*LAY THONG TIN UPDATE LAI DATASOURCE*/
+		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+		try{
+			var indexRow = $tr.index();
+			var rowData = objDataJson[indexRow];
+			
+			rowData['STT'] = $tr.find('input[name="STT"]').val();
+			rowData['ProductName'] = $tr.find('input[name="ProductName"]').val();
+			rowData['ProductCode'] = $tr.find('input[name="ProductCode"]').val();
+			rowData['Unit'] = $tr.find('input[name="Unit"]').val();
+			rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
+			rowData['Price'] = $tr.find('input[name="Price"]').val();
+			rowData['Total'] = $tr.find('input[name="Total"]').val();
+			rowData['Amount'] = $tr.find('input[name="Amount"]').val();
+			rowData['Feature'] = $tr.find('select[name="Feature"]').val();
+			
+			_gridSub01.data("kendoGrid").dataSource.data()[indexRow] = rowData;
+		}catch(err){
+			console.log(err);
+		}
+		});
+	
+}
+
+function getDataToSave(){
+	var dataPost = {};
+	calcSTTInGrid();
+	
+	dataPost['_id'] = $('#f-export-crud').find('input[name="_id"]').val();
+	dataPost['mau-so-hdon'] = $('#f-export-crud').find('#mau-so-hdon').val();	
+	dataPost['ten-loai-hd'] = $('#f-export-crud').find('#ten-loai-hd').val();
+	dataPost['hinh-thuc-thanh-toan'] = $('#f-export-crud').find('#hinh-thuc-thanh-toan').val();
+	dataPost['hinh-thuc-thanh-toan-text'] = $('#f-export-crud').find('#hinh-thuc-thanh-toan').find('option:selected').text();
+	dataPost['ngay-lap'] = $('#f-export-crud').find('#ngay-lap').val();
+	
+	dataPost['kh-mst'] = $('#f-export-crud').find('#kh-mst').val();
+	dataPost['kh-ho-ten-ng-xuat'] = $('#f-export-crud').find('#kh-ho-ten-ng-xuat').val();
+	
+	dataPost['nban-dchi'] = $('#f-export-crud').find('#nban-dchi').val();
+	
+	dataPost['kh-ho-ten-ng-vc'] = $('#f-export-crud').find('#kh-ho-ten-ng-vc').val();
+	dataPost['kh-ho-ten-ng-dd'] = $('#f-export-crud').find('#kh-ho-ten-ng-dd').val();
+	dataPost['kh-ve-viec'] = $('#f-export-crud').find('#kh-ve-viec').val();
+	dataPost['kh-ten-don-vi'] = $('#f-export-crud').find('#kh-ten-don-vi').val();
+	dataPost['kh-dia-chi'] = $('#f-export-crud').find('#kh-dia-chi').val();
+	
+	dataPost['kh-lenh-dd-noi-bo'] = $('#f-export-crud').find('#kh-lenh-dd-noi-bo').val();
+	dataPost['kh-pt-vc'] = $('#f-export-crud').find('#kh-pt-vc').val();
+	dataPost['kh-email'] = $('#f-export-crud').find('#kh-email').val();
+	dataPost['kh-mst'] = $('#f-export-crud').find('#kh-mst').val();
+	dataPost['kh-tendv'] = $('#f-export-crud').find('#kh-tendv').val();
+	
+	dataPost['kh-so-dt'] = $('#f-export-crud').find('#kh-so-dt').val();
+	dataPost['kh-so-tk'] = $('#f-export-crud').find('#kh-so-tk').val();
+	dataPost['kh-tk-tai-ngan-hang'] = $('#f-export-crud').find('#kh-tk-tai-ngan-hang').val();
+	
+	dataPost['tong-tien-truoc-thue'] = $('#f-export-crud').find('#tong-tien-truoc-thue').val();
+	dataPost['loai-tien-tt'] = $('#f-export-crud').find('#loai-tien-tt').val();
+	dataPost['ty-gia'] = $('#f-export-crud').find('#ty-gia').val();
+	dataPost['tong-tien-thue-gtgt'] = $('#f-export-crud').find('#tong-tien-thue-gtgt').val();
+	dataPost['tong-tien-da-co-thue'] = $('#f-export-crud').find('#tong-tien-da-co-thue').val();
+	dataPost['tien-bang-chu'] = $('#f-export-crud').find('#tien-bang-chu').val();
+	dataPost['kh-hds'] = $('#f-export-crud').find('#kh-hds').val();
+	
+	var arrRows = [];
+	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+	jQuery.each(objDataJson, function(index, item) {
+		tmp = item['ProductName'] == null? '': item['ProductName'].trim();
+		if('' != tmp){
+			arrRows.push(item);
+		}
+	});
+	dataPost['ds-san-pham'] = encodeObjJsonBase64UTF8(arrRows);
+	
+	
+	return dataPost;
+}
+
+
+function setReadonlyTGia(){
+	
+	
+	$('#f-export-crud').find('#ty-gia').prop('readonly', true);
+	$('#f-export-crud').find('div.quidoingoaite').addClass('d-none');
+	$('#f-export-crud').find('#tong-tien-quy-doi').prop('readonly', true);
+	
+	var isAccept = $('#f-export-crud').find('button[data-action="accept"]').length > 0;
+	var loaiTien = $('#f-export-crud').find('#loai-tien-tt').val();
+	if(loaiTien == '') loaiTien = 'VND';
+	
+	if(isAccept && loaiTien != 'VND'){
+		$('#f-export-crud').find('#ty-gia').prop('readonly', false);
+		$('#f-export-crud').find('#tong-tien-quy-doi').prop('readonly', false);
+	}
+	if(loaiTien != 'VND'){
+		$('#f-export-crud').find('div.quidoingoaite').removeClass('d-none');
+	}
+		
+}
+
+
+function calcTienQuyDoi(){
+	var sumAmountAfterTax = 0;
+	var tyGia = 0;
+	var tienQuiDoi = 0;
+	var $numeral = null;
+	
+	$numeral = numeral($('#f-export-crud').find('#ty-gia').val());
+	tyGia = $numeral.value() == null? 1: $numeral.value();
+	$numeral = numeral($('#f-export-crud').find('#tong-tien-da-co-thue').val());
+	sumAmountAfterTax = $numeral.value() == null? 0: $numeral.value();
+	
+//	tienQuiDoi = tyGia * sumAmountAfterTax;
+//	$('#f-export-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(4))
+//	FormatCurrency($('#f-export-crud').find('#tong-tien-quy-doi')[0], 'VND');
+}
+</script>
+	</div>
+</div>
+
+</html>

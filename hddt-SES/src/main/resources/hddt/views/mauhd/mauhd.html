@@ -1,0 +1,519 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+	<style>
+		.text-blue123{
+		color: #7753f8;
+		}
+		</style>
+	<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách mẫu hóa đơn</h3>
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-12">
+				<form id="f-mauhd" name="f-mauhd" method="post" enctype="multipart/form-data" >
+		   <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div
+                        class="col-12 col-sm-12 col-md-4 col-lg-4 custom-field m-b-16"
+                      >
+                        <div class="c-f__wrapper">
+                          <input
+                            class="form-control form-control-sm c-f__textbox"
+                            id="loaihd"
+                            name="loaihd"
+                            autocomplete="off"
+                          />
+                          <fieldset aria-hidden="true" class="c-f__set">
+                            <legend class="c-f__legend">
+                              <label>Loại hóa đơn</label>
+                            </legend>
+                          </fieldset>
+                        </div>
+                      </div>
+                      <div
+                        class="col-12 col-sm-12 col-md-4 col-lg-4 custom-field m-b-16"
+                      >
+                        <div class="c-f__wrapper">
+                          <input
+                            class="form-control form-control-sm c-f__textbox"
+                            type="text"
+                            id="mausohd"
+                            name="mausohd"
+                            autocomplete="off"
+                          />
+                          <fieldset aria-hidden="true" class="c-f__set">
+                            <legend class="c-f__legend">
+                              <label>Mẫu số hóa đơn </label>
+                            </legend>
+                          </fieldset>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+                        <button
+                          class="btns btns-search_auto__ses hover-up__ses w-100p"
+                          data-action="search"
+                          title="Tìm kiếm"
+                          type="button"
+                        >
+                          <i class="mdi mdi-file-find"></i
+                          ><span class="d-none d-md-inline">Tìm kiếm</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12">
+                        <hr style="margin: 0 0 10px 0" />
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="row mT-0">
+                        <div class="col-12 text-right p-r-0 p-l-0">
+                          <div class="button-group text-right">
+                          
+                            <button
+                              type="button"
+                              title="Thêm mới"
+                              data-action="mauhd-cre"
+                              class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|mauhd-cre|')}" 
+                            >
+                              <i class="mdi mdi mdi-plus-circle-outline"> </i
+                              ><span class="d-none d-md-inline">Thêm mới</span>
+                            </button>
+                            <button type="button" title="Chi tiết" data-action="mauhd-detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|mauhd-detail|')}" th:disabled="true" >
+                            <i class="mdi mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
+                            </button>
+                            				
+                            				<button type="button" title="Thay đổi" data-action="mauhd-edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|mauhd-edit|')}" th:disabled="true" >
+                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div> 
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+				<style>
+				.text-red{
+				color: red;
+				}
+				</style>
+				<script type="text/javascript">
+				_gridMain = $('#f-mauhd').find('#grid');
+				</script>
+				
+			<script type="text/javascript">
+			$(function(){
+				_gridMain.kendoGrid({
+					dataSource: new kendo.data.DataSource({
+						transport: {
+							read: {
+								type: 'POST',
+								url: ROOT_PATH + '/main/mauhd/search',
+			                    dataType: 'json',
+			                    data: function(){return getDataSearch();},
+			                    beforeSend: function(req){
+			                    	initAjaxJsonGridRequest(req);
+			                	},
+							}
+						},
+						requestEnd: function (e) {
+			               	if (e.type === "read" && e.response) {
+			               		if(e.response.errorCode == 0){
+			               		}else{
+			               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+			               		}
+			               	}
+			           	},
+			            schema: {
+							data: "rows",
+			                total: "total",
+			                model: {
+								fields: {
+								}
+							}
+						},
+						pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+						serverPaging: true,
+						serverSorting: true,
+			           	serverFiltering: true,
+			           	change: function(e) {
+			            },
+					}),
+					selectable: true, scrollable: true, 
+			 		sortable: {mode: "single", allowUnsort: true},
+					sortable: true,
+					filterable: false, resizable: true,
+					serverSorting: false,
+					pageable: {
+						refresh: true,
+						pageSizes: true,
+						buttonCount: KENDOUI_BUTTONCOUNT,
+						messages: {
+							itemsPerPage: kendoGridMessages.itemsPerPage,
+							previous: kendoGridMessages.previous,
+							next: kendoGridMessages.next,
+							refresh: kendoGridMessages.refresh,
+							last: kendoGridMessages.last,
+							first: kendoGridMessages.first,
+							empty: kendoGridMessages.empty,
+							display: kendoGridMessages.display
+						},
+						pageSizes: KENDOUI_PAGESIZES,
+						numeric: true
+					},
+					dataBinding: function () {
+			            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+			        },
+			        columns: [
+			        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+			  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+			  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+			  			},
+			  			{field: 'isCheck', title: '', width: '60px', encoded: false
+							, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+							, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+							, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+							, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
+						},
+			  			{field: 'func', title: '', width: '50px', encoded: false
+			  				, headerTemplate: '&nbsp;'
+							, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
+							, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+						, template: '#= window.setTemplateForGridMAIN("func", data) #'
+						},
+						{field: 'MauSo', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số</a>',
+							attributes: {'class': 'table-cell text-center'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						{field: 'PhoiHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Phôi hóa đơn</a>',
+							attributes: {'class': 'table-cell text-center'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						
+						{field: 'LoaiHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Loại hóa đơn</a>',
+							attributes: {'class': 'table-cell text-center'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+				
+						{field: 'IsActive', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng Thái</a>',
+							attributes: {'class': 'table-cell text-left'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+					
+						
+			    	],
+					dataBound: function(e) {
+
+						
+						$("#f-mauhd").find('button[data-action="mauhd-detail"], button[data-action="mauhd-edit"]').prop('disabled', true);
+						
+						_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+						_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+							e.preventDefault();/*e.stopPropagation();*/
+							
+							var $obj = $(this);
+							var $tr = $obj.closest('tr');
+							var subAction = $obj.attr('data-sub-action');
+							
+							var indexRow = $tr.index();
+							var rowData = null;
+							var objData = {};
+							var objURL = {};
+							
+							switch (subAction) {
+							case 'viewpdf':
+								rowData = _gridMain.data("kendoGrid").dataItem($tr);
+								window.open(ROOT_PATH + '/common/viewpdf/' + rowData['_id'],'_blank');
+								break;
+							case 'delete':
+							case 'deactive':
+							case 'active':					
+								if('delete' == subAction){
+									objURL['check'] = ROOT_PATH + '/main/mauhd-del/check-data';
+									objURL['exec'] = ROOT_PATH + '/main/mauhd-del/exec-data';
+								}else if('active' == subAction){
+									objURL['check'] = ROOT_PATH + '/main/mauhd-active/check-data';
+									objURL['exec'] = ROOT_PATH + '/main/mauhd-active/exec-data';
+								}
+								else {
+									objURL['check'] = ROOT_PATH + '/main/mauhd-deactive/check-data';
+									objURL['exec'] = ROOT_PATH + '/main/mauhd-deactive/exec-data';
+								}
+								rowData = _gridMain.data("kendoGrid").dataItem($tr);
+								objData['_id'] = rowData['_id'];
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: objURL['check'],
+									data: objData,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												var responseData = res.responseData;
+												
+												var confirmText = responseData['CONFIRM'];
+												tokenTransaction = responseData['TOKEN'];
+												
+												objData['tokenTransaction'] = tokenTransaction;
+												
+												alertConfirm(confirmText,
+													function(e){
+														$.ajax({
+															type: "POST",
+															datatype: "json",
+															url: objURL['exec'],
+															data: objData,
+															beforeSend: function(req) {
+																initAjaxJsonRequest(req);
+													        	showLoading();
+															},
+															success:function(res) {
+																hideLoading();
+																if(res) {
+																	if(res.errorCode == 0) {
+																		_gridMain.data("kendoGrid").dataSource.read();
+																	}else{
+																		alertDLSuccess(createObjectError(res).html(), function(){});
+																	}
+																}else{
+																	alertDLSuccess('unknown error!!!', function(){});
+																	hideLoading();
+																}
+															},
+															error:function (xhr, ajaxOptions, thrownError){
+																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+													            hideLoading();
+													        }
+														});
+													},
+													function(e){}
+												);
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+								break;
+							default:
+								break;
+							}
+						});
+						
+					}
+				});
+				
+				
+				_gridMain.find('table[role="grid"]').find('thead').undelegate('input[type="checkbox"][data-check-all]', 'click');
+				_gridMain.find('table[role="grid"]').find('thead').delegate('input[type="checkbox"][data-check-all]', 'click', function(e){
+					var _obj = this;
+					
+					_gridMain.find('table[role="grid"] tbody input[type="checkbox"][data-check-item]').prop('checked', $(_obj).prop('checked'));
+					if ($(_obj).prop('checked')) {
+						_gridMain.find(' tbody tr').addClass("k-state-selected");
+					}else{
+						_gridMain.find(' tbody tr').removeClass("k-state-selected");
+					}
+					
+					isDisabledEditDel();
+				});
+				
+				_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+				_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+					var $tr = $(this).closest("tr");
+
+					var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					$("#f-mauhd").find('button[data-action="mauhd-detail"]').prop('disabled', false);	
+					$("#f-mauhd").find('button[data-action="mauhd-edit"]').prop('disabled', 'Đã xóa' != rowData['IsActive']? false: true);
+					
+					//$("#f-mauhd").find('button[data-action="mauhd-edit"]').prop('disabled', false);	
+					var $tr = $(this).closest("tr");
+					var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					
+					
+				});
+				
+				_gridMain.find('table[role="grid"]').find('thead').undelegate('input[type="checkbox"][data-check-all]', 'click');
+				_gridMain.find('table[role="grid"]').find('thead').delegate('input[type="checkbox"][data-check-all]', 'click', function(e){
+					var _obj = this;
+					
+					_gridMain.find('table[role="grid"] tbody input[type="checkbox"][data-check-item]').prop('checked', $(_obj).prop('checked'));
+					if ($(_obj).prop('checked')) {
+						_gridMain.find(' tbody tr').addClass("k-state-selected");
+					}else{
+						_gridMain.find(' tbody tr').removeClass("k-state-selected");
+					}
+					
+					disableEnabledAllButton();
+				});
+
+				_gridMain.find('table[role="grid"]').find('tbody').undelegate('input[type="checkbox"][data-check-item]', 'click');
+				_gridMain.find('table[role="grid"]').find('tbody').delegate('input[type="checkbox"][data-check-item]', 'click', function(e){
+					var checked = $(this).prop('checked');
+					if(checked){
+						$(this).closest("tr").addClass("k-state-selected");
+					}else{
+						$(this).closest("tr").removeClass("k-state-selected");
+					}
+					_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+					disableEnabledAllButton();
+				});
+
+				_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr td:not(:eq(1))', 'click');
+				_gridMain.find('table[role="grid"]').find('tbody').delegate('tr td:not(:eq(1))', 'click', function(e){
+					var _obj = $(this).closest("tr");
+					
+					var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
+					$(_obj).find('input[type=checkbox][data-check-item]').prop('checked', !_oldChecked);
+					if(!_oldChecked){
+						$(this).closest("tr").addClass("k-state-selected");
+					}else{
+						$(this).closest("tr").removeClass("k-state-selected");
+					}
+					_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+					disableEnabledAllButton();
+				});
+				
+				$("#f-mauhd").undelegate('a.download-plugin', 'click');
+				$("#f-mauhd").delegate('a.download-plugin', 'click', function(event){
+					event.preventDefault();/*event.stopPropagation();*/
+					
+					window.open(ROOT_PATH + '/main/common/download-plugin', '_blank');
+				});
+				
+				$("#f-mauhd").find('button[data-action]').click(function (event) {
+					event.preventDefault();/*event.stopPropagation();*/
+					var dataAction = $(this).data('action');
+					
+					var $obj = $(this);
+					
+					var rowData = null;
+					var actionCheck = '|mauhd-edit|mauhd-detail|';
+					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+					
+					var ids = null;
+					var idx = -1;
+					if(actionCheck.indexOf('|' + dataAction + '|') != -1 && 0 == checkRows.length){
+						alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+						return;
+					}
+					
+					var objData = {};
+					switch (dataAction) {
+					
+					case 'mauhd-edit':
+					case 'mauhd-detail':
+						objData = {};
+						idx = $(checkRows[0].closest("tr")).index();
+						rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+						objData['_id'] = rowData['_id'];
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+						break;
+				
+					case 'mauhd-cre':
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+						break;
+					case 'search':
+						_gridMain.data("kendoGrid").dataSource.page(1);
+						break;
+				
+					default:
+						break;
+					}
+				});
+				
+			});
+
+				function getDataSearch(){
+								var dataPost = {};
+								
+								dataPost['loaihd'] = $('#f-mauhd #loaihd').val() == null? '': $('#f-mauhd #loaihd').val();
+								dataPost['mausohd'] = $('#f-mauhd #mausohd').val() == null? '': $('#f-mauhd #mausohd').val();
+								return dataPost;
+							}
+				
+				
+				function disableEnabledAllButton(){
+					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+				//	$("#f-mauhd").find('button[data-action="export-sign"]').prop('disabled', checkRows.length == 0);
+//					$("#f-export").find('button[data-action="delete"]').prop('disabled', checkRows.length == 0);
+				}
+				
+				function setTemplateForGridMAIN(key, data){
+					var acti = data['IsActive'];
+					var eInvoiceStatus = data['EInvoiceStatus'];
+				
+					var text = '';
+					
+					switch (key) {
+					case 'func':
+						if('Chưa Hoạt động' == acti){
+							text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';						
+							
+							text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';		
+						}
+						else if('Đã xóa' == acti){
+						
+						}
+
+						else{
+							text += '<i title="Hủy kích hoạt" class="mdi mdi-close-circle fs-25 text-blue123 c-pointer" data-sub-action="deactive" ></i>';						
+							text += '<i title="Xem mẫu hóa đơn" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="viewpdf" ></i>';
+							
+						}
+						break;
+					case 'StatusDesc':
+						if('DELETED' == data['EInvoiceStatus']){
+							text = '<div style="background: red;color: white;">' + data['StatusDesc'] + '</div>';
+						}else{
+							text = data['StatusDesc'];
+						}
+						break;
+					default:
+						break;
+					}
+					
+					return text;
+				}			
+				
+			</script>
+		
+			</div>
+		</div>		
+		
+		
+	</th:block>
+</body>
+</html>

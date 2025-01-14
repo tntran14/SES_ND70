@@ -1,0 +1,40 @@
+.loader-css {
+  border: 7px solid #dcdcdc;
+  border-radius: 50%;
+  border-top: 7px solid blue;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+.preloader{
+	position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    opacity: .65;
+    z-index: 10000;
+}
+
+.page-titles {
+    padding: 10px !important;
+}
+
+.alertify.ajs-movable:not(.ajs-maximized) .ajs-header{
+	border-bottom: 1px solid rgba(0, 0, 0, .0625) !important;
+}
+
+.btn.disabled, .btn:disabled {
+    color: #212529 !important;
+}
+
+.justify-content-flex-end{
+	justify-content: flex-end !important;
+}

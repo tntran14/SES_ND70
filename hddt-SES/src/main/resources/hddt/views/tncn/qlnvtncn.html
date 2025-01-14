@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách nhân viên</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-qlnvtncn" name="f-qlnvtncn" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-r-0 p-l-0">
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="tax-code" name="tax-code" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="qlnvtncn-name" name="qlnvtncn-name" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên nhân viên</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-2 m-b-10">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+                        		
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+										 <button type="button" title="Import danh sách" data-action="import" class="btns btns-detail__ses btns-import__ses-1 hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|qlnvtncn-cre|')}">
+												<i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline"> Import danh sách</span>
+											</button> 
+											<button type="button" title="Thêm mới" data-action="cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|qlnvtncn-cre|')}">
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
+                            				</button>
+                            				<button type="button" title="Chi tiết" data-action="detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|qlnvtncn-detail|')}" th:disabled="true" >
+                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
+                            				</button>
+                            				<button type="button" title="Thay đổi" data-action="edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|qlnvtncn-edit|')}" th:disabled="true" >
+                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
+                            				</button>
+                            				<button type="button" title="Xóa" data-action="delete" class="btns btns-delete__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|qlnvtncn-del|')}" th:disabled="true" >
+                            					<i class="mdi mdi-close-box"> </i><span class="d-none d-md-inline">Xóa</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+							<div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+							
+						</div>
+					</div>
+					
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-qlnvtncn').find('#grid');
+				</script>
+				<!-- <script th:src="@{/static/function/dm/qlnvtncn.js(v=1.3) }"></script> -->
+				<script type="text/javascript">
+				$(function(){
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/qlnvtncn/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: false, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+//				 		filterable: { mode: "row"},
+						filterable: false, resizable: true,
+						serverSorting: false,
+//						height: kendoGridHeight,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+				        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+				  			{field: 'isCheck', title: '', width: '60px', encoded: false
+								, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+								, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
+							},
+							{field: 'Code', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã nhân viên</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Department', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Phòng ban</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+						
+							{field: 'TaxCode', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế nhân viên</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Name', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên nhân viên</a>',
+								attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Address', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'Date', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'UserCreated', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người tạo</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+				    	],
+				    	dataBound: function(e) {
+				    		_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', 
+								_gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length > 0 
+								&& _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0
+							);
+							isDisabledEditDel();
+				    	}
+				        
+					});
+					
+					_gridMain.find('table[role="grid"]').find('thead').undelegate('input[type="checkbox"][data-check-all]', 'click');
+					_gridMain.find('table[role="grid"]').find('thead').delegate('input[type="checkbox"][data-check-all]', 'click', function(e){
+						var _obj = this;
+						
+						_gridMain.find('table[role="grid"] tbody input[type="checkbox"][data-check-item]').prop('checked', $(_obj).prop('checked'));
+						if ($(_obj).prop('checked')) {
+							_gridMain.find(' tbody tr').addClass("k-state-selected");
+						}else{
+							_gridMain.find(' tbody tr').removeClass("k-state-selected");
+						}
+						
+						isDisabledEditDel();
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('input[type="checkbox"][data-check-item]', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('input[type="checkbox"][data-check-item]', 'click', function(e){
+						var checked = $(this).prop('checked');
+						if(checked){
+							$(this).closest("tr").addClass("k-state-selected");
+						}else{
+							$(this).closest("tr").removeClass("k-state-selected");
+						}
+						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+						isDisabledEditDel();
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr td:not(:eq(1))', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr td:not(:eq(1))', 'click', function(e){
+						var _obj = $(this).closest("tr");
+						
+						var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
+						$(_obj).find('input[type=checkbox][data-check-item]').prop('checked', !_oldChecked);
+						if(!_oldChecked){
+							$(this).closest("tr").addClass("k-state-selected");
+						}else{
+							$(this).closest("tr").removeClass("k-state-selected");
+						}
+						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+						isDisabledEditDel();
+					});
+
+					$("#f-qlnvtncn").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var $obj = $(this);
+						var objData = {};
+						
+						var rowData = null;
+						var actionCheck = '|detail|';
+						var grid = _gridMain.data("kendoGrid");
+						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+						var ids = null;
+						var idx = -1;
+						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && 0 == checkRows.length){
+							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+							return;
+						}
+						
+						switch (dataAction) {
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;
+						case 'import':
+							showPopupWithURLAndData(ROOT_PATH + '/main/qlnvtncn/import', objData, true, function(e){
+							});
+							break;
+								break;
+						case 'cre':
+							showPopupWithURLAndData(ROOT_PATH + '/main/qlnvtncn-cre/init', objData, true, function(e){
+							});
+							break;
+						case 'detail':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							
+							objData['_id'] = rowData['_id'];
+							showPopupWithURLAndData(ROOT_PATH + '/main/qlnvtncn-detail/init', objData, true, function(e){
+							});
+							break;
+						case 'edit':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							objData['_id'] = rowData['_id'];
+							showPopupWithURLAndData(ROOT_PATH + '/main/qlnvtncn-edit/init', objData, true, function(e){
+							});
+							break;
+						case 'delete':
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});
+							
+							objData = {_token: encodeObjJsonBase64UTF8(ids)};
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/qlnvtncn-del/check-data-save',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											
+											var confirmText = responseData['CONFIRM'];
+											tokenTransaction = responseData['TOKEN'];
+											
+											objData['tokenTransaction'] = tokenTransaction;
+											
+											alertConfirm(confirmText,
+												function(e){
+													$.ajax({
+														type: "POST",
+														datatype: "json",
+														url: ROOT_PATH + '/main/qlnvtncn-del/save-data',
+														data: objData,
+														beforeSend: function(req) {
+															initAjaxJsonRequest(req);
+												        	showLoading();
+														},
+														success:function(res) {
+															hideLoading();
+															if(res) {
+																if(res.errorCode == 0) {
+																	if($('#f-qlnvtncn').find('#grid').length > 0){
+																		_gridMain.data("kendoGrid").dataSource.read();
+																	}
+																}else{
+																	alertDLSuccess(createObjectError(res).html(), function(){});
+																}
+															}else{
+																alertDLSuccess('unknown error!!!', function(){});
+																hideLoading();
+															}
+														},
+														error:function (xhr, ajaxOptions, thrownError){
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+												            hideLoading();
+												        }
+													});
+												},
+												function(e){}
+											);
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+						default:
+							break;
+						}
+					});
+				});
+
+				function getDataSearch(){
+					var dataPost = {};
+					
+					dataPost['tax-code'] = $('#f-qlnvtncn #tax-code').val() == null? '': $('#f-qlnvtncn #tax-code').val();
+					dataPost['qlnvtncn-name'] = $('#f-qlnvtncn #qlnvtncn-name').val() == null? '': $('#f-qlnvtncn #qlnvtncn-name').val();
+					
+					return dataPost;
+				}
+
+				function isDisabledEditDel(){
+					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+					$('#f-qlnvtncn').find('button[data-action="edit"],button[data-action="detail"]').prop('disabled', checkRows.length != 1);
+					$('#f-qlnvtncn').find('button[data-action="delete"]').prop('disabled', checkRows.length == 0);
+				}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

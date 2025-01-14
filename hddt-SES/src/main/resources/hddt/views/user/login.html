@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:th="http://www.thymeleaf.org"	
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" type="image/png" sizes="16x16" th:href="@{/favicon.ico}" >
+    <title th:text="${_header}">Đăng nhập hệ thống</title>
+  
+    <link rel="canonical" href="https://www.wrappixel.com/templates/materialpro/">
+    
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{/static/assets/plugins/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <link th:href="@{/static/css/icons/font-awesome/css/fontawesome-all.css}" rel="stylesheet">
+	<link th:href="@{/static/css/icons/simple-line-icons/css/simple-line-icons.css}" rel="stylesheet">
+	<link th:href="@{/static/css/icons/weather-icons/css/weather-icons.min.css}" rel="stylesheet">
+	<link th:href="@{/static/css/icons/linea-icons/linea.css}" rel="stylesheet">
+	<link th:href="@{/static/css/icons/themify-icons/themify-icons.css}" rel="stylesheet">
+	<link th:href="@{/static/css/icons/flag-icon-css/flag-icon.min.css}" rel="stylesheet">	    
+    <link th:href="@{/static/css/icons/material-design-iconic-font/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <link th:href="@{/static/css/spinners.css}" rel="stylesheet">
+    <link th:href="@{/static/css/animate.css}" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link th:href="@{/static/css/style.css(v=1.7)}" rel="stylesheet">
+    <!-- You can change the theme colors from here -->
+    <link th:href="@{/static/css/colors/blue.css}" id="theme" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	
+	<!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script th:src="@{/static/assets/plugins/jquery/jquery.min.js}"></script>
+	
+	<link th:href="@{/static/css/style-util.css}" rel="stylesheet">
+	<link th:href="@{/static/css/style-admin.css}" rel="stylesheet">
+	<link th:href="@{/static/css/style-admin-custom.css(v=1.3)}" rel="stylesheet">
+	
+	<link th:href="@{/static/css/style.custom.css}" rel="stylesheet">
+	
+	<link th:href="@{/static/assets/alertify/alertify.min.css}" rel="stylesheet">
+	<script th:src="@{/static/assets/alertify/alertify.min.js}"></script>
+</head>
+<body>
+<style>
+.sp-email,
+.sp-phone {
+  display: flex;
+  align-items: center;
+}
+.sp-email .sp--email__icon {
+  color: var(--nav-green);
+  font-size: 16px;
+}
+.sp-email .sp--email__txt {
+  color: red;
+  font-weight: 600;
+  font-size: 16px;
+  margin-left: 10px;
+  position: relative;
+  top: -2px;
+}
+.sp-phone {
+  padding: 8px 0;
+}
+.sp-phone .sp-phone__icon {
+  color: var(--nav-green);
+  font-size: 16px;
+  font-weight: 600;
+}
+.sp-phone .sp-phone__txt {
+  color: red;
+  font-size: 16px;
+  margin-left: 12px;
+  font-weight: 600;
+}
+.forgot-password {
+  font-size: 15px;
+}
+</style>
+
+	<!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader" style="opacity: 0.5"><svg class="circular" viewbox="25 25 50 50"><circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle> </svg></div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <section id="wrapper" >
+<!--         <div class="login-register" style="background-image:url(../assets/images/background/login-register.jpg);"> -->
+ <div class="col-12 main-wrapper">
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-5 col-lg-5 login-ses__wrap--km">
+            <div class="blogs-main">
+            
+           
+           
+           
+           
+           
+              <div class="blogs-list" th:each="l: ${TinWebL}">
+                <div class="blogs-wrap">
+                  <div class="blogs-icon">
+                    <i class="fa fa-certificate m-r-5"></i>
+                  </div>
+                  <div class="blogs-wrap__main">
+                    <a class="blogs-wrap__heading" href="javascript:void(0);">
+                      <span>[[${l.Chude}]]</span>
+                    </a>
+                    <p class="blogs-wrap__desc">
+                   [[${l.Tieude} ]]
+                    </p>
+                    <a
+                      class="blogs-wrap__cta"
+                    th:href="@{${l.Link}}"
+                      target="blank"
+                      ><span>Xem chi tiết</span></a
+                    >
+                  </div>
+                </div>
+              </div>
+
+        
+            
+            
+            
+            
+            
+            
+            
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-7 col-lg-4 login-ses__wrap--box">
+                <div class="login-box card">
+                <div class="card-body p-l-40 p-r-40">
+                	<form class="form-login__main form-horizontal form-material authform" id="loginform" th:action="@{/authenticate}" method="post" enctype="application/x-www-form-urlencoded">
+					<div class="form-logo__head text-center">
+               	<img th:src="*{'data:realCaptcha/jpg;base64,'+ LOGO }" />
+              </div>
+              <h3 class="box-title m-b-20 text-uppercase font-bold text-center">
+                ĐĂNG NHẬP SES - INVOICE
+              </h3>
+						<div class="form-group ">
+							<div class="col-xs-12">
+								<input name="j_username" class="form-control" type="text" required placeholder="Tên đăng nhập" readonly="readonly" autocomplete="given-name" > 
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-12">
+								<input name="j_password" class="form-control" type="password" required placeholder="Mật khẩu" readonly="readonly" autocomplete="new-password" >
+							</div>
+						</div>
+						<div class="form-group captcha">
+							<div class="col-xs-12">
+								<div class="d-flex">
+									<div>
+										<img class="rounded " alt="" id="idImageCap" >
+									</div>
+									<div class="p-l-16">
+										<input type="text" class="form-control form-control-sm" id="j_captcha" name="j_captcha" required placeholder="Mã xác nhận" maxlength="10" readonly="readonly" autocomplete="off" >
+									</div>
+								
+								</div>
+							</div>
+						</div>
+						
+						
+					
+						<div class="form-group ">
+							<div class="d-flex no-block align-items-center">
+								<div class="ml-auto">
+									<a href="/hddt/forgotpass"  class="text-muted"><i class="fa fa-lock m-r-5"></i> Quên mật khẩu?</a> 
+								</div>
+							</div>
+						</div>
+						<div class="form-group text-center m-t-20">
+							<div class="col-xs-12">
+								<button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light login p-t-4 p-b-4" type="submit">Đăng nhập</button>
+							</div>
+						</div>
+						<div class="support-nav">
+                <div>
+                  <div class="sp-email">
+                    <span class="sp--email__icon">
+                      <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </span>
+                    <span class="sp--email__txt" th:text="${EMAIL}"></span>
+                  </div>
+                  <div class="sp-phone">
+                    <span class="sp-phone__icon"
+                      ><i class="fa fa-phone" aria-hidden="true"></i>
+                    </span>
+                    <span class="sp-phone__txt" th:text="${PHONE}"></span>
+                  </div>
+                </div>
+              </div>
+					</form>
+					<script>
+					$(document).ready(function(event) {
+						setTimeout(function(){
+							$('.authform').find('input[name="j_username"], input[name="j_password"], input[name="j_captcha"]').prop('readonly', false);
+						}, 1000);
+						refreshCaptcha($('.authform').find('#idImageCap'));
+						
+						$('.authform').find('#idImageCap, #btChangeCaptcha').click(function(event) {
+							event.preventDefault();/* event.stopPropagation(); */
+							refreshCaptcha($('.authform').find('#idImageCap'));
+						});
+						
+						$('.authform').find("button.login").click(function (event) {
+							event.preventDefault();/* event.stopPropagation(); */
+							var dataLogin = $(".authform").serializeObject();
+							
+							var $obj = $(this);
+							$obj.prop('disabled', true);
+							var $form = $('form.authform');
+							var _action = $form.attr('action');
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: _action,
+								data: dataLogin,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									$obj.prop('disabled', false);
+									refreshCaptcha($('.authform').find('#idImageCap'));
+									$('.authform').find('input[name="j_captcha"]').val('');
+									
+									if(res) {
+										if(res.errorCode == 0) {
+											location.href= ROOT_PATH + '/main';
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+											hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									refreshCaptcha($('.authform').find('#idImageCap'));
+									$('.authform').find('input[name="j_captcha"]').val('');
+									$obj.prop('disabled', false);
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							return false;
+						});
+						
+					});
+					</script>
+                </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-12 col-lg-3 login-ses__wrap--sp">
+            <div class="support-list">
+         
+         
+         
+         
+         
+         
+         
+         
+              <div class="support-card"th:each="r: ${TinWebR}">
+                <p class="text-uppercase support-wrap">
+                  <i class="fa fa-certificate m-r-5"></i>
+                  <span class="support-wrap__title">[[${r.Chude}]]</span>
+                </p>
+                <p class="_700 m-b-xs support-item support-data">
+                  <a class="text-dark _600" 
+                   th:utext="${r.Noidung}" >
+                    </a>
+                </p>
+
+              
+              </div>
+
+    
+            
+            </div>
+          </div>
+        </div>
+      </div>
+       
+            
+    </section>
+    
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- Bootstrap tether Core JavaScript -->
+	    <script th:src="@{/static/assets/plugins/popper/popper.min.js}"></script>
+	    <script th:src="@{/static/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
+	    <!-- slimscrollbar scrollbar JavaScript -->
+	    <script th:src="@{/static/js/jquery.slimscroll.js}"></script>
+	    <!--Wave Effects -->
+	    <script th:src="@{/static/js/waves.js}"></script>
+	    <!--Menu sidebar -->
+	    <script th:src="@{/static/js/sidebarmenu.js}"></script>
+	    <!--stickey kit -->
+	    <script th:src="@{/static/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js}"></script>
+	    <script th:src="@{/static/assets/plugins/sparkline/jquery.sparkline.min.js}"></script>
+	    <!--Custom JavaScript -->
+<!-- 	    <script th:src="@{/js/custom.min.js}"></script> -->
+		<script th:src="@{/static/js/customs.js(v=0.5)}"></script>
+	    <!-- ============================================================== -->
+	    <!-- Style switcher -->
+	    <!-- ============================================================== -->
+	    <script th:src="@{/static/assets/plugins/styleswitcher/jQuery.style.switcher.js}"></script>
+	    
+	    <script th:src="@{/static/js/custom.hddt.js}"></script>
+    <script>
+    ROOT_PATH = '[[${#httpServletRequest.getContextPath()}]]';
+	_csrf_value = '[[${_csrf.token}]]';_csrf_name = '[[${_csrf.parameterName}]]';
+    </script>
+</body>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="fRolesManageAdminCRUD" name="fRolesManageAdminCRUD" method="post" enctype="multipart/form-data" >
+			<div class="row text-danger m-b-10 fw-500" th:if="${messageError != null}">
+				[[${messageError}]]
+				<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+			</div>
+			<div class="row" th:classappend="${messageError != null? 'none-pointer-event': ''}" >
+				<div class="col-lg-12 p-0">
+					<div class="form-group m-b-5">
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="card">
+									<div class="card-body">
+										<div class="form-group m-b-5">
+											<div class="row m-b-5">
+												<label class="control-label col-sm-4 m-b-0 m-t-10 text-muted">Mã nhóm quyền <span class="text-danger" th:if="${'CREATE' == _action_}" >*</span></label>
+												<div class="col-sm-8 p-l-0">
+													<input class="form-control form-control-sm text-uppercase" type="text"  id="roleId" name="roleId" th:readonly="${'CREATE' != _action_}" th:value="${RoleId}" autocomplete="off" >
+													<div class="text-danger form-control-feedback fs-10" th:if="${'CREATE' == _action_}">Mã nhóm quyền bao gồm [A-Z0-9_-.] và bắt đầu bằng ký tự [A-Z].</div>
+												</div>
+											</div>
+											<div class="row m-b-5">
+												<label class="control-label col-sm-4 m-b-0 m-t-10 text-muted">Tên nhóm quyền <span class="text-danger" th:if="${_isedit_}" >*</span></label>
+												<div class="col-sm-8 p-l-0">
+													<input class="form-control form-control-sm" type="text" id="roleName" name="roleName" th:readonly="${!_isedit_}" th:value="${RoleName}" autocomplete="off" >
+												</div>
+											</div>
+											<div class="row m-b-5" th:if="false">
+												<div class="col-sm-8 offset-sm-4 p-l-0">
+													<label class="custom-control custom-checkbox m-b-0">
+														<input type="checkbox" class="custom-control-input" name="chkActive" th:disabled="${'ACTIVE' != _action_ && 'CREATE' != _action_}" th:checked="${ActiveFlag}" ><span class="custom-control-label p-t-2">Kích hoạt</span>
+													</label>
+												</div>
+											</div>
+										<th:block th:if="${'CREATE' != _action_}">
+											<div class="row m-b-5">
+												<label class="control-label col-sm-4 m-b-0 m-t-10 text-muted">Ngày tạo</label>
+												<div class="col-sm-8 p-l-0">
+													<input class="form-control form-control-sm" type="text" readonly="readonly" th:value="${CreateDate}" >
+												</div>
+											</div>
+											<div class="row m-b-5">
+												<label class="control-label col-sm-4 m-b-0 m-t-10 text-muted">Người tạo</label>
+												<div class="col-sm-8 p-l-0">
+													<input class="form-control form-control-sm" type="text" readonly="readonly" th:value="${CreateUser}" >
+												</div>
+											</div>
+										</th:block>
+											
+										</div>
+										
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="card">
+									<div class="card-body">
+										<div class="form-group m-b-5">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group m-b-0 zTreeMenuBackground" style="height: ">
+														<!-- zTree -->
+														<ul id="treeViewMenu" class="ztree"></ul>
+													</div>
+												</div>
+											</div>
+											
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<div class="button-group text-right">
+		<button type="button" id="btAccept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError && 'DETAIL' != _action_}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+		<button type="button" id="btDlgClose" class="btn btn-sm btn-outline-secondary " data-dismiss="modal"><i class="mdi mdi-power mR-5"></i> Đóng</button>
+	</div>
+</div>
+<script type="text/javascript">
+transactionMain = '[[${transaction}]]';
+var _allowChecked = [[${_isedit_}]];
+</script>
+<!-- <script th:src="@{/static/js/role-admin/system/rolesRightManageCrud.js(v=2.0) }"></script> -->
+<script type="text/javascript">
+var settingZTree = {
+		view: {
+			dblClickExpand: true,
+			selectedMulti: false,
+			showLine: false,
+	        nameIsHTML: true,
+		},
+		check: {
+			enable: true,
+			chkboxType: { "Y": "s", "N": "s" }
+		},
+		data: {
+			key: {
+				title:"name"
+			},
+			simpleData: {
+				enable: true,
+				idKey: "id",	//tree node ID name
+	            pIdKey: "pid",	//parent node ID name
+	            rootPId: -1, 	//root node ID
+			}
+		},
+		callback: {
+			onCheck: onCheckZTree
+		}
+	};
+
+	$(function(){
+		//inputFilterPosition($('#fRolesManageAdminCRUD').find('#roleId'))
+		
+		$('#fRolesManageAdminCRUD').find('#treeViewMenu').undelegate('span.chk', 'click');
+		$('#fRolesManageAdminCRUD').find('#treeViewMenu').delegate('span.chk', 'click', function(e){
+//			e.preventDefault();
+//			if(!_allowChecked){
+//				return !_allowChecked;	
+//			}
+			return _allowChecked;
+	    });
+		
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/common/getFullRightAdminManager',
+			data: {},
+			beforeSend: function(req) {
+				initAjaxJsonArrayRequest(req);
+			},
+			success:function(res) {
+				
+				if(res) {
+					$.fn.zTree.init($('#fRolesManageAdminCRUD').find("#treeViewMenu"), settingZTree, res);
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+	            hideLoading();
+	        }
+		});
+		
+		$('div.modal-footer').find("#btAccept").click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var _obj = this;
+			$(_obj).prop('disabled', true);
+			
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+				data: getPopupDataToSave(),
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					$(_obj).prop('disabled', false);
+					hideLoading();
+					if(res) {
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							alertConfirm(confirmText,
+									function(e) {
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+											data: getPopupDataToSave() + '&tokenTransaction=' + tokenTransaction,
+											beforeSend: function(req) {
+												initAjaxJsonRequest(req);
+									        	showLoading();
+											},
+											success:function(res) {
+												hideLoading();
+												if(res) {
+													if(res.errorCode == 0) {
+														alertDLSuccess(createObjectError(res).html(), function(){
+															if($('#fRolesManageAdmin').find('#grid').length > 0){
+																_gridMain.data("kendoGrid").dataSource.read();
+															}
+															$('#fRolesManageAdminCRUD').closest("div.modal").modal("hide");
+															$('#fRolesManageAdminCRUD').closest("div.modal").find('.modal-content').empty();
+														});
+													}else{
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+												}else{
+													alertDLSuccess('unknown error!!!', function(){});
+													hideLoading();
+												}
+											},
+											error:function (xhr, ajaxOptions, thrownError){
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+									            hideLoading();
+									        }
+										});
+									},
+									function(e) {
+										
+									}
+								);
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					}else{
+						alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					$(_obj).prop('disabled', false);
+					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		            hideLoading();
+		        }
+			});
+			
+		});
+		
+	});
+
+	function onCheckZTree(e, treeId, treeNode) {
+		
+	}
+
+	function getPopupDataToSave(){
+		var dataPost = $("#fRolesManageAdminCRUD").serializeIncludeDisabled() + '&';
+		
+		var arrayActions = [];
+		var treeObj = $.fn.zTree.getZTreeObj("treeViewMenu");
+		var nodes = treeObj.getCheckedNodes(true);
+		$.each(nodes, function( index, value ){
+		    if(value['action'] != null){
+		    	arrayActions.push(value['action']);
+		    }
+		});
+		dataPost += 'rightactions=' + encodeObjJsonBase64UTF8(arrayActions) + '&';
+		
+		return dataPost;
+	}
+
+</script>
+
+</html>

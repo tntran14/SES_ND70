@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+			  <div class="container-fluid style-main-content" id="divMainContent">
+          <div class="container__dashboard">
+            <div class="row page-titles m-t-32 m-b-32">
+              <div class="col-md-12 col-12 align-self-center p-l-0">
+                <h2 class="font-bold m-b-0 m-t-0 text-uppercase text-center">
+                  SỐ LƯỢNG KHÁCH HÀNG TRUY CẬP VÀO HỆ THỐNG
+                </h2>
+     
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <div>               
+                  <div  th:if="${ActiveUsers != null}">
+                     <div class="row m-t-16 justify-content-center">
+						 
+                    <div class="col-12 col-sm-12 col-md-4">
+                      <div class="s-invoice__item">
+                        <div class="s-invoice__body s-invoice__green">
+                          <h5>Số lượng truy cập thực</h5>
+                          <p  th:text="${ActiveUsers}"></p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  <!--     <div class="col-12 col-sm-12 col-md-4">
+                      <div class="s-invoice__item">
+                        <div class="s-invoice__body s-invoice__green">
+                          <h5>Số lượng thực</h5>
+                          <p  th:text="${ActiveUsers}"></p>
+                        </div>
+                      </div>
+                    </div>-->
+                    
+                  </div>
+                 </div>             
+                </div>
+              </div>
+              
+       
+           
+            </div>
+          </div>
+        </div>
+	
+	</th:block>
+</body>
+</html>

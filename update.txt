@@ -1,0 +1,14 @@
+danh sach hoa don vat
+MST
+6000420044
+
+22.09.2024-update
+"HDDCKPTQuan" : "1" cho isuer PTQ
+
+
+
+    "IsUserHDDT" : true,
+    "MaCQT" : "EUS3W",
+    "Status" : true,
+    "HDDCKPTQuan" : "1"
+}

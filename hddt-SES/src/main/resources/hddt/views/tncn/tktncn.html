@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">THỐNG KÊ CHỨNG TỪ KHẤU TRỪ THU NHẬP CÁ NHÂN</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form name="f-report" id="f-report"
+					method="post" enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-l p-r">
+								<div class="col-sm-12 offset-md-2 col-md-8 b-a m-b-sm">
+									<div class="col-12 custom-field m-b-16">
+										<div class="c-f__wrapper">
+											<select id="quarterMonth" name="quarterMonth"
+												th:object="${PARAM_QUARTERMONTH}"
+												class="form-control form-control-sm c-f__textbox">
+												<option th:id="${quater_month.id}"
+													th:each="quater_month : ${PARAM_QUARTERMONTH}"
+													th:value="${quater_month.id}" th:text="${quater_month.desc}"></option>
+											</select>
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Quý/Tháng</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="col-12 custom-field m-b-16">
+										<div class="c-f__wrapper">
+											<select id="year" name="year" th:object="${PARAM_YEARS}"
+												class="form-control form-control-sm c-f__textbox">
+												<option th:id="${years.id}" th:each="years : ${PARAM_YEARS}"
+													
+th:value="${years.id}" th:text="${years.desc}"  th:selected="${YEAR == years.id}"></option>
+											</select>
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Năm</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="text-right col-12">
+										<!-- 	<button type="button" title="In báo cáo HTML" data-action="tktncn-html" class="btns btns-detail__ses hover-up__ses"
+											th:if="${#strings.contains(UserFullPathRight,'|tktncn-html|')}">
+												<i class="mdi mdi-xml"></i><span class="d-md-inline">In báo cáo HTML</span>
+											</button> -->
+									<!-- 	<button type="button" title="Xuất báo cáo PDF" data-action="tktncn-pdf"
+											class="btns btns-detail__ses hover-up__ses"
+										th:if="${#strings.contains(UserFullPathRight,'|tktncn-pdf|')}">
+											<i class="mdi mdi-file-pdf"> </i><span class="d-md-inline">Xuất báo cáo PDF</span>
+										</button> -->
+										
+										<button type="button" title="Xuất Excel" data-action="tktncn-excel"
+											class="btns btns-detail__ses btns-import__ses-1 hover-up__ses"
+										th:if="${#strings.contains(UserFullPathRight,'|tktncn-excel|')}">
+											<i class="mdi mdi-xml"> </i><span class="d-md-inline">Xuất EXCEL</span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+
+
+				<script type="text/javascript">
+					transactionMain = 'report'
+				</script>
+
+				<script>
+				$(function() {
+					disabledExport();
+					$("#f-report").find('#quarterMonth, #year').change(function (event) {
+						event.preventDefault();event.stopPropagation();
+						disabledExport();
+					});
+					
+					$("#f-report").find('button[data-action]').click(function (event) {
+						event.preventDefault();event.stopPropagation();
+						var dataAction = $(this).data('action');
+						if(null == dataAction) dataAction = 'excel';
+						$.ajax({
+							type: "POST",
+							datatype: "json",
+							url: ROOT_PATH + "/main/tktncn/checkDataToExport",
+							data: getDataToExport(),					
+							beforeSend: function(req) {
+								initAjaxJsonRequest(req);
+					        	showLoading();
+							},
+							success:function(res) {
+								hideLoading();
+								if(res) {		
+					
+									if(res.errorCode == 0) {																				
+										if(res.errorMessages !=null){		
+											var messager = res.errorMessages.toString();
+											alertConfirm(messager);											
+										}else{
+											switch (dataAction) {									
+											case 'tktncn-pdf':
+												var pdf = "viewReportPdf";
+												objData = res.responseData +"-"+ pdf;
+											
+												window.open(ROOT_PATH + '/main/tktncn/viewReportPdf/' + objData,'_blank');
+												break;
+											case 'tktncn-excel':
+												var xml = "exportDataExcel";
+												objData = res.responseData +"-"+ xml;
+												window.open(ROOT_PATH + '/main/tktncn/exportDataExcel/' + objData,'_blank');
+												break;
+											default:
+												break;
+											}	
+										}
+										
+										
+									}else{
+									notificationDLSuccess(createObjectError(res.response).html(), function(){});
+									}
+								}else{
+									alertDLSuccess('unknown error!!!', function(){});
+									hideLoading();
+								}
+							},
+							error:function (xhr, ajaxOptions, thrownError){
+								alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+					            hideLoading();
+					        }
+						});
+					});
+					
+				});
+
+				function disabledExport(){
+					var quarterMonth = null == $("#f-report").find('#quarterMonth').val()? '': $("#f-report").find('#quarterMonth').val();
+					var year = null == $("#f-report").find('#year').val()? '': $("#f-report").find('#year').val();
+					$("#f-report").find('button[name="btExport"]').prop('disabled', !('' != quarterMonth && year != ''));
+				}
+
+				function getDataToExport(){
+					var dataPost = $("#f-report").serializeIncludeDisabled() + '&';
+					dataPost += _csrf_name + '=' + _csrf_value;
+					return dataPost;
+				}
+				</script>
+			</div>
+		</div>
+
+	</th:block>
+
+</body>
+</html>

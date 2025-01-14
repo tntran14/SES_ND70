@@ -1,0 +1,1161 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		
+     <div
+          class="container-fluid hide style-main-content"
+          id="divSubContent"
+          style="display: block"
+        >
+          <div class="row page-titles">
+            <div class="col-12 align-self-center p-l-0 centerX">
+              <h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">
+                Tạo mới thông báo phát hành
+              </h3>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <form
+                id="f-einvoice-crud"
+                name="f-einvoice-crud"
+                method="post"
+                enctype="multipart/form-data"
+                data-an-count="30"
+                data-an-form-handler="xu5ug"
+              >
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group row m-b-6">
+                      <div class="col-md-6">
+                        <div class="row m-b-16">
+                          <div class="col-12">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="nban-ten"
+                                name="nban-ten"
+                                class="form-control form-control-sm c-f__textbox"
+                                value="CÔNG TY TNHH EVER WEALTHY VIỆT NAM"
+                                type="text"
+                                autocomplete="off"
+                                readonly="readonly"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Tên đơn vị</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row m-b-16">
+                          <div class="col-12">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="nban-dchi"
+                                name="nban-dchi"
+                                class="form-control form-control-sm c-f__textbox"
+                                value="40/1B Tô Ký, khu phố 2, Phường Trung Mỹ Tây, Quận 12, TP.HCM"
+                                type="text"
+                                autocomplete="off"
+                                readonly="readonly"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Địa chỉ</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row m-b-16">
+                          <div class="col-12">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="ten-loai-hd"
+                                name="ten-loai-hd"
+                                class="form-control form-control-sm c-f__textbox"
+                                type="text"
+                                autocomplete="off"
+                                readonly="readonly"
+                                value="Nguyễn Văn A"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Người đại diện</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="row m-b-16">
+                          <div class="col-12">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="nban-mst"
+                                name="nban-mst"
+                                class="form-control form-control-sm c-f__textbox"
+                                value="0313561363"
+                                type="text"
+                                autocomplete="off"
+                                readonly="readonly"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Mã số thuế</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row m-b-16">
+                          <div class="col-12">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="nban-sdt"
+                                name="nban-sdt"
+                                class="form-control form-control-sm c-f__textbox"
+                                value=""
+                                type="text"
+                                autocomplete="off"
+                                readonly="readonly"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Số điện thoại</label>
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="row">
+                          <div
+                            class="col-12 col-sm-6 col-md-6 custom-field m-b-16"
+                          >
+                            <div class="c-f__wrapper c-service__related">
+                              <select
+                                class="form-control form-control-sm select2-hidden-accessible c-f__textbox"
+                                id="taskServiceRelate"
+                                name="taskServiceRelate"
+                                data-select2-id="taskServiceRelate"
+                                tabindex="-1"
+                                aria-hidden="true"
+                              >
+                                <option value="" data-select2-id="43"></option>
+
+                                <option
+                                  value="5fb8e4c29b1efd7ed0434585"
+                                  data-select2-id="51"
+                                >
+                                  Hà Nội
+                                </option>
+                              </select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Tỉnh/Thành phố</label>
+                                </legend>
+                              </fieldset>
+                              <!-- <span
+														class="
+															select2
+															select2-container
+															select2-container--default
+															select2-container--above
+														"
+														dir="ltr"
+														data-select2-id="42"
+														style="width: 100%"
+														><span class="selection"
+															><span
+																class="
+																	select2-selection
+																	select2-selection--single
+																"
+																role="combobox"
+																aria-haspopup="true"
+																aria-expanded="false"
+																tabindex="0"
+																aria-labelledby="select2-taskServiceRelate-container"
+																><span
+																	class="select2-selection__rendered"
+																	id="select2-taskServiceRelate-container"
+																	role="textbox"
+																	aria-readonly="true"
+																	><span
+																		class="select2-selection__placeholder"
+																	></span></span
+																><span
+																	class="select2-selection__arrow"
+																	role="presentation"
+																	><b
+																		role="presentation"
+																	></b></span></span></span
+														><span
+															class="dropdown-wrapper"
+															aria-hidden="true"
+														></span
+													></span> -->
+                            </div>
+                          </div>
+                          <div
+                            class="col-12 col-sm-6 col-md-6 custom-field m-b-16"
+                          >
+                            <div class="c-f__wrapper c-service__related">
+                              <select
+                                class="form-control form-control-sm select2-hidden-accessible c-f__textbox"
+                                id="taxAuthorities"
+                                name="taxAuthorities"
+                                data-select2-id="taxAuthorities"
+                                tabindex="-1"
+                                aria-hidden="true"
+                              >
+                                <option value="" data-select2-id="43"></option>
+
+                                <option
+                                  value="5fb8e4c29b1efd7ed0434585"
+                                  data-select2-id="51"
+                                >
+                                  Hà Nội
+                                </option>
+                              </select>
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label>Cơ quan thuế</label>
+                                </legend>
+                              </fieldset>
+                              <!-- <span
+														class="
+															select2
+															select2-container
+															select2-container--default
+															select2-container--above
+														"
+														dir="ltr"
+														data-select2-id="42"
+														style="width: 100%"
+														><span class="selection"
+															><span
+																class="
+																	select2-selection
+																	select2-selection--single
+																"
+																role="combobox"
+																aria-haspopup="true"
+																aria-expanded="false"
+																tabindex="0"
+																aria-labelledby="select2-taskServiceRelate-container"
+																><span
+																	class="select2-selection__rendered"
+																	id="select2-taskServiceRelate-container"
+																	role="textbox"
+																	aria-readonly="true"
+																	><span
+																		class="select2-selection__placeholder"
+																	></span></span
+																><span
+																	class="select2-selection__arrow"
+																	role="presentation"
+																	><b
+																		role="presentation"
+																	></b></span></span></span
+														><span
+															class="dropdown-wrapper"
+															aria-hidden="true"
+														></span
+													></span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="row mT-0 mB-5">
+                          <div class="col-9 col-sm-6 p-t-8">
+                            <span
+                              class="text-middle fw-800 text-uppercase text-decoration-underline color-ses"
+                              >Các loại hóa đơn phát hành</span
+                            >
+                          </div>
+                          <div class="col-3 col-sm-6 text-right">
+                            <button
+                              type="button"
+                              data-action="add-to-grid"
+                              class="btn-sm btn-primary btn-ses"
+                              title="Thêm sản phẩm, dịch vụ"
+                            >
+                              <i class="mdi mdi-plus fs-15"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 has-min-height-grid-prd m-b-15">
+                        <div
+                          id="grid"
+                          data-role="grid"
+                          class="k-grid k-widget"
+                          style=""
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <hr style="margin: 0 0 10px 0" />
+                      </div>
+                    </div>
+                    <div class="form-group row m-b-6 justify-content-between">
+                      <div class="col-6">
+                        <button
+                          type="button"
+                          data-action="accept"
+                          class="btnadd btns btns-blue__ses"
+                          title="Chấp nhận"
+                        >
+                          <span class="d-md-inline">Danh sách</span>
+                        </button>
+                      </div>
+                      <div class="col-6 text-right">
+                        <button
+                          type="button"
+                          data-action="accept"
+                          class="btnadd btns btns-blue__ses"
+                          title="Chấp nhận"
+                        >
+                          <i class="mdi mdi-check-all"></i>
+                          <span class="d-md-inline">Chấp nhận</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" name="_id" value="" />
+              </form>
+              <script type="text/javascript">
+                transactionMain = 'einvoice-cre'
+                var rowsTMP = []
+                var vIsEdit = true
+                _gridSub01 = $('#f-einvoice-crud').find('#grid')
+              </script>
+
+              <script type="text/javascript">
+                $.each(new Array(5), function (n) {
+                  rowsTMP.push({})
+                })
+              </script>
+
+            <script type="text/javascript">
+            $(function(){
+            	if(vIsEdit){
+            		initInputNumber('#f-einvoice-crud .text-number');
+            	}
+            			initComboSearchLocal('#f-einvoice-crud', '#taskServiceRelate');
+            			initComboSearchLocal('#f-einvoice-crud', '#taxAuthorities');
+
+            	
+            	_gridSub01.kendoGrid({
+            		dataSource: {
+            			data: rowsTMP,
+            			pageSize: 999999,
+            			serverPaging: false,
+            			serverSorting: false,
+                       	serverFiltering: false
+            		},
+            		selectable: !vIsEdit, scrollable: true, 
+            		sortable: false,
+            		filterable: false, resizable: true,
+            		serverSorting: false,
+            		pageable: {
+            			refresh: false,
+            			pageSizes: false,
+            			numeric: false,
+            			previousNext: false
+            		},
+            		dataBinding: function () {
+                        record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+                    },
+            		columns: [
+            	{field: 'STT', title: 'STT', width: '45px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+              				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
+              				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}, template: "#= ++record #",
+              			},
+              			{field: 'function', title: 'Function', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Chức năng</a>',
+              				attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false, 
+              				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+              			},
+            			{field: 'typeBill', title: '', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên loại hóa đơn</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'denominatorBill', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'symbolBill', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ký hiệu</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'quantityBill', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'fromNumber', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Từ số</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'toNumber', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đến số</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			{field: 'startDate', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày bắt đầu</a>',
+            				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'}
+            			},
+            			
+            		],
+            		dataBound: function(e) {
+            			initInputNumber('#f-einvoice-crud #grid .input-grid-number');
+            			
+            			autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('input[name="ProductName"]'), function(e){
+            				var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + rowSelect + ')');
+            				$tr.find('input[name="ProductCode"]').val(e.Code);
+            				$tr.find('input[name="Unit"]').val(e.Unit);
+            				$tr.find('input[name="Price"]').val(e.Price);
+            				$tr.find('select[name="VATRate"]').val(e.VatRate);
+            				$tr.find('input[name="Quantity"]').trigger('keyup');
+            			});
+            			
+//            			rowSelect
+            			
+            			/*ACTION IN GRID*/
+            			_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').undelegate('i[data-sub-action]', 'click');
+            			_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').delegate('i[data-sub-action]', 'click', function(e){
+            				event.preventDefault();/*event.stopPropagation();*/
+            				
+            				var $obj = $(this);
+            				var $tr = $obj.closest('tr');
+            				var subAction = $obj.attr('data-sub-action');
+
+            				var indexRow = $tr.index();
+            				switch (subAction) {
+            				case 'delete':
+            					alertConfirm('Bạn có muốn xóa dòng ' + (indexRow + 1) + ' không?',
+            						function(e){
+            							var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+            							if(indexRow < objDataJson.length && indexRow > -1){
+            								objDataJson.splice(indexRow, 1);
+            								_gridSub01.data("kendoGrid").dataSource.data(objDataJson);	
+            							}
+            							calcTotalAmount();
+            						},
+            						function(e){}
+            					)
+            					break;
+            				default:
+            					break;
+            				}
+            			});
+            			
+            			_gridSub01.find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"][name="chkSTT"]', 'click');
+            			_gridSub01.find('tbody[role="rowgroup"]').delegate('input[type="checkbox"][name="chkSTT"]', 'click', function(e){
+            				setSTTinGrid();
+            				calcAmountInGrid($(this));
+            			});
+            			
+            			_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-vatrate, .input-grid-feature, select[name="VATRate"], select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change');
+            			_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-vatrate, .input-grid-feature, select[name="VATRate"], select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change', function(e){
+            				calcAmountInGrid($(this));
+            				calcTotalAmount();
+            			});
+            			
+            			_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-vatrate, .input-grid-feature', 'keyup');
+            			_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-vatrate, .input-grid-feature', 'keyup', function(e){
+            				var code = e.keyCode || e.which;
+//            				console.log(code)
+            				//9: Tab
+            				//16: Shift Tab
+            				if(code == 9 || code == 16) return;
+            				calcAmountInGrid($(this));
+            				calcTotalAmount();
+            			});
+            			/*END - ACTION IN GRID*/
+            			
+            		}
+                    
+            	});
+            	
+            	setReadonlyTGia();
+            	$('#f-einvoice-crud').find('#loai-tien-tt').change(function(e){
+            		event.preventDefault();/*event.stopPropagation();*/
+            		$('#f-einvoice-crud').find('#ty-gia').val('1');
+            		setReadonlyTGia();
+            		calcTienQuyDoi();
+            	});
+            	
+            	$('#f-einvoice-crud').undelegate('#ty-gia, #tong-tien-da-co-thue', 'keyup');
+            	$('#f-einvoice-crud').delegate('#ty-gia, #tong-tien-da-co-thue', 'keyup', function(e){
+            		var code = e.keyCode || e.which;
+//            		console.log(code)
+            		//9: Tab
+            		//16: Shift Tab
+            		if(code == 9 || code == 16) return;
+            		calcTienQuyDoi();
+            	});
+            	
+            	$('#f-einvoice-crud').find('button[data-action]').click(function (event) {
+            		event.preventDefault();/*event.stopPropagation();*/
+            		var dataAction = $(this).data('action');
+            		
+            		var $obj = $(this);
+            		var objDataSend = null;
+            		
+            		switch (dataAction) {
+            		case 'add-to-grid':
+            			var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+            			objDataJson.push({});
+            			_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+            			break;
+            		case 'back':
+            			$('#divMainContent').show();
+            			$('#divSubContent').hide(function(){$(this).empty();});
+            			try{
+            				if($('#f-einvoices').find('#grid').length > 0)
+            					$('#f-einvoices').find('#grid').data("kendoGrid").dataSource.read();
+            			}catch(err){}
+            			break;
+            		case 'sign':
+            			objDataSend = {};
+            			objDataSend['_id'] = $('#f-einvoice-crud').find('input[name="_id"]').val();
+            			$.ajax({
+            				type: "POST",
+            				datatype: "json",
+            				url: ROOT_PATH + '/main/einvoice-sign/check-data-sign',
+            				data: objDataSend,
+            				beforeSend: function(req) {
+            					initAjaxJsonRequest(req);
+            		        	showLoading();
+            				},
+            				success:function(res) {
+            					if(res) {
+            						if(res.errorCode == 0) {
+            							var responseData = res.responseData;
+            							
+            							tokenTransaction = responseData['TOKEN'];
+            							objDataSend['tokenTransaction'] = tokenTransaction;
+            							getCert(function(e){
+            								if(null == e) {
+            									alertDLSuccess('Lấy chữ ký số không thành công.', function(){});
+            									hideLoading();
+            									return;
+            								}
+            								serialNumber = '';
+            								//KIEM TRA THONG TIN CERT
+            								$.ajax({
+            									type: "POST",
+            									datatype: "json",
+            									url: ROOT_PATH + '/main/common/check-cert',
+            									data: {'cert': base64Cert.replace(/\+/g, "@")},
+            									beforeSend: function(req) {
+            										initAjaxJsonRequest(req);
+            							        	showLoading();
+            									},
+            									success:function(res) {
+            										hideLoading();
+            										if(res) {
+            											if(res.errorCode == 0) {
+            												serialNumber = res.responseData;
+            												//LAY NOI DUNG FILE XML
+            												jQuery.ajax({
+            													url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+            											        cache:false,
+            											        xhr:function(){// Seems like the only way to get access to the xhr object
+            											            var xhr = new XMLHttpRequest();
+            											            xhr.responseType= 'blob'
+            											            return xhr;
+            											        },
+            											        success:function(data, textStatus, xhr) {
+//            											        	hideLoading();
+            												    	if(xhr.status == 200){
+            												    		var blob = new Blob([data], { type: 'octet/stream' });
+            												    		var postEnc = new FormData();
+            												    		postEnc.append('SerialNumber', serialNumber);
+            												    		postEnc.append('xmlFile', blob);
+            												    		
+            												    		var xhrSign = new XMLHttpRequest();
+            												    		xhrSign.onreadystatechange = function(e) {
+            												    			if(4 == this.readyState) {
+            												    				if(this.status == 200){	
+            												    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
+            												    					blob = new Blob( [this.response], { type : "octet/stream" } );
+            												    					showLoading();
+            												    					
+            												    					formData = new FormData();
+            																		formData.append("XMLFileSigned", blob);
+            																		formData.append('certificate', base64Cert.replace(/\+/g, "@"));
+            												    					
+            																		xhrSign = new XMLHttpRequest();
+            																		xhrSign.upload.addEventListener('progress', function(e) {
+            																			
+            																		});
+            																		if(xhrSign.upload) {
+            																			
+            																		};
+            																		xhrSign.onreadystatechange = function(e) {
+            																			if(4 == this.readyState && this.status == 200) {
+            																				var res = xhrSign.response;
+            																				if(res){
+            																					if(res.errorCode == 0) { 
+            																						hideLoading();
+            																						$('#f-einvoice-crud').find('button[data-action="back"]').trigger('click');
+            																					}else{
+            																            			alertDLSuccess(createObjectError(res).html(), function(){});
+            																            			hideLoading();
+            																            		}
+            																				}else{
+            																					alertDLSuccess('unknown error!!!', function(){});
+            																					hideLoading();
+            																            	}
+            																			}
+            																		}
+            																		xhrSign.onerror = function() {
+            																			
+            																		}
+            																		xhrSign.ontimeout = function() {
+            																			
+            																		}
+            																		
+            																		var urlPost = ROOT_PATH + '/main/einvoice-sign/signFile';
+            																		xhrSign.open("POST", urlPost, true);
+            																		xhrSign.responseType = 'json';
+            																		xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+            																		xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+            																		
+            																		xhrSign.setRequestHeader("Cache-Control", "no-cache");
+            																		xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            																		xhrSign.send(formData);
+            												    				}else{
+            																		hideLoading();
+            																		alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function(){});
+            																	}
+            												    			}
+            												    		}
+            												    		
+            												    		xhrSign.open('POST', urlPluginSign + signXML, true);
+            															xhrSign.timeout = 5 * 60 * 1000;
+            															xhrSign.responseType = 'blob';	//or arraybuffer
+            															xhrSign.send(postEnc);
+            												    	}else{
+            												    		hideLoading();
+            												    		alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function(){});
+            														}
+            											        },
+            											        error:function(){
+            											            
+            											        }
+            												});
+            											}else{
+            												alertDLSuccess(createObjectError(res).html(), function(){});
+            											}
+            										}else{
+            											alertDLSuccess('unknown error!!!', function(){});
+            											hideLoading();
+            										}
+            									},
+            									error:function (xhr, ajaxOptions, thrownError){
+            										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+            							            hideLoading();
+            							        }
+            								});
+            							});
+            						}else{
+            							hideLoading();
+            							alertDLSuccess(createObjectError(res).html(), function(){});
+            						}
+            					}else{
+            						alertDLSuccess('unknown error!!!', function(){});
+            						hideLoading();
+            					}
+            				},
+            				error:function (xhr, ajaxOptions, thrownError){
+            					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+            		            hideLoading();
+            		        }
+            			});
+            			break;
+            		case 'accept':
+            			objDataSend = getDataToSave();
+            			$.ajax({
+            				type: "POST",
+            				datatype: "json",
+            				url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+            				data: objDataSend,
+            				beforeSend: function(req) {
+            					initAjaxJsonRequest(req);
+            		        	showLoading();
+            				},
+            				success:function(res) {
+            					hideLoading();
+            					if(res.errorCode == 0) {
+            						var responseData = res.responseData;
+            						
+            						var confirmText = responseData['CONFIRM'];
+            						tokenTransaction = responseData['TOKEN'];
+            						
+            						objDataSend['tokenTransaction'] = tokenTransaction;
+            						alertConfirm(confirmText,
+            							function(e){
+            								$.ajax({
+            									type: "POST",
+            									datatype: "json",
+            									url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+            									data: objDataSend,
+            									beforeSend: function(req) {
+            										initAjaxJsonRequest(req);
+            							        	showLoading();
+            									},
+            									success:function(res) {
+            										hideLoading();
+            										if(res) {
+            											if(res.errorCode == 0) {
+            												$('#f-einvoice-crud').find('button[data-action="back"]').trigger('click');
+            											}else{
+            												alertDLSuccess(createObjectError(res).html(), function(){});
+            											}
+            										}else{
+            											alertDLSuccess('unknown error!!!', function(){});
+            											hideLoading();
+            										}
+            									},
+            									error:function (xhr, ajaxOptions, thrownError){
+            										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+            							            hideLoading();
+            							        }
+            								});
+            							},
+            							function(e){}
+            						);
+            					}else{
+            						alertDLSuccess(createObjectError(res).html(), function(){});
+            					}
+            				},
+            				error:function (xhr, ajaxOptions, thrownError){
+            					$obj.prop('disabled', false);
+            					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+            		            hideLoading();
+            		        }
+            			});
+            			break;
+            		case 'kh-refresh':
+            			$('#f-einvoice-crud').find('#kh-mst,#kh-makhachhang,#kh-ho-ten-nguoi-mua,#kh-ten-don-vi').val('');
+            			$('#f-einvoice-crud').find('#kh-dia-chi,#kh-email,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');
+            			break;
+            		case 'kh_search':
+            			objDataSend = {};
+            			showPopupWithURLAndData(ROOT_PATH + '/common/show-search-customer', objDataSend, false, function(e){
+            				if('object' ==jQuery.type(e)){
+            					var mst = e['TaxCode'] == null? '': e['TaxCode'];
+            					if(mst.startsWith('CN') || mst.length < 10)
+            						mst = '';
+            					$('#f-einvoice-crud').find('#kh-mst').val(mst);
+            					$('#f-einvoice-crud').find('#kh-makhachhang').val(e['CustomerCode'] == null? '': e['CustomerCode']);
+//            					$('#f-einvoice-crud').find('#kh-ho-ten-nguoi-mua').val(e['CustomerName'] == null? '': e['CustomerName']);
+            					$('#f-einvoice-crud').find('#kh-ten-don-vi').val(e['CompanyName'] == null? '': e['CompanyName']);
+            					$('#f-einvoice-crud').find('#kh-dia-chi').val(e['Address'] == null? '': e['Address']);
+            					$('#f-einvoice-crud').find('#kh-email').val(e['Email'] == null? '': e['Email']);
+            					$('#f-einvoice-crud').find('#kh-so-dt').val(e['Phone'] == null? '': e['Phone']);
+            					$('#f-einvoice-crud').find('#kh-so-tk').val(e['AccountNumber'] == null? '': e['AccountNumber']);
+            					$('#f-einvoice-crud').find('#kh-tk-tai-ngan-hang').val(e['AccountBankName'] == null? '': e['AccountBankName']);
+            				}
+            			});
+            			break;
+            		default:
+            			break;
+            		}
+            	});
+            	
+            });
+
+            function setTemplateForGrid(key, data){
+            	if(!vIsEdit) return data[key] == null? '': data[key];
+            	
+            	var text = '';
+            	if('func' == key){
+            		text = '<div>';
+            		text += '<i class="mdi mdi-close-box fs-25 text-black c-pointer" data-sub-action="delete"></i>';
+            		text += '</div>';
+            		return text;
+            	}
+            	
+            	var isReadonlyOrDisabled = false;
+            	var feature = data['Feature'];
+            	
+            	var _valTmp = '';
+            	text = '<div class="form-row m-l-1 m-r-1">';
+            	switch (key) {
+            	case 'Quantity':
+            	case 'Price':
+            	case 'Total':
+            	case 'VATAmount':
+            	case 'Amount':
+            		text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" ' + (('2' == feature)? ' readonly="readonly" ': '') + ' >';	// || '4' == feature
+            		break;
+            	case 'VATRate':
+            		_valTmp = null == data[key]? '': data[key];
+            		if('' == _valTmp) _valTmp = '8';
+            		
+            		text += '<select class="input-grid form-control form-control-sm input-grid-vatrate"  name="' + key + '" style="height: 100%;" ' + (('2' == feature)? ' disabled="disabled" ': '') + '>';	/*|| '4' == feature*/
+            		$.each(objVAT, function(k, v){
+            			text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + '>' + v + '</option>';
+            		});
+            		text += '</select>';
+            		break;
+            	case 'Feature':
+            		_valTmp = null == data[key]? '': data[key];
+            		if('' == _valTmp) _valTmp = '';
+            		
+            		text += '<select class="input-grid form-control form-control-sm input-grid-feature" name="' + key + '" style="height: 100%;" >';
+            		$.each(objFeature, function(k, v){
+            			text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + ' >' + v + '</option>';
+            		});
+            		text += '</select>';
+            		break;
+            	case 'STT':
+            		text += '<div class="input-group">';
+            		text += '	<div class="input-group-prepend">';		
+            		text += '		<label class="custom-control custom-checkbox">';
+            		text += '			<input type="checkbox" name="chkSTT" class="custom-control-input" ' + (null != data[key] && '' != data[key]? 'checked="checked"': '') + ' >';
+            		text += '			<span class="custom-control-label">&nbsp;</span>';
+            		text += '		</label>';		
+            		text += '	</div>';
+            		text += '	<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right" style="border: none;" >';
+            		text += '</div>';
+            		break;
+            	default:
+            		text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm" >';
+            		break;
+            	}
+            	text += '</div>';
+            	return text;
+            }
+
+            function calcAmountInGrid($obj){
+            	var $tr = $obj.closest('tr');
+            	var _name = $obj.prop('name');
+            	var _val = '';
+            	var _numeral = null;
+            	var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+            	
+            	var dblQuantity = 0;
+            	var dblPrice = 0;
+            	var dblTotal = 0;
+            	var dblVATRate = 0;
+            	var dblVATAmount = 0;
+            	var dblAmount = 0;
+            	
+            	switch (_name) {
+            	case 'chkSTT':
+//            		if('' == _val){
+//            			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', false);
+//            		}else{
+//            			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', true);
+//            		}
+            		break;
+            	case 'Quantity':
+            	case 'Price':
+            		_numeral = numeral($tr.find('input[name="Quantity"]').val());
+            		dblQuantity = _numeral == null? 0: _numeral.value();
+            		_numeral = numeral($tr.find('input[name="Price"]').val());
+            		dblPrice = _numeral == null? 0: _numeral.value();
+            		dblTotal = dblQuantity * dblPrice;
+            		
+            		$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+            		FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+            		
+            		_numeral = numeral($tr.find('select[name="VATRate"]').val());
+            		dblVATRate = _numeral == null? 0: _numeral.value();
+            		if(dblVATRate < 0) dblVATRate = 0;
+            		
+            		dblVATAmount = dblTotal * dblVATRate / 100;
+            		$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4))
+            		FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
+            		break;
+            	case 'Total':
+//            		$tr.find('input[name="Quantity"],input[name="Price"]').val('');
+            		
+            		_numeral = numeral($tr.find('input[name="Total"]').val());
+            		dblTotal = _numeral == null? 0: _numeral.value();
+            		
+            		_numeral = numeral($tr.find('select[name="VATRate"]').val());
+            		dblVATRate = _numeral == null? 0: _numeral.value();
+            		if(dblVATRate < 0) dblVATRate = 0;
+            		
+            		dblVATAmount = dblTotal * dblVATRate / 100;
+            		$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4));
+            		FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
+            		break;
+            	case 'VATRate':
+            		_numeral = numeral($tr.find('input[name="Total"]').val());
+            		dblTotal = _numeral == null? 0: _numeral.value();
+            		
+            		_numeral = numeral($tr.find('select[name="VATRate"]').val());
+            		dblVATRate = _numeral == null? 0: _numeral.value();
+            		if(dblVATRate < 0) dblVATRate = 0;
+            		
+            		dblVATAmount = dblTotal * dblVATRate / 100;
+            		$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4));
+            		FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
+            		break;
+            	case 'VATAmount':
+            		_numeral = numeral($tr.find('input[name="Total"]').val());
+            		dblTotal = _numeral == null? 0: _numeral.value();
+            		
+            		_numeral = numeral($tr.find('input[name="VATAmount"]').val());
+            		dblVATAmount = _numeral == null? 0: _numeral.value();
+            		break;
+            	case 'Feature':
+            		$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"], input[name="Total"], input[name="VATRate"], input[name="VATAmount"], input[name="Amount"]').prop('readonly', false);
+            		$tr.find('select[name="VATRate"]').prop('disabled', false);
+            		$tr.find('select[name="VATRate"]').val('0');
+            		_val = $obj.val();
+            		switch (_val) {
+            		case '1':
+            			$tr.find('input[name="VATAmount"], input[name="Amount"]').val('');
+            			break;
+            		case '2':
+            			$tr.find('input[name="Price"]').val('');
+            			$tr.find('input[name="Total"], select[name="VATRate"], input[name="VATAmount"]').val('');
+            			
+            			$tr.find('input[name="Price"], input[name="Total"], input[name="VATAmount"], input[name="Amount"]').prop('readonly', true);
+            			$tr.find('select[name="VATRate"]').prop('disabled', true);
+            			break;
+            		case '4':
+            			$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"]').val('');
+            			$tr.find('input[name="Total"], select[name="VATRate"], input[name="VATAmount"]').val('');
+            			
+//            			$tr.find('input[name="Unit"], input[name="Quantity"], input[name="Price"], input[name="Total"], input[name="VATRate"], input[name="VATAmount"], input[name="Amount"]').prop('readonly', true);
+//            			$tr.find('select[name="VATRate"]').prop('disabled', true);
+            			
+            			break;
+            		default:
+            			break;
+            		}
+            		break;
+            	case 'ProductName':
+            		_val = $obj.val();
+            		if('' == _val){
+            			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', false);
+            		}else{
+            			$tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked', true);
+            		}
+            		setSTTinGrid();
+            		break;
+            	default:
+            		break;
+            	}
+            	
+            	_numeral = numeral($tr.find('input[name="Total"]').val());
+            	dblTotal = _numeral == null? 0: _numeral.value();
+            	_numeral = numeral($tr.find('input[name="VATAmount"]').val());
+            	dblVATAmount = _numeral == null? 0: _numeral.value();
+            	
+            	dblAmount = dblTotal + dblVATAmount;
+            	$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
+            	FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
+            	
+            	/*LAY THONG TIN UPDATE LAI DATASOURCE*/
+            	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+            	try{
+            		var indexRow = $tr.index();
+            		var rowData = objDataJson[indexRow];
+            		
+            		rowData['STT'] = $tr.find('input[name="STT"]').val();
+            		rowData['ProductName'] = $tr.find('input[name="ProductName"]').val();
+            		rowData['ProductCode'] = $tr.find('input[name="ProductCode"]').val();
+            		rowData['Unit'] = $tr.find('input[name="Unit"]').val();
+            		rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
+            		rowData['Price'] = $tr.find('input[name="Price"]').val();
+            		rowData['Total'] = $tr.find('input[name="Total"]').val();
+            		rowData['VATRate'] = $tr.find('select[name="VATRate"]').val();
+            		rowData['VATAmount'] = $tr.find('input[name="VATAmount"]').val();
+            		rowData['Amount'] = $tr.find('input[name="Amount"]').val();
+            		rowData['Feature'] = $tr.find('select[name="Feature"]').val();
+            		
+            		_gridSub01.data("kendoGrid").dataSource.data()[indexRow] = rowData;
+            	}catch(err){
+            		console.log(err);
+            	}
+            }
+
+            function setSTTinGrid(){
+            	var $tr = null;
+            	var stt = 0;
+            	_gridSub01.find('table[role="grid"]').find('tbody[role="rowgroup"]').find('tr').each(function(i, v) {
+            		$tr = $(this);
+            		if($tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked')
+            			&& $tr.find('input[type="text"][name="ProductName"]').val() != ''
+            		){
+            			$tr.find('input[type="text"][name="STT"]').val(++stt);
+            		}else{
+            			$tr.find('input[type="text"][name="STT"]').val('');
+            		}
+            	});
+            }
+
+            function calcTotalAmount(){
+            	var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+            	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+            	
+            	/*TINH TIEN TRUOC THUE - TIEN THUE - TONG TIEN SAU THUE*/
+            	var sumAmount = 0;
+            	var sumAmountVAT = 0;
+            	var sumAmountAfterTax = 0;
+            	var tmp = '';
+            	var tmp2 = '';
+            	jQuery.each(objDataJson, function(index, item) {
+            		tmp = item['ProductName'] == null? '': item['ProductName'].trim();
+            		if('' != tmp){
+            			_val = item['Feature'] == null? '': item['Feature'].trim();
+            			_numeral = numeral(item['Total']);
+            			if(_val == '3'){ //CK
+            				sumAmount -= _numeral.value() == null? 0: _numeral.value();
+            			}else{
+            				sumAmount += _numeral.value() == null? 0: _numeral.value();
+            			}
+            			
+            			switch (_val) {
+            			case '4':		//GHI CHU - KHONG XU LY TIEN
+            				break;
+            			case '3':		//CK: TRU TIEN THUE VA TONG TIEN
+            				_numeral = numeral(item['VATAmount']);
+            				sumAmountVAT -= _numeral.value() == null? 0: _numeral.value();
+            				_numeral = numeral(item['Amount']);
+            				sumAmountAfterTax -= _numeral.value() == null? 0: _numeral.value();
+            				break;
+            			case '2':		//KM: CHI CONG TONG TIEN
+            				break;
+            			default:
+            				_numeral = numeral(item['VATAmount']);
+            				sumAmountVAT += _numeral.value() == null? 0: _numeral.value();
+            				_numeral = numeral(item['Amount']);
+            				sumAmountAfterTax += _numeral.value() == null? 0: _numeral.value();
+            				break;
+            			}
+            		}
+            	});
+            	
+            	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+            	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+            	$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+            	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+            	$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+            	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+            	
+            	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+            	
+            	calcTienQuyDoi();
+            }
+
+            function getDataToSave(){
+            	var dataPost = {};
+            	
+            	dataPost['_id'] = $('#f-einvoice-crud').find('input[name="_id"]').val();
+            	dataPost['mau-so-hdon'] = $('#f-einvoice-crud').find('#mau-so-hdon').val();	
+            	dataPost['ten-loai-hd'] = $('#f-einvoice-crud').find('#ten-loai-hd').val();
+            	dataPost['hinh-thuc-thanh-toan'] = $('#f-einvoice-crud').find('#hinh-thuc-thanh-toan').val();
+            	dataPost['hinh-thuc-thanh-toan-text'] = $('#f-einvoice-crud').find('#hinh-thuc-thanh-toan').find('option:selected').text();
+            	dataPost['ngay-lap'] = $('#f-einvoice-crud').find('#ngay-lap').val();
+            	dataPost['_id_tt_dc'] = $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').val();
+            	
+            	dataPost['kh-mst'] = $('#f-einvoice-crud').find('#kh-mst').val();
+            	dataPost['kh-makhachhang'] = $('#f-einvoice-crud').find('#kh-makhachhang').val();
+            	dataPost['kh-ho-ten-nguoi-mua'] = $('#f-einvoice-crud').find('#kh-ho-ten-nguoi-mua').val();
+            	dataPost['kh-ten-don-vi'] = $('#f-einvoice-crud').find('#kh-ten-don-vi').val();
+            	dataPost['kh-dia-chi'] = $('#f-einvoice-crud').find('#kh-dia-chi').val();
+            	dataPost['kh-email'] = $('#f-einvoice-crud').find('#kh-email').val();
+            	dataPost['kh-so-dt'] = $('#f-einvoice-crud').find('#kh-so-dt').val();
+            	dataPost['kh-so-tk'] = $('#f-einvoice-crud').find('#kh-so-tk').val();
+            	dataPost['kh-tk-tai-ngan-hang'] = $('#f-einvoice-crud').find('#kh-tk-tai-ngan-hang').val();
+            	
+            	dataPost['tong-tien-truoc-thue'] = $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val();
+            	dataPost['loai-tien-tt'] = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+            	dataPost['ty-gia'] = $('#f-einvoice-crud').find('#ty-gia').val();
+            	dataPost['tong-tien-thue-gtgt'] = $('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val();
+            	dataPost['tong-tien-da-co-thue'] = $('#f-einvoice-crud').find('#tong-tien-da-co-thue').val();
+            	dataPost['tong-tien-quy-doi'] = $('#f-einvoice-crud').find('#tong-tien-quy-doi').val();
+            	
+            	dataPost['tien-bang-chu'] = $('#f-einvoice-crud').find('#tien-bang-chu').val();
+            	
+            	var arrRows = [];
+            	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+            	jQuery.each(objDataJson, function(index, item) {
+            		tmp = item['ProductName'] == null? '': item['ProductName'].trim();
+            		if('' != tmp){
+            			arrRows.push(item);
+            		}
+            	});
+            	dataPost['ds-san-pham'] = encodeObjJsonBase64UTF8(arrRows);
+            	
+//            	var arrRows = [];
+//            	var obj = null;
+//            	var $tr = null;
+//            	_gridSub01.find('table[role="grid"]').find('tbody[role="rowgroup"]').find('tr').each(function(i, v) {
+//            		$tr = $(v);
+//            	    obj = {};
+//            	    obj['STT'] = $tr.find('input[name="STT"]').val();
+//            	    obj['ProductName'] = $tr.find('input[name="ProductName"]').val();
+//            	    obj['Unit'] = $tr.find('input[name="Unit"]').val();
+//            	    obj['Quantity'] = $tr.find('input[name="Quantity"]').val();
+//            	    obj['Price'] = $tr.find('input[name="Price"]').val();
+//            	    obj['Total'] = $tr.find('input[name="Total"]').val();
+//            	    obj['VATRate'] = $tr.find('select[name="VATRate"]').val();
+//            	    obj['VATAmount'] = $tr.find('input[name="VATAmount"]').val();
+//            	    obj['Amount'] = $tr.find('input[name="Amount"]').val();
+//            	    obj['Feature'] = $tr.find('select[name="Feature"]').val();
+//            	    arrRows.push(obj)
+//            	});	
+//            	dataPost['ds-san-pham'] = encodeObjJsonBase64UTF8(arrRows);
+            	
+            	return dataPost;
+            }
+
+            function setReadonlyTGia(){
+            	$('#f-einvoice-crud').find('#ty-gia').prop('readonly', true);
+            	$('#f-einvoice-crud').find('div.quidoingoaite').addClass('d-none');
+            	$('#f-einvoice-crud').find('#tong-tien-quy-doi').prop('readonly', true);
+            	
+            	var isAccept = $('#f-einvoice-crud').find('button[data-action="accept"]').length > 0;
+            	var loaiTien = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+            	if(loaiTien == '') loaiTien = 'VND';
+            	
+            	if(isAccept && loaiTien != 'VND'){
+            		$('#f-einvoice-crud').find('#ty-gia').prop('readonly', false);
+            		$('#f-einvoice-crud').find('#tong-tien-quy-doi').prop('readonly', false);
+            	}
+            	if(loaiTien != 'VND'){
+            		$('#f-einvoice-crud').find('div.quidoingoaite').removeClass('d-none');
+            	}
+            		
+            }
+
+            function calcTienQuyDoi(){
+            	var sumAmountAfterTax = 0;
+            	var tyGia = 0;
+            	var tienQuiDoi = 0;
+            	var $numeral = null;
+            	
+            	$numeral = numeral($('#f-einvoice-crud').find('#ty-gia').val());
+            	tyGia = $numeral.value() == null? 1: $numeral.value();
+            	$numeral = numeral($('#f-einvoice-crud').find('#tong-tien-da-co-thue').val());
+            	sumAmountAfterTax = $numeral.value() == null? 0: $numeral.value();
+            	
+            	tienQuiDoi = tyGia * sumAmountAfterTax;
+            	$('#f-einvoice-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(4))
+            	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-quy-doi')[0], 'VND');
+            }
+            </script>
+            </div>
+          </div>
+        </div>
+		
+	</th:block>
+</body>
+</html>

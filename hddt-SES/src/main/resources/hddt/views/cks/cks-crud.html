@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+		<form id="f-cks-crud" name="f-cks-crud" method="post" enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body" th:if="${messageError != null}">
+					<div class="row text-danger m-b-10 fw-500 col-12">
+						<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center" th:utext="${messageError}"></div>
+						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại" 
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+							
+						</div>
+					</div>
+				</div>
+				
+				<div class="card-body" th:if="${messageError == null}">
+					<div class="form-group row m-b-6">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="custom-field m-b-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="mst" name="mst" type="text" autocomplete="off" th:value="${mst}" readonly />
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+									</fieldset>
+								</div>
+							</div>
+							
+							
+						</div>
+						
+						<div class="col-12 col-sm-6 col-md-3">
+							
+							<div class="custom-field m-b-16">
+								<div class="c-f__wrapper">
+								<input class="form-control form-control-sm c-f__textbox" th:value="${TThanhName}" th:readonly="true" th:if="${!_isedit_}" type="text" autocomplete="off"  />
+									<select class="form-control form-control-sm c-f__textbox" id="tinh-thanh" name="tinh-thanh" th:if="${_isedit_}" >
+										<option value=""></option>
+										<th:block th:if="${map_dmtinhthanh != null}" >
+											<option th:each="entry : ${map_dmtinhthanh.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
+										</th:block>
+									</select>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Tỉnh/Thành phố<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+						
+						</div>
+					
+						<div class="col-12 col-sm-6 col-md-3">
+							
+							<div class="custom-field m-b-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" th:value="${CQThueName}" th:readonly="true" th:if="${!_isedit_}" type="text" autocomplete="off"  />
+									<select class="form-control form-control-sm c-f__textbox" id="CQTQLy" name="CQTQLy" th:if="${_isedit_}" >
+										<option value=""></option>
+										<th:block th:if="${map_cucthue != null}">
+											<option th:each="entry : ${map_cucthue.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${CQThueCode == entry.key}" > </option>
+										</th:block>
+									</select>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Cơ quan thuế<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+						
+						</div>
+				
+						<div class="col-12 col-sm-6 col-md-3">
+							
+							<div class="custom-field m-b-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" id="NLap" name="NLap" th:value="${nLap}" th:readonly="${!_isedit_}" />
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Ngày lập </label></legend>
+									</fieldset>
+								</div>
+							</div>
+						
+						</div>
+						
+					</div>
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 16px 0" /></div></div>
+				
+					<div class="row mT-0 mB-5">
+						<div class="col-9 col-sm-6 p-t-8">
+							<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Danh sách chứng thư số sử dụng</span>
+						</div>
+						<div class="col-3 col-sm-6 text-right">
+						<button type="button" data-action="add-certtc" class="btn-sm btn-primary btn-ses" title="Thêm chứng thư số thủ công" th:if="${_isedit_}" ><i class="mdi mdi-pen fs-15"></i></button>
+							<button type="button" data-action="add-cert" class="btn-sm btn-primary btn-ses" title="Thêm chứng thư số" th:if="${_isedit_}" ><i class="mdi mdi-plus fs-15"></i></button>
+						</div>
+					</div>
+					<div class="col-12 p-0 has-min-height-grid-prd">
+						<div id="grid_cert"></div>
+					</div>
+					
+			
+                    
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại" 
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept" class="btnadd btns btns-blue__ses" title="Chấp nhận" th:if="${null == messageError && ('CREATE' == _action_) ||  ('EDIT' == _action_)}" >
+								<i class="mdi mdi-check-all"></i> <span class="d-none d-md-inline">Chấp nhận</span>
+							</button>
+						
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+		<script type="text/javascript">
+		var vIsEdit = [[${_isedit_}]];
+		transactionMain = '[[${transaction}]]';
+		var rowsCert = [];
+		_gridSub01 = $('#f-cks-crud').find('#grid_cert');
+		</script>
+		<script type="text/javascript" th:if="${_action_ == 'DETAIL' || _action_ == 'EDIT' || _action_ =='SIGN'}">
+		var strJson = '[[${DSCTSSDung}]]';
+		rowsTMP = [];
+		try{
+			var parser = new DOMParser;
+			var dom = parser.parseFromString('<!doctype html><body>' + strJson, 'text/html');
+			var decodedString = dom.body.textContent;
+			
+			rowsCert = JSON.parse(decodedString);
+		}catch(err){}
+		</script>
+	<script type="text/javascript">
+	$(function(){
+	if(vIsEdit){
+			
+			if($('#f-cks-crud').find('#tinh-thanh').length > 0)
+				initComboSearchLocal('#f-cks-crud', '#tinh-thanh');
+			if($('#f-cks-crud').find('#CQTQLy').length > 0)
+				initComboSearchLocal('#f-cks-crud', '#CQTQLy');
+		}
+
+		_gridSub01.kendoGrid({
+			dataSource: {
+				data: rowsCert,
+				pageSize: 999999,
+				serverPaging: false,
+				serverSorting: false,
+	           	serverFiltering: false
+			},
+			selectable: true, scrollable: true, 
+			sortable: false,
+			filterable: false, resizable: true,
+			serverSorting: false,
+			pageable: {
+				refresh: false,
+				pageSizes: false,
+				numeric: false,
+				previousNext: false
+			},
+			dataBinding: function () {
+	            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+	        },
+			columns: [
+				{field: 'STT', title: 'STT', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+	  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
+	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+	  				, template: '#: ++record #',
+	  			},
+	  			{field: 'func', title: '', width: '60px', encoded: false, hidden: !vIsEdit
+	  				, headerTemplate: '&nbsp;'
+					, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+					, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+					, template: '<i class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="remove" ></i>'
+				},
+	  			{field: 'TTChuc', title: '', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhà cung cấp</a>',
+					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("TTChuc", data) #'
+				},
+				{field: 'Seri', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Seri</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("Seri", data) #'
+				},
+				{field: 'TNgay', title: '', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Từ ngày</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("TNgay", data) #'
+				},
+				{field: 'DNgay', title: '', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đến ngày</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("DNgay", data) #'
+				},
+			
+			],
+			dataBound: function(e) {
+				_gridSub01.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+				_gridSub01.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+					e.preventDefault();/*e.stopPropagation();*/
+					
+					var $obj = $(this);
+					var $tr = $obj.closest('tr');
+					var subAction = $obj.attr('data-sub-action');
+					
+					var indexRow = $tr.index();
+					
+					switch (subAction) {
+					case 'remove':
+						alertConfirm('Bạn có chắc chắn muốn xóa không?',
+							function(e){
+								var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+								if(indexRow < objDataJson.length && indexRow > -1){
+									objDataJson.splice(indexRow, 1);
+									_gridSub01.data("kendoGrid").dataSource.data(objDataJson);	
+								}
+									
+							},
+							function(e){}
+						)
+						break;
+
+					default:
+						break;
+					}
+					
+				});
+				_gridSub01.find('tbody[role="rowgroup"]').undelegate('input[name="TTChuc"], input[name="Seri"], input[name="TNgay"], input[name="DNgay"]', 'change');
+				_gridSub01.find('tbody[role="rowgroup"]').delegate('input[name="TTChuc"], input[name="Seri"], input[name="TNgay"],input[name="DNgay"]', 'change', function(e){
+					calcAmountInGrid($(this));
+				});
+			}
+		});
+		
+		/*LAY THONG TIN CKS*/
+		$("#f-cks-crud").find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+			
+			var $obj = $(this);
+			var objDataSend = null;
+			
+			switch (dataAction) {
+			case 'add-certtc':
+				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();	
+				objDataJson.push({});
+				_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+				break;
+			case 'add-cert':
+				
+				   $.ajax({
+
+url: "http://localhost:11284/getCert",
+type: 'POST',
+cors: true ,
+secure: true,
+headers: {
+'Access-Control-Allow-Origin': '*',
+'Access-Control-Allow-Headers': '*',
+'Access-Control-Allow-Private-Network': true
+},
+beforeSend: function(req) {
+initAjaxJsonRequest(req);
+showLoading();
+},
+success:function(res) {
+hideLoading();
+if(res != null) {
+var cert = res;           	
+$.ajax({
+type: "POST",
+datatype: "json",
+url: ROOT_PATH + '/main/common/check-certcks',
+data: {'cert': cert},
+beforeSend: function(req) {
+	initAjaxJsonRequest(req);
+	showLoading();
+},
+success:function(res) {
+	hideLoading();
+	if(res) {
+		if(res.errorCode == 0) {
+			var res = res.responseData;
+			var seri = res['Seri'];
+			var check = false;
+			var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+			for(var i = 0; i < objDataJson.length; i++){
+				if(seri == objDataJson[i]['Seri']){
+					check = true;
+					break;
+				}
+			}
+			
+			if(!check){
+				objDataJson.push(res);
+				_gridSub01.data("kendoGrid").dataSource.data(objDataJson);	
+			}
+			
+		}else{
+			alertDLSuccess(createObjectError(res).html(), function(){});
+		}
+	}else{
+		alertDLSuccess('unknown error!!!', function(){});
+		hideLoading();
+	}
+},
+error:function (xhr, ajaxOptions, thrownError){
+	alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+ hideLoading();
+}
+});
+
+}else{
+alertDLSuccess('Lấy chữ ký số không thành công.', function(){});
+							hideLoading();
+							$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
+							return;
+}
+},
+error:function (xhr, ajaxOptions, thrownError){
+alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+hideLoading();
+}
+});
+				
+				
+				
+				
+				break;
+			case 'back':
+				$('#divMainContent').show();
+				$('#divSubContent').hide(function(){$(this).empty();});
+				try{
+					if($('#f-cks').find('#grid').length > 0)
+						$('#f-cks').find('#grid').data("kendoGrid").dataSource.read();
+				}catch(err){}
+				break;
+			
+			case 'accept':
+				objDataSend = getDataToSave();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+					data: objDataSend,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							
+							alertConfirm(confirmText,
+								function(e){
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													$("#f-cks-crud").find('button[data-action="back"]').trigger('click');
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								},
+								function(e){}
+							);
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+
+			default:
+				break;
+			}
+			
+		});
+		
+		$('#f-cks-crud #tinh-thanh').change(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var _val = $(this).val();
+			
+			$('#f-cks-crud').find('#CQTQLy').empty();
+			$('#f-cks-crud').find('#CQTQLy').append($("<option></option>").text('').val(''));
+			
+			if('' == _val || _val == undefined) return;
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/common/get-chi-cuc-thue',
+				data: {"tinhthanh_ma": _val},
+				beforeSend: function(req) {
+					initAjaxJsonArrayRequest(req);
+				},
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-cks-crud').find('#CQTQLy').append(
+								$("<option></option>").text(item['name']).val(item['code'])
+							);
+						});
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+		});
+		
+	});
+
+	
+	function setTemplateForGrid(key, data){
+		if(!vIsEdit)
+			return data[key] == null? '': data[key];
+
+		var text = '';
+		text = '<div class="form-row m-l-1 m-r-1">';
+		switch (key) {			
+		case 'TTChuc':
+		case 'Seri':
+		case 'TNgay':
+		case 'DNgay':
+			text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" >';
+			 break;
+		default:
+			break;
+		}
+		text += '</div>';
+		return text;
+		
+	
+	}
+	function calcAmountInGrid($obj){	
+		/*LAY THONG TIN UPDATE LAI DATASOURCE*/
+		var $tr = $obj.closest('tr');
+		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+		try{
+			var indexRow = $tr.index();
+			var rowData = objDataJson[indexRow];
+			rowData['TTChuc'] = $tr.find('input[name="TTChuc"]').val();
+			rowData['Seri'] = $tr.find('input[name="Seri"]').val();
+			rowData['TNgay'] = $tr.find('input[name="TNgay"]').val();
+			rowData['DNgay'] = $tr.find('input[name="DNgay"]').val();
+			_gridSub01.data("kendoGrid").dataSource.data()[indexRow] = rowData;
+		}catch(err){
+			console.log(err);
+		}
+		
+		
+		
+	}
+
+	function getDataToSave(){
+		var dataPost = {};
+		
+		dataPost['_id'] = $('#f-cks-crud').find('input[name="_id"]').val();
+		dataPost['ten-nnt'] = $('#f-cks-crud').find('#ten-nnt').val();
+		dataPost['mau-so'] = $('#f-cks-crud').find('#mau-so').val();
+		dataPost['ten'] = $('#f-cks-crud').find('#ten').val();	
+		dataPost['mst'] = $('#f-cks-crud').find('#mst').val();
+		dataPost['tinh-thanh'] = $('#f-cks-crud').find('#tinh-thanh').val();
+		dataPost['CQTQLy'] = $('#f-cks-crud').find('#CQTQLy').val();
+		dataPost['NLap'] = $('#f-cks-crud').find('#NLap').val();
+		var arrRows = [];
+		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+		jQuery.each(objDataJson, function(index, item) {
+			item['HThuc'] = $('#f-cks-crud').find('#grid_cert').find('tbody[role="rowgroup"]').find('tr:eq(' + index + ')').find('select[name="HThuc"]').val();
+			arrRows.push(item);
+		});
+		dataPost['DSCTSSDung'] = encodeObjJsonBase64UTF8(arrRows);
+		
+		return dataPost;
+	}
+	</script>
+	</div>
+</div>
+</html>

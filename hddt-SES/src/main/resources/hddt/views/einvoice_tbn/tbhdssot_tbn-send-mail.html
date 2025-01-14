@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="col-12">
+		<form id="f-tbhdssot_mtt-send-mail" name="f-tbhdssot_mtt-send-mail" method="post" enctype="multipart/form-data" >
+			<div class="row text-danger m-b-10 fw-500 " th:if="${messageError != null}">
+				<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center" th:utext="${messageError}"></div>
+			</div>
+			<div class="row" th:if="${messageError == null}">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-12">
+							<div class="c-f__wrapper">
+								<input id="title" name="title" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${Title}" type="text" autocomplete="off"  />
+								<fieldset aria-hidden="true" class="c-f__set">
+									<legend class="c-f__legend"><label>Tiêu đề <span class="text-danger">*</span></label></legend>
+								</fieldset>
+							</div>
+						</div>
+						<div class="col-12 m-t-15">
+							<div class="c-f__wrapper">
+								<input id="email-receive" name="email-receive" class="form-control form-control-sm c-f__textbox " th:value="${EmailReceive}" type="text" autocomplete="off"  />
+								<fieldset aria-hidden="true" class="c-f__set">
+									<legend class="c-f__legend"><label>Email nhận <span class="text-danger">*</span></label></legend>
+								</fieldset>
+							</div>
+						</div>
+						<div class="col-12 m-t-15">
+							<textarea id="emailContent" name="emailContent" class="form-control">[[${EmailContent}]]</textarea>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+		<script type="text/javascript" th:if="${messageError == null}" >
+			$(function(){
+				initTinyMCEForMail('emailContent');
+			});
+		</script>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="send-mail" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError}" ><i class="mdi mdi-telegram"> </i> Gửi mail</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<script type="text/javascript">
+$(function(){
+	$('div.modal-footer').find('button[data-action="send-mail"]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var $obj = $(this);
+		var objDataSend = getPopupDataToSave();
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/main/tbhdssot_mtt-send-mail/check-data-send',
+			data: objDataSend,
+			beforeSend: function(req) {
+				initAjaxJsonRequest(req);
+	        	showLoading();
+			},
+			success:function(res) {
+				hideLoading();
+				if(res) {
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						
+						alertConfirm(confirmText,
+							function(e){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/tbhdssot_mtt-send-mail/send-mail',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$('#f-tbhdssot_mtt-send-mail').closest("div.modal").modal("hide");
+												$('#f-tbhdssot_mtt-send-mail').closest("div.modal").find('.modal-content').empty();
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e){}
+						);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				}else{
+					alertDLSuccess('unknown error!!!', function(){});
+					hideLoading();
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	            hideLoading();
+	        }
+		});
+	});
+	
+	
+});
+function getPopupDataToSave(){
+	var dataPost = {};
+	
+	dataPost['_id'] = $('#f-tbhdssot_mtt-send-mail').find('input[name="_id"]').val();
+	dataPost['_title'] = $('#f-tbhdssot_mtt-send-mail').find('#title').val();
+	dataPost['_email'] = $('#f-tbhdssot_mtt-send-mail').find('#email-receive').val();
+	dataPost['_content'] = encodeURIComponent(tinymce.get('emailContent').getContent());
+	
+	return dataPost;
+}
+</script>
+</html>

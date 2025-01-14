@@ -1,0 +1,255 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="container-fluid style-main-content" id="divMainContent">
+			<div>
+				<div class="row page-titles">
+					<div class="col-md-12 col-12 align-self-center p-l-0">
+						<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">THAY
+							ĐỔI MẬT KHẨU</h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+
+						<div class="card">
+							<div class="card-body">
+
+								<form id="f-changepass" name="f-changepass" th:action="@{/change}" class="authform" method="post" enctype="application/x-www-form-urlencoded">
+									<div class="form-group">
+
+										<div class="row m-t-32 d-flex flex-column align-items-center">
+											<p th:if="${message!=null}">
+												<span class="tb" th:text="${message}"></span>
+											</p>
+											<div
+												class="col-12 col-sm-12 col-md-8 col-lg-4 custom-field m-b-24">
+												<div class="c-f__wrapper">
+													<input th:value="${userName}"
+														class="form-control form-control-sm c-f__textbox"
+														type="text" autocomplete="off" th:readonly="true" />
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Mã số thuế</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div
+												class="col-12 col-sm-12 col-md-8 col-lg-4 custom-field m-b-24">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox"
+														type="password" id="pw" name="pw" required="required"
+														pattern=".{6,}" title="Mật khẩu phải từ 6 ký tự trở lên"
+														autocomplete="off" /> <span toggle="#pw"
+														class="show-hide__password">show</span>
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Mật khẩu cũ</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div
+												class="col-12 col-sm-12 col-md-8 col-lg-4 custom-field m-b-24">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox"
+														required="required" pattern=".{6,}"
+														title="Mật khẩu phải từ 6 ký tự trở lên" type="password"
+														id="pw1" name="pw1" value="" autocomplete="off" /> <span
+														toggle="#pw1" class="show-hide__password">show</span>
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Mật khẩu mới</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+											<div
+												class="col-12 col-sm-12 col-md-8 col-lg-4 custom-field m-b-24">
+												<div class="c-f__wrapper">
+													<input class="form-control form-control-sm c-f__textbox"
+														required="required" pattern=".{6,}"
+														title="Mật khẩu phải từ 6 ký tự trở lên" type="password"
+														id="pw2" name="pw2" value="" autocomplete="off" /> <span
+														toggle="#pw2" class="show-hide__password">show</span>
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Nhập lại mật khẩu mới</label>
+														</legend>
+													</fieldset>
+												</div>
+											</div>
+
+
+											<!-- captcha -->
+											<div class="col-12 col-sm-12 col-md-8 col-lg-4 captcha">
+												<div class=" custom-field m-b-24">
+													<div class="row">
+														<div class="col-5">
+															<img class="rounded " alt="" id="idImageCap">
+														</div>
+														<div class="col-7">
+														<div class="c-f__wrapper">
+													<input type="text" class="form-control form-control-sm c-f__textbox"
+																id="j_captcha" name="j_captcha" required
+															 maxlength="10"
+																 autocomplete="off">
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Mã xác nhận</label>
+														</legend>
+													</fieldset>
+												</div>
+															
+														</div>
+
+													</div>
+												</div>
+											</div>
+
+											<!-- end captcha -->
+
+											<div class="col-12 col-sm-12 col-md-8 col-lg-4 m-b-24">
+												<div class="text-md-left text-sm-left text-left"></div>
+												<div class="text-md-right text-sm-right text-right">
+													<button type="submit" data-action="accept" class="btnadd btns btns-blue__ses" title="Chấp nhận">
+														<i class="mdi mdi-check-all"></i> <span class="d-md-inline">Chấp nhận</span>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+							
+								</form>
+
+
+							</div>
+						</div>
+
+					</div>
+
+
+					<script type="text/javascript">
+						$(function() {
+							
+							refreshCaptcha($('.authform').find('#idImageCap'));
+							
+							$('.authform').find('#idImageCap, #btChangeCaptcha').click(function(event) {
+								event.preventDefault();/* event.stopPropagation(); */
+								refreshCaptcha($('.authform').find('#idImageCap'));
+							});
+							
+							var clicked = 0
+							$('.show-hide__password').click(function(e) {
+								e.preventDefault()
+								if (clicked == 0) {
+									$(this).html('hide')
+									clicked = 1
+								} else {
+									$(this).html('show')
+									clicked = 0
+								}
+
+								var input = $($(this).attr('toggle'))
+								if (input.attr('type') == 'password') {
+									input.attr('type', 'text')
+								} else {
+									input.attr('type', 'password')
+								}
+							})
+							$('#f-changepass').find('button[data-action]').click(
+											function(event) {
+												event.preventDefault();/*event.stopPropagation();*/
+												var dataAction = $(this).data(
+														'action');
+
+												var $obj = $(this);
+												var objDataSend = null;
+
+												switch (dataAction) {
+												case 'add-to-grid':
+													var objDataJson = _gridSub01
+															.data("kendoGrid").dataSource
+															.data();
+													objDataJson.push({});
+													_gridSub01
+															.data("kendoGrid").dataSource
+															.data(objDataJson);
+													break;
+												case 'back':
+													$('#divMainContent').show();
+													$('#divSubContent').hide(function() {$(this).empty();});
+													try {
+														if ($('#f-tkhai').find('#grid').length > 0)
+															$('#f-tkhai').find('#grid').data("kendoGrid").dataSource.read();
+													} catch (err) {
+													}
+													break;
+												case 'accept':
+													objDataSend = getDataToSave();
+															$.ajax({
+																type : "POST",
+																datatype : "json",
+																url : ROOT_PATH+ '/main/changepassAdmin/change',
+																data : objDataSend,
+																beforeSend : function(req) {
+																	initAjaxJsonRequest(req);
+																	showLoading();
+																},
+																success : function(res) {
+																	hideLoading();
+																	if (res) {
+																		if (res.errorCode == 0) {																	
+																			location.reload();
+																		} 
+																		
+																		else if (res.errorCode == 909) {							
+																			location.reload();
+																		} 
+																		else {
+																			alertDLSuccess(res.responseData, function(){});
+																			refreshCaptcha($('.authform').find('#idImageCap'));
+																			$('.authform').find('input[name="j_captcha"]').val('');															
+																			
+																		}
+																	} else {
+																		alertDLSuccess(createObjectError(res).html(), function(){});
+																		hideLoading();
+																	}
+																},
+
+																error : function(xhr,ajaxOptions,thrownError){
+																refreshCaptcha($('.authform').find('#idImageCap'));
+																$('.authform').find('input[name="j_captcha"]').val('');																														
+																	hideLoading();
+																}
+															});
+													break;
+
+												default:
+													break;
+												}
+											});
+
+						});
+
+						function getDataToSave() {
+							var dataPost = {};
+							dataPost['pw'] = $('#f-changepass').find('#pw').val();
+							dataPost['pw1'] = $('#f-changepass').find('#pw1').val();
+							dataPost['pw2'] = $('#f-changepass').find('#pw2').val();
+							dataPost['j_captcha'] = $('#f-changepass').find('#j_captcha').val();		
+							return dataPost;
+						}
+					</script>
+				</div>
+			</div>
+		</div>
+
+	</th:block>
+</body>
+</html>

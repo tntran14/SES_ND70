@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">	
+
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-db" name="f-db" method="post" enctype="multipart/form-data" >
+			<div class="row" >
+				<div class="col-sm-12">
+					<div class="form-group m-b-5">
+						<div class="row">
+							<div class="col-12 p-l-0 p-r-0">
+								<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline">Check dữ liệu hợp đồng</span>
+							</div>
+						</div>
+					<br/>
+						  <div class="col-12 col-sm-12 col-md-12 custom-field m-b-16 ">
+						  <div class="row">
+	                       <div class="col-6 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">							
+											<input class="form-control form-control-sm c-f__textbox"
+												th:value="${SLHDTT}" 	type="text" autocomplete="off" disabled="disabled"/>
+												
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số hợp lượng kho thực tế</label></legend>
+										</fieldset>
+									</div>
+								</div>		
+								   <div class="col-6 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">							
+											<input class="form-control form-control-sm c-f__textbox"
+												th:value="${SLHDQL}" 	type="text" autocomplete="off" disabled="disabled"/>
+												
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số hợp lượng kho đang quản lý</label></legend>
+										</fieldset>
+									</div>
+								</div>	
+							</div>					
+						</div>                
+					</div>
+				
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError}" ><i class="mdi mdi-check-bold"> </i>Cập nhật đồng bộ</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<script type="text/javascript">
+
+
+$('div.modal-footer').find('button[data-action="accept"]').click(function (event) {
+	event.preventDefault();/*event.stopPropagation();*/
+	
+
+	$.ajax({
+		type: "POST",
+		datatype: "json",
+		url: ROOT_PATH + '/main/issu-contract-db/updatedb',
+		beforeSend: function(req) {
+			initAjaxJsonRequest(req);
+        	showLoading();
+		},
+		success:function(res) {
+			hideLoading();
+			if(res) {
+				if(res.errorCode == 0) {
+					alertDLSuccess('Thành công', function(){});
+					setTimeout(function(){
+						   window.location.reload(1);
+						}, 1000);
+				}else{
+					alertDLSuccess(createObjectError(res).html(), function(){});
+				}
+			}else{
+				alertDLSuccess('unknown error!!!', function(){});
+				hideLoading();
+			}
+		},
+		error:function (xhr, ajaxOptions, thrownError){
+			$obj.prop('disabled', false);
+			alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+            hideLoading();
+        }
+	});
+});
+
+
+
+
+</script>
+
+
+
+
+</html>

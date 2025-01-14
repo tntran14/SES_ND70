@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="row page-titles">
+	<div class="col-md-12 col-12 align-self-center p-l-0">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="hdsd-crud" name="hdsd-crud" method="post" enctype="multipart/form-data" >
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500" th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+					</div>
+					<div class="form-group row m-b-6" th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-12">
+							<div class="row">
+								<div class="col-md-5 m-b-5">
+									<label class="col-form-label">Chủ đề<span class="text-danger">*</span></label>
+									<input class="form-control form-control-sm"  th:readonly="${!_isedit_}" type="text" id="title" name="title" th:value="${Chude}" autocomplete="off" >
+								</div>
+									<div class="col-md-5 m-b-5">
+									<label class="col-form-label">Mô tả ngắn*<span class="text-danger">(Lưu ý trường này dùng để mô tả cho những cột bên trái)</span></label>
+									<input class="form-control form-control-sm"  th:readonly="${!_isedit_}" type="text" id="summaryContent" name="summaryContent" th:value="${Tieude}"  autocomplete="off" >
+								</div>
+								<div class="col-md-2 m-b-5">
+									<label class="col-form-label">Bên hiển thị<span class="text-danger">*</span></label>
+								<input class="form-control form-control-sm "
+										th:value="${HT}" th:readonly="true"
+											th:if="${!_isedit_}" type="text" autocomplete="off" />
+								<select 
+											class="form-control form-control-sm "
+											id="ht" name="ht" th:if="${_isedit_}">
+											<option value="L">Trái</option>
+										<option value="R">Phải</option>
+										</select>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 m-b-12">
+									<label class="col-form-label">Link liên kết<span class="text-danger">(Lưu ý trường này dùng để mô tả cho những cột bên trái)</span></label>
+									<input class="form-control form-control-sm"  th:readonly="${!_isedit_}" type="text" id="link" name="link" th:value="${Link}" autocomplete="off" >
+								</div>
+									
+							</div>
+						</div>
+					
+						<div class="col-12 m-b-5">
+							<div class="row">
+								<div class="col-12">
+									<label class="col-form-label">Nội dung chi tiết <span class="text-danger"></span></label>
+									<textarea id="content"  th:value="${Content}" name="content" rows="10" class="form-control">[[${Content}]]</textarea>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0;"></div></div>					
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> Quay lại</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses"
+								th:if="${null == messageError && 'DETAIL' != _action_}" ><i class="mdi mdi-check-all"></i> Chấp nhận</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+
+		<script type="text/javascript">
+		var vIsEdit = [[${_isedit_}]];
+		transactionMain = '[[${transaction}]]';
+		</script>
+		<th:block th:switch="${_isedit_}" >
+			<script type="text/javascript" th:case="true">
+			$(function(){
+				initTinyMCEForMail('content');
+			});
+			</script>
+			
+		
+		</th:block>
+			<th:block th:switch="${!_isedit_}" || >
+			<script type="text/javascript" th:case="true">
+			$(function(){
+				initTinyMCEForMail('content');
+			});
+			</script>
+		
+		</th:block>
+	<script type="text/javascript">
+	var namefileimg = "";
+	$(function(){
+		$("#hdsd-crud").find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			
+			var $obj = $(this);
+			var action = $obj.data('action');
+			
+			switch (action) {
+			case 'accept':
+				objDataSend = getDataToSave();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+					data: objDataSend,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							alertConfirm(confirmText,
+								function(e){
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													$('#hdsd-crud').find('button[data-action="back"]').trigger('click');
+													location.reload();
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								},
+								function(e){}
+							);
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						$obj.prop('disabled', false);
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+			
+			case 'back':
+						$('#divMainContent').show();
+						$('#divSubContent').hide(function(){$(this).empty();});
+						if($('#fPost').find('#grid').length > 0){
+							try{
+								$('#fPost').find('#grid').data("kendoGrid").dataSource.read();
+							}catch(err){}
+						}						
+						break;
+
+			default:
+				break;
+			}
+			
+		});
+		
+	});
+	
+	
+	 function getDataToSave(){
+ 		var dataPost = {};
+ 		dataPost['_id'] = $('#hdsd-crud').find('input[name="_id"]').val();
+		dataPost['title'] = $('#hdsd-crud').find('#title').val();
+		dataPost['link'] = $('#hdsd-crud').find('#link').val();
+		dataPost['ht'] = $('#hdsd-crud').find('#ht').val();
+		dataPost['content'] = tinyMCE.editors["content"].getContent();
+		dataPost['summaryContent'] = $('#hdsd-crud').find('#summaryContent').val();
+		
+ 		return dataPost;	
+ 	}
+
+	</script>
+	</div>
+</div>
+
+</html>

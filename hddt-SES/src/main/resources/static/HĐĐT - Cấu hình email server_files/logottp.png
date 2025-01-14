@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<title>HĐĐT - Quản lý</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/hddt/favicon.ico;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" >
+    
+    
+	
+    <!-- Bootstrap Core CSS -->
+    <link href="/hddt/static/assets/plugins/bootstrap/css/bootstrap.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <link href="/hddt/static/css/icons/font-awesome/css/fontawesome-all.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/css/icons/simple-line-icons/css/simple-line-icons.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/css/icons/weather-icons/css/weather-icons.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/css/icons/linea-icons/linea.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/css/icons/themify-icons/themify-icons.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/css/icons/flag-icon-css/flag-icon.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">	    
+    <link href="/hddt/static/css/icons/material-design-iconic-font/css/materialdesignicons.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <link href="/hddt/static/css/spinners.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+    <link href="/hddt/static/css/animate.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/hddt/static/css/style.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+    
+    <!-- You can change the theme colors from here -->
+    <link href="/hddt/static/css/colors/blue.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" id="theme" rel="stylesheet">
+<!-- 	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.9.55/css/materialdesignicons.min.css"> -->
+    <link href="/hddt/static/css/icons/material-design-5.9.55/css/materialdesignicons.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" id="theme" rel="stylesheet">
+    <link href="/hddt/static/css/icons/themify-icons/themify-icons.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" id="theme" rel="stylesheet">
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	
+	<link href="/hddt/static/assets/alertify/alertify.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<link href="/hddt/static/KendoUI/css/kendo.common.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+<!-- 		<link th:href="@{/static/KendoUI/css/kendo.default.min.css}" rel="stylesheet"> -->
+	<link href="/hddt/static/KendoUI/css/kendo.rtl.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/KendoUI/css/kendo.mobile.all.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/KendoUI/css/all.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<!-- WYSIWYG -->
+	<!-- quill -->
+	<link href="/hddt/static/quill/quill.snow.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<!-- end quill -->
+	
+	<!-- Import Trumbowyg -->
+	<link href="/hddt/static/assets/plugins/trumbowyg/ui/trumbowyg.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<link href="/hddt/static/assets/plugins/trumbowyg/plugins/table/ui/trumbowyg.table.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<!-- END Import Trumbowyg -->
+	
+	<!-- virtual-select -->
+	<link href="/hddt/static/assets/plugins/virtual-select/virtual-select.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	<!-- end - virtual-select -->
+	
+	<link href="/hddt/static/select2-4.0.7/css/select2.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<link href="/hddt/static/datetimepicker/jquery.datetimepicker.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<link rel="stylesheet" href="/hddt/static/zTree/css/zTreeStyle/zTreeStyle.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" type="text/css">
+	
+	<link href="/hddt/static/sumoselect/sumoselect.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<!-- using notification -->
+	<link href="/hddt/static/assets/plugins/toast-master/css/jquery.toast.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+	
+	<link href="/hddt/static/css/style.custom.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	
+	<link href="/hddt/static/css/style-util.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<link href="/hddt/static/css/style-admin.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<link href="/hddt/static/css/css-mobile.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<link href="/hddt/static/css/style-admin-custom.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	
+	<link href="/hddt/static/css/style-fullscreen-modals.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<link href="/hddt/static/jquery-ui-1.12.1/jquery-ui.min.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" rel="stylesheet">
+
+	<link href="/hddt/static/css/main.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	
+	<link href="/hddt/static/assets/plugins/tribute/tribute.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	<link href="/hddt/static/css/all-styles.css;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0" rel="stylesheet">
+	
+	<!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="/hddt/static/assets/plugins/jquery/jquery.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+<!--     <script th:src="@{/static/assets/plugins/jquery/jquery-migrate-3.1.0.min.js}"></script> -->
+	<script src="/hddt/static/assets/plugins/jquery/jquery-migrate.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/hddt/static/assets/plugins/popper/popper.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <script src="/hddt/static/assets/plugins/bootstrap/js/bootstrap.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>    
+    
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/hddt/static/js/jquery.slimscroll.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <!--Wave Effects -->
+    <script src="/hddt/static/js/waves.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <!--Menu sidebar -->
+    <script src="/hddt/static/js/sidebarmenu.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <!--stickey kit -->
+    <script src="/hddt/static/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <script src="/hddt/static/assets/plugins/sparkline/jquery.sparkline.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+    <!--Custom JavaScript -->
+    <script src="/hddt/static/js/customs.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0"></script>
+    <!-- ============================================================== -->
+    <!-- Style switcher -->
+    <!-- ============================================================== -->
+	<script src="/hddt/static/assets/alertify/alertify.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<script src="/hddt/static/KendoUI/js/kendo.all.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/KendoUI/js/console.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/select2-4.0.7/js/select2.full.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<script type="text/javascript" src="/hddt/static/zTree/js/jquery.ztree.core.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	<script type="text/javascript" src="/hddt/static/zTree/js/jquery.ztree.excheck.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	
+	<script src="/hddt/static/datetimepicker/jquery.datetimepicker.full.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<script src="/hddt/static/js/base64.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script type="text/javascript" src="/hddt/static/jq.tmpl/jquery.tmpl.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	<script src="/hddt/static/js/jquery.customupload.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<!-- FILE UPLOAD -->
+	<script src="/hddt/static/jQuery-File-Upload/jquery.ui.widget.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/jQuery-File-Upload/jquery.iframe-transport.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/jQuery-File-Upload/jquery.fileupload.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<!-- END FILE UPLOAD -->
+	
+	<script type="text/javascript" src="/hddt/static/tinymce/js/tinymce/tinymce.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	<!-- using notification -->
+	<script src="/hddt/static/assets/plugins/toast-master/js/jquery.toast.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<!-- SUMO -->
+	<script type="text/javascript" src="/hddt/static/sumoselect/jquery.sumoselect.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	<!-- numeral -->
+	<script type="text/javascript" src="/hddt/static/numeral/numeral.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	<script type="text/javascript" src="/hddt/static/jquery-ui-1.12.1/jquery-ui.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	
+	<!--  -->
+	<script type="text/javascript" src="/hddt/static/js/autoNumeric.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" ></script>
+	
+	<script src="/hddt/static/js/custom.hddt.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.23"></script>
+	<script src="/hddt/static/js/plugin.sign.crm.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.1"></script>
+	<!-- WYSIWYG -->
+	<!-- quill -->
+	<script src="/hddt/static/quill/quill.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F?v=1.0"></script>
+	<!-- end quill -->
+	
+	<script src="//rawcdn.githack.com/RickStrahl/jquery-resizable/0.35/dist/jquery-resizable.min.js"></script>
+	<!-- Import Trumbowyg -->
+	<script src="/hddt/static/assets/plugins/trumbowyg/trumbowyg.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/langs/vi.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<!-- end Import Trumbowyg -->
+<!-- 	Import Trumbowyg plugins... -->
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/pasteimage/trumbowyg.pasteimage.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/allowtagsfrompaste/trumbowyg.allowtagsfrompaste.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/base64/trumbowyg.base64.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/colors/trumbowyg.colors.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/fontfamily/trumbowyg.fontfamily.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/fontsize/trumbowyg.fontsize.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/history/trumbowyg.history.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/lineheight/trumbowyg.lineheight.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/table/trumbowyg.table.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<script src="/hddt/static/assets/plugins/trumbowyg/plugins/resizimg/trumbowyg.resizimg.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	
+	<!-- virtual-select -->
+	<script src="/hddt/static/assets/plugins/virtual-select/virtual-select.min.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+	<!-- end - virtual-select -->
+	<script src="/hddt/static/assets/plugins/tribute/tribute.js;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"></script>
+</head>
+<body class="fix-header card-no-border logo-center">
+	<!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader" ><svg class="circular" viewbox="25 25 50 50"><circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle> </svg></div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper">
+    	 <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" >	<!-- th:style = "'background: rgb(40 167 69);'" -->
+			<nav class="navbar top-navbar navbar-expand-md navbar-light">
+				<!-- ============================================================== -->
+				<!-- toggle and nav items -->
+				<!-- ============================================================== -->
+				<ul class="navbar-nav mt-md-0 navbar-nav__menu">
+					<!-- This is  -->
+					<li class="nav-item">
+						<a class="nav-link nav-toggler text-muted waves-effect waves-dark" href="javascript:void(0)">
+						<i class="mdi mdi-chevron-double-right"></i></a>
+					</li>
+				<!-- ============================================================== -->
+				</ul>
+				<!-- ============================================================== -->
+				<!-- Logo -->
+				<!-- ============================================================== -->
+				<div class="navbar-header" style="width: auto; position: unset;">
+	               	<a class="navbar-brand" href="/hddt/main">
+						<!-- Logo text -->
+						<div>
+	                    	<!-- Light Logo text -->    
+							<img src="/hddt/static/images/ses.jpg;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" class="light-logo" alt="homepage"  >
+						</div>
+					</a>
+				</div>
+				<div class="support support-nav">
+					<div>
+						<span class="support-label">Hỗ trợ:</span> <span class="support-data">088 95 95 333</span><span class="support-label"> | </span><span class="support-label">Email:</span> <span class="support-data">support@sesgroup.vn</span>
+					</div>
+				</div>
+				<!-- ============================================================== -->
+				<!-- End Logo -->
+				<!-- ============================================================== -->
+				<div class="navbar-collapse justify-content-end navbar-right">
+					<!-- ============================================================== -->
+					<!-- ============================================================== -->
+					<!-- User profile and search -->
+					<!-- ============================================================== -->
+					<ul class="navbar-nav my-lg-0">
+					<!-- ============================================================== -->
+					<!-- Profile -->
+					<!-- ============================================================== -->
+						<li class="nav-item dropdown" >
+							<a class="dropdown-toggle text-muted text-center d-flex align-items-center user-profile__show" 
+									href="" 
+									data-toggle="dropdown" 
+									aria-haspopup="true" 
+									aria-expanded="false" 
+									style="line-height: 20px !important;">
+								<img src="/hddt/static/images/user-icon-03.jpg;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" alt="user" class="profile-pic mr-2">
+							</a>
+							<div class="dropdown-menu dropdown-menu-right scale-up">
+								<ul class="dropdown-user" >
+									<li><a action-link="viewProfile" class="pT-3 pB-5"><i class="ti-user"></i> Thông tin người dùng</a></li>
+									<li role="separator" class="divider m-0"></li>
+									<li><a action-link="changePassword" class="pT-5 pB-5"><i class="ti-unlock"></i> Thay đổi mật khẩu</a></li>
+									<li role="separator" class="divider m-0"></li>
+									<li><a href="/hddt/logout;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" class="pT-5 pB-5"><i class="mdi mdi-logout"></i> Logout</a></li>
+								</ul>
+							</div>
+						</li>
+					<!-- ============================================================== -->
+					</ul>
+				</div>
+			</nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+		<div class="left-sidebar">
+			<div class="scroll-sidebar" >
+				<div class="sidebar-nav">
+					<ul id="sidebarnav">
+						<span><i class="mdi mdi-chevron-double-left"></i></span>
+						<div class="sidebar-nav__logo">
+							<a href="/hddt/main" class="sidebar-nav__logo--link">
+								<img src="/hddt/static/images/logottp.png;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F"  class="light-logo" alt="homepage">
+							</a>
+						</div>
+						<li class="nav-small-cap">PERSONAL</li>
+						<li>
+							<a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file-check-outline" ></i><span class="hide-menu">Phát hành hóa đơn </span></a>
+							<ul aria-expanded="false" class="collapse">
+								
+								
+							</ul>
+						</li>
+						<li class="nav-small-cap">BC</li>
+						<li>
+							<a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-chart-bar-stacked" ></i><span class="hide-menu">Báo cáo </span></a>
+							<ul aria-expanded="false" class="collapse">
+								
+							</ul>
+						</li>
+						<li class="nav-small-cap">DM</li>
+						<li>
+							<a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-cog-box" ></i><span class="hide-menu">Danh mục </span></a>
+							<ul aria-expanded="false" class="collapse">
+								
+								
+								
+							</ul>
+						</li>
+						<li class="nav-small-cap">SYSTEM</li>
+						<li>
+							<a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-cog-box" ></i><span class="hide-menu">Hệ thống </span></a>
+							<ul aria-expanded="false" class="collapse">
+								
+							</ul>
+						</li>
+						
+					</ul>
+				</div>
+			</div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+         <div class="page-wrapper" >
+         	<!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid hide style-main-content" id="divSubContent02"></div>
+            <div class="container-fluid hide style-main-content" id="divSubContent"></div>
+            <div class="container-fluid style-main-content" id="divMainContent">
+            	<div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="col-xs-11 margin-top-only margin-bottom-only center-block">
+					<form  method="post" enctype="multipart/form-data" >
+						<div class="row" >
+							<div class="col-12">
+								<div class="form-group m-b-5 text-center">
+									<img src="/hddt/static/images/sadface.gif;jsessionid=DA28ABE1E072F04EB11767CE6A1F479F" width="250">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="form-group m-b-5 text-center">
+									<div class="text-danger fs-20" role="alert">404 - Not Found...</div>
+								</div>
+							</div>	
+						</div>
+						
+					</form>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+            </div>
+         
+         	<div id="modelPopup" class="modal modal-fullscreen-xl" tabindex="-1" role="dialog"  data-backdrop="static" aria-hidden="true" data-keyboard="false" style="display: none;padding-left: 8px;padding-right: 0px;">
+            	<div class="modal-dialog" role="document">
+            		<div class="modal-content">
+            			
+                    </div>
+				</div>                  
+            </div>
+            
+            <div id="modelPopupMedium" class="modal modal-fullscreen-sm" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" data-keyboard="false" style="display: none;">
+				<div class="modal-dialog custom-dialog__ses" role="document">
+					<div class="modal-content">
+					</div>
+				</div>
+			</div>
+         </div>
+         <footer class="footer">&copy; HĐĐT</footer>
+         <!-- ============================================================== -->
+           <!-- End footer -->
+		<div class="overlay-wrap"></div>
+		 <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+     <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <script>
+    $.datetimepicker.setLocale('vi');
+    ROOT_PATH = '/hddt';
+	_csrf_value = '0a50cb73-900b-4333-8b67-3637d8838862';_csrf_name = '_csrf';
+	
+	/*REMOVE ITEM NOT RIGHT*/
+	var lis = $('ul#sidebarnav').children('li');
+	lis.each(function( index, obj ) {
+	    if($(obj).children('ul').length > 0 && $(obj).children('ul').children('li').length == 0){
+	        $(obj).remove();
+	    }
+	});
+	
+	$(function() {
+		// Set height mobile
+		var cardHeight = function () {
+			var topOffset = 80
+			var height = (window.innerHeight > 0 ? window.innerHeight : this.screen.height) - 1;
+			height = height - topOffset;
+			$('.card-wrapper__ses').css('min-height', height + 'px');
+		}
+        $(window).ready(cardHeight);
+        $(window).on('resize', cardHeight);
+        // End set height mobile
+        
+		$("header.topbar").find('li a[action-link]').click(function (event) {
+			var _actionLink = $(this).attr('action-link');
+
+			switch (_actionLink) {
+			case 'viewProfile':
+				showPopupWithURLAndData(ROOT_PATH + '/Main?transaction=common&method=viewProfile', {}, true);
+				break;
+			case 'changePassword':
+				showPopupWithURLAndData(ROOT_PATH + '/Main?transaction=common&method=showChangePassword', {}, true);
+				break;	
+			default:
+				break;
+			}
+			
+			return;
+		});
+		
+
+		$(document).on("submit", "form", function(e){
+		    e.preventDefault();e.stopPropagation();return false;
+		});
+		
+	});
+    </script>
+</body>
+		
+</html>
+	

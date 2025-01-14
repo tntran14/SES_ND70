@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách hóa đơn VAT</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-einvoices" name="f-einvoices" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<select class="form-control form-control-sm c-f__textbox" id="mau-so-hdon" name="mau-so-hdon" >
+													<option value=""></option>
+													<th:block th:if="${map_mausokyhieu != null}">
+														<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+															th:value="${entry.key}" th:utext="${entry.value}" > </option>
+													</th:block>
+												</select>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mẫu hóa đơn</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row m-b-16">
+										<div class="col-12 custom-field">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="so-hoa-don" name="so-hoa-don" value="" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số hóa đơn</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox "type="text" id="nmua-mst" name="nmua-mst" value="" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>MST khách hàng</label></legend></fieldset>
+											</div>
+										</div>
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox " type="text" id="nmua-ten" name="nmua-ten" value="" autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Khách hàng</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5 col-erp__cta">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+                            		<div class="col-12 text-right p-r-0 p-l-0">
+                            			<div class="button-group text-right">
+                        			
+                            				<button type="button" title="Xuất bảng kê tổng quát" data-action="misaSME2015-export-excel" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|misaSME2015-export-excel|')}" >
+                            					<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất bảng kê excel</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-einvoices').find('#grid');
+				</script>
+				<!-- <script th:src="@{/static/function/report/tkdshdon.js(v=1.02) }"></script> -->
+			<!-- 	<script th:src="@{/static/function/report/tkdshdon_misa_2015.js(v=1.01) }"></script> -->
+				<script>
+				$(function(){
+					dateInputFormat($('#f-einvoices').find('#from-date'));
+					dateInputFormat($('#f-einvoices').find('#to-date'));
+					
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/misaSME2015/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+//				 		filterable: { mode: "row"},
+						filterable: false, resizable: true,
+						serverSorting: false,
+//						height: kendoGridHeight,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+				        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+							{field: 'StatusDesc', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'SignStatusDesc', width: '80px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đã ký</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'MCCQT', width: '300px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'CQTMTLoi', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Lỗi từ CQT</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'EInvoiceNumber', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'NLap', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày lập</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'TaxCode', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'CompanyName', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'TgTTTBSo', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
+								attributes: {'class': 'table-cell text-right'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'TgTCThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
+								attributes: {'class': 'table-cell text-right'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'TgTThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiền thuế</a>',
+								attributes: {'class': 'table-cell text-right'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'HVTNMHang', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'UserCreated', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
+								attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+				    	],
+						dataBound: function(e) {
+							
+						}
+					});
+					
+					$("#f-einvoices").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var objData = {};
+						switch (dataAction) {
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;
+					
+						case 'misaSME2015-export-excel':	
+							objData = getDataSearch();
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/misaSME2015/check-data-export',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res.errorCode == 0) {
+										var responseData = res.responseData;
+										
+										tokenTransaction = responseData['TOKEN'];
+												
+											window.open(ROOT_PATH + '/main/misaSME2015/export-excel-vat/' + tokenTransaction,'_blank');
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+						default:
+							break;
+						}
+					});
+					
+				});
+
+				function getDataSearch(){
+					var dataPost = {};
+					
+					dataPost['mau-so-hdon'] = $('#f-einvoices #mau-so-hdon').val() == null? '': $('#f-einvoices #mau-so-hdon').val();
+					dataPost['so-hoa-don'] = $('#f-einvoices #so-hoa-don').val() == null? '': $('#f-einvoices #so-hoa-don').val();
+					dataPost['from-date'] = $('#f-einvoices #from-date').val() == null? '': $('#f-einvoices #from-date').val();
+					dataPost['to-date'] = $('#f-einvoices #to-date').val() == null? '': $('#f-einvoices #to-date').val();
+					dataPost['nmua-mst'] = $('#f-einvoices #nmua-mst').val() == null? '': $('#f-einvoices #nmua-mst').val();
+					dataPost['nmua-ten'] = $('#f-einvoices #nmua-ten').val() == null? '': $('#f-einvoices #nmua-ten').val();
+					
+					return dataPost;
+				}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>

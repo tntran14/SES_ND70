@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="row page-titles">
+	<div class="col-md-12 col-12 align-self-center p-l-0">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<form id="f-supportCRUD" name="f-supportCRUD" method="post" enctype="multipart/form-data" >
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500" th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+					</div>
+					<div class="form-group row m-b-6" th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-12">
+							<div class="row">
+								<div class="col-md-12">
+									<label class="col-form-label">Tiêu đề <span class="text-danger" th:if="${_isedit_}">*</span></label>
+									<input class="form-control form-control-sm" type="text" id="title" name="title" th:value="${Title}" autocomplete="off" th:readonly="${!_isedit_}">
+								</div>
+								
+						<div class="col-12 m-b-5">
+							<div class="row">
+								<div class="col-12">
+									<label class="col-form-label">Nội dung rút gọn </label> <input
+										class="form-control form-control-sm" type="text"
+										id="summaryContent" name="summaryContent"
+										th:value="${SummaryContent}" autocomplete="off" th:readonly="${!_isedit_}">
+								</div>
+													
+							</div>
+						</div>
+										
+					<div class="col-md-12">
+									<th:block th:if="${_action_ == 'CREATE'}">
+										<label class="col-form-label">File phần mềm <span
+											class="text-danger" th:if="${_isedit_}">*</span></label>
+										<div class="row m-b-5">
+											<div class="col-8 p-r-0">
+												<div class="input-group">
+													<input type="text" class="form-control form-control-sm"
+														name="attachFileName" maxlength="50" readonly="readonly">
+													<div class="input-group-append">
+														<button type="button" data-action="refresh-attach-file"
+															class="btn btn-sm btn-warning p-t-1 p-b-1">
+															<i class="mdi mdi-refresh"> </i>
+														</button>
+													</div>
+												</div>
+												<div class="dis-none">
+													<input type="text" class="form-control form-control-sm"
+														name="attachFileNameSystem" maxlength="50"
+														readonly="readonly">
+												</div>
+											</div>
+											<div class="col-4 p-l-0">
+												<div class="form-file m-t-xs">
+													<!-- <input type="file" name="attachFile" accept=".zip,.rar,.7zip"> -->
+															<input type="file" name="attachFile">
+													<button class="btn btn-sm btn-block btn-success fw-700">Chọn
+														file...</button>
+												</div>
+											</div>
+										</div>
+									</th:block>
+									<th:block th:if="${'DETAIL' == _action_ }">
+									<label class="col-form-label">Tên file phần mềm <span
+											class="text-danger" th:if="${_isedit_}">*</span></label>
+											<div class="row m-b-5">
+											<div class="col-8 p-r-0">
+												<div class="input-group">
+													<input type="text" class="form-control form-control-sm" th:value="${ImageLogoOriginalFilename}"
+														name="attachFileName" maxlength="50" readonly="readonly">
+													<div class="input-group-append">
+														<button type="button" data-action="refresh-attach-file"
+															class="btn btn-sm btn-warning p-t-1 p-b-1">
+															<i class="mdi mdi-refresh"> </i>
+														</button>
+													</div>
+												</div>
+												<div class="dis-none">
+													<input type="text" class="form-control form-control-sm"
+														name="attachFileNameSystem" maxlength="50"
+														readonly="readonly">
+												</div>
+											</div>
+											<div class="col-4 p-l-0">
+												<div class="form-file m-t-xs">
+												<!-- 	<input type="file" name="attachFile" accept=".zip,.rar,.7zip"> -->
+													<input type="file" name="attachFile">
+													<button class="btn btn-sm btn-block btn-success fw-700">Chọn
+														file...</button>
+												</div>
+											</div>
+										</div>
+									</th:block>
+									<th:block th:if="${_action_ == 'EDIT'}">
+										<label class="col-form-label">File phần mềm <span
+											class="text-danger" th:if="${_isedit_}">*</span></label>
+											<div class="row m-b-5">
+											<div class="col-8 p-r-0">
+												<div class="input-group">
+													<input type="text" class="form-control form-control-sm" th:value="${ImageLogoOriginalFilename}"
+														name="attachFileName" maxlength="50" readonly="readonly">
+													<div class="input-group-append">
+														<button type="button" data-action="refresh-attach-file"
+															class="btn btn-sm btn-warning p-t-1 p-b-1">
+															<i class="mdi mdi-refresh"> </i>
+														</button>
+													</div>
+												</div>
+												<div class="dis-none">
+													<input type="text" class="form-control form-control-sm"
+														name="attachFileNameSystem" maxlength="50"
+														readonly="readonly">
+												</div>
+											</div>
+											<div class="col-4 p-l-0">
+												<div class="form-file m-t-xs">
+												<!-- 	<input type="file" name="attachFile" accept=".zip,.rar,.7zip"> -->
+														<input type="file" name="attachFile">
+													<button class="btn btn-sm btn-block btn-success fw-700">Chọn
+														file...</button>
+												</div>
+											</div>
+										</div>
+									</th:block>
+								</div>
+						
+								</div>
+						</div>
+					
+				
+					</div>
+					
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0;"></div></div>					
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> Quay lại</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses"
+								th:if="${null == messageError && 'DETAIL' != _action_}" ><i class="mdi mdi-check-all"></i> Chấp nhận</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+		<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		</script>
+		<th:block th:switch="${_isedit_}" >
+			<script type="text/javascript" th:case="true">
+			$(function(){
+				initTinyMCEForMail('content');
+			});
+			</script>
+			<script type="text/javascript" th:case="*">
+			$(function(){
+				disabledAllControlsInForm('f-supportCRUD');
+				initTinyMCEOnlyView('content');
+				setTimeout(function(){
+					$('div[role="application"]').find('div[role="group"]').removeClass('tox-tbtn--disabled').removeAttr('aria-disabled');
+					$('div[role="application"]').find('div[role="group"]').find('button').removeClass('tox-tbtn--disabled').removeAttr('aria-disabled');
+				}, 500);
+			});
+			</script>
+		</th:block>
+<!-- 		<script th:src="@{/static/function/juridical/serviceCRUD.js(v=1.4) }"></script> -->
+<script>
+$(function(){
+	setEventFileUpload();
+	
+	$("#f-supportCRUD").find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		
+		var $obj = $(this);
+		var action = $obj.data('action');
+		
+		switch (action) {
+		case 'accept':
+			var formData = new FormData();
+			formData.append('_id', $('#f-supportCRUD').find('input[name="_id"]').val());
+			formData.append('title', $('#f-supportCRUD').find('#title').val());
+			formData.append('summaryContent', $('#f-supportCRUD').find('#summaryContent').val());				
+		
+			formData.append('attachFileName', $('#f-supportCRUD').find('input[name="attachFileName"]').val());
+			formData.append('attachFileNameSystem', $('#f-supportCRUD').find('input[name="attachFileNameSystem"]').val());
+			var xhrSign = new XMLHttpRequest();
+			xhrSign.upload.addEventListener('progress', function(e) {
+				
+			});
+			if(xhrSign.upload) {
+				
+			};
+			xhrSign.onreadystatechange = function(e) {
+				if(4 == this.readyState && this.status == 200) {
+					var res = xhrSign.response;
+	            	if(res){
+	            		if(res.errorCode == 0) {
+	            			hideLoading();
+
+	            			var responseData = xhrSign.response.responseData;
+	            			var confirmText = responseData['CONFIRM'];
+	    					tokenTransaction = responseData['TOKEN'];
+	    					
+	    					formData.append('tokenTransaction', tokenTransaction);
+	    					
+	    					alertConfirm(confirmText,
+    							function(e){
+		    						var xhr = new XMLHttpRequest();
+			    					xhr.upload.addEventListener('progress', function(e) {
+			    						
+			    					});
+			    					if(xhr.upload) {
+			    						
+			    					};
+			    					xhr.onreadystatechange = function(e) {
+			    						if(4 == this.readyState && this.status == 200) {
+			    							var res = xhr.response;
+			    			            	if(res){
+			    			            		if(res.errorCode == 0) {
+			    			            			disabledAllControlsInForm('f-supportCRUD');
+			    			            			$obj.prop('disabled', true);
+			    			            			alertDLSuccess(jQuery.type(res.responseData) == 'object'? res.responseData.info: createObjectError(res).html(), function(){
+			    			            			});
+			    			            				$('#f-supportCRUD').find('button[data-action="back"]').trigger('click');
+			    			            		}else{
+							            			$obj.prop('disabled', false);
+							            			alertDLSuccess(createObjectError(res).html(), function(){});
+							            			hideLoading();
+							            		}
+			    			            	}else{
+							            		$obj.prop('disabled', false);
+							            		alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+							            	}
+			    						}
+			    					}
+			    					xhr.onerror = function() {
+			    						
+			    					}
+			    					xhr.ontimeout = function() {
+			    						
+			    					}
+			    					
+			    					var urlPost = ROOT_PATH + '/main/' + transactionMain + '/save-data';
+			    					xhr.open("POST", urlPost, true);
+			    					xhr.responseType = 'json';
+			    					xhr.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+			    					xhr.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+			    					
+			    					xhr.setRequestHeader("Cache-Control", "no-cache");
+			    					xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			    					xhr.send(formData);
+	    						}
+	    						, function(e){}
+	    					);
+	    					
+//	            			alert(tokenTransaction);
+//	            			alertDLSuccess('Ký hợp đồng thành công.', function(){
+//	            				objData = {};
+//	            				objData['_id'] = $('#fEOfficeEContractSign').find('input[name="_id"]').val();
+//	            				submitFormRenderArea(ROOT_PATH + '/Main?transaction=EOfficeEContractSign&method=main', objData, $('#divSubContent'));
+//	            			});
+	            			
+	            		}else{
+	            			$obj.prop('disabled', false);
+	            			alertDLSuccess(createObjectError(res).html(), function(){});
+	            			hideLoading();
+	            		}
+	            	}else{
+	            		$obj.prop('disabled', false);
+	            		alertDLSuccess('unknown error!!!', function(){});
+						hideLoading();
+	            	}
+				}
+			}
+			xhrSign.onerror = function() {
+				
+			}
+			xhrSign.ontimeout = function() {
+				
+			}
+			
+			var urlPost = ROOT_PATH + '/main/' + transactionMain + '/check-data-save';
+			xhrSign.open("POST", urlPost, true);
+			xhrSign.responseType = 'json';
+			xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+			xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+			
+			xhrSign.setRequestHeader("Cache-Control", "no-cache");
+			xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			xhrSign.send(formData);
+			
+			break;
+		case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function(){$(this).empty();});
+					if($('#f-support').find('#grid').length > 0){
+						try{
+							$('#f-support').find('#grid').data("kendoGrid").dataSource.read();
+						}catch(err){}
+					}						
+					break;
+
+		default:
+			break;
+		}
+		
+	});
+	
+});
+
+function setEventFileUpload(){	
+	$("#f-supportCRUD").find('input[type="file"][name="attachFile"]').fileupload({
+		dataType: 'json',
+		url: ROOT_PATH + '/common/processUploadFileTmp',
+		sequentialUploads: true,
+		singleFileUploads: true,
+		beforeSend: function(xhr, data) {
+			initAjaxJsonRequest(xhr);
+			showLoading();
+		},
+		add: function (e, data) {
+			data.submit();
+			
+			objTmp = this;
+			$(objTmp).closest("div.row").find('input[type="text"]').val('');
+		},
+		progressall: function (e, data) {
+		},
+		done: function (e, data) {
+		},
+		success:function(res) {
+			hideLoading();
+			if(res) {
+				if(res.errorCode == 0) {
+//					if($.isArray(res.responseData) && res.responseData.length > 0){
+//						var item = res.responseData[0];
+						var item = res.responseData;
+						$(objTmp).closest("div.row").find('input[type="text"][name="attachFileName"]').val(item['OriginalFilename']);
+						$(objTmp).closest("div.row").find('input[type="text"][name="attachFileNameSystem"]').val(item['SystemFilename']);
+//					}
+				}else{
+					alertDLSuccess(createObjectError(res).html(), function(){});
+				}				
+			}else{
+				alertDLSuccess('unknown error!!!', function(){});
+				hideLoading();
+			}
+		},
+		processfail: function (e, data) {
+			hideLoading();
+	    },
+		error: function (e, data) {
+			hideLoading();
+			alertDLSuccess('Lỗi trong quá trình tải tập tin...', function(){});
+		}
+	});
+}
+</script>
+	</div>
+</div>
+
+</html>

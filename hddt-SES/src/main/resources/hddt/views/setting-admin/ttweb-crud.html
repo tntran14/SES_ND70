@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase"
+			th:text="${_header_}"></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+
+		<div class="card">
+			<div class="card-body">
+			
+
+				<form id="f-issu-crud" name="f-issu-crud" method="post"
+					enctype="multipart/form-data" class="col-sm-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8 b-a m-b-sm p-t-sm">
+					<div class="form-group row">
+					
+							<div class="col-md-12">	
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											id="phone" name="phone" th:value="${Phone}" type="text"
+											required="true" th:readonly="${!_isedit_}" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>ĐIỆN THOẠI<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+					</div>
+						</div>
+						<div class="form-group row">
+						<div class="col-md-12">	
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											id="mail" name="mail" th:value="${Mail}" type="text"
+											required="true" th:readonly="${!_isedit_}" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>EMAIL<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+					</div>
+					</div>
+					<div class="form-group row">
+					<div class="col-md-12">	
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									  <label class=" form-control-label"
+                            >LOGO
+                          </label>
+                          <div>
+                            <div class="form-file m-b-14">
+                              <input
+                             
+                                type="file"
+                               name="logoFile" id="logoFile"
+                                accept="image/*"
+                                class="b-upload__input"
+                              />
+                              <button class="btn-sm btn-outline b-upload__file">
+                                Chọn tập tin ...
+                              </button>
+                            </div>
+                            <div class="row">
+                              <div class="col-10 col-sm-10 col-md-10">
+  
+                             <input type="text" class="form-control form-control-sm "th:value="${Logo}" id="logoFileName" readonly="readonly" >
+							<input type="hidden" class="form-control form-control-sm " id="logoFileNameSystem" name="logoFileNameSystem" readonly="readonly" >   
+                              </div>
+                              <div
+                                class="col-2 col-sm-2 col-md-2 none-padding-left"
+                              >
+                                <button
+                                  type="button"
+                                  name="btDeleteImage"
+                                     data-action="delete"	
+                                  data-target="logoFile"
+                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
+                                  title="Delete"
+                                >
+                                  <i class="mdi mdi-close-box"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" style="display: none">
+                            <div class="col-12">
+                              <div class="progress progress-striped active">
+                                <div
+                                  style="width: 0%"
+                                  class="progress-bar primary"
+                                >
+                                  0%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+								</div>
+							</div>
+
+					</div>
+					</div>
+				
+
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-blue__ses" title="Chấp nhận"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Chấp nhận</span>
+							</button>
+
+						</div>
+					</div>
+						<input type="hidden" name="_id" th:value="${_id}" >
+				</form>
+				
+				<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-issu-crud').find('#grid');
+		</script>
+		
+		
+		
+				<script type="text/javascript">
+		$(function(){
+			
+			$('#f-issu-crud').find('button[data-action]').click(function (event) {
+				event.preventDefault();/*event.stopPropagation();*/
+				var dataAction = $(this).data('action');
+				
+				var $obj = $(this);
+				var objDataSend = null;
+				
+				switch (dataAction) {
+				case 'add-to-grid':
+					var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+					objDataJson.push({});
+					_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+					break;
+				case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function(){$(this).empty();});
+					try{
+						if($('#f-issu').find('#grid').length > 0)
+							$('#f-issu').find('#grid').data("kendoGrid").dataSource.read();
+					}catch(err){}
+					break;
+				
+				case 'accept':
+					objDataSend = getDataToSave();
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+						data: objDataSend,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res.errorCode == 0) {
+								var responseData = res.responseData;
+								
+								var confirmText = responseData['CONFIRM'];
+								tokenTransaction = responseData['TOKEN'];
+								
+								objDataSend['tokenTransaction'] = tokenTransaction;
+								alertConfirm(confirmText,
+									function(e){
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+											data: objDataSend,
+											beforeSend: function(req) {
+												initAjaxJsonRequest(req);
+									        	showLoading();
+											},
+											success:function(res) {
+												hideLoading();
+												if(res) {
+													if(res.errorCode == 0) {
+														$('#f-issu-crud').find('button[data-action="back"]').trigger('click');
+														location.reload();
+													}else{
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+												}else{
+													alertDLSuccess('unknown error!!!', function(){});
+													hideLoading();
+												}
+											},
+											error:function (xhr, ajaxOptions, thrownError){
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+									            hideLoading();
+									        }
+										});
+									},
+									function(e){}
+								);
+							}else{
+								alertDLSuccess(createObjectError(res).html(), function(){});
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							$obj.prop('disabled', false);
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					});
+					break;
+
+				default:
+					break;
+				}
+			});
+			$("#f-issu-crud").find('#logoFile').fileupload({
+				dataType: 'json',
+				url: ROOT_PATH + '/main/' + transactionMain + '/processUploadFile',
+				formData: {
+					_csrf: _csrf_value
+				},
+				sequentialUploads: true,
+				singleFileUploads: true,
+				beforeSend: function(xhr, data) {
+					initAjaxJsonRequest(xhr);
+				},
+				add: function (e, data) {
+					var id = $(this).attr('id');
+					$('#' + id + 'Name, #' + id + 'NameSystem').val('');
+					data.submit();
+				},
+				progressall: function (e, data) {
+				},
+				done: function (e, data) {
+				},
+				success:function(res) {
+					if(res) {
+						if(res.errorCode == 0) {
+							$('#' + res.responseData.id).val(res.responseData.value);
+							$('#' + res.responseData.id + 'System').val(res.responseData.valueSystem);
+						}
+					}
+				},
+				processfail: function (e, data) {
+			    },
+				error: function (e, data) {
+					alertConfirm('Lỗi');
+				}
+			});
+			
+				$("#f-issu-crud").find('button[name="btDeleteImage"]').click(function (event) {
+				event.preventDefault();event.stopPropagation();
+				
+				var typeImage = $(this).attr('data-target');
+				alertConfirm('Bạn có chắc muốn xóa không', function (result) {
+					if(result){
+						var dataPost = 'typeImage=' + typeImage + '&';
+						dataPost += _csrf_name + '=' + _csrf_value;
+						
+						$.ajax({
+							type: "POST",
+							datatype: "json",
+								url: ROOT_PATH + '/main/' + transactionMain + '/deleteImage',
+							data: dataPost,
+							beforeSend: function(req) {
+								initAjaxJsonRequest(req);
+					        	showLoading();
+							},
+							success:function(res) {
+								hideLoading();
+								if(res) {
+									if(res.errorCode == 0) {
+										$('#' + typeImage + 'Name, #' + typeImage + 'NameSystem').val('');
+										alertConfirm('Xóa thành công.', function(){	
+										});
+									}else{
+										alertConfirm(createObjectError(res).html());
+									}
+								}else{
+									alertConfirm('unknown error!!!');
+									hideLoading();
+								}
+							},
+							error:function (xhr, ajaxOptions, thrownError){
+								alertConfirm(xhr.status + " - " + xhr.responseText, function(){});
+					            hideLoading();
+					        }
+						});
+					}
+				});
+			
+			});
+			
+		});
+		
+	
+		
+		function getDataToSave(){
+			var dataPost = {};
+			dataPost['_id'] = $('#f-issu-crud').find('input[name="_id"]').val();
+			dataPost['phone'] = $('#f-issu-crud').find('#phone').val();	
+			dataPost['mail'] = $('#f-issu-crud').find('#mail').val();
+			dataPost['logoFileNameSystem'] = $('#f-issu-crud').find('#logoFileNameSystem').val();
+			return dataPost;
+		}
+		</script>
+
+
+			
+				<div class="row">
+					<div class="col-12">
+						<hr style="margin: 0 0 10px 0" />
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
+</div>
+
+</html>

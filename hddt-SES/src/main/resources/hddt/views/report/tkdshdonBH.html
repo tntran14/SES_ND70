@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách hóa đơn bán hàng</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-einvoices" name="f-einvoices" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<select class="form-control form-control-sm c-f__textbox" id="mau-so-hdon" name="mau-so-hdon" >
+													<option value=""></option>
+													<th:block th:if="${map_mausokyhieu != null}">
+														<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+															th:value="${entry.key}" th:utext="${entry.value}" > </option>
+													</th:block>
+												</select>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mẫu hóa đơn</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row m-b-16">
+										<div class="col-12 custom-field">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="so-hoa-don" name="so-hoa-don" value="" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số hóa đơn</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox "type="text" id="nmua-mst" name="nmua-mst" value="" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>MST khách hàng</label></legend></fieldset>
+											</div>
+										</div>
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox " type="text" id="nmua-ten" name="nmua-ten" value="" autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Khách hàng</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5 col-erp__cta">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+                            		<div class="col-12 text-right p-r-0 p-l-0">
+                            			<div class="button-group text-right">
+                            				<button type="button" title="Xuất Excel - Import to FAST" data-action="export-excel-fast" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tkdshdonBH-export-excel-fast|')}">
+                            					<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất Excel - Import to FAST</span>
+                            				</button>
+                            				<button type="button" title="Xuất danh sách chi tiết" data-action="export-excel-detail" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tkdshdonBH-export-excel-detail|')}">
+                            					<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất danh sách chi tiết</span>
+                            				</button>
+                            				<button type="button" title="Xuất bảng kê tổng quát" data-action="export-excel-general" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tkdshdonBH-export-excel-general|')}">
+                            					<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất bảng kê tổng quát</span>
+                            				</button>
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-einvoices').find('#grid');
+				</script>
+				<script th:src="@{/static/function/report/tkdshdonBH.js(v=1.02) }"></script>
+			</div>
+		</div>
+	</th:block>
+</body>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		
+	<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách quản lý tài khoản admin</h3>
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-12">
+				<form id="f-createUserAdmin" name="f-createUserAdmin" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="fullName" name="fullName"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Tên người dùng</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="userName" name="userName"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Mã người dùng</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+							 	<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="phone" name="phone"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Điện thoại</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div> 
+						<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="email" name="email"  autocomplete="off"/>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend"><label>Email</label></legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div> 
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12">
+											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+								
+                            		<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
+                            				<div class="button-group text-right">
+                                    <button type="button" th:if="${#strings.contains(UserFullPathRight,'createUserAdminCre')}" title="Thêm mới"
+                                    		data-action=createUserAdminCre class="btns btns-add__ses hover-up__ses"><i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline"> Thêm mới</span></button>
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'createUserAdminDetail')}" title="Chi tiết"
+                                    		data-action="createUserAdminDetail" class="btns btns-detail__ses hover-up__ses"><i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline"> Chi tiết</span></button>
+                                    <button type="button" th:if="${#strings.contains(UserFullPathRight,'createUserAdminEdit')}" title="Thay đổi"
+                                    		data-action="createUserAdminEdit" class="btns btns-edit__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline"> Thay đổi</span></button>
+                 					<button type="button" th:if="${#strings.contains(UserFullPathRight,'|createUserAdminActive|')}" title="Kích hoạt"
+                                    		data-action="active" class="btns btns-export__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline"> Kích hoạt</span></button>
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'|createUserAdminDeActive|')}" title="Hủy kích hoạt"
+                                    		data-action="de-active" class="btns btns-export__ses-2 hover-up__ses" disabled="disabled" ><i class="mdi mdi-account-remove"> </i><span class="d-none d-md-inline"> Hủy kích hoạt</span></button>
+
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'|createUserAdminResetPassword|')}" title="Reset mật khẩu"
+                                    		data-action="createUserAdminResetPassword" class="btns btns-detail__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-lock-reset"> </i><span class="d-none d-md-inline"> Reset mật khẩu</span></button>
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'|createUserAdminDelete|')}" title="Xóa"
+                                    		data-action="delete" class="btns btns-delete__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-close-box"> </i><span class="d-none d-md-inline"> Xóa</span></button>
+                                </div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div> 
+							
+						</div>
+					</div>
+                      
+                      
+				</form>
+			
+				<script type="text/javascript">
+				_gridMain = $('#f-createUserAdmin').find('#grid');
+				</script>
+				
+				<script type="text/javascript">
+				$(function(){
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/createUserAdmin/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+						filterable: false, resizable: true,
+						serverSorting: false,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+				        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+				  			
+							{field: 'userName', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã người dùng</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'fullName', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên người dùng</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'roleRightName', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Nhóm quyền</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+					
+							{field: 'phone', width: '80px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Điện thoại</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'email', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'effectDate', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày hiệu lực</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'expireDate', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày hết hạn</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'activeDeactiveDesc', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;'},
+							},
+							{field: 'createUserAdmin', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+				    	],
+				    	filter: function(arg){arraySelected = [];},
+						sort: function(arg){arraySelected = [];},
+						dataBound: function(e) {
+							$("#f-createUserAdmin").find('button[data-action="createUserAdminDetail"], button[data-action="createUserAdminEdit"], button[data-action="active"], button[data-action="de-active"], button[data-action="createUserAdminResetPassword"], button[data-action="delete"]').prop('disabled', true);
+							_gridMain.find('div table tbody tr td').each(function(idx, obj){
+								$(obj).attr('title', $(obj).html())
+							});
+						}
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+						var item = _gridMain.data("kendoGrid").dataItem($(this).closest("tr"));
+						$("#f-createUserAdmin").find('button[data-action="createUserAdminDetail"]').prop('disabled', false);
+						
+						var grid = _gridMain.data("kendoGrid");
+						var rowData = grid.dataItem(grid.select());
+						$("#f-createUserAdmin").find('button[data-action="createUserAdminEdit"]').prop('disabled', !('0' == rowData['active']) );
+						$("#f-createUserAdmin").find('button[data-action="active"]').prop('disabled', !('0' == rowData['active']) );
+						$("#f-createUserAdmin").find('button[data-action="de-active"]').prop('disabled', '0' == rowData['active'] );
+						$("#f-createUserAdmin").find('button[data-action="delete"], button[data-action="createUserAdminResetPassword"]').prop('disabled', !('0' == rowData['active']) );
+					});
+					
+				
+					
+					$("#f-createUserAdmin").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var $obj = $(this);
+						
+						var rowData = null;
+						var actionCheck = '|createUserAdminEdit|createUserAdmincontract-cre|createUserAdminDetail|';
+						
+						var entityGrid = _gridMain.data("kendoGrid");
+						var selectedItem = entityGrid.dataItem(entityGrid.select());
+						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
+							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+							return;
+						}
+						
+						var objData = {};
+						switch (dataAction) {						
+						case 'createUserAdminEdit':		
+						case 'createUserAdminDetail':
+						case 'createUserAdminResetPassword':
+							objData['_id'] = selectedItem['_id'];
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+							break;
+						case 'createUserAdminCre':
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+							break;
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;		
+							
+						case 'active':
+						case 'de-active':
+						case 'delete':
+							var _obj = this;
+							$(_obj).prop('disabled', true);
+							var transactionTmp = '';
+							if('active' == dataAction) transactionTmp = 'createUserAdminActive';
+							else if('de-active' == dataAction) transactionTmp = 'createUserAdminDeActive';
+							else if('delete' == dataAction) transactionTmp = 'createUserAdminDelete';
+							
+							objData['_id'] = selectedItem['_id'];
+							var objDataSend = {_id: objData['_id']};
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/' + transactionTmp + '/check-data-save',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									$(_obj).prop('disabled', false);
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											var confirmText = responseData['CONFIRM'];
+											tokenTransaction = responseData['TOKEN'];
+											
+											objDataSend['tokenTransaction'] = tokenTransaction;
+											
+											alertConfirm(confirmText,
+													function(e) {
+														$.ajax({
+															type: "POST",
+															datatype: "json",
+															url: ROOT_PATH + '/main/' + transactionTmp + '/save-data',
+															data: objDataSend,
+															beforeSend: function(req) {
+																initAjaxJsonRequest(req);
+													        	showLoading();
+															},
+															success:function(res) {
+																hideLoading();
+																if(res) {
+																	if(res.errorCode == 0) {
+																		$(_obj).prop('disabled', true);
+																		alertDLSuccess(createObjectError(res).html(), function(){
+																			_gridMain.data("kendoGrid").dataSource.read();
+																		});
+																		
+																	}else{
+																		alertDLSuccess(createObjectError(res).html(), function(){});
+																	}
+																}else{
+																	alertDLSuccess('unknown error!!!', function(){});
+																	hideLoading();
+																}
+															},
+															error:function (xhr, ajaxOptions, thrownError){
+																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+													            hideLoading();
+													        }
+														});
+													},
+													function(e) {
+														
+													}
+												);
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									$(_obj).prop('disabled', false);
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+						default:
+							break;
+						}
+					});
+					
+				});
+
+				function getDataSearch(){
+					var dataPost = {};
+					
+					dataPost['userName'] = $('#f-createUserAdmin #userName').val() == null? '': $('#f-createUserAdmin #userName').val();
+					dataPost['fullName'] = $('#f-createUserAdmin #fullName').val() == null? '': $('#f-createUserAdmin #fullName').val();
+					dataPost['phone'] = $('#f-createUserAdmin #phone').val() == null? '': $('#f-createUserAdmin #phone').val();
+					dataPost['email'] = $('#f-createUserAdmin #email').val() == null? '': $('#f-createUserAdmin #email').val();
+					
+					return dataPost;
+				}
+
+				function disableEnabledAllButton(){
+					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+					$("#f-createUserAdmin").find('button[data-action="createUserAdminsign"]').prop('disabled', checkRows.length == 0);
+					}
+
+				function setTemplateForGridMAIN(key, data){
+					var signStatusCode = data['SignStatusCode'];
+					var eInvoiceStatus = data['EInvoiceStatus'];
+					var text = '';
+					
+					switch (key) {
+					case 'func':
+						if('CREATED' == eInvoiceStatus || 'NOSIGN' == signStatusCode){
+							text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';
+						}else if('PENDING' == eInvoiceStatus && 'SIGNED' == signStatusCode){
+							text += '<i title="Gửi CQT" class="mdi mdi-telegram fs-25 text-info c-pointer" data-sub-action="send-cqt" ></i>';
+						}else if('PROCESSING' == eInvoiceStatus && 'SIGNED' == signStatusCode){
+							text = '<i title="Lấy kết quả từ CQT" class="mdi mdi-refresh-circle fs-25 text-info c-pointer" data-sub-action="refresh" ></i>';
+						}
+						text += '<i title="In hóa đơn" class="mdi mdi-printer fs-25 text-black c-pointer" data-sub-action="print" ></i>';
+						break;
+					case 'StatusDesc':
+						if('DELETED' == data['EInvoiceStatus']){
+							text = '<div style="background: red;color: white;">' + data['StatusDesc'] + '</div>';
+						}else{
+							text = data['StatusDesc'];
+						}
+						break;
+					default:
+						break;
+					}
+					
+					
+					return text;
+				}
+				</script>			
+			</div>
+		</div>		
+		
+		
+	</th:block>
+</body>
+</html>

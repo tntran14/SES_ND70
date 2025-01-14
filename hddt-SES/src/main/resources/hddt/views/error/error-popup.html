@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" th:text="${statusCode}"></h4>
+</div>
+
+<div class="modal-body">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="col-xs-11 margin-top-only margin-bottom-only center-block">
+				<form id="fShowMessageError" name="fShowMessageError" method="post" enctype="multipart/form-data" >
+					<div class="row" >
+						<div class="col-12">
+							<div class="form-group m-b-5 text-center">
+								<img th:src="@{/static/images/sadface.gif}" width="250">
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group m-b-5 text-center">
+								<div class="text-danger fs-20" role="alert">[[${errorMessage}]]</div>
+							</div>
+						</div>
+
+					</div>
+					<div th:if="${'Y' eq _IsRelogin}">
+						<script>var url = window.location.protocol + '//' + window.location.hostname + ('' == window.location.port? '': ':' + window.location.port) + '/';var pathName = window.location.pathname;var arrayPathName = pathName.split('/');url += arrayPathName[1];setTimeout(function(){ window.location.replace(url); }, 3000);</script>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-sm btn-outline-secondary " data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<script type="text/javascript">
+</script>
+
+</html>
+
+

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="row page-titles">
+	<div class="col-12 col-sm-8 col-md-6 align-self-center p-l-5 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}" ></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 col-sm-8 col-md-6 centerX">
+		<form id="f-qlUserCheckAdminCRUD" name="f-qlUserCheckAdminCRUD" method="post" enctype="multipart/form-data" >
+			<div class="card">
+				<div class="card-body">
+					<div class="row text-danger m-b-10 fw-500 col-12" th:if="${messageError != null}">
+						[[${messageError}]]
+						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+					</div>
+					<div class="form-group row m-b-6" th:classappend="${messageError != null? 'none-pointer-event': ''}">
+						<div class="col-12 m-b-5">
+							<div class="row">
+								<label class="col-4 col-lg-3 col-form-label">Tên đăng nhập <span class="text-danger" th:if="${'CREATE' == _action_}">*</span></label>
+								<div class="col-8 col-lg-9">
+									<div class="input-group">
+										<div class="input-group-prepend" th:if="${'CREATE' == _action_}">
+											<span class="input-group-text p-t-1 p-b-1 fw-700" th:text="${PrefixUserID}" >[[${PrefixUserID}]]</span>
+										</div>
+										<input class="form-control form-control-sm text-uppercase" type="text" id="userName" name="userName" th:value="${UserName}" autocomplete="off" th:readonly="${'CREATE' != _action_}" >	
+									</div>
+									
+								</div>
+							</div>
+							<div class="row m-t-5" th:if="${'CREATE' == _action_ || 'RESET_PASSWORD' == _action_}">
+								<label class="col-4 col-lg-3 col-form-label">Mật khẩu </label>
+								<div class="col-8 col-lg-9">
+									<div class="input-group" id="show_hide_password">
+										<input class="form-control form-control-sm" type="password" id="password" name="password"  autocomplete="off" 
+													placeholder="Mật khẩu trả về khi thực hiện thành công" readonly="readonly">
+										<div class="input-group-append">
+											<button type="button" class="btn btn-sm btn-info p-t-1 p-b-1" ><i class="mdi mdi-eye-off"> </i></button>
+										</div>		
+									</div>
+								</div>
+							</div>
+									<div class="row m-t-5">
+								<label class="col-4 col-lg-3 col-form-label">Tên người dùng <span class="text-danger" th:if="${_isedit_}">*</span></label>
+								<div class="col-8 col-lg-9">
+									<input class="form-control form-control-sm " type="text" id="fullName" name="fullName" autocomplete="off" th:value="${FullName}" th:readonly="${!_isedit_}">
+								</div>
+							</div>
+							<div class="row m-t-5">
+								<label class="col-4 col-lg-3 col-form-label">Điện thoại</label>
+								<div class="col-8 col-lg-9">
+									<input class="form-control form-control-sm " type="text" id="phone" name="phone" autocomplete="off" th:value="${Phone}" th:readonly="${!_isedit_}">
+								</div>
+							</div>
+							<div class="row m-t-5">
+								<label class="col-4 col-lg-3 col-form-label">Email</label>
+								<div class="col-8 col-lg-9">
+									<input class="form-control form-control-sm " type="text" id="email" name="email" autocomplete="off" th:value="${Email}" th:readonly="${!_isedit_}">
+								</div>
+							</div>
+				<!-- 							
+							<div class="row m-t-5">
+								<label class="col-4 col-lg-3 col-form-label">Ngày hiệu lực <span class="text-danger" th:if="${_isedit_}">*</span></label>
+								<div class="col-8 col-lg-9">
+									<input class="form-control form-control-sm date" type="text" id="effectDate" name="effectDate" th:value="${EffectDate}" autocomplete="off" th:readonly="${!_isedit_}">
+								</div>
+							</div>
+							<div class="row m-t-5">
+								<label class="col-4 col-lg-3 col-form-label">Ngày hết hạn <span class="text-danger" th:if="${_isedit_}">*</span></label>
+								<div class="col-8 col-lg-9">
+									<input class="form-control form-control-sm date" type="text" id="expireDate" name="expireDate" th:value="${ExpireDate}" autocomplete="off" th:readonly="${!_isedit_}">
+								</div>
+							</div> -->
+
+						</div>
+					</div>
+					
+					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0;"></div></div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" id="btBack" class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> Quay lại</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" id="btAccept" class="btn btn-sm btn-primary btn-ses"
+								th:if="${null == messageError && 'DETAIL' != _action_}" ><i class="mdi mdi-check-all"></i> Chấp nhận</button>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			
+			<input type="hidden" name="_id" th:value="${_id}" >
+		</form>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+transactionMain = '[[${transaction}]]';
+var _allowChecked = [[${_isedit_}]];
+</script>
+<!-- <script th:src="@{/static/js/role-admin/system/rolesRightManageCrud.js(v=2.0) }"></script> -->
+	<script type="text/javascript" th:if="${_isedit_}">
+	$(function(){
+			dateInputFormat($('#f-qlUserCheckAdminCRUD').find('#effectDate'));
+			dateInputFormat($('#f-qlUserCheckAdminCRUD').find('#expireDate'));
+		});
+	</script>
+	
+
+		
+<script type="text/javascript">
+var arrayData = [];
+var objTmp = null;
+$(function(){
+	$('#f-qlUserCheckAdminCRUD').find("#show_hide_password button").on('click', function(event) {
+		event.preventDefault();
+        if($('#f-qlUserCheckAdminCRUD').find('#show_hide_password input').attr("type") == "text"){
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password input').attr('type', 'password');
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password i').addClass( "mdi-eye-off" );
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password i').removeClass( "mdi-eye" );
+        }else if($('#f-qlUserCheckAdminCRUD').find('#show_hide_password input').attr("type") == "password"){
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password input').attr('type', 'text');
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password i').removeClass( "mdi-eye-off" );
+        	$('#f-qlUserCheckAdminCRUD').find('#show_hide_password i').addClass( "mdi-eye" );
+        }
+		 
+	 });
+	
+	$("#f-qlUserCheckAdminCRUD").find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		var _obj = this;
+		var _id = '';
+		
+		var objData = {};
+		switch (dataAction) {
+		case 'detail-role':
+			_id = $(_obj).closest('div.input-group').find('#roleId').val();
+			if(undefined == _id || null == _id || '' == _id) return;
+			objData['_id'] = _id;
+			showPopupWithURLAndData(ROOT_PATH + '/main/RolesManageAdminDetail/init' , objData, true, function(e){
+			});
+			break;
+
+		default:
+			break;
+		}
+	});
+	
+	$('#f-qlUserCheckAdminCRUD #btAccept').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		
+		var _obj = this;
+		$(_obj).prop('disabled', true);
+	
+		var objDataSend = getDataToSave();
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+			data: objDataSend,
+			beforeSend: function(req) {
+				initAjaxJsonRequest(req);
+	        	showLoading();
+			},
+			success:function(res) {
+				$(_obj).prop('disabled', false);
+				hideLoading();
+				if(res) {
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						
+						alertConfirm(confirmText,
+								function(e) {
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													$(_obj).prop('disabled', true);
+													disabledAllControlsInForm('f-qlUserCheckAdminCRUD');
+													$('#f-qlUserCheckAdminCRUD').find('#btAccept').prop('disabled', true);
+													
+													if(jQuery.type(res.responseData) == 'object'){
+														$('#f-qlUserCheckAdminCRUD').find('#password').val(res.responseData.password);
+													}
+													
+													alertDLSuccess(jQuery.type(res.responseData) == 'object'? res.responseData.info: createObjectError(res).html(), function(){
+													});
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								},
+								function(e) {
+									
+								}
+							);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				}else{
+					alertDLSuccess('unknown error!!!', function(){});
+					hideLoading();
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				$(_obj).prop('disabled', false);
+				alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	            hideLoading();
+	        }
+		});
+		
+	});
+	
+	$('#f-qlUserCheckAdminCRUD #btBack').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		$('#divMainContent').show();
+		$('#divSubContent').hide(function(){$(this).empty();});
+		if($('#f-qlUserCheck').find('#grid').length > 0)
+			$('#f-qlUserCheck').find('#grid').data("kendoGrid").dataSource.read();
+	});
+});
+
+function getDataToSave(){
+	var dataPost = {};
+	dataPost['_id'] = $('#f-qlUserCheckAdminCRUD').find('input[name="_id"]').val();
+	dataPost['userName'] = $('#f-qlUserCheckAdminCRUD').find('#userName').val();
+ 	dataPost['fullName'] = $('#f-qlUserCheckAdminCRUD').find('#fullName').val(); 
+	dataPost['phone'] = $('#f-qlUserCheckAdminCRUD').find('#phone').val();
+	dataPost['email'] = $('#f-qlUserCheckAdminCRUD').find('#email').val();
+/* 	dataPost['effectDate'] = $('#f-qlUserCheckAdminCRUD').find('#effectDate').val();
+	dataPost['expireDate'] = $('#f-qlUserCheckAdminCRUD').find('#expireDate').val();	 */
+	/* dataPost['hasRetired'] = $('#f-qlUserCheckAdminCRUD').find('#hasRetired').prop('checked')? 'Y': 'N'; */
+	
+	return dataPost;
+}
+
+</script>
+
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Thay đổi trạng thái hóa đơn</h3>
+			</div>
+		</div>
+		          <div class="row">
+            <div class="col-12">
+              <form
+                name="f-tthdon"
+                id="f-tthdon"
+                method="post"
+                enctype="multipart/form-data"
+              >
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row p-l p-r">
+                      <div class="col-12 b-a m-b-sm">
+                        <div class="row m-b-16">
+                          <div class="col-12 col-md-6">
+                            <div class="c-f__wrapper">
+                              <input
+                                id="mtdiep"
+                                name="mtdiep"
+                                class="form-control form-control-sm c-f__textbox"
+                                type="text"
+                                autocomplete="off"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label
+                                    >Mã thông điệp<span
+                                      class="text-danger"
+                                      style="font-size: 15px"
+                                      >(*)</span
+                                    ></label
+                                  >
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                          <div class="col-12 col-md-2">
+                            <div class="m-b-16">
+                              <button
+                                class="btns btns-search_auto__ses hover-up__ses w-100p"
+                                data-action="search"
+                                title="Tìm kiếm"
+                                type="button"
+                              >
+                                <i class="mdi mdi-file-find"></i
+                                ><span class="d-none d-md-inline"
+                                  >Tìm kiếm</span
+                                >
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12">
+                            <hr style="margin: 0 0 10px 0" />
+                          </div>
+                        </div>
+                        <div>
+                          <div class="row mT-0">
+                            <div class="col-12 col-sm-12 col-md-3">
+                              <div class="custom-field m-b-16">
+                             
+									<div class="c-f__wrapper">		
+								<!-- 	<input class="form-control form-control-sm c-f__textbox" th:value="${TTHDonText}" type="text" autocomplete="off" th:readonly="true" />								 -->
+										<select id="tthd" name="tthd" class="form-control form-control-sm c-f__textbox"  >
+											<option value=""></option>
+											<th:block th:if="${map_tthdon != null}">
+												<option th:each="entry : ${map_tthdon.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TTHDon == entry.key}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Thay đổi trạng thái hóa đơn<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+										</fieldset>
+									</div>
+                              </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-2">
+                              <div class="button-group">
+                                <button
+                                  type="button"
+                                  data-action="accept"
+                                  class="btnadd btns btns-blue__ses"
+                                  title="Chấp nhận"
+                                >
+                                  <i class="mdi mdi-check-all"></i>
+                                  <span class="d-md-inline">Chấp nhận</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group row m-b-5 m-t-7">
+                          <div class="col-12 has-min-height-grid">
+                            <div
+                              id="grid"
+                              data-role="grid"
+                              class="k-grid k-widget"
+                              style=""
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 			<input type="hidden" name="_id" value="61e64214021ce9aa6b8dfd87" /> -->
+              </form>
+              <script type="text/javascript">
+                transactionMain = 'tthdon'
+                _gridMain = $('#f-tthdon').find('#grid')
+       
+				   
+				   var a = '[[${LHDon}]]';
+				   console.log(a);
+
+              </script>
+   
+   
+
+<script type="text/javascript">
+
+$(function(){
+
+	
+	_gridMain.kendoGrid({
+		dataSource: new kendo.data.DataSource({
+			transport: {
+				read: {
+					type: 'POST',
+					url: ROOT_PATH + '/main/tthdon/search',
+                    dataType: 'json',
+                    data: function(){return getDataSearch();},
+                    beforeSend: function(req){
+                    	initAjaxJsonGridRequest(req);
+                	},
+				}
+			},
+			requestEnd: function (e) {
+               	if (e.type === "read" && e.response) {
+               		console.log(e.response)
+               		if(e.response.errorCode == 0){
+               			
+               			/* $.ajax({
+    						type: "POST",
+    						datatype: "json",
+    						url: ROOT_PATH + '/main/tthdon/check_search',
+    						data: getDataSearch(),
+    						beforeSend: function(req) {
+    							initAjaxJsonRequest(req);
+    				        	showLoading();
+    						},
+    						success:function(res) {
+    							
+    							hideLoading();
+    							if(res) {
+    								if(res.errorCode == 0) {
+    									_gridMain.data("kendoGrid").dataSource.read();
+    								}else{
+    									alertDLSuccess(createObjectError(res).html(), function(){});
+    								}
+    							}else{
+    								alertDLSuccess('unknown error!!!', function(){});
+    								hideLoading();
+    							}
+    						},
+    						error:function (xhr, ajaxOptions, thrownError){
+    							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+    				            hideLoading();
+    				        }
+    					});	 */
+               		}else{
+               			//notificationDLSuccess(createObjectError(e.response).html(), function(){});
+               		}
+               	}
+           	},
+            schema: {
+				data: "rows",
+                total: "total",
+                model: {
+					fields: {
+					}
+				}
+			},
+			pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+			serverPaging: true,
+			serverSorting: true,
+           	serverFiltering: true,
+           	change: function(e) {
+            },
+		}),
+		selectable: true, scrollable: true, 
+ 		sortable: {mode: "single", allowUnsort: true},
+		sortable: true,
+// 		filterable: { mode: "row"},
+		filterable: false, resizable: true,
+		serverSorting: false,
+//		height: kendoGridHeight,
+		pageable: {
+			refresh: true,
+			pageSizes: true,
+			buttonCount: KENDOUI_BUTTONCOUNT,
+			messages: {
+				itemsPerPage: kendoGridMessages.itemsPerPage,
+				previous: kendoGridMessages.previous,
+				next: kendoGridMessages.next,
+				refresh: kendoGridMessages.refresh,
+				last: kendoGridMessages.last,
+				first: kendoGridMessages.first,
+				empty: kendoGridMessages.empty,
+				display: kendoGridMessages.display
+			},
+			pageSizes: KENDOUI_PAGESIZES,
+			numeric: true
+		},
+		dataBinding: function () {
+            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+        },
+        columns: [
+        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+  			},
+			{field: 'StatusDesc', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+				
+			},
+			{field: 'SignStatusDesc', width: '140px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đã ký</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+		
+			{field: 'MCCQT', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CQTMTLoi', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Lỗi từ CQT</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'ExportNumber', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày phát hành</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'TaxCode', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CompanyName', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'TgTTTBSo', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
+				attributes: {'class': 'table-cell text-right'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'TgTCThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
+				attributes: {'class': 'table-cell text-right'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},	
+			{field: 'MTDiep', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã thông điệp</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'MTDTChieu', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã tham chiếu</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'UserCreated', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
+				attributes: {'class': 'table-cell text-left'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'SendCQT_Date', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày gửi mã hóa đơn</a>',
+				attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'CQT_Date', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày cấp mã hóa đơn</a>',
+				attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			
+    	],
+		dataBound: function(e) {
+//			_gridMain.find('div table tbody tr td').each(function(idx, obj){
+//				$(obj).attr('title', $(obj).html())
+//			});
+			
+			$("#f-tthdon").find('button[data-action="export-detail"], button[data-action="export-edit"], button[data-action="export-copy"],button[data-action="export-cre-dc-tt"], button[data-action="export-sign"]').prop('disabled', true);
+			
+			_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+			_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+				e.preventDefault();/*e.stopPropagation();*/
+				
+				var $obj = $(this);
+				var $tr = $obj.closest('tr');
+				var subAction = $obj.attr('data-sub-action');
+				
+				var indexRow = $tr.index();
+				var rowData = null;
+				var objData = {};
+				var objURL = {};
+				
+				switch (subAction) {	
+				case 'history':
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					objData['_id'] = rowData['_id'];
+					$('#divSubContent').show();$('#divMainContent').hide();
+					submitFormRenderArea(ROOT_PATH + '/main/export-history/history', objData, $('#divSubContent'));
+					break;
+				case 'change':
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					objData['_id'] = rowData['_id'];
+					$('#divSubContent').show();$('#divMainContent').hide();
+					submitFormRenderArea(ROOT_PATH + '/main/export-change/change', objData, $('#divSubContent'));
+					break;
+				case 'send-email':
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					objData['_id'] = rowData['_id'];
+					showPopupWithURLAndData(ROOT_PATH + '/main/export-send-mail/init', objData, false, function(e){
+					});
+					break;
+				case 'print':
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					window.open(ROOT_PATH + '/main/common/print-export/' + rowData['_id'],'_blank');
+					break;
+				case 'delete_':
+					
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					objData['_id'] = rowData['_id'];	
+				
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/export/delete_HD',
+						data: objData,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							
+							hideLoading();
+							if(res) {
+								if(res.errorCode == 0) {
+									_gridMain.data("kendoGrid").dataSource.read();
+								}else{
+									alertDLSuccess(createObjectError(res).html(), function(){});
+								}
+							}else{
+								alertDLSuccess('unknown error!!!', function(){});
+								hideLoading();
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					});	
+					break;
+				case 'print-convert':
+					rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					window.open(ROOT_PATH + '/common/print-export-convert/' + rowData['_id'],'_blank');
+					break;
+				
+				case 'delete':
+			
+				default:
+					break;
+				}
+			});
+			
+		}
+	});
+	
+	_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+	_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+		$("#f-tthdon").find('button[data-action="export-detail"]').prop('disabled', false);	
+		$("#f-tthdon").find('button[data-action="export-copy"]').prop('disabled', false);	
+		var $tr = $(this).closest("tr");
+		var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+		$("#f-tthdon").find('button[data-action="export-sign"]').prop('disabled', 'NOSIGN' == rowData['SignStatusCode']? false: true);
+		$("#f-tthdon").find('button[data-action="export-edit"]').prop('disabled', 'NOSIGN' == rowData['SignStatusCode']? false: true);
+	
+	});
+	
+	
+	$("#f-tthdon").find('button[data-action]').click(function (event) {
+		event.preventDefault();/*event.stopPropagation();*/
+		var dataAction = $(this).data('action');
+		
+		var $obj = $(this);
+		
+		var rowData = null;
+		var actionCheck = '|export-edit|export-sign|export-detail|export-copy|';
+		
+		var entityGrid = _gridMain.data("kendoGrid");
+		var selectedItem = entityGrid.dataItem(entityGrid.select());
+		if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
+			alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+			return;
+		}
+		
+		var objData = {};
+		var objDataSend = {};
+		switch (dataAction) {
+		
+			case 'search':
+			_gridMain.data("kendoGrid").dataSource.page(1);
+			break;
+		case 'accept':
+			objDataSend = getDataSearch();
+			$.ajax({
+				type: "POST",
+				datatype: "json",
+				url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+				data: objDataSend,
+				beforeSend: function(req) {
+					initAjaxJsonRequest(req);
+		        	showLoading();
+				},
+				success:function(res) {
+					hideLoading();
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						alertConfirm(confirmText,
+							function(e){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												alertDLSuccess("Thay đổi trạng thái thành công.", function(){});		
+												location.reload();
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e){}
+						);
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+					$obj.prop('disabled', false);
+					alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		            hideLoading();
+		        }
+			});
+			break;
+		default:
+			break;
+		}
+	});
+	
+});
+
+function getDataSearch(){
+	var dataPost = {};
+		
+	dataPost['mtdiep'] = $('#f-tthdon #mtdiep').val() == null? '': $('#f-tthdon #mtdiep').val();
+	dataPost['tthdon'] = $('#f-tthdon #tthd').val() == null? '': $('#f-tthdon #tthd').val();
+	return dataPost;
+}
+
+function disableEnabledAllButton(){
+	var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+	$("#f-tthdon").find('button[data-action="export-sign"]').prop('disabled', checkRows.length == 0);
+//	$("#f-tthdon").find('button[data-action="delete"]').prop('disabled', checkRows.length == 0);
+}	
+		
+</script>
+   
+               </div>
+          </div>
+        
+		</th:block>
+</body>
+</html>

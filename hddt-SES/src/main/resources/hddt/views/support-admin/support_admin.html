@@ -1,0 +1,306 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách phần mềm hỗ trợ</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-support" name="f-support" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							<div class="form-group row m-b-6">
+								<div class="col-12 col-md-10 col-lg-6">
+									<div class="custom-field">
+										<input class="form-control form-control-sm custom-field__textbox" type="text" id="title" name="title" autocomplete="off">
+										<label class=" col-form-label custom-field__textbox--label">Tiêu đề</label>
+									</div>
+								</div>
+								<div class="col-12 col-md-2 col-lg-6 config-email__search">
+									<div class="row">
+										<div class=" col-8 offset-4 col-md-12 offset-md-0 col-lg-12 offset-lg-0 ">
+											<button class="btns btns-search_auto__ses hover-up__ses" data-action="search" title="Tìm kiếm" type="button"><i class="mdi mdi-file-find "></i> <span class="d-none d-md-inline">Tìm kiếm</span></button>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0;"></div></div>
+	           				<div class="row"><div class="col-12">
+	           				<div class="button-group text-right">
+	           					<button type="button" title="Thêm mới"
+                                    		data-action="create" data-controller="support-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|support-cre|')}"><i class="mdi mdi mdi-plus-circle-outline"> </i> <span class="d-none d-md-inline" >Thêm mới</span></button>
+								<button type="button" title="Chi tiết"
+                                    		data-action="detail" data-controller="support-detail" class="btns btns-detail__ses hover-up__ses" disabled="disabled" th:if="${#strings.contains(UserFullPathRight,'|support-detail|')}"><i class="mdi mdi-information-outline"> </i> <span class="d-none d-md-inline">Chi tiết</span></button>
+								<button type="button" title="Thay đổi"
+											data-action="edit" data-controller="support-edit" class="btns btns-edit__ses hover-up__ses" disabled="disabled" th:if="${#strings.contains(UserFullPathRight,'|support-edit|')}"><i class="mdi mdi-tooltip-edit"> </i> <span class="d-none d-md-inline">Thay đổi</span></button>											
+								
+								<button type="button" title="Kích hoạt"
+                                    		data-action="active" data-controller="support-active" class="btns btns-export__ses hover-up__ses" disabled="disabled" th:if="${#strings.contains(UserFullPathRight,'|support-active|')}"><i class="mdi mdi-account-check-outline"> </i> <span class="d-none d-md-inline">Kích hoạt</span></button>
+								<button type="button"  title="Hủy kích hoạt"
+                                    		data-action="de-active" data-controller="support-deactive" class="btns btns-export__ses-2 hover-up__ses" disabled="disabled" th:if="${#strings.contains(UserFullPathRight,'|support-deactive|')}"><i class="mdi mdi-account-remove"> </i> <span class="d-none d-md-inline">Hủy kích hoạt</span></button>
+															
+								<button type="button" title="Xóa"
+                                    		data-action="delete" data-controller="support-del" class="btns btns-delete__ses hover-up__ses" disabled="disabled" th:if="${#strings.contains(UserFullPathRight,'|support-del|')}"><i class="mdi mdi-close-box"> </i> <span class="d-none d-md-inline">Xóa</span></button>			
+							</div>
+	           				</div></div>
+	           				
+	           				<div class="form-group row m-b-5 m-t-7">
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+						</div>
+					</div>
+				</form>
+				<script type="text/javascript">
+					var _gridMain = $('#f-support').find('#grid');
+				</script>
+				<!-- <script th:src="@{/static/function/support/support.js(v=1.1) }"></script> -->
+				<script>
+				$(function(){
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+				                    url: ROOT_PATH + '/main/support_admin/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+//				           			showNotificationComplete(createObjectError(e.response).html(), 'warning');
+//				           			alertDLSuccess(createObjectError(e.response).html(), function(){});
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+//							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							pageSize: 10,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+//				 		filterable: { mode: "row"},
+						filterable: false, resizable: true,
+						serverSorting: false,
+//						height: kendoGridHeight,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+							{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+				  			{field: 'Title', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiêu đề</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+										
+							{field: 'StatusDesc', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'CreateDate', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+								attributes: {'class': 'table-cell', style: 'text-align: center;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'CreateUserFullName', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người tạo</a>',
+								attributes: {'class': 'table-cell', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+						],
+				        filter: function(arg){arraySelected = [];},
+						sort: function(arg){arraySelected = [];},
+						dataBound: function(e) {
+							_gridMain.find('div table tbody tr td').each(function(idx, obj){
+								$(obj).attr('title', $(obj).html())
+							});
+							
+							$("#f-support").find('button[data-action="detail"], button[data-action="hotnews"]').prop('disabled', true);
+							$("#f-support").find('button[data-action="edit"]').prop('disabled', true);
+							$("#f-support").find('button[data-action="active"]').prop('disabled', true);
+							$("#f-support").find('button[data-action="de-active"]').prop('disabled', true);
+							$("#f-support").find('button[data-action="delete"]').prop('disabled', true);
+						},
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+						var item = _gridMain.data("kendoGrid").dataItem($(this).closest("tr"));
+						$("#f-support").find('button[data-action="detail"], button[data-action="hotnews"]').prop('disabled', false);
+						
+						var grid = _gridMain.data("kendoGrid");
+						var rowData = grid.dataItem(grid.select());
+						if(null == rowData) return;
+						
+						var isActive = null == rowData['ActiveFlag']? '': rowData['ActiveFlag'];
+						
+						$("#f-support").find('button[data-action="edit"]').prop('disabled', !('N' == isActive) );
+						$("#f-support").find('button[data-action="active"]').prop('disabled', !('N' == isActive) );
+						$("#f-support").find('button[data-action="de-active"]').prop('disabled', 'N' == isActive );
+						$("#f-support").find('button[data-action="delete"]').prop('disabled', !('N' == isActive) );
+					});
+					
+					$("#f-support").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						var dataController = $(this).data('controller');
+						
+						var actionCheck = '|detail|edit|de-active|active|delete|';
+						var grid = _gridMain.data("kendoGrid");
+				    	var rowData = grid.dataItem(grid.select());
+				    	if(actionCheck.indexOf('|' + dataAction + '|') != -1 && null == rowData){
+				    		alertDLSuccess('Vui lòng chọn dòng dữ liệu để thực hiện.', function(){});
+				    		return;
+				    	}
+						
+						var objData = {};
+						if(rowData != null){
+							objData['_id'] = rowData['_id'];
+						}
+						switch (dataAction) {
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.read();
+							break;
+						case 'create':
+						case 'detail':
+						case 'edit':
+							$('#divSubContent').show();$('#divMainContent').hide();
+//							submitFormRenderArea(ROOT_PATH + '/Main?transaction=ServiceContractCreate&method=main', objData, $('#divSubContent'));
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataController + '/init', objData, $('#divSubContent'));
+							break;
+						case 'active':
+						case 'de-active':
+						case 'delete':
+						case 'hotnews':
+							objData = {_id: rowData['_id']};
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/' + dataController + '/check-data-save',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											var confirmText = responseData['CONFIRM'];
+											tokenTransaction = responseData['TOKEN'];
+											
+											objData['tokenTransaction'] = tokenTransaction;
+											
+											alertConfirm(confirmText,
+												function(e){
+													$.ajax({
+														type: "POST",
+														datatype: "json",
+														url: ROOT_PATH + '/main/' + dataController + '/save-data',
+														data: objData,
+														beforeSend: function(req) {
+															initAjaxJsonRequest(req);
+												        	showLoading();
+														},
+														success:function(res) {
+															hideLoading();
+															if(res) {
+																if(res.errorCode == 0) {
+																	_gridMain.data("kendoGrid").dataSource.read();
+																}else{
+																	alertDLSuccess(createObjectError(res).html(), function(){});
+																}
+															}else{
+																alertDLSuccess('unknown error!!!', function(){});
+																hideLoading();
+															}
+														},
+														error:function (xhr, ajaxOptions, thrownError){
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+												            hideLoading();
+												        }
+													});
+												},
+												function(e){}
+											)
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+
+						default:
+							break;
+						}
+						
+					});
+					
+				});
+
+				function getDataSearch(){
+					var dataPost = {};
+					dataPost['title'] = $("#f-support").find('#title').val();
+					return dataPost;
+				}
+				</script>
+			</div>
+		</div>
+	
+	</th:block>
+</body>
+</html>

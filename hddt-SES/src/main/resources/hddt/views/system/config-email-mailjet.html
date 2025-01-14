@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+	  <div class="container-fluid style-main-content" id="divMainContent">
+      <div class="row page-titles">
+        <div class="col-md-12 col-12 align-self-center p-l-0">
+          <h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">
+            Chi tiết cấu hình email Mailjet
+          </h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <form
+            name="f-config-email-mailjet"
+            id="f-config-email-mailjet"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="row p-l p-r m-t-20">
+                  <div
+                    class="col-sm-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8 b-a m-b-sm p-t-sm"
+                  >
+                    <!-- box-header -->
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >Tên cấu hình
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm has-value"
+                              id="nch"
+                              name="nch"
+                              autocomplete="off"
+                            		  th:value="${nch}" 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >Mặc định</label
+                      >
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <label
+                              class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0"
+                            >
+                              <input
+							  id = "md"
+                                name="md"
+                                type="checkbox"
+                                class="custom-control-input"
+                              />
+                              <span
+                                class="custom-control-label p-t-5"
+                              ></span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >Loại mail sử dụng
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                          <input
+                          type="text"
+                          class="form-control form-control-sm has-value"
+                          id="lm"
+                          name="lm"
+                          autocomplete="off"
+                        		  th:value="${lm}" 
+                        />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="b b-b m-b-16"></div>
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >ApiKey
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm has-value"
+                              id="ak"
+                              name="ak"
+                              autocomplete="off"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >SecretKey
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm has-value"
+                              id="sk"
+                              name="sk"
+                              autocomplete="off"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >Tên người gửi
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm has-value"
+                              id="ng"
+                              name="ng"
+                              autocomplete="off"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="input-group-sm row m-b-16">
+                      <label class="col-5 col-sm-4 form-control-label"
+                        >Địa chỉ Email
+                      </label>
+                      <div class="col-7 col-sm-8">
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm has-value"
+                              id="am"
+                              name="am"
+                              autocomplete="off"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="b b-b m-b-16"></div>
+                    <div class="input-group-sm p-b-sm p-r">
+                      <div
+                        class="col-12 text-md-right text-sm-right text-right p-r-0"
+                      >
+                        <button
+                          type="button"
+                          data-action="accept"
+                          class="btnadd btns btns-blue__ses"
+                          title="Chấp nhận"
+                        >
+                          <i class="mdi mdi-check-all"></i>
+                          <span class="d-md-inline">Chấp nhận</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </form>
+          <script type="text/javascript">
+            transactionMain = 'config-email-mailjet'
+          </script>
+          <script type="text/javascript">
+            $(function () {
+              inputFilterInteger(
+                $('#f-config-email-mailjet').find('#smtp-port')
+              )
+
+              $('#f-config-email-mailjet')
+                .find('button[data-action]')
+                .click(function (event) {
+                  event.preventDefault() /*event.stopPropagation();*/
+                  var dataAction = $(this).data('action')
+
+                  var $obj = $(this)
+                  var objDataSend = null
+
+                  switch (dataAction) {
+                    case 'accept':
+                      objDataSend = getDataToSave()
+                      $.ajax({
+                        type: 'POST',
+                        datatype: 'json',
+                        url:
+                          ROOT_PATH +
+                          '/main/' +
+                          transactionMain +
+                          '/check-data-save',
+                        data: objDataSend,
+                        beforeSend: function (req) {
+                          initAjaxJsonRequest(req)
+                          showLoading()
+                        },
+                        success: function (res) {
+                          hideLoading()
+                          if (res.errorCode == 0) {
+                            var responseData = res.responseData
+
+                            var confirmText = responseData['CONFIRM']
+                            tokenTransaction = responseData['TOKEN']
+
+                            objDataSend['tokenTransaction'] =
+                              tokenTransaction
+                            alertConfirm(
+                              confirmText,
+                              function (e) {
+                                $.ajax({
+                                  type: 'POST',
+                                  datatype: 'json',
+                                  url:
+                                    ROOT_PATH +
+                                    '/main/' +
+                                    transactionMain +
+                                    '/save-data',
+                                  data: objDataSend,
+                                  beforeSend: function (req) {
+                                    initAjaxJsonRequest(req)
+                                    showLoading()
+                                  },
+                                  success: function (res) {
+                                    hideLoading()
+                                    if (res) {
+                                      if (res.errorCode == 0) {
+                                      
+                                      } else {
+                                        alertDLSuccess(
+                                          createObjectError(res).html(),
+                                          function () {}
+                                        )
+                                      }
+                                    } else {
+                                      alertDLSuccess(
+                                        'unknown error!!!',
+                                        function () {}
+                                      )
+                                      hideLoading()
+                                    }
+                                  },
+                                  error: function (
+                                    xhr,
+                                    ajaxOptions,
+                                    thrownError
+                                  ) {
+                                    alertDLSuccess(
+                                      xhr.status + ' - ' + xhr.responseText,
+                                      function () {}
+                                    )
+                                    hideLoading()
+                                  },
+                                })
+                              },
+                              function (e) {}
+                            )
+                          } else {
+                            alertDLSuccess(
+                              createObjectError(res).html(),
+                              function () {}
+                            )
+                          }
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                          alertDLSuccess(
+                            xhr.status + ' - ' + xhr.responseText,
+                            function () {}
+                          )
+                          hideLoading()
+                        },
+                      })
+                      break
+
+                    default:
+                      break
+                  }
+                })
+            })
+
+            function getDataToSave() {
+              var dataPost = {}
+              var _tmp = ''
+
+             
+             dataPost['nch'] = $('#f-config-email-mailjet #nch').val() == null? '': $('#f-config-email-mailjet #nch').val();
+            
+			_tmp = $('#f-config-email-mailjet')
+                .find('input[type="checkbox"][name="md"]')
+                .prop('checked')
+                ? 'Y'
+                : 'N'
+              dataPost['md'] = _tmp
+			  
+			  
+            
+			  
+			 dataPost['lm'] = $('#f-config-email-mailjet #lm').val() == null? '': $('#f-config-email-mailjet #lm').val();
+			dataPost['ak'] = $('#f-config-email-mailjet #ak').val() == null? '': $('#f-config-email-mailjet #ak').val();
+			dataPost['sk'] = $('#f-config-email-mailjet #sk').val() == null? '': $('#f-config-email-mailjet #sk').val();
+			 dataPost['ng'] = $('#f-config-email-mailjet #ng').val() == null? '': $('#f-config-email-mailjet #ng').val();
+			 dataPost['am'] = $('#f-config-email-mailjet #am').val() == null? '': $('#f-config-email-mailjet #am').val();
+			
+            
+        
+
+              return dataPost
+            }
+          </script>
+        </div>
+      </div>
+    </div>
+	</th:block>
+</body>
+</html>

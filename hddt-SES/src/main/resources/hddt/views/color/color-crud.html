@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase"
+			th:text="${_header_}"></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+
+		<div class="card">
+			<div class="card-body">
+			
+
+				<form id="f-color-crud" name="f-color-crud" method="post"
+					enctype="multipart/form-data">
+					
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="name" name="name" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:readonly="${!_isedit_}" th:value="${Name}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Tên nút hóa đơn</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+					<div class="form-group row">
+						<div class="col-md-6">	
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											id="color" name="color" th:value="${Color}" type="text"
+											required="true" th:readonly="${!_isedit_}" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Mã màu<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+					</div>					
+					<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" th:value="${LBT}" type="text" autocomplete="off" th:if="${!_isedit_}" th:readonly="true" />
+										<select id="loai-button" name="loai-button" class="form-control form-control-sm c-f__textbox" th:if="${_isedit_}" >
+											<option value=""></option>
+											<th:block th:if="${map_dmbutton != null}">
+												<option th:each="entry : ${map_dmbutton.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${LBTCode == entry.key}" ></option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Loại nút<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+					</div>
+				
+			
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-import__ses-1" title="Chấp nhận"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Chấp nhận</span>
+							</button>
+
+						</div>
+					</div>
+						<input type="hidden" name="_id" th:value="${_id}" >
+				</form>
+				
+				<script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-color-crud').find('#grid');
+		</script>
+		
+		
+		
+				<script type="text/javascript">
+		$(function(){
+			
+			$('#f-color-crud').find('button[data-action]').click(function (event) {
+				event.preventDefault();/*event.stopPropagation();*/
+				var dataAction = $(this).data('action');
+				
+				var $obj = $(this);
+				var objDataSend = null;
+				
+				switch (dataAction) {
+				case 'add-to-grid':
+					var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+					objDataJson.push({});
+					_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+					break;
+				case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function(){$(this).empty();});
+					try{
+						if($('#f-color').find('#grid').length > 0)
+							$('#f-color').find('#grid').data("kendoGrid").dataSource.read();
+					}catch(err){}
+					break;
+				
+				case 'accept':
+					objDataSend = getDataToSave();
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+						data: objDataSend,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res.errorCode == 0) {
+								var responseData = res.responseData;
+								
+								var confirmText = responseData['CONFIRM'];
+								tokenTransaction = responseData['TOKEN'];
+								
+								objDataSend['tokenTransaction'] = tokenTransaction;
+								alertConfirm(confirmText,
+									function(e){
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+											
+											data: objDataSend,
+											beforeSend: function(req) {
+												initAjaxJsonRequest(req);
+									        	showLoading();
+											},
+											success:function(res) {
+												hideLoading();
+												if(res) {
+													if(res.errorCode == 0) {
+														$('#f-color-crud').find('button[data-action="back"]').trigger('click');
+							
+													}else{
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+												}else{
+													alertDLSuccess('unknown error!!!', function(){});
+													hideLoading();
+												}
+											},
+											error:function (xhr, ajaxOptions, thrownError){
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+									            hideLoading();
+									        }
+										});
+									},
+									function(e){}
+								);
+							}else{
+								alertDLSuccess(createObjectError(res).html(), function(){});
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							$obj.prop('disabled', false);
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					});
+					break;
+
+				default:
+					break;
+				}
+			});
+			
+		});
+
+		function getDataToSave(){
+			var dataPost = {};
+			dataPost['_id'] = $('#f-color-crud').find('input[name="_id"]').val();
+			dataPost['name'] = $('#f-color-crud').find('#name').val();
+			dataPost['color'] = $('#f-color-crud').find('#color').val();
+			dataPost['loai-button'] = $('#f-color-crud').find('#loai-button').val();
+			dataPost['loai-button-text'] = $('#f-color-crud').find('#loai-button').find('option:selected').text();
+			return dataPost;
+		}
+		</script>
+
+
+			
+				<div class="row">
+					<div class="col-12">
+						<hr style="margin: 0 0 10px 0" />
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
+</div>
+
+</html>

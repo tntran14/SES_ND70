@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header container-fluid">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-search" name="f-search" method="post" enctype="multipart/form-data" >
+			<div class="row"  >
+				<div class="col-sm-12">
+					<div class="row p-r-0 p-l-0">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox" id="mau-so-hdon" name="mau-so-hdon" >
+											<option value=""></option>
+											<th:block th:if="${map_mausokyhieu != null}">
+												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" > </option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mẫu hóa đơn</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12 custom-field">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="so-hoa-don" name="so-hoa-don" value="" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số hóa đơn</label></legend></fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Từ ngày </label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox "type="text" id="nban-mst" name="nban-mst" value="" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>MST khách hàng</label></legend></fieldset>
+									</div>
+								</div>
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox " type="text" id="nban-ten" name="nban-ten" value="" autocomplete="off"/>
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Khách hàng</label></legend></fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12">
+									<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+										<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row m-b-5 m-t-7" >
+						<div class="col-12 has-min-height-grid">
+							<div id="grid" ></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer p-t-10 p-b-5">
+	<div class="button-group text-right">
+		<button type="button" data-action="select" class="btn btn-sm btn-primary" ><i class="mdi mdi-check-bold"> </i> Chọn</button>
+		<button type="button" class="btn btn-sm btn-outline-secondary " data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>
+	</div>
+</div>
+<script type="text/javascript">
+	var _gridMainSearch = $('#f-search').find('#grid');
+</script>
+<script th:src="@{/static/function/common/search-dshddky.js(v=1.0) }"></script>
+</html>

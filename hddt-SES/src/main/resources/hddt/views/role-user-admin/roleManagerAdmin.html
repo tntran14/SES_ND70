@@ -1,0 +1,351 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách nhóm quyền admin</h3>
+			</div>
+		</div>
+		 <div class="row">
+			<div class="col-12">
+				<form id="fRolesManageAdmin" name="fRolesManageAdmin" method="post" enctype="multipart/form-data" >				
+					<div class="card">
+						<div class="card-body">
+	                    	<div class="form-group row m-b-6">
+	                    		<div class="col-12 col-md-10 col-lg-6">
+	                    			<div class="custom-field">
+	                    				<input class="form-control form-control-sm custom-field__textbox" type="text" id="roleName" name="roleName" autocomplete="off" >
+	                    				<label class="col-form-label custom-field__textbox--label">Tên nhóm</label>
+	                    			</div>
+	                    		</div>
+	                    		<div class="col-12 col-md-2 col-lg-6 config-email__search">
+	                    			<div class="row">
+	                    				<div class="col-8 offset-4 col-md-12 offset-md-0">
+	                    					<button class="btns btns-search_auto__ses hover-up__ses" id="btSearch" type="button" title="Tìm kiếm" ><i class="mdi mdi-file-find "></i> <span class="d-none d-md-inline">Tìm kiếm</span></button>
+	                    				</div>
+	                    			</div>
+	                    		</div>
+	                    	</div>
+	                    	
+	                    	<div class="form-group row m-b-6" th:if="false">
+	                    		<div class="col-md-6">
+									<div class="row">
+										<label class="col-4 col-md-3 col-form-label">Tên nhóm</label>
+										<div class="col-8 col-md-9">
+                                      		<input class="form-control form-control-sm" type="text" id="roleName" name="roleName" autocomplete="off" >
+                                      	</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-8 offset-4 col-md-12 offset-md-0 ">
+                                     		<button class="btn btn-sm btn-info btn-ses" id="btSearch" type="button" title="Tìm kiếm" ><i class="mdi mdi-file-find "></i> <span class="d-none d-md-inline">Tìm kiếm</span></button>
+                                     	</div>
+									</div>
+								</div>
+								
+	           				</div>
+	           				
+	           				<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0;"></div></div>
+	           				<div class="row"><div class="col-12">
+	           					<div class="button-group text-right">
+                                    <button type="button" th:if="${#strings.contains(UserFullPathRight,'|RolesManageAdminCreate|')}" title="Thêm mới"
+                                    		data-action="RolesManageAdminCreate" class="btns btns-add__ses hover-up__ses"><i class="mdi mdi-plus-circle-outline"> </i> <span class="d-none d-md-inline">Thêm mới</span></button>
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'|RolesManageAdminDetail|')}" title="Chi tiết"
+                                    		data-action="RolesManageAdminDetail" class="btns btns-detail__ses hover-up__ses"><i class="mdi mdi-information"> </i> <span class="d-none d-md-inline">Chi tiết</span></button>
+                                    <button type="button" th:if="${#strings.contains(UserFullPathRight,'RolesManageAdminEdit')}" title="Thay đổi"
+                                    		data-action="RolesManageAdminEdit" class="btns btns-edit__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-tooltip-edit"> </i> <span class="d-none d-md-inline">Thay đổi</span></button>
+                                   <button type="button" th:if="${#strings.contains(UserFullPathRight,'|RolesManageAdminActive|')}" title="Kích hoạt"
+                                    		data-action="active" class="btns btns-export__ses hover-up__ses" disabled="disabled" ><i class="mdi mdi-account-check"> </i> <span class="d-none d-md-inline">Kích hoạt</span></button>
+									<button type="button" th:if="${#strings.contains(UserFullPathRight,'|RolesManageAdminDeActive|')}" title="Hủy kích hoạt"
+                                    		data-action="de-active" class="btns btns-export__ses-2 hover-up__ses" disabled="disabled" ><i class="mdi mdi-close-box"> </i> <span class="d-none d-md-inline">Hủy kích hoạt</span></button>
+                                </div>
+	           				</div></div>
+	           				<div class="form-group row m-b-5 m-t-7">
+	           					<div class="col-12">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+	           				
+	                    </div>
+					</div>
+				</form>
+				<script type="text/javascript">
+					var _gridMain = $('#fRolesManageAdmin').find('#grid');
+				</script>
+				<!-- <script th:src="@{/static/js/role-admin/system/RolesManageAdmin.js(v=2.01) }"></script> -->
+				
+				<script type="text/javascript">
+				
+				$(function(){
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+				                    url: ROOT_PATH + '/main/roleManagerAdmin/search',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: true, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+//				 		filterable: { mode: "row"},
+						filterable: false, resizable: true,
+						serverSorting: false,
+						height: kendoGridHeight,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+						columns: [
+							{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}, template: "#= ++record #",
+				  			},
+				  			{field: 'roleId', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã nhóm quyền</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'roleName', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên nhóm quyền</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'functionRightsCount', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">SL quyền</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: center;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'activeDeactiveDesc', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: left;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'createDate', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: center;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'createUser', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người tạo</a>',
+								attributes: {'class': 'table-cell text-nowrap', style: 'text-align: center;'}, 
+								headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',},
+							},
+							{field: 'updateDate', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày cập nhật</a>',
+								attributes: {'class': 'table-cell text-center'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'updateUser', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người cập nhật</a>',
+								attributes: {'class': 'table-cell text-left'}, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+						],
+				  		filter: function(arg){arraySelected = [];},
+						sort: function(arg){arraySelected = [];},
+						dataBound: function(e) {
+							$("#fRolesManageAdmin").find('button[data-action="RolesManageAdminDetail"], button[data-action="RolesManageAdminEdit"], button[data-action="active"], button[data-action="de-active"]').prop('disabled', true);
+							_gridMain.find('div table tbody tr td').each(function(idx, obj){
+								$(obj).attr('title', $(obj).html())
+							});
+						}
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+						var item = _gridMain.data("kendoGrid").dataItem($(this).closest("tr"));
+						$("#fRolesManageAdmin").find('button[data-action="RolesManageAdminDetail"]').prop('disabled', false);
+						
+						var grid = _gridMain.data("kendoGrid");
+						var rowData = grid.dataItem(grid.select());
+						$("#fRolesManageAdmin").find('button[data-action="RolesManageAdminEdit"]').prop('disabled', !('0' == rowData['active']) );
+						$("#fRolesManageAdmin").find('button[data-action="active"]').prop('disabled', !('0' == rowData['active']) );
+						$("#fRolesManageAdmin").find('button[data-action="de-active"]').prop('disabled', '0' == rowData['active'] );
+					});
+					
+					$("#fRolesManageAdmin").find('#btSearch').click(function (event) {
+						event.preventDefault();event.stopPropagation();
+						refreshSearch();		
+					});
+					
+					$("#fRolesManageAdmin").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var actionCheck = '|RolesManageAdminDetail|RolesManageAdminEdit|active|de-active|';
+						var grid = _gridMain.data("kendoGrid");
+				    	var rowData = grid.dataItem(grid.select());
+				    	if(actionCheck.indexOf('|' + dataAction + '|') != -1 && null == rowData){
+				    		alertDLSuccess('Vui lòng chọn dòng dữ liệu để thực hiện.', function(){});
+				    		return;
+				    	}
+						
+						var objData = {};
+						console.log(dataAction)
+						switch (dataAction) {
+						case 'RolesManageAdminCreate':
+							showPopupWithURLAndData(ROOT_PATH + '/main/' + dataAction +'/init' , objData, true, function(e){
+							});
+							break;
+						case 'RolesManageAdminDetail':
+							objData['_id'] = rowData['_id'];
+							showPopupWithURLAndData(ROOT_PATH + '/main/' + dataAction +'/init' , objData, true, function(e){
+							});
+							break;
+						case 'RolesManageAdminEdit':
+							objData['_id'] = rowData['_id'];
+							showPopupWithURLAndData(ROOT_PATH + '/main/' + dataAction +'/init' , objData, true, function(e){
+							});
+							break;
+						case 'active':
+						case 'de-active':
+							var _obj = this;
+							$(_obj).prop('disabled', true);
+							
+							var transactionTmp = '';
+							if('active' == dataAction) transactionTmp = 'RolesManageAdminActive';
+							else if('de-active' == dataAction) transactionTmp = 'RolesManageAdminDeActive';
+							
+							var objDataSend = {_id: rowData['_id']};
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/' + transactionTmp + '/check-data',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									$(_obj).prop('disabled', false);
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											var confirmText = responseData['CONFIRM'];
+											tokenTransaction = responseData['TOKEN'];
+											
+											objDataSend['tokenTransaction'] = tokenTransaction;
+											
+											alertConfirm(confirmText,
+													function(e) {
+														$.ajax({
+															type: "POST",
+															datatype: "json",
+															url: ROOT_PATH + '/main/' + transactionTmp + '/exec-data',
+															data: objDataSend,
+															beforeSend: function(req) {
+																initAjaxJsonRequest(req);
+													        	showLoading();
+															},
+															success:function(res) {
+																hideLoading();
+																if(res) {
+																	if(res.errorCode == 0) {
+																		$(_obj).prop('disabled', true);
+																		_gridMain.data("kendoGrid").dataSource.read();
+//																		alertDLSuccess(createObjectError(res).html(), function(){
+//																			_gridMain.data("kendoGrid").dataSource.read();
+//																		});														
+																	}else{
+																		alertDLSuccess(createObjectError(res).html(), function(){});
+																	}
+																}else{
+																	alertDLSuccess('unknown error!!!', function(){});
+																	hideLoading();
+																}
+															},
+															error:function (xhr, ajaxOptions, thrownError){
+																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+													            hideLoading();
+													        }
+														});
+													},
+													function(e) {
+														
+													}
+												);
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									$(_obj).prop('disabled', false);
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+							
+						default:
+							break;
+						}
+					});
+					
+				});
+
+				function refreshSearch(){
+					_gridMain.data("kendoGrid").dataSource.page(1);
+//					_gridMain.data("kendoGrid").dataSource.read();
+//					_gridMain.data("kendoGrid").dataSource.query({ page: 2, pageSize: 20 })
+				}
+
+				function getDataSearch(){
+					var dataPost = {};
+					dataPost['roleName'] = $('#fRolesManageAdmin #roleName').val() == null? '': $('#fRolesManageAdmin #roleName').val();
+					return dataPost;
+				}
+				</script>
+				
+            </div>
+		</div>
+	
+	</th:block>
+</body>
+</html>

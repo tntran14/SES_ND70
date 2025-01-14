@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh sách chứng thư số</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-cks" name="f-cks" method="post" enctype="multipart/form-data" >
+					<div class="card">
+						<div class="card-body">
+							
+							<div class="row" th:if="false"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-6 p-l-0">
+										<p class=" inline p-0 download-support__ses--wrap text-info m-b-0">
+                            				<i class="fa fa-download"></i><a class="download download-support__ses" href="javascript:void(0);" data-type="SignPlugin" onclick="DownloadFile('SES invoice Sign.msi')">Tải phần mềm hỗ trợ ký số</a>
+                            			</p>
+                            		</div>
+                            		<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
+                            			<div class="button-group text-right">
+                            				<button type="button" title="Thêm mới" data-action="cks-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cks-cre|')}" >
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
+                            				</button> 
+                            				<button type="button" title="Chi tiết" data-action="cks-detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cks-detail|')}" th:disabled="true" >
+                            					<i class="mdi mdi-information-outline"></i> <span class="d-none d-md-inline">Chi tiết</span>
+                            				</button>
+
+                            			
+                            				
+                            			</div>
+                            		</div>
+                            	</div>
+                            </div>
+                            
+							<div class="form-group row m-b-5 m-t-7" >
+	           					<div class="col-12 has-min-height-grid">
+	           						<div id="grid" ></div>
+	           					</div>
+	           				</div>
+						</div>
+					</div>
+				</form>
+			
+				<script type="text/javascript">
+				_gridMain = $('#f-cks').find('#grid');
+				</script>
+			<script type="text/javascript">
+			$(function(){
+				_gridMain.kendoGrid({
+					dataSource: new kendo.data.DataSource({
+						transport: {
+							read: {
+								type: 'POST',
+								url: ROOT_PATH + '/main/cks/search',
+			                    dataType: 'json',
+			                    data: function(){return getDataSearch();},
+			                    beforeSend: function(req){
+			                    	initAjaxJsonGridRequest(req);
+			                	},
+							}
+						},
+						requestEnd: function (e) {
+			               	if (e.type === "read" && e.response) {
+			               		if(e.response.errorCode == 0){
+			               		}else{
+			               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+			               		}
+			               	}
+			           	},
+			            schema: {
+							data: "rows",
+			                total: "total",
+			                model: {
+								fields: {
+								}
+							}
+						},
+						pageSize: 9999,
+						serverPaging: false,
+						serverSorting: false,
+			           	serverFiltering: false,
+			           	change: function(e) {
+			            },
+					}),
+					selectable: true, scrollable: true, 
+			 		sortable: {mode: "single", allowUnsort: true},
+					sortable: true,
+//			 		filterable: { mode: "row"},
+					filterable: false, resizable: true,
+					serverSorting: false,
+//					height: kendoGridHeight,
+					pageable: {
+						refresh: true,
+						pageSizes: false,
+						numeric: false,
+						previousNext: false
+					},
+					dataBinding: function () {
+			            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+			        },
+			        columns: [
+			        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+			  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+			  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+			  			},
+			  			{field: 'func', title: '', width: '40px', encoded: false
+			  				, headerTemplate: '&nbsp;'
+							, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+							, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+//							, template: '<i title="Lấy kết quả từ CQT" class="mdi mdi-refresh-circle fs-25 text-info c-pointer"></i>'
+							, template: '#= window.setTemplateForGridMAIN("func", data) #'
+						},
+			  			{field: 'MST', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+							attributes: {'class': 'table-cell text-center'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						{field: 'TenNnt', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên người nộp thuế</a>',
+							attributes: {'class': 'table-cell text-left'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						
+						{field: 'Seri', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Seri</a>',
+							attributes: {'class': 'table-cell text-center'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						
+						
+						{field: 'TDate', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Từ ngày</a>',
+							attributes: {'class': 'table-cell text-left'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						{field: 'DDate', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đến ngày</a>',
+							attributes: {'class': 'table-cell text-left'}, sortable: false, 
+							headerAttributes: {'class': 'table-header-cell text-center'},
+						},
+						
+			    	],
+			    	dataBound: function(e) {
+			    		$("#f-cks").find('button[data-action="cks-detail"], button[data-action="cks-sign"], button[data-action="cks-edit"], button[data-action="cks-del"]').prop('disabled', true);
+			    		
+			    		_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+			    		_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+			    			e.preventDefault();/*e.stopPropagation();*/
+							
+							var $obj = $(this);
+							var $tr = $obj.closest('tr');
+							var subAction = $obj.attr('data-sub-action');
+							
+							var indexRow = $tr.index();
+							var rowData = null;
+							var objData = {};
+							
+							switch (subAction) {
+							case 'delete':
+								rowData = _gridMain.data("kendoGrid").dataItem($tr);
+								objData['_id'] = rowData['_id'];
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/cks-del/check-data-save',
+									data: objData,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												var responseData = res.responseData;
+												
+												var confirmText = responseData['CONFIRM'];
+												tokenTransaction = responseData['TOKEN'];
+												
+												objData['tokenTransaction'] = tokenTransaction;
+												
+												alertConfirm(confirmText,
+													function(e){
+														$.ajax({
+															type: "POST",
+															datatype: "json",
+															url: ROOT_PATH + '/main/cks-del/save-data',
+															data: objData,
+															beforeSend: function(req) {
+																initAjaxJsonRequest(req);
+													        	showLoading();
+															},
+															success:function(res) {
+																hideLoading();
+																if(res) {
+																	if(res.errorCode == 0) {
+																		_gridMain.data("kendoGrid").dataSource.read();
+//																		$("#f-cks-crud").find('button[data-action="back"]').trigger('click');
+																	}else{
+																		alertDLSuccess(createObjectError(res).html(), function(){});
+																	}
+																}else{
+																	alertDLSuccess('unknown error!!!', function(){});
+																	hideLoading();
+																}
+															},
+															error:function (xhr, ajaxOptions, thrownError){
+																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+													            hideLoading();
+													        }
+														});
+													},
+													function(e){}
+												);
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+								break;
+							
+							default:
+								break;
+							}
+							
+							
+						});
+			    		
+			    	}
+				});
+				
+				_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+				_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+					$("#f-cks").find('button[data-action="cks-detail"]').prop('disabled', false);
+					
+					var $tr = $(this);
+					var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					
+					$("#f-cks").find('button[data-action="cks-sign"]').prop('disabled', !('CREATED' == rowData['Status']));
+					$("#f-cks").find('button[data-action="cks-edit"]').prop('disabled', !('CREATED' == rowData['Status']));
+					$("#f-cks").find('button[data-action="cks-del"]').prop('disabled', !('CREATED' == rowData['Status']));
+				});
+				
+				$("#f-cks").find('button[data-action]').click(function (event) {
+					event.preventDefault();/*event.stopPropagation();*/
+					var dataAction = $(this).data('action');
+					
+					var entityGrid = _gridMain.data("kendoGrid");
+					var selectedItem = entityGrid.dataItem(entityGrid.select());
+					
+					var actionCheck = '|cks-edit|cks-detail|cks-sign|';
+					if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
+						alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+						return;
+					}
+					
+					var $obj = $(this);
+					var objData = {};
+					switch (dataAction) {
+					case 'cks-cre':
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+						break;
+					case 'cks-detail':
+						objData['_id'] = selectedItem['_id'];
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+					case 'cks-edit':
+						objData['_id'] = selectedItem['_id'];
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+						break;
+				
+					default:
+						break;
+					}
+				});
+				
+			});
+
+			function getDataSearch(){
+				var dataPost = {};
+				
+				return dataPost;
+			}
+
+			function setTemplateForGridMAIN(key, data){
+				var status = data['Status'];
+				var text = '';
+				switch (key) {
+				case 'func':
+					switch (status) {
+				
+					case 'CREATED':
+					/* 	text = '<i title="Xóa" class="mdi mdi-account-remove-outline fs-25 text-warning c-pointer" data-sub-action="delete" ></i>'; */
+						break;
+					default:
+						text = '';
+						break;
+					}
+					
+					break;
+				default:
+				/* 	return data[key]; */
+					break;
+				}
+				return text;
+				
+			}
+
+
+			</script>
+				<script type="text/javascript">
+			function DownloadFile(fileName) {
+				//Set the File URL.
+				var url = ROOT_PATH + "/static/sign-msi/" + fileName;
+
+				//Create XMLHTTP Request.
+				var req = new XMLHttpRequest();
+				req.open("GET", url, true);
+				req.responseType = "blob";
+				req.onload = function() {
+					//Convert the Byte Data to BLOB object.
+					var blob = new Blob([ req.response ], {
+						type : "application/octetstream"
+					});
+
+					//Check the Browser type and download the File.
+					var isIE = false || !!document.documentMode;
+					if (isIE) {
+						window.navigator.msSaveBlob(blob, fileName);
+					} else {
+						var url = window.URL || window.webkitURL;
+						link = url.createObjectURL(blob);
+						var a = document.createElement("a");
+						a.setAttribute("download", fileName);
+						a.setAttribute("href", link);
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+					}
+				};
+				req.send();
+			};
+		</script>
+			</div>
+		</div>
+	</th:block>
+</body>

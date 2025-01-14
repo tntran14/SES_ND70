@@ -1,0 +1,4261 @@
+.bg-primary {
+  background-color: #1e88e5 !important;
+}
+.btn-primary,
+.btn-primary.disabled {
+  background: #1e88e5 !important;
+  border: 1px solid #1e88e5 !important;
+}
+
+.card {
+  margin-bottom: 0px !important;
+}
+
+@media only screen and (max-width: 584px) and (min-width: 100px) {
+  /*    .divdisplayy {
+        display: none;
+    }*/
+
+  .support {
+    display: none;
+  }
+  h5 {
+    /*    padding-top: 17px;*/
+    width: 200px !important;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 9px !important; */
+  }
+
+  .footer {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 1023px) and (min-width: 585px) {
+  /* .sidebar-nav .has-arrow {
+        width: 200px !important;
+    } */
+  h5 {
+    /*padding-top: 17px;*/
+    width: 200px !important;
+  }
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 5.4em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 9px !important; */
+  }
+
+  .footer {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 584px) and (min-width: 760px) {
+  .support {
+    display: none;
+  }
+}
+
+@media only screen and (width: 320px) {
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+  }
+  .title {
+    font-size: 15px !important;
+  }
+  .dropbox {
+/*     max-width: 68% !important; */
+    font-size: 11px !important;
+    height: 31px;
+  }
+  .titledrop {
+    margin-top: 2% !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 5px;
+  }
+
+  .SumoSelect {
+    font-size: 12px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 132.16px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 132.16px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     font-size: 11px; */
+/*     height: 32px !important; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 7% !important;
+    width: 250px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 120px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 10px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 10px !important;
+  }
+  .custom-control-label {
+    font-size: 10px !important;
+  }
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    /* width: 20px !important; */
+    text-align: center;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 460px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 4px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    /* font-size: 7.5px !important; */
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+}
+
+@media only screen and (width: 360px) {
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+  .title {
+    font-size: 15px !important;
+  }
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 11px !important;
+    height: 31px !important;
+  }
+  .titledrop {
+    margin-top: 2% !important;
+  }
+  .SelectBox {
+    height: 31px !important;
+  }
+
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  h3 {
+    font-size: 17px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 155.5px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 155.5px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     font-size: 11px; */
+/*     height: 32px !important; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 245px;
+  }
+
+/*   #change, */
+/*   #add, */
+/*   #details, */
+/*   #file { */
+/*     width: 114.64px; */
+/*   } */
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 9px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 120px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 10px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 10px;
+  }
+  .custom-control-label {
+    font-size: 10px !important;
+  }
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 25px !important;
+  }
+
+  .SumoSelect {
+    font-size: 12px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+/*   #fromDate, */
+/*   #toDate, */
+/*   #serviceContractNo, */
+/*   #serviceName, */
+/*   #positionId, */
+/*   #effectDate, */
+/*   #totalAmountBeforeTax, */
+/*   #vatAmount { */
+/*     margin-bottom: 4px; */
+/*   } */
+
+/*   #btAddToGrid { */
+/*     width: 50px; */
+/*     text-align: center; */
+/*   } */
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 500px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 43px;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 7px;
+  }
+}
+
+@media only screen and (width: 375px) {
+  .title {
+    font-size: 15px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 11px !important;
+    height: 31px !important;
+  }
+
+  .titledrop {
+    margin-top: 2% !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  .SumoSelect {
+    font-size: 12px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 164.25px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 164.25px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 13% !important;
+    width: 250px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 122.83px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 10.5px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 10.5px !important;
+  }
+  .custom-control-label {
+    font-size: 10.5px !important;
+  }
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #identificationNumber,
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 520px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 53px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #identificationNumber,
+  #expireDate,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 7px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+}
+
+@media only screen and (width: 411px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .SelectBox {
+    height: 31px !important;
+  }
+  .dropbox {
+/*     max-width: 78% !important; */
+    font-size: 11px !important;
+    height: 31px !important;
+  }
+
+  .titledrop {
+    margin-top: 2% !important;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 185.25px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 185.25px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 285px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 125.83px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 11px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 11px !important;
+  }
+
+  .custom-control-label {
+    font-size: 11px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 70px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+}
+
+@media only screen and (width: 480px) {
+  .title {
+    font-size: 15px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  .dropbox {
+/*     max-width: 82% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 225.5px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 225.5px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 330px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 135px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 12px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 12px !important;
+  }
+  .custom-control-label {
+    font-size: 12px !important;
+  }
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 134px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+    width: 100px !important;
+  }
+}
+
+@media only screen and (width: 414px) {
+  .title {
+    font-size: 15px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 187px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 187px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 285px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 124.83px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 12px; */
+/*     text-align: left; */
+/*   } */
+  .custom-control-label {
+    font-size: 12px !important;
+  }
+  .col-form-label {
+    font-size: 12px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 92px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 13px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 1280px) {
+  #createDateFrom,
+  #createDateTo {
+    width: 176.33px;
+  }
+
+  .alertify .ajs-dialog {
+    width: 500px;
+    height: 163px;
+    margin: 5% auto !important;
+  }
+
+  #change {
+    margin-left: 0px;
+  }
+
+  /*    #btSearch {
+        margin-left: 0%;
+    }*/
+}
+
+@media only screen and (width: 768px) {
+  #change {
+    margin-left: 0px;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 5.5em !important;
+  }
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 17% !important;
+    width: 500px;
+  }
+}
+
+@media only screen and (width: 600px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .inforwork {
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 295.5px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 295.5px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 460px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.9em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    width: 180px;
+    text-align: left;
+  }
+
+/*   #btSearch { */
+/*             width: 80px; */
+/*     font-size: 12px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 12px; */
+/*     text-align: left; */
+/*   } */
+  .custom-control-label {
+    font-size: 12px !important;
+  }
+  .col-form-label {
+    font-size: 12px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 15px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 13px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 164px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 13px;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 11px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 800px) {
+  #createDateFrom,
+  #createDateTo {
+    width: 295.5px;
+  }
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 8% !important;
+    width: 220px;
+  }
+
+  #change,
+  #add,
+  #details,
+  #file {
+    width: 114.64px;
+  }
+
+  /* #btSearch {
+        margin-left: 61.5%
+    }*/
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 5.5em !important;
+  }
+}
+
+@media only screen and (width: 1024px) {
+  #createDateFrom,
+  #createDateTo {
+    width: 295.5px;
+  }
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 8% !important;
+    width: 220px;
+  }
+
+  #change,
+  #add,
+  #details,
+  #file {
+    width: 114.64px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 5.5em !important;
+  }
+}
+
+@media only screen and (width: 412px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .custom-control-label {
+    font-size: 12px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 9px !important;
+    width: 420px !important;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 185.25px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 185.25px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 290px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    width: 127.83px;
+    text-align: left;
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 12px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 12px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    /*         width: 30px !important; */
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 670px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 89px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12.5px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 458px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .custom-control-label {
+    font-size: 13px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 212.66px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 212.66px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 315px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 130px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 13px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 13px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 122px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 76% !important; */
+    font-size: 13px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 390px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .custom-control-label {
+    font-size: 11px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 174.75px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 174.75px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 270px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+/*   .text-themecolor-1 { */
+/*     margin-top: 27px !important; */
+/*   } */
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 128.83px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 11px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 11px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 68.5px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 428px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .custom-control-label {
+    font-size: 12px !important;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 195.16px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 195.16px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 285px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+  .text-themecolor-1 {
+    margin-top: 27px !important;
+  }
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 129px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 12px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 12px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 106px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 393px) {
+  .title {
+    font-size: 15px !important;
+  }
+  .custom-control-label {
+    font-size: 11px !important;
+  }
+
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 8px !important;
+    width: 400px !important;
+  }
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 174.75px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 174.75px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 12% !important;
+    width: 270px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+  .text-themecolor-1 {
+    margin-top: 27px !important;
+  }
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 130px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 11px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 11px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 650px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 71px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #identificationNumber,
+  #toDate,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 8px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}
+
+@media only screen and (width: 384px) {
+  .title {
+    font-size: 15px !important;
+  }
+  #messageSend {
+    width: 190px !important;
+  }
+
+  #btnSaveMessage {
+  }
+  /* .sidebar-nav .has-arrow {
+    width: 200px !important;
+  } */
+  .inforwork {
+    margin-top: 15px;
+    font-size: 11px !important;
+    width: 400px !important;
+  }
+  .input-group > .input-group-append > .btn,
+  .input-group > .input-group-append > .input-group-text,
+  .input-group > .input-group-prepend:first-child > .btn:not(:first-child),
+  .input-group
+    > .input-group-prepend:first-child
+    > .input-group-text:not(:first-child),
+  .input-group > .input-group-prepend:not(:first-child) > .btn,
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    text-align: center;
+  }
+  #idIssueDate {
+    margin-top: 4px;
+  }
+  .SumoSelect {
+    font-size: 14px !important;
+  }
+
+  h3 {
+    font-size: 19px;
+  }
+
+  .footer {
+    width: 100%;
+  }
+
+/*   #createDateFrom, */
+/*   #createDateTo { */
+/*     width: 169.5px; */
+/*   } */
+
+/*   #fromDate, */
+/*   #toDate { */
+/*     width: 169.5px; */
+/*   } */
+
+/*   #btBack { */
+/*             width: 100px; */
+/*     height: 32px !important; */
+/*     font-size: 11px; */
+/*   } */
+
+  .alertify .ajs-dialog {
+    margin: 50% 0% 0% 13% !important;
+    width: 260px;
+  }
+
+  .k-webkit .k-pager-wrap,
+  .k-ff .k-pager-wrap,
+  .k-ie11 .k-pager-wrap,
+  .k-safari .k-pager-wrap {
+    overflow: auto !important;
+  }
+
+  .k-autocomplete .k-input,
+  .k-dateinput-wrap .k-input,
+  .k-dropdown-wrap .k-input,
+  .k-picker-wrap .k-input,
+  .k-multiselect-wrap .k-input,
+  .k-numeric-wrap .k-input {
+    padding: 0rem !important;
+  }
+
+  .k-webkit .k-pager-numbers + .k-link,
+  .k-ff .k-pager-numbers + .k-link,
+  .k-ie11 .k-pager-numbers + .k-link,
+  .k-safari .k-pager-numbers + .k-link {
+    margin-left: 3.1em !important;
+  }
+
+  .k-webkit .k-pager-numbers,
+  .k-ff .k-pager-numbers,
+  .k-ie11 .k-pager-numbers,
+  .k-safari .k-pager-numbers,
+  .k-webkit .k-grid .k-pager-numbers,
+  .k-ff .k-grid .k-pager-numbers,
+  .k-ie11 .k-grid .k-pager-numbers,
+  .k-safari .k-grid .k-pager-numbers {
+    left: 4.6em !important;
+  }
+
+  .text-themecolor-1 {
+    margin-top: 27px !important;
+  }
+
+  article,
+  aside,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section {
+    display: table;
+  }
+
+  .fw-700 {
+    /*         font-size: 10px !important; */
+    /*         width: 95% !important; */
+  }
+
+  .btn {
+    /*         width: 129.83px; */
+    /*         text-align: left; */
+  }
+
+/*   #btSearch { */
+/*             width: 90px; */
+/*     font-size: 11px; */
+/*             float: right; */
+/*     margin-top: 5px; */
+/*   } */
+
+/*   .m-b-0 { */
+/*     font-size: 11px; */
+/*     text-align: left; */
+/*   } */
+
+  .col-form-label {
+    font-size: 11px !important;
+  }
+
+  .btn-sm {
+    /*         font-size: 9px !important; */
+  }
+
+  .input-group-append .btn,
+  .input-group-prepend .btn {
+    width: 30px !important;
+  }
+
+  .chat-main-box .chat-right-aside {
+    margin-top: 2%;
+  }
+
+  .button-group .btn {
+    margin-right: 0px !important;
+  }
+
+  #dlg_title {
+    font-size: 14px !important;
+    width: 2000px !important;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName {
+    margin-top: 4px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName {
+    margin-bottom: 4px;
+  }
+
+  #btAddToGrid {
+    width: 50px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold !important;
+  }
+
+/*   .chat-main-box .chat-left-aside.open-pnl { */
+/*     margin-top: 46px !important; */
+/*   } */
+
+/*   .chat-main-box { */
+/*     height: 520px !important; */
+/*   } */
+
+  .fs-10 {
+    font-size: 8px !important;
+  }
+
+  span.select2-selection__arrow {
+    margin-top: 4px;
+  }
+
+  .btAccept {
+    width: 100px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+  }
+
+  .form-file {
+    margin-top: 4px;
+  }
+
+  .btnexcel {
+    margin-left: 62px;
+  }
+
+  .input-group
+    > .input-group-append:last-child
+    > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group
+    > .input-group-append:last-child
+    > .input-group-text:not(:last-child),
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text {
+    height: 31px;
+    font-size: 7.5px !important;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .btnadd {
+    /*         margin-top: 4px !important; */
+    /*         width: 100px; */
+    font-size: 11px;
+    height: 32px !important;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+
+  .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    text-align: center;
+  }
+
+  #expireDate,
+  #toDate,
+  #identificationNumber,
+  .input-group-append .btn,
+  .input-group > .custom-file,
+  .input-group > .custom-select,
+  .input-group > .form-control,
+  .input-group > .form-control-plaintext,
+  .input-group-prepend .btn,
+  #serviceContractNo,
+  #customerNameIdentificationNumber,
+  #serviceName,
+  #fullName,
+  #phone,
+  #email,
+  #password,
+  #positionId,
+  .select2-container--default .select2-selection--single,
+  #effectDate {
+    margin-top: 4px;
+  }
+
+  input,
+  input::-webkit-input-placeholder {
+    font-size: 7px;
+  }
+
+  #toDate,
+  #serviceContractNo,
+  #serviceName,
+  #positionId,
+  #effectDate,
+  #totalAmountBeforeTax,
+  #vatAmount {
+    margin-bottom: 4px;
+  }
+  #btDlgClose {
+    /*         width: 100px; */
+    /*         font-size: 11px; */
+    /*         height: 32px !important; */
+  }
+  .custom-control-label {
+    font-size: 11px !important;
+  }
+
+  .accept {
+    margin-top: 0px !important;
+    min-width: max-content !important;
+    font-size: 12px !important;
+  }
+
+  .dropbox {
+/*     max-width: 73% !important; */
+    font-size: 12px !important;
+    height: 31px !important;
+  }
+
+  .SelectBox {
+    height: 31px !important;
+  }
+}

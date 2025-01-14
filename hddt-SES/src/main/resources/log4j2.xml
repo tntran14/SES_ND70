@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="APP_LOG_ROOT">/hddt-ses</Property>
+		<Property name="LOG_PATTERN">[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %m%n</Property>
+    </Properties> 
+	<Appenders>  
+	    <!-- Console Appender -->
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LOG_PATTERN}"/>
+	    </Console>
+	    
+	    <!-- File Appender -->
+		<RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/errors.log" filePattern="${APP_LOG_ROOT}/errors-%d{yyyy-MM-dd}.log">
+			<LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+				<SizeBasedTriggeringPolicy size="50MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/info.log" filePattern="${APP_LOG_ROOT}/info-%d{yyyy-MM-dd}.log">
+			<LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+				<SizeBasedTriggeringPolicy size="50MB"/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+  
+	<Loggers>
+		<AsyncLogger name="vn.sesgroup" level="trace" includeLocation="true">
+            <AppenderRef ref="errorLog" level="error" />
+            <AppenderRef ref="infoLog" level="info" />
+        </AsyncLogger>
+  </Loggers>
+</Configuration>

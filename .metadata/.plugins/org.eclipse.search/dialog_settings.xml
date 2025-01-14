@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="filters_last_used" value=""/>
+	<section name="SearchDialog">
+		<item key="PREVIOUS_PAGE" value="org.eclipse.search.internal.ui.text.TextSearchPage"/>
+	</section>
+	<section name="Search">
+		<list key="Search.processedPageIds">
+			<item value="org.eclipse.search.internal.ui.text.TextSearchPage"/>
+			<item value="org.eclipse.mylyn.tasks.ui.search.page"/>
+			<item value="org.eclipse.egit.ui.commitSearchPage"/>
+			<item value="org.eclipse.jdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.pde.internal.ui.search.SearchPage"/>
+		</list>
+		<list key="Search.enabledPageIds">
+			<item value="org.eclipse.search.internal.ui.text.TextSearchPage"/>
+			<item value="org.eclipse.mylyn.tasks.ui.search.page"/>
+			<item value="org.eclipse.egit.ui.commitSearchPage"/>
+			<item value="org.eclipse.jdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.pde.internal.ui.search.SearchPage"/>
+		</list>
+	</section>
+	<section name="SearchDialog.ScopePart">
+		<item key="scope" value="0"/>
+	</section>
+	<section name="DialogBounds_SearchDialog">
+		<item key="DIALOG_X_ORIGIN" value="462"/>
+		<item key="DIALOG_Y_ORIGIN" value="143"/>
+		<item key="DIALOG_WIDTH" value="554"/>
+		<item key="DIALOG_HEIGHT" value="476"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-24|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+	<section name="TextSearchPage">
+		<item key="CASE_SENSITIVE" value="false"/>
+		<item key="REG_EX_SEARCH" value="false"/>
+		<item key="WHOLE_WORD" value="false"/>
+		<item key="SEARCH_DERIVED" value="false"/>
+		<item key="SEARCH_IN_BINARIES" value="false"/>
+		<item key="HISTORY_SIZE" value="12"/>
+		<section name="HISTORY0">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="tbhdssot_tbn-cre"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="EXTENSIONS">
+			<item key="0" value="*"/>
+			<item key="1" value="*.js"/>
+			<item key="2" value="*.java"/>
+			<item key="3" value="*.PL, *.Xsession, *.ad, *.adoc, *.aggr, *.aggrcon, *.ant, *.asciidoc, *.ascx, *.asp, *.aspx, *.atom, *.axaml, *.axml, *.babelrc, *.bas, *.bash, *.bash_aliases, *.bash_login, *.bash_logout, *.bash_profile, *.bashrc, *.bat, *.bbx, *.bib, *.bmp, *.bowerrc, *.bpmn, *.brs, *.c, *.c++, *.c++m, *.cake, *.cbx, *.cc, *.ccm, *.cff, *.cginc, *.cjs, *.class, *.class without source, *.clj, *.cljc, *.cljs, *.cljx, *.clojure, *.cls, *.cmd, *.code-search, *.code-snippets, *.coffee, *.compute, *.confluence, *.containerfile, *.cpp, *.cppm, *.cpt, *.cpy, *.cs, *.csh, *.cshrc, *.cshtml, *.csl, *.cson, *.csproj, *.css, *.csx, *.ctp, *.cts, *.ctx, *.cu, *.cuh, *.cxx, *.cxxm, *.dart, *.dbk, *.ddl, *.diff, *.dita, *.ditamap, *.doc, *.dockerfile, *.docx, *.dsql, *.dtd, *.dtml, *.e4xmi, *.ear, *.ebuild, *.ecore, *.ecore2ecore, *.ecore2xml, *.edn, *.ejs, *.emof, *.ent, *.erb, *.es6, *.eslintrc, *.exec, *.exsd, *.eyaml, *.eyml, *.fish, *.fs, *.fsi, *.fsproj, *.fsscript, *.fsx, *.fx, *.fxh, *.fxml, *.g, *.gemspec, *.genmodel, *.geojson, *.gif, *.git-blame-ignore-revs, *.gitignore, *.gitignore_global, *.go, *.gradle, *.groovy, *.gvy, *.gyp, *.gypi, *.h, *.h++, *.handlebars, *.har, *.hbs, *.hh, *.hintrc, *.hjs, *.hlsl, *.hlsli, *.hpp, *.htm, *.html, *.htpl, *.hxx, *.i, *.iced, *.ico, *.ii, *.iml, *.ini, *.inl, *.ino, *.ipp, *.ipy, *.ipynb, *.isml, *.ixx, *.jade, *.jar, *.jardesc, *.jav, *.java, *.jenkinsfile, *.jl, *.jmx, *.jpage, *.jpeg, *.jpg, *.js, *.jscsrc, *.jsf, *.jsfmtrc, *.jshintrc, *.jshtm, *.jslintrc, *.json, *.jsonc, *.jsonl, *.jsonld, *.jsp, *.jspf, *.jspx, *.jsv, *.jsx, *.jtpl, *.ksh, *.launch, *.less, *.log, *.ltx, *.lua, *.m, *.macrodef, *.mak, *.markdn, *.markdown, *.md, *.mdoc, *.mdown, *.mdtext, *.mdtxt, *.mdwn, *.mediawiki, *.menu, *.mjs, *.mk, *.mkd, *.mm, *.mod, *.mts, *.mxml, *.nf, *.nqp, *.nuspec, *.opml, *.owl, *.p6, *.pac, *.patch, *.php, *.php4, *.php5, *.phtml, *.pl6, *.plist, *.pm, *.pm6, *.png, *.pod, *.podspec, *.pom, *.prefs, *.product, *.profile, *.proj, *.properties, *.props, *.prototype, *.ps1, *.psd1, *.psgi, *.psh, *.psm1, *.psrc, *.pssc, *.pt, *.publishsettings, *.pubxml, *.pug, *.py, *.pyi, *.pyt, *.pyw, *.r, *.rake, *.raku, *.rakudoc, *.rakumod, *.rakutest, *.razor, *.rb, *.rbi, *.rbx, *.rbxlx, *.rbxmx, *.rdf, *.rej, *.rhistory, *.rhtml, *.rjs, *.rnc, *.rng, *.rprofile, *.rpy, *.rs, *.rss, *.rst, *.rt, *.ru, *.scss, *.server, *.setup, *.sh, *.shader, *.shproj, *.shtm, *.shtml, *.sql, *.sqlpage, *.storyboard, *.sty, *.svg, *.swcrc, *.swift, *.t, *.tag, *.tagf, *.tagx, *.tagxf, *.target, *.targets, *.tcshrc, *.tex, *.textile, *.tld, *.tmLanguage, *.tmTheme, *.tmx, *.tpp, *.tracwiki, *.ts, *.tsx, *.twiki, *.txt, *.txx, *.vb, *.vba, *.vbproj, *.vbs, *.vcxproj, *.volt, *.vsh, *.vue, *.vuerc, *.war, *.webmanifest, *.wml, *.workbook, *.workingsets, *.wsdd, *.wsdl, *.wsil, *.wsimsg, *.wxi, *.wxl, *.wxs, *.xaml, *.xbl, *.xht, *.xhtml, *.xib, *.xjb, *.xlf, *.xliff, *.xmi, *.xml, *.xoml, *.xpdl, *.xprofile, *.xsd, *.xsessionrc, *.xsl, *.xslt, *.xul, *.yaml, *.yaml-tmlanguage, *.yaml-tmpreferences, *.yaml-tmtheme, *.yash_profile, *.yashrc, *.yml, *.zip, *.zlogin, *.zlogout, *.zprofile, *.zsh, *.zsh-theme, *.zshenv, *.zshrc"/>
+		</section>
+		<section name="HISTORY1">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="check-data-save"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY2">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="readMoneyInWords"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY3">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="readmoneyinword"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY4">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="calcTienQuyDoi"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY5">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="check-data-signAll"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY6">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="einvoice-signAll"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY7">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="online-mst"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY8">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="einvoice_online_mst"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY9">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="einvoice_mtt"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*.java"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY10">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="einvoice_mtt/search"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*.java"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY11">
+			<item key="ignoreCase" value="true"/>
+			<item key="isRegExSearch" value="false"/>
+			<item key="isWholeWord" value="false"/>
+			<item key="textPattern" value="/main/einvoice_mtt/search"/>
+			<item key="scope" value="0"/>
+			<list key="fileNamePatterns">
+				<item value="*.PL"/>
+				<item value="*.Xsession"/>
+				<item value="*.ad"/>
+				<item value="*.adoc"/>
+				<item value="*.aggr"/>
+				<item value="*.aggrcon"/>
+				<item value="*.ant"/>
+				<item value="*.asciidoc"/>
+				<item value="*.ascx"/>
+				<item value="*.asp"/>
+				<item value="*.aspx"/>
+				<item value="*.atom"/>
+				<item value="*.axaml"/>
+				<item value="*.axml"/>
+				<item value="*.babelrc"/>
+				<item value="*.bas"/>
+				<item value="*.bash"/>
+				<item value="*.bash_aliases"/>
+				<item value="*.bash_login"/>
+				<item value="*.bash_logout"/>
+				<item value="*.bash_profile"/>
+				<item value="*.bashrc"/>
+				<item value="*.bat"/>
+				<item value="*.bbx"/>
+				<item value="*.bib"/>
+				<item value="*.bmp"/>
+				<item value="*.bowerrc"/>
+				<item value="*.bpmn"/>
+				<item value="*.brs"/>
+				<item value="*.c"/>
+				<item value="*.c++"/>
+				<item value="*.c++m"/>
+				<item value="*.cake"/>
+				<item value="*.cbx"/>
+				<item value="*.cc"/>
+				<item value="*.ccm"/>
+				<item value="*.cff"/>
+				<item value="*.cginc"/>
+				<item value="*.cjs"/>
+				<item value="*.class"/>
+				<item value="*.class without source"/>
+				<item value="*.clj"/>
+				<item value="*.cljc"/>
+				<item value="*.cljs"/>
+				<item value="*.cljx"/>
+				<item value="*.clojure"/>
+				<item value="*.cls"/>
+				<item value="*.cmd"/>
+				<item value="*.code-search"/>
+				<item value="*.code-snippets"/>
+				<item value="*.coffee"/>
+				<item value="*.compute"/>
+				<item value="*.confluence"/>
+				<item value="*.containerfile"/>
+				<item value="*.cpp"/>
+				<item value="*.cppm"/>
+				<item value="*.cpt"/>
+				<item value="*.cpy"/>
+				<item value="*.cs"/>
+				<item value="*.csh"/>
+				<item value="*.cshrc"/>
+				<item value="*.cshtml"/>
+				<item value="*.csl"/>
+				<item value="*.cson"/>
+				<item value="*.csproj"/>
+				<item value="*.css"/>
+				<item value="*.csx"/>
+				<item value="*.ctp"/>
+				<item value="*.cts"/>
+				<item value="*.ctx"/>
+				<item value="*.cu"/>
+				<item value="*.cuh"/>
+				<item value="*.cxx"/>
+				<item value="*.cxxm"/>
+				<item value="*.dart"/>
+				<item value="*.dbk"/>
+				<item value="*.ddl"/>
+				<item value="*.diff"/>
+				<item value="*.dita"/>
+				<item value="*.ditamap"/>
+				<item value="*.doc"/>
+				<item value="*.dockerfile"/>
+				<item value="*.docx"/>
+				<item value="*.dsql"/>
+				<item value="*.dtd"/>
+				<item value="*.dtml"/>
+				<item value="*.e4xmi"/>
+				<item value="*.ear"/>
+				<item value="*.ebuild"/>
+				<item value="*.ecore"/>
+				<item value="*.ecore2ecore"/>
+				<item value="*.ecore2xml"/>
+				<item value="*.edn"/>
+				<item value="*.ejs"/>
+				<item value="*.emof"/>
+				<item value="*.ent"/>
+				<item value="*.erb"/>
+				<item value="*.es6"/>
+				<item value="*.eslintrc"/>
+				<item value="*.exec"/>
+				<item value="*.exsd"/>
+				<item value="*.eyaml"/>
+				<item value="*.eyml"/>
+				<item value="*.fish"/>
+				<item value="*.fs"/>
+				<item value="*.fsi"/>
+				<item value="*.fsproj"/>
+				<item value="*.fsscript"/>
+				<item value="*.fsx"/>
+				<item value="*.fx"/>
+				<item value="*.fxh"/>
+				<item value="*.fxml"/>
+				<item value="*.g"/>
+				<item value="*.gemspec"/>
+				<item value="*.genmodel"/>
+				<item value="*.geojson"/>
+				<item value="*.gif"/>
+				<item value="*.git-blame-ignore-revs"/>
+				<item value="*.gitignore"/>
+				<item value="*.gitignore_global"/>
+				<item value="*.go"/>
+				<item value="*.gradle"/>
+				<item value="*.groovy"/>
+				<item value="*.gvy"/>
+				<item value="*.gyp"/>
+				<item value="*.gypi"/>
+				<item value="*.h"/>
+				<item value="*.h++"/>
+				<item value="*.handlebars"/>
+				<item value="*.har"/>
+				<item value="*.hbs"/>
+				<item value="*.hh"/>
+				<item value="*.hintrc"/>
+				<item value="*.hjs"/>
+				<item value="*.hlsl"/>
+				<item value="*.hlsli"/>
+				<item value="*.hpp"/>
+				<item value="*.htm"/>
+				<item value="*.html"/>
+				<item value="*.htpl"/>
+				<item value="*.hxx"/>
+				<item value="*.i"/>
+				<item value="*.iced"/>
+				<item value="*.ico"/>
+				<item value="*.ii"/>
+				<item value="*.iml"/>
+				<item value="*.ini"/>
+				<item value="*.inl"/>
+				<item value="*.ino"/>
+				<item value="*.ipp"/>
+				<item value="*.ipy"/>
+				<item value="*.ipynb"/>
+				<item value="*.isml"/>
+				<item value="*.ixx"/>
+				<item value="*.jade"/>
+				<item value="*.jar"/>
+				<item value="*.jardesc"/>
+				<item value="*.jav"/>
+				<item value="*.java"/>
+				<item value="*.jenkinsfile"/>
+				<item value="*.jl"/>
+				<item value="*.jmx"/>
+				<item value="*.jpage"/>
+				<item value="*.jpeg"/>
+				<item value="*.jpg"/>
+				<item value="*.js"/>
+				<item value="*.jscsrc"/>
+				<item value="*.jsf"/>
+				<item value="*.jsfmtrc"/>
+				<item value="*.jshintrc"/>
+				<item value="*.jshtm"/>
+				<item value="*.jslintrc"/>
+				<item value="*.json"/>
+				<item value="*.jsonc"/>
+				<item value="*.jsonl"/>
+				<item value="*.jsonld"/>
+				<item value="*.jsp"/>
+				<item value="*.jspf"/>
+				<item value="*.jspx"/>
+				<item value="*.jsv"/>
+				<item value="*.jsx"/>
+				<item value="*.jtpl"/>
+				<item value="*.ksh"/>
+				<item value="*.launch"/>
+				<item value="*.less"/>
+				<item value="*.log"/>
+				<item value="*.ltx"/>
+				<item value="*.lua"/>
+				<item value="*.m"/>
+				<item value="*.macrodef"/>
+				<item value="*.mak"/>
+				<item value="*.markdn"/>
+				<item value="*.markdown"/>
+				<item value="*.md"/>
+				<item value="*.mdoc"/>
+				<item value="*.mdown"/>
+				<item value="*.mdtext"/>
+				<item value="*.mdtxt"/>
+				<item value="*.mdwn"/>
+				<item value="*.mediawiki"/>
+				<item value="*.menu"/>
+				<item value="*.mjs"/>
+				<item value="*.mk"/>
+				<item value="*.mkd"/>
+				<item value="*.mm"/>
+				<item value="*.mod"/>
+				<item value="*.mts"/>
+				<item value="*.mxml"/>
+				<item value="*.nf"/>
+				<item value="*.nqp"/>
+				<item value="*.nuspec"/>
+				<item value="*.opml"/>
+				<item value="*.owl"/>
+				<item value="*.p6"/>
+				<item value="*.pac"/>
+				<item value="*.patch"/>
+				<item value="*.php"/>
+				<item value="*.php4"/>
+				<item value="*.php5"/>
+				<item value="*.phtml"/>
+				<item value="*.pl6"/>
+				<item value="*.plist"/>
+				<item value="*.pm"/>
+				<item value="*.pm6"/>
+				<item value="*.png"/>
+				<item value="*.pod"/>
+				<item value="*.podspec"/>
+				<item value="*.pom"/>
+				<item value="*.prefs"/>
+				<item value="*.product"/>
+				<item value="*.profile"/>
+				<item value="*.proj"/>
+				<item value="*.properties"/>
+				<item value="*.props"/>
+				<item value="*.prototype"/>
+				<item value="*.ps1"/>
+				<item value="*.psd1"/>
+				<item value="*.psgi"/>
+				<item value="*.psh"/>
+				<item value="*.psm1"/>
+				<item value="*.psrc"/>
+				<item value="*.pssc"/>
+				<item value="*.pt"/>
+				<item value="*.publishsettings"/>
+				<item value="*.pubxml"/>
+				<item value="*.pug"/>
+				<item value="*.py"/>
+				<item value="*.pyi"/>
+				<item value="*.pyt"/>
+				<item value="*.pyw"/>
+				<item value="*.r"/>
+				<item value="*.rake"/>
+				<item value="*.raku"/>
+				<item value="*.rakudoc"/>
+				<item value="*.rakumod"/>
+				<item value="*.rakutest"/>
+				<item value="*.razor"/>
+				<item value="*.rb"/>
+				<item value="*.rbi"/>
+				<item value="*.rbx"/>
+				<item value="*.rbxlx"/>
+				<item value="*.rbxmx"/>
+				<item value="*.rdf"/>
+				<item value="*.rej"/>
+				<item value="*.rhistory"/>
+				<item value="*.rhtml"/>
+				<item value="*.rjs"/>
+				<item value="*.rnc"/>
+				<item value="*.rng"/>
+				<item value="*.rprofile"/>
+				<item value="*.rpy"/>
+				<item value="*.rs"/>
+				<item value="*.rss"/>
+				<item value="*.rst"/>
+				<item value="*.rt"/>
+				<item value="*.ru"/>
+				<item value="*.scss"/>
+				<item value="*.server"/>
+				<item value="*.setup"/>
+				<item value="*.sh"/>
+				<item value="*.shader"/>
+				<item value="*.shproj"/>
+				<item value="*.shtm"/>
+				<item value="*.shtml"/>
+				<item value="*.sql"/>
+				<item value="*.sqlpage"/>
+				<item value="*.storyboard"/>
+				<item value="*.sty"/>
+				<item value="*.svg"/>
+				<item value="*.swcrc"/>
+				<item value="*.swift"/>
+				<item value="*.t"/>
+				<item value="*.tag"/>
+				<item value="*.tagf"/>
+				<item value="*.tagx"/>
+				<item value="*.tagxf"/>
+				<item value="*.target"/>
+				<item value="*.targets"/>
+				<item value="*.tcshrc"/>
+				<item value="*.tex"/>
+				<item value="*.textile"/>
+				<item value="*.tld"/>
+				<item value="*.tmLanguage"/>
+				<item value="*.tmTheme"/>
+				<item value="*.tmx"/>
+				<item value="*.tpp"/>
+				<item value="*.tracwiki"/>
+				<item value="*.ts"/>
+				<item value="*.tsx"/>
+				<item value="*.twiki"/>
+				<item value="*.txt"/>
+				<item value="*.txx"/>
+				<item value="*.vb"/>
+				<item value="*.vba"/>
+				<item value="*.vbproj"/>
+				<item value="*.vbs"/>
+				<item value="*.vcxproj"/>
+				<item value="*.volt"/>
+				<item value="*.vsh"/>
+				<item value="*.vue"/>
+				<item value="*.vuerc"/>
+				<item value="*.war"/>
+				<item value="*.webmanifest"/>
+				<item value="*.wml"/>
+				<item value="*.workbook"/>
+				<item value="*.workingsets"/>
+				<item value="*.wsdd"/>
+				<item value="*.wsdl"/>
+				<item value="*.wsil"/>
+				<item value="*.wsimsg"/>
+				<item value="*.wxi"/>
+				<item value="*.wxl"/>
+				<item value="*.wxs"/>
+				<item value="*.xaml"/>
+				<item value="*.xbl"/>
+				<item value="*.xht"/>
+				<item value="*.xhtml"/>
+				<item value="*.xib"/>
+				<item value="*.xjb"/>
+				<item value="*.xlf"/>
+				<item value="*.xliff"/>
+				<item value="*.xmi"/>
+				<item value="*.xml"/>
+				<item value="*.xoml"/>
+				<item value="*.xpdl"/>
+				<item value="*.xprofile"/>
+				<item value="*.xsd"/>
+				<item value="*.xsessionrc"/>
+				<item value="*.xsl"/>
+				<item value="*.xslt"/>
+				<item value="*.xul"/>
+				<item value="*.yaml"/>
+				<item value="*.yaml-tmlanguage"/>
+				<item value="*.yaml-tmpreferences"/>
+				<item value="*.yaml-tmtheme"/>
+				<item value="*.yash_profile"/>
+				<item value="*.yashrc"/>
+				<item value="*.yml"/>
+				<item value="*.zip"/>
+				<item value="*.zlogin"/>
+				<item value="*.zlogout"/>
+				<item value="*.zprofile"/>
+				<item value="*.zsh"/>
+				<item value="*.zsh-theme"/>
+				<item value="*.zshenv"/>
+				<item value="*.zshrc"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+	</section>
+	<section name="">
+		<item key="org.eclipse.search.resultpage.limit" value="1000"/>
+		<item key="org.eclipse.jdt.search.resultpage.limit" value="1000"/>
+		<item key="org.eclipse.jdt.search.resultpage.limit_enabled" value="TRUE"/>
+	</section>
+	<section name="org.eclipse.search.text.FileSearchResultPage">
+		<item key="org.eclipse.search.resultpage.limit" value="1000"/>
+	</section>
+	<section name="org.eclipse.jdt.ui.JavaSearchResultPage">
+		<item key="org.eclipse.jdt.search.resultpage.limit" value="1000"/>
+		<item key="org.eclipse.jdt.search.resultpage.limit_enabled" value="TRUE"/>
+	</section>
+	<section name="">
+		<item key="org.eclipse.jdt.search.resultpage.limit" value="1000"/>
+		<item key="org.eclipse.jdt.search.resultpage.limit_enabled" value="TRUE"/>
+		<item key="org.eclipse.search.resultpage.limit" value="1000"/>
+	</section>
+</section>

@@ -1,0 +1,218 @@
+
+  <div class="row page-titles">
+            <style>
+              .text-red {
+                color: red;
+              }
+              .btns-import__ses-3,
+              .btns-blue__ses {
+                background-color: palegoldenrod;
+                color: var(--text-color);
+              }
+            </style>
+            <div class="col-md-12 col-12 align-self-center p-l-0">
+              <h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">
+                Tìm kiếm khách hàng
+              </h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <form
+                id="f-cus-check"
+                name="f-cus-check"
+                method="post"
+                enctype="multipart/form-data"
+              >
+                <div class="card">
+                  <div class="card-body">
+                    <div class="">
+                      <div class="col-sm-12 offset-md-2 col-md-8">
+                       <div class="row">
+                          <div class="col-12 custom-field m-b-16">
+                            <div class="c-f__wrapper">
+                              <input
+                                class="form-control form-control-sm c-f__textbox"
+                                type="text"
+                                id="mst"
+                                name="mst"
+                                value=""
+                                autocomplete="off"
+                              />
+                              <fieldset aria-hidden="true" class="c-f__set">
+                                <legend class="c-f__legend">
+                                  <label
+                                    >Mã số thuế<span
+                                      class="text-danger"
+                                      style="font-size: 15px"
+                                      >(*)</span
+                                    ></label
+                                  >
+                                </legend>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12">
+                        <hr style="margin: 0 0 10px 0" />
+                      </div>
+                    </div>
+                    <div class="form-group row m-b-6">
+                      <div class="col-5 col-sm-6">
+                        <button
+                          type="button"
+                          data-action="back"
+                          title="Quay lại"
+                          class="btn btn-sm btn-outline-secondary"
+                        >
+                          <i class="mdi mdi-chevron-left"></i>
+                          <span >Quay lại</span>
+                        </button>
+                      </div>
+                      <div class="col-7 col-sm-6 text-right">
+                        <button
+                          type="button"
+                          data-action="accept"
+                          class="btnadd btns btns-import__ses-1"
+                          title="Chấp nhận"
+                        >
+                          <i class="mdi mdi-check-all"></i>
+                          <span ></span>Chấp nhận</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <script type="text/javascript">
+		transactionMain = '[[${transaction}]]';
+		var rowsTMP = [];
+		var vIsEdit = [[${_isedit_}]];
+		_gridSub01 = $('#f-cus-check').find('#grid');
+		</script>
+		
+		<script type="text/javascript" th:if="${_action_ == 'CREATE' && false}"></script>
+
+	
+	<script type="text/javascript">
+	$(function(){
+					//END VIEW
+		$('#f-cus-check').find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+			
+			var $obj = $(this);
+			var objDataSend = null;
+			
+			switch (dataAction) {
+			
+			case 'back':
+				$('#divMainContent').show();
+				$('#divSubContent').hide(function(){$(this).empty();});
+				try{
+					if($('#f-api').find('#grid').length > 0)
+						$('#f-api').find('#grid').data("kendoGrid").dataSource.read();
+				}catch(err){}
+				break;
+		
+			case 'accept':
+				objDataSend = getDataToSave();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/' + transactionMain + '/check-data',
+					data: objDataSend,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							var confirmText = responseData['CONFIRM'];
+							tokenTransaction = responseData['TOKEN'];
+							
+							objDataSend['tokenTransaction'] = tokenTransaction;
+							
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+										data: objDataSend,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													objData = {};													
+													var responseData = res.responseData;
+													var mst = responseData['MST'];
+													var name = responseData['Name'];									
+													objData['tokenTransaction'] = mst+","+ name;
+											
+							                          $('#divSubContent').show()
+							                          $('#divMainContent').hide()
+							                          submitFormRenderArea(
+							                            ROOT_PATH + '/main/session_key_cre/init',
+							                            objData,
+							                            $('#divSubContent')
+							                          )			
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+								
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						$obj.prop('disabled', false);
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
+		
+			default:
+				break;
+			}
+		});
+		
+	});
+
+	
+
+	
+
+	function getDataToSave(){
+		var dataPost = {};
+		
+		dataPost['mst'] = $('#f-cus-check').find('#mst').val();	
+	
+		return dataPost;
+	}
+
+
+	</script>
+</div>
+</div>
+     

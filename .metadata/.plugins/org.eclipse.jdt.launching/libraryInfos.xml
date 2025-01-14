@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<libraryInfos>
+    <libraryInfo home="D:\Apps install\java17" version="17.0.9"/>
+    <libraryInfo home="D:\Apps install\java8_391\bin" version="1.8.0_391">
+        <bootpath>
+            <entry path="D:\Apps install\java8_391\jre\lib\resources.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\lib\rt.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\lib\jsse.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\lib\jce.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\lib\charsets.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\lib\jfr.jar"/>
+            <entry path="D:\Apps install\java8_391\jre\classes"/>
+        </bootpath>
+        <extensionDirs>
+            <entry path="D:\Apps install\java8_391\jre\lib\ext"/>
+            <entry path="C:\WINDOWS\Sun\Java\lib\ext"/>
+        </extensionDirs>
+        <endorsedDirs>
+            <entry path="D:\Apps install\java8_391\jre\lib\endorsed"/>
+        </endorsedDirs>
+    </libraryInfo>
+    <libraryInfo home="C:\Users\hoang\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.9.v20231028-0858\jre" version="17.0.9"/>
+    <libraryInfo home="D:\Apps install\java17\bin" version="17.0.9"/>
+    <libraryInfo home="D:\Apps install\jdk21.0.2" version="21.0.2"/>
+    <libraryInfo home="C:\Users\hoang\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.9.v20231028-0858" version="17.0.9"/>
+</libraryInfos>

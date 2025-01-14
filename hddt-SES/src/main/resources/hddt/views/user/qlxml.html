@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Lấy file XML</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form name="f-qlxml" id="f-qlxml"
+					method="post" enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-l p-r">
+								<div class="col-sm-12 offset-md-2 col-md-8 b-a m-b-sm">						
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="mst" name="mst" class="form-control form-control-sm c-f__textbox"  type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số thuế<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="khhd" name="khhd" class="form-control form-control-sm c-f__textbox"  type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Kí hiệu hóa đơn<span class="text-danger" style="font-size:12px"> (Ví dụ: C22XXX)</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="shd" name="shd" class="form-control form-control-sm c-f__textbox"  type="text" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số hóa đơn<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>	
+								<div class="row m-b-16">
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input id="mtd" name="mtd" class="form-control form-control-sm c-f__textbox"  type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã thông điệp</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+										
+									<div class="input-group-sm p-b-sm p-r-xs">
+										<div class="text-md-left text-sm-left text-left"></div>
+										<div class="text-md-right text-sm-right text-right">
+											<button type="button" data-action="accept"
+												class="btnadd btns btns-blue__ses" title="Chấp nhận">
+												<i class="mdi mdi-check-all"></i> <span class="d-md-inline">Chấp
+													nhận</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+		<!-- 			<input type="hidden" name="_id" value="61e64214021ce9aa6b8dfd87" /> -->
+				</form>
+				<script type="text/javascript">
+				transactionMain = '[[${transaction}]]';
+				</script>
+				<!-- <script th:src="@{/static/function/system/config-email-server.js(v=1.0) }"></script> -->
+				<script type="text/javascript">
+				
+				initInputNumber('#f-qlxml .text-number');
+		
+					$(function() {						
+						$('#f-qlxml')
+								.find('button[data-action]')
+								.click(
+										function(event) {
+											event.preventDefault() /*event.stopPropagation();*/
+											var dataAction = $(this).data(
+													'action')
+
+											var $obj = $(this)
+											var objDataSend = null
+
+											switch (dataAction) {											
+											case 'accept':
+												objDataSend = getDataToSave()
+												$.ajax({
+															type : 'POST',
+															datatype : 'json',
+															url : ROOT_PATH
+																	+ '/main/qlxml/check-data-save',
+															data : objDataSend,
+															beforeSend : function(
+																	req) {
+																initAjaxJsonRequest(req)
+																showLoading()
+															},
+															success : function(
+																	res) {
+																hideLoading()
+																if (res.errorCode == 0) {
+																	var responseData = res.responseData
+	
+															//		var confirmText = responseData['CONFIRM']
+																	var objData = null;
+																	tokenTransaction = responseData['TOKEN']
+																	var mst = responseData['mst']
+																	var khhd = responseData['khhd']
+																	var shd = responseData['shd']
+																	var mtd = responseData['mtd']
+																	var data = null;
+																	data = [];
+																	data.push(mst);
+																	data.push(khhd);
+																	data.push(shd);
+																	data.push(mtd);
+																	objData =  encodeObjJsonBase64UTF8(data);
+																									
+																	window.open(ROOT_PATH + '/common/getXml/' + objData,'_blank');
+															
+																} else {
+																	alertDLSuccess(createObjectError(res).html(),function() {})
+																}
+															},
+															error : function(
+																	xhr,
+																	ajaxOptions,
+																	thrownError) {
+																alertDLSuccess(xhr.status+ ' - '+ xhr.responseText,function() {})
+																hideLoading()
+															},
+														})
+												break
+
+											default:
+												break
+											}
+										})
+					})
+
+					function getDataToSave() {
+						var dataPost = {}
+						var _tmp = ''
+						dataPost['mst'] = $('#f-qlxml').find('#mst').val();
+						dataPost['khhd'] = $('#f-qlxml').find('#khhd').val();
+						dataPost['shd'] = $('#f-qlxml').find('#shd').val();
+						dataPost['mtd'] = $('#f-qlxml').find('#mtd').val();
+						return dataPost;
+					}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

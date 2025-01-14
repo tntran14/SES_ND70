@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="container-fluid style-main-content" id="divMainContent">
+			<div class="row page-titles">
+				<div class="col-md-12 col-12 align-self-center p-l-0">
+					<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Cấu
+						hình tham số ADMIN</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<form name="f-config-param" id="f-config-param" method="post"
+						enctype="multipart/form-data">
+						<div class="card">
+							<div class="card-body config__parameters--h">
+								<div class="row p-l p-r m-t-20">
+									<div
+										class="col-sm-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8 b-a m-b-sm background-frame-brown p-t-sm">
+										<!-- box-header -->				
+										
+									<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Tham số mẫu số hết hạn <span class="text-danger"> (%)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${MS_EXPIRES != null}">
+													<input type="number" min="1" max="100"
+														class="form-control form-control-sm has-value" id="ms-expires"
+														name="ms-expires" th:value="${MS_EXPIRES}" />
+												</th:block>
+										
+
+											</div>
+										</div> 
+
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Tham số chữ ký số hết hạn <span class="text-danger"> (Tháng)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${CKS_EXPIRES != null}">
+													<input type="number" min="1" max="12"
+														class="form-control form-control-sm has-value" id="cks-expires"
+														name="cks-expires" th:value="${CKS_EXPIRES}" />
+												</th:block>
+												
+											</div>
+										</div>																	
+
+										<div class="b b-b m-b-16"></div>
+										<div class="input-group-sm p-b-sm p-r">
+											<div
+												class="col-12 text-md-right text-sm-right text-right p-r-0">
+												<button type="button" data-action="accept"
+													class="btns btns-search_auto__ses hover-up__ses">
+													Chấp nhận</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+
+					<script>
+						$(function() {
+							$('#f-config-param')
+									.find('button[data-action]')
+									.click(
+											function(event) {
+												event.preventDefault();/*event.stopPropagation();*/
+												var dataAction = $(this).data('action');
+												var $obj = $(this);
+												var objDataSend = null;
+
+												switch (dataAction) {
+												case 'accept':
+													objDataSend = getDataToSave();
+													$.ajax({
+																type : "POST",
+																datatype : "json",
+																url : ROOT_PATH + '/main/param-admin/check-data-save',
+																data : objDataSend,
+																beforeSend : function(req) {
+																	initAjaxJsonRequest(req);
+																	showLoading();
+																},
+																success : function(res) {
+																	hideLoading();
+																	if (res.errorCode == 0) {
+																		var responseData = res.responseData;
+																		var confirmText = responseData['CONFIRM'];
+																		tokenTransaction = responseData['TOKEN'];
+																		objDataSend['tokenTransaction'] = tokenTransaction;
+																		alertConfirm(
+																				confirmText,
+																				function(e) {
+																					$.ajax({
+																							type : "POST",
+																							datatype : "json",
+																							url : ROOT_PATH + '/main/param-admin/save-data',
+																							data : objDataSend,
+																							beforeSend : function(req) {
+																								initAjaxJsonRequest(req);
+																								showLoading();
+																							},
+																							success : function(res) {
+																									hideLoading();
+																									if (res) {
+																										if (res.errorCode == 0) {
+																											//$('#f-config-param').find('button[data-action="back"]').trigger('click');
+																											location.reload();
+																										} else {
+																											alertDLSuccess(createObjectError(res).html(),function() {});
+																										}
+																									} else {
+																										alertDLSuccess('unknown error!!!',function() {});
+																										hideLoading();
+																									}
+																								},
+																								error : function(
+																										xhr,ajaxOptions,thrownError) {
+																									alertDLSuccess(xhr.status+ " - "+ xhr.responseText,function() {});
+																									hideLoading();
+																								}
+																							});
+																				},
+																				function(
+																						e) {
+																				});
+																	} else {
+																		alertDLSuccess(createObjectError(res).html(),function() {});
+																	}
+																},
+																error : function(xhr,ajaxOptions,thrownError) {$obj.prop('disabled',false);
+																	alertDLSuccess(xhr.status+ " - "+ xhr.responseText,function() {});
+																	hideLoading();
+																}
+															});
+													break;
+
+												default:
+													break;
+												}
+											});
+
+						});
+
+						function getDataToSave() {
+							var dataPost = {};			
+							dataPost['ms-expires'] = $('#f-config-param').find('#ms-expires').val();
+							dataPost['cks-expires'] = $('#f-config-param').find('#cks-expires').val();
+							return dataPost;
+						}
+					</script>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

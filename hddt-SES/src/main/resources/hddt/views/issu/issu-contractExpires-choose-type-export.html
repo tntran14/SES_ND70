@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid">
+		<form id="f-prd-type-exp" name="f-prd-type-exp" method="post" enctype="multipart/form-data" >
+			<div class="row" >
+				<div class="col-12 col-md-8 centerX">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="c-f__wrapper">
+								<div class="custom-field m-t-5 m-b-0">
+									<label class="custom-control custom-radio d-inline-block m-r-10 m-b-0">
+										<input name="optType" type="radio" class="custom-control-input text-color-dark-blue" value="WEEK">
+										<span class="custom-control-label p-t-5 fs-13">Xuất theo tuần mới nhất</span>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-12">
+							<div class="c-f__wrapper">
+								<div class="custom-field m-t-5 m-b-0">
+									<label class="custom-control custom-radio d-inline-block m-r-10 m-b-0">
+										<input name="optType" type="radio" class="custom-control-input text-color-dark-blue" value="MONTH" checked="true" >
+										<span class="custom-control-label p-t-5 fs-13">Xuất theo tháng</span>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12 m-t-15 d-none type-date">
+							<div class="row">
+								<div class="col-6">
+									<div class="c-f__wrapper">
+										<input id="from-date" name="from-date" class="form-control form-control-sm c-f__textbox" th:value="${FromDate}" type="text" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Từ ngày</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6">
+									<div class="c-f__wrapper">
+										<input id="to-date" name="to-date" class="form-control form-control-sm c-f__textbox" th:value="${ToDate}" type="text" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Đến ngày</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						
+					</div>
+					
+					
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+<!-- <script th:src="@{/static/function/dm/product-choose-type-export.js(v=1.1) }"></script> -->
+<script type="text/javascript">
+$(function(){
+	dateInputFormat($('#f-prd-type-exp').find('#from-date'));
+	dateInputFormat($('#f-prd-type-exp').find('#to-date'));
+	
+	 $( document ).ready(function() {
+			$('#f-prd-type-exp').find('div.type-date').removeClass('d-none');	
+	    });
+	
+	$('#f-prd-type-exp').find('input[type="radio"][name="optType"]').change(function() {
+		var _val = $(this).val();
+		$('#f-prd-type-exp').find('div.type-date').addClass('d-none');
+		if('MONTH' == _val){
+			$('#f-prd-type-exp').find('div.type-date').removeClass('d-none');	
+		}
+	});
+	
+	$('div.modal-footer').find("button[data-action='accept']").click(function (event) {
+		event.preventDefault();
+		
+		var _type = $('#f-prd-type-exp').find('input[type="radio"][name="optType"]:checked').val();
+		var obj = {};
+		obj['type'] = _type;
+  		if('MONTH' == _type){  
+			obj['from-date'] = $('#f-prd-type-exp').find('#from-date').val();
+			obj['to-date'] = $('#f-prd-type-exp').find('#to-date').val();
+ 		}  
+		
+		if(callback) callback(obj);
+		$('#f-prd-type-exp').closest("div.modal").modal("hide");
+		$('#f-prd-type-exp').closest("div.modal").find('.modal-content').empty();
+	});
+});
+
+</script>
+</html>
