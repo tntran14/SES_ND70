@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="javax.net.ssl.HttpsURLConnection"/>
-    <fullyQualifiedTypeName name="java.util.HashMap"/>
-    <fullyQualifiedTypeName name="com.fasterxml.jackson.databind.JsonNode"/>
-    <fullyQualifiedTypeName name="vn.sesgroup.hddt.utility.Json"/>
-</qualifiedTypeNameHistroy>
