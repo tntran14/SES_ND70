@@ -337,7 +337,7 @@ public class LoginController extends AbstractController{
          	
            	sbRights.append("mauhd_admin|mauhd_admin-edit|mauhd_admin-check|");
          	
-        	sbRights.append("einvoice_mtt|einvoice_mtt-cre|einvoice_mtt-detail|einvoice_mtt-edit|einvoice_mtt-sign|einvoice_mtt-copy|einvoice_mtt-cre-dc-tt|");
+        	sbRights.append("einvoice_mtt|einvoice_mtt-cre|einvoice_mtt-detail|einvoice_mtt-edit|einvoice_mtt-sign|einvoice_mtt-copy|einvoice_mtt-cre-dc-tt|einvoice_mtt-import-auto|");
            
         		
          	sbRights.append("dm-lhd|dm-lhd-cre|dm-lhd-detail|dm-lhd-edit|dm-lhd-del|");

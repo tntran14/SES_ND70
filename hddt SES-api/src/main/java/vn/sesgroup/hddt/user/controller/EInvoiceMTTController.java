@@ -347,5 +347,18 @@ public class EInvoiceMTTController {
 				.body(rsp);
 	}
 	
+	@RequestMapping(value = "/import-data-auto", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> importExcelAuto(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.importExcelAuto(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
 }
 

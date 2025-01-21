@@ -212,6 +212,10 @@
                             				<button type="button" title="Thêm mới" data-action="einvoice_mtt-cre" class="btns tmoi_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre|')}" >
                             					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
                             				</button>
+                            				
+                            				<button type="button" title="Import hóa đơn" data-action="einvoice-import-auto" class="btns import_hdon hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice-import-auto|')}" >
+										   		<i class="mdi mdi-file-excel"></i><span class="d-none d-md-inline">Import Hóa Đơn</span>
+										   	</button>
                             			
 											<button  type="button"  title="Thêm mới HĐ Điều chỉnh/Thay thế" data-action="einvoice_mtt-cre-dc-tt"
 											  class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dc-tt|')}" th:disabled="true" >
@@ -727,7 +731,7 @@
 							});
 							break;
 						case 'einvoice-import-auto':
-				              showPopupWithURLAndData(ROOT_PATH + '/main/einvoice-import-auto/init', objData, true, function(e){
+				              showPopupWithURLAndData(ROOT_PATH + '/main/einvoice_mtt-import-auto/init', objData, true, function(e){
 				              });
 				              break;
 						case 'einvoice-delete_':

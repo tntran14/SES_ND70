@@ -31,6 +31,13 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +63,9 @@ import com.mongodb.client.model.ReturnDocument;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
+import vn.sesgroup.hddt.model.DSHHDVu;
+import vn.sesgroup.hddt.model.EInvoiceExcelForm;
+import vn.sesgroup.hddt.model.EInvoiceMTTExcelForm;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.EInvoiceMTTDAO;
 import vn.sesgroup.hddt.user.dao.SendMailAsyncDAO;
@@ -5577,6 +5587,1665 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
+	}
+
+	private boolean isRowEmpty(Row row) {
+		for (int i = 0; i < 25; i++) {
+			Cell cell = row.getCell(i);
+			if (cell != null && cell.getCellType() != CellType.BLANK) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public MsgRsp importExcelAuto(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+
+		// XML
+		Document docTmp = null;
+
+		DocumentBuilderFactory dbf = null;
+		DocumentBuilder db = null;
+		org.w3c.dom.Document doc = null;
+		Element root = null;
+
+		Element elementContent = null;
+
+		Element elementSubTmp = null;
+		Element elementSubTmp01 = null;
+		Element elementSubContent = null;
+		Element elementTmp = null;
+		boolean isSdaveFile = false;
+		int intTmp = 0;
+		HashMap<String, Double> mapVATAmount = null;
+		HashMap<String, Double> mapAmount = null;
+		String tmp = "";
+		// END XML
+
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		String dataFileName = commons.getTextJsonNode(jsonData.at("/DataFileName")).replaceAll("\\s", "");
+		String mauSoHdon = commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
+		// Start
+		ObjectId objectId = null;
+		ObjectId objectIdUser = null;
+		ObjectId objectIdMSKH = null;
+		List<Document> pipeline = null;
+		try {
+			objectId = new ObjectId(header.getIssuerId());
+		} catch (Exception e) {
+		}
+		try {
+			objectIdUser = new ObjectId(header.getUserId());
+		} catch (Exception e) {
+		}
+		try {
+			objectIdMSKH = new ObjectId(mauSoHdon);
+		} catch (Exception e) {
+		}
+
+		/* XU LY LAY ID CỦA MAU SO KI HIEU */
+
+		Document findInforIssuer = new Document("_id", 1).append("TaxCode", 1).append("Name", 1).append("Address", 1)
+				.append("Phone", 1).append("Fax", 1).append("Email", 1).append("Website", 1).append("TinhThanhInfo", 1)
+				.append("ChiCucThueInfo", 1).append("BankAccount", 1).append("NameEN", 1).append("BankAccountExt", 1);
+
+		pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match",
+				new Document("_id", objectId).append("IsActive", true).append("IsDelete", false)));
+		pipeline.add(new Document("$project", findInforIssuer));
+		pipeline.add(new Document("$lookup",
+				new Document("from", "Users").append("pipeline", Arrays.asList(
+						new Document("$match",
+								new Document("IssuerId", header.getIssuerId()).append("_id", objectIdUser)
+										.append("IsActive", true).append("IsDelete", false)),
+						new Document("$project", new Document("_id", 1).append("UserName", 1).append("FullName", 1)),
+						new Document("$limit", 1))).append("as", "UserInfo"))
+
+		);
+		pipeline.add(
+				new Document("$unwind", new Document("path", "$UserInfo").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$lookup",
+				new Document("from", "DMMauSoKyHieu").append("pipeline", Arrays.asList(
+						new Document("$match",
+								new Document("IssuerId", header.getIssuerId()).append("IsActive", true)
+										.append("IsDelete", false).append("ConLai", new Document("$gt", 0))
+										.append("_id", objectIdMSKH)),
+						new Document("$project", new Document("_id", 1).append("KHMSHDon", 1).append("KHHDon", 1)),
+						new Document("$limit", 1))).append("as", "DMMauSoKyHieu")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$lookup", new Document("from", "PramLink")
+				.append("pipeline",
+						Arrays.asList(new Document("$match", new Document("$expr", new Document("IsDelete", false))),
+								new Document("$project", new Document("_id", 1).append("LinkPortal", 1))))
+				.append("as", "PramLink")));
+		pipeline.add(
+				new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+		try {
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+
+		mongoClient.close();
+		if (null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+		if (docTmp.get("UserInfo") == null) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		if (docTmp.get("DMMauSoKyHieu") == null) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin ký hiệu mẫu số.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+
+		/* END XU LY LAY ID CỦA MAU SO KI HIEU */
+
+		Path path = Paths.get(SystemParams.DIR_TEMPORARY, header.getIssuerId(), dataFileName);
+		File file = path.toFile();
+		if (!(file.exists() && file.isFile())) {
+			responseStatus = new MspResponseStatus(9999, "Tập tin import dữ liệu không tồn tại.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		List<EInvoiceMTTExcelForm> eInvoiceMTTExcelFormList = new ArrayList<>();
+		Workbook wb = null;
+		Sheet sheet = null;
+		try {
+			wb = WorkbookFactory.create(file);
+			sheet = wb.getSheetAt(0);
+			boolean skipHeader = true;
+			for (Row row1 : sheet) {
+				if (skipHeader) {
+					skipHeader = false;
+					continue;
+				}
+
+				// check contain null row
+				if (isRowEmpty(row1)) {
+					continue;
+				}
+
+				List<Cell> cells = new ArrayList<Cell>();
+				int lastColumn = Math.max(row1.getLastCellNum(), 24);
+
+				for (int cn = 0; cn < lastColumn; cn++) {
+					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+					cells.add(c);
+				}
+				EInvoiceMTTExcelForm eInvoiceExcelForm = extractInfoFromCellAuto(cells);
+				eInvoiceMTTExcelFormList.add(eInvoiceExcelForm);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (wb != null) {
+				try {
+					wb.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		boolean checkMaHD = false;
+		boolean checkNullMaHD = false;
+		if (eInvoiceMTTExcelFormList != null) {
+			for (int tam = 0; tam < eInvoiceMTTExcelFormList.size(); tam++) {
+				if (eInvoiceMTTExcelFormList.get(tam).getMaHD() == null) {
+					checkNullMaHD = true;
+				}
+			}
+			if (checkNullMaHD == true) {
+				responseStatus = new MspResponseStatus(999,
+						"Import không thành công. \r\n" + "Hãy kiểm tra lại file excel. \r\n"
+								+ "Không được chứa các dòng thừa và phải chuẩn theo mẫu.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
+			String tempMST = "";
+			String tempTenNM = "";
+			String tempCccd = "";
+			String tempTenDonVi = "";
+			String tempDChiKH = "";
+			String tempMailKH = "";
+			String tempSdtKH = "";
+			String tempStkNH = "";
+			String tempTenNH = "";
+			String tempLoaiHoaDon = "";
+			String tempHinhThucThanhToan = "";
+			String tempLoaiTien = "";
+			String tempTyGia = "";
+			List<DSHHDVu> dshhdVuList = new ArrayList<>();
+			List<Object> listHHDVu = new ArrayList<Object>();
+			int i = 0;
+			int start = 0;
+			int end = 0;
+			int dem = 0;
+
+			/* DOC FILE EXCEL - GHI DU LIEU VO LIST */
+			for (; i < eInvoiceMTTExcelFormList.size();) {
+				dem = 0;
+
+				// lay thong tin
+				tempMST = eInvoiceMTTExcelFormList.get(i).getMaSoThue();
+				tempTenNM = eInvoiceMTTExcelFormList.get(i).getTenNguoiMua();
+				tempCccd = eInvoiceMTTExcelFormList.get(i).getCccd();
+				tempTenDonVi = eInvoiceMTTExcelFormList.get(i).getTenDonVi();
+				tempDChiKH = eInvoiceMTTExcelFormList.get(i).getDiaChiKhachHang();
+				tempMailKH = eInvoiceMTTExcelFormList.get(i).getMailKhachHang();
+				tempSdtKH = eInvoiceMTTExcelFormList.get(i).getSdtKhachHang();
+				tempStkNH = eInvoiceMTTExcelFormList.get(i).getSoTaiKhoan();
+				tempTenNH = eInvoiceMTTExcelFormList.get(i).getTenNganHang();
+				tempLoaiHoaDon = eInvoiceMTTExcelFormList.get(i).getLoaiHoaDon();
+				tempHinhThucThanhToan = eInvoiceMTTExcelFormList.get(i).getHinhThucThanhToan();
+				tempLoaiTien = eInvoiceMTTExcelFormList.get(i).getLoaiTien();
+				tempTyGia = eInvoiceMTTExcelFormList.get(i).getTyGia();
+
+				for (int j = i; j < eInvoiceMTTExcelFormList.size(); j++) {
+					if (eInvoiceMTTExcelFormList.get(i).getMaHD() == eInvoiceMTTExcelFormList.get(j).getMaHD()) {
+						dem++;
+						start = j + 1;
+						end = j;
+						if (eInvoiceMTTExcelFormList.size() == j + 1) {
+							checkMaHD = true;
+						}
+					} else {
+						checkMaHD = true;
+					}
+
+				}
+
+				if (dem == 1) {
+					end = i;
+					checkMaHD = true;
+				}
+
+				if (checkMaHD == true) {
+					if (dem > 1) {
+						int stt = 1;
+
+						Double tongTienThue = 0.0;
+						Double tongThanhTien = 0.0;
+						Double total = 0.0;
+						for (int k = i; k <= end; k++) {
+							DSHHDVu dshhdVu = new DSHHDVu();
+							String STT = String.valueOf(stt++);
+							Double thanhTien = eInvoiceMTTExcelFormList.get(k).getThanhTien();
+							Double thueSuat = eInvoiceMTTExcelFormList.get(k).getThueSuat();
+							Double tienThue = eInvoiceMTTExcelFormList.get(k).getTienThue();
+							Double tongtien = eInvoiceMTTExcelFormList.get(k).getTongTien();
+
+							tongTienThue += tienThue;
+							tongThanhTien += thanhTien;
+							total += tongtien;
+
+							dshhdVu.setSTT(STT);
+							dshhdVu.setProductName(eInvoiceMTTExcelFormList.get(k).getTenHangHoa());
+							dshhdVu.setProductCode(eInvoiceMTTExcelFormList.get(k).getMaHangHoa());
+							dshhdVu.setUnit(eInvoiceMTTExcelFormList.get(k).getDonViTinh());
+							dshhdVu.setQuantity(eInvoiceMTTExcelFormList.get(k).getSoLuong());
+							dshhdVu.setPrice(eInvoiceMTTExcelFormList.get(k).getDonGia());
+							dshhdVu.setTotal(thanhTien);
+							dshhdVu.setVATRate(thueSuat);
+							dshhdVu.setVATAmount(tienThue);
+							dshhdVu.setAmount(tongtien);
+							dshhdVu.setFeature(eInvoiceMTTExcelFormList.get(k).getTinhChat());
+
+							dshhdVuList.add(dshhdVu);
+
+							HashMap<String, Object> hItem1 = null;
+							hItem1 = new LinkedHashMap<String, Object>();
+							hItem1.put("STT", dshhdVu.getSTT());
+							hItem1.put("ProductName", dshhdVu.getProductName());
+							hItem1.put("ProductCode", dshhdVu.getProductCode());
+							hItem1.put("SLo", dshhdVu.getSLo());
+							hItem1.put("HanSD", dshhdVu.getHanSD());
+							hItem1.put("Unit", dshhdVu.getUnit());
+							hItem1.put("Quantity", dshhdVu.getQuantity());
+							hItem1.put("Price", dshhdVu.getPrice());
+							hItem1.put("Total", dshhdVu.getTotal());
+							hItem1.put("VATRate", dshhdVu.getVATRate());
+							hItem1.put("VATAmount", dshhdVu.getVATAmount());
+							hItem1.put("Amount", dshhdVu.getAmount());
+							hItem1.put("Feature", dshhdVu.getFeature());
+
+							listHHDVu.add(hItem1);
+						}
+						// Clear BIEN GAN STT
+						stt = stt - (end + 1);
+
+						String TTBChu = commons.formatNumberReal(total).replaceAll(",", "");
+						String TTBCHU = ChuyenSangChu(TTBChu);
+						String tongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+
+						// Thông tin hóa đơn - TTChung
+						String MaHD = eInvoiceMTTExcelFormList.get(i).getMaHD();
+						String THDon = Integer.parseInt(tempLoaiHoaDon) == 1 ? "Hóa đơn giá trị gia tăng TT 78"
+								: "Hóa đơn bán hàng";
+						String MauSoHD = mauSoHdon;
+						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
+						String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
+						LocalDateTime NLap = LocalDateTime.now();
+						String HTTToanCode = "";
+						String HTTToan = "";
+						switch (tempHinhThucThanhToan) {
+						case "1":
+							HTTToanCode = "1";
+							HTTToan = "Tiền mặt";
+							break;
+						case "2":
+							HTTToanCode = "2";
+							HTTToan = "Chuyển khoản";
+							break;
+						case "3":
+							HTTToanCode = "3";
+							HTTToan = "Tiền mặt/Chuyển khoản";
+							break;
+						case "4":
+							HTTToanCode = "4";
+							HTTToan = "Đối trừ công nợ";
+							break;
+						case "5":
+							HTTToanCode = "5";
+							HTTToan = "Không thu tiền";
+							break;
+						default:
+							break;
+						}
+
+						// Thông tin người bán - Thông tin người mua - NDHDon
+						String Ten = docTmp.getEmbedded(Arrays.asList("Name"), "").toString();
+						String MST = docTmp.getEmbedded(Arrays.asList("TaxCode"), "").toString();
+						String DChi = docTmp.getEmbedded(Arrays.asList("Address"), "").toString();
+						String SDThoai = docTmp.getEmbedded(Arrays.asList("Phone"), "").toString();
+						String DCTDTu = docTmp.getEmbedded(Arrays.asList("Email"), "").toString();
+						String STKNHang = docTmp.getEmbedded(Arrays.asList("BankAccount", "AccountNumber"), "")
+								.toString();
+						String TNHang = docTmp.getEmbedded(Arrays.asList("BankAccount", "BankName"), "").toString();
+						String Fax = docTmp.getEmbedded(Arrays.asList("Fax"), "").toString();
+						String Website = docTmp.getEmbedded(Arrays.asList("Website"), "").toString();
+
+						// Một số thông tin khác
+						String MTDiep = "";
+						String secureKey = "";
+
+						// Setting
+						String pathDir = "";
+						File file1 = null;
+						Path path1 = null;
+						ObjectId objectIdEInvoice = null;
+						String fileNameXML = "";
+						objectIdEInvoice = new ObjectId();
+						String taxCode = "";
+						taxCode = docTmp.getString("TaxCode");
+						path1 = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode,
+								docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString());
+						pathDir = path1.toString();
+						file1 = path1.toFile();
+						if (!file1.exists())
+							file1.mkdirs();
+						fileNameXML = objectIdEInvoice.toString() + ".xml";
+
+						secureKey = commons.csRandomNumbericString(6);
+
+						// XML
+						dbf = DocumentBuilderFactory.newInstance();
+						db = dbf.newDocumentBuilder();
+						doc = db.newDocument();
+						doc.setXmlStandalone(true);
+
+						root = doc.createElement("HDon");
+						root.setAttribute("Id", "DLieu0");
+						doc.appendChild(root);
+
+						elementContent = doc.createElement("DLHDon");
+						elementContent.setAttribute("Id", "data");
+						root.appendChild(elementContent);
+
+						elementSubTmp = null;
+						elementSubTmp01 = null;
+						elementSubContent = doc.createElement("TTChung");
+						elementTmp = null;
+
+						elementSubContent
+								.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", THDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon", KHMSHDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon", KHHDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon", "")); // SE PHAT SINH
+
+						// Ngày lập
+						elementSubContent.appendChild(
+								commons.createElementWithValue(doc, "NLap", NLap.format(DateTimeFormatter.ISO_DATE)));
+
+						// Đơn vị tiền tệ
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", tempLoaiTien));
+
+						// Tỷ giá
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", tempTyGia));
+
+						// Hình thức thanh toán
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "HTTToan", HTTToan));
+
+						// MST tổ chức cung cấp giải pháp HĐĐT
+						elementSubContent
+								.appendChild(commons.createElementWithValue(doc, "MSTTCGP", SystemParams.MSTTCGP));
+
+						elementTmp = doc.createElement("TTKhac"); // THONG TIN KHAC
+						elementTmp
+								.appendChild(commons.createElementTTKhac(doc, "HoaDon_Loai", "string", tempLoaiHoaDon));
+						elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
+						elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
+						elementTmp.appendChild(
+								commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+						elementSubContent.appendChild(elementTmp);
+
+						elementContent.appendChild(elementSubContent);
+
+						// NDHDon: Nội dung hóa đơn
+						elementSubContent = doc.createElement("NDHDon");
+						elementTmp = doc.createElement("NBan"); // NGUOI BAN
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", Ten));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MST));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoai));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", DCTDTu));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", STKNHang));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TNHang", TNHang));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Fax", Fax));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Website", Website));
+
+						// Thong tin khac
+						elementSubTmp = doc.createElement("TTKhac");
+						elementSubTmp.appendChild(
+								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+
+						elementSubTmp
+								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
+						elementSubTmp
+								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
+
+						elementTmp.appendChild(elementSubTmp);
+						elementSubContent.appendChild(elementTmp);
+
+						elementTmp = doc.createElement("NMua"); // NGUOI MUA
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", tempTenDonVi));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", tempMST));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", tempDChiKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", tempSdtKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", tempMailKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", tempTenNM));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", tempStkNH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TNHang", tempTenNH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+						elementSubContent.appendChild(elementTmp);
+
+						mapVATAmount = new LinkedHashMap<String, Double>();
+						mapAmount = new LinkedHashMap<String, Double>();
+						elementTmp = doc.createElement("DSHHDVu"); // HH-DV
+
+						for (Object o : listHHDVu) {
+							if (!"".equals(o.equals("/ProductName"))) {
+								JsonNode h = Json.serializer().nodeFromObject(o);
+								tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
+										.replaceAll(",", "");
+								switch (tmp) {
+								case "0":
+									tmp = "-1";
+									break;
+								case "1":
+									tmp = "0%";
+									break;
+								case "5":
+								case "8":
+								case "10":
+									tmp += "%";
+									break;
+								case "-1":
+									tmp = "KCT";
+									break;
+								case "-2":
+									tmp = "KKKNT";
+									break;
+								default:
+									break;
+								}
+
+								if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
+										|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))
+										|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									mapAmount.compute(tmp, (k, v) -> {
+										return (v == null ? commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
+												* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
+												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1));
+									});
+									mapVATAmount.compute(tmp, (k, v) -> {
+										return (v == null
+												? commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1)
+												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1));
+									});
+								}
+
+								elementSubTmp = doc.createElement("HHDVu");
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
+										commons.getTextJsonNode(h.at("/Feature"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "STT",
+										commons.getTextJsonNode(h.at("/STT"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "MHHDVu",
+										commons.getTextJsonNode(h.at("/ProductCode"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "THHDVu",
+										commons.getTextJsonNode(h.at("/ProductName"))));
+
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "DVTinh",
+										commons.getTextJsonNode(h.at("/Unit"))));
+
+								if (!("2".equals(commons.getTextJsonNode(h.at("/Feature"))))) { // ||
+																								// "4".equals(commons.getTextJsonNode(o.at("/Feature")))
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong",
+											commons.formatNumberReal(commons.getTextJsonNode(h.at("/Quantity")))
+													.replaceAll(",", "")));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia",
+											commons.formatNumberReal(commons.getTextJsonNode(h.at("/Price")))
+													.replaceAll(",", "")));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
+											commons.formatNumberReal(
+													commons.getTextJsonNode(h.at("/Total")).replaceAll(",", ""))
+													.replaceAll(",", "")));
+									if (!tmp.equals("-1") && !tempLoaiHoaDon.equals("2")) {
+										elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
+									}
+								}
+
+								if (!tempLoaiHoaDon.equals("2")) {
+									elementSubTmp01 = doc.createElement("TTKhac");
+
+									if (commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "").equals("")) {
+										elementSubTmp01.appendChild(
+												commons.createElementTTKhac(doc, "VATAmount", "decimal", "0"));
+									} else {
+										elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount",
+												"decimal",
+												commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
+									}
+
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
+											commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
+
+									elementSubTmp.appendChild(elementSubTmp01);
+									elementTmp.appendChild(elementSubTmp);
+								} else {
+									elementSubTmp01 = doc.createElement("TTKhac");
+
+									if (commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "").equals("")) {
+										elementSubTmp01.appendChild(
+												commons.createElementTTKhac(doc, "VATAmount", "decimal", "0"));
+									} else {
+										elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount",
+												"decimal",
+												commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
+									}
+
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
+											commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
+											commons.getTextJsonNode(h.at("/STT"))));
+
+									elementSubTmp.appendChild(elementSubTmp01);
+									elementTmp.appendChild(elementSubTmp);
+								}
+							}
+						}
+
+						if (!tempLoaiHoaDon.equals("2")) {
+							elementSubContent.appendChild(elementTmp);
+
+							// Thong tin thanh toan
+							elementTmp = doc.createElement("TToan");
+							elementSubTmp = doc.createElement("THTTLTSuat");
+
+							/* DANH SACH CAC LOAI THUE SUAT */
+							for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
+								if (null != pair.getKey() && !"".equals(pair.getKey())) {
+									if (!pair.getKey().equals("-1")) {
+										elementSubTmp01 = doc.createElement("LTSuat");
+										elementSubTmp01.appendChild(
+												commons.createElementWithValue(doc, "TSuat", pair.getKey()));
+										elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
+												commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",",
+														"")));
+
+										if (tempLoaiTien.equals("VND")) {
+											elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
+													String.format("%.0f", mapVATAmount.get(pair.getKey()))));
+										} else {
+											elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
+													String.format("%.2f", mapVATAmount.get(pair.getKey()))));
+										}
+										elementSubTmp.appendChild(elementSubTmp01);
+									}
+								}
+							}
+							elementTmp.appendChild(elementSubTmp);
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+									commons.formatNumberReal(tongThanhTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
+									commons.formatNumberReal(tongTienThue).replaceAll(",", "")));
+
+							elementSubTmp = doc.createElement("DSLPhi");
+							elementSubTmp01 = doc.createElement("LPhi");
+							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TLPhi", ""));
+							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TPhi", "0"));
+							elementSubTmp.appendChild(elementSubTmp01);
+
+							elementTmp.appendChild(elementSubTmp);
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+									commons.formatNumberReal(total).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
+
+							elementSubTmp = doc.createElement("TTKhac");
+
+							elementTmp.appendChild(elementSubTmp);
+							elementSubContent.appendChild(elementTmp);
+							elementContent.appendChild(elementSubContent);
+						} else {
+							elementSubContent.appendChild(elementTmp);
+
+							// Thong tin thanh toan
+							elementTmp = doc.createElement("TToan");
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+									commons.formatNumberReal(tongThanhTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
+									commons.formatNumberReal(tongTienThue).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+									commons.formatNumberReal(total).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
+							elementSubContent.appendChild(elementTmp);
+							elementContent.appendChild(elementSubContent);
+						}
+
+						// END - NDHDon: Nội dung hóa đơn
+
+						isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+						if (!isSdaveFile) {
+							throw new Exception("Lưu dữ liệu không thành công.");
+						}
+						/* END - TAO XML HOA DON */
+						String uuid = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+						MTDiep = SystemParams.MSTTCGP
+								+ commons.convertLocalDateTimeToString(LocalDateTime.now(), "yyyyMMddHHmmssSSS")
+								+ uuid.substring(0, 19);
+
+						// lookup data
+						docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
+								.append("MTDiep", MTDiep)
+								.append("EInvoiceDetail", new Document("TTChung",
+										new Document("THDon", THDon)
+										.append("MaHD", MaHD)
+										.append("LoaiHD", tempLoaiHoaDon)
+										.append("MauSoHD", MauSoHD)
+										.append("KHMSHDon", KHMSHDon)
+										.append("KHHDon", KHHDon)
+										.append("NLap", NLap)
+										.append("DVTTe", tempLoaiTien)
+										.append("TGia", tempTyGia)
+										.append("HTTToanCode", HTTToanCode)
+										.append("HTTToan", HTTToan))
+										.append("NDHDon",
+												new Document("NBan",
+														new Document("Ten", Ten)
+														.append("MST", MST)
+														.append("DChi", DChi)
+														.append("SDThoai", SDThoai)
+														.append("DCTDTu", DCTDTu)
+														.append("STKNHang", STKNHang)
+														.append("TNHang", TNHang)
+														.append("Fax", Fax)
+														.append("Website", Website))
+												.append("NMua", new Document("Ten", tempTenDonVi)
+																.append("MST", "")
+																.append("DChi", tempDChiKH)
+																.append("MKHang", "")
+																.append("SDThoai", tempSdtKH)
+																.append("CCCDan", tempCccd)
+																.append("DCTDTu", tempMailKH)
+																.append("HVTNMHang", tempTenNM)
+																.append("STKNHang", tempStkNH)
+																.append("TNHang", tempTenNH)))
+
+										.append("DSHHDVu",listHHDVu)
+										.append("TToan",
+												new Document("TgTCThue", tongThanhTien)
+												.append("TgTThue", tongTienThue)
+												.append("TgTTTBSo", total)
+												.append("TgTTTBChu", tongTienBangchu)))
+								.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+								.append("EInvoiceStatus", Constants.INVOICE_STATUS.CREATED)
+								.append("IsDelete", false)
+								.append("SecureKey", secureKey)
+								.append("Dir", pathDir)
+								.append("FileNameXML", fileNameXML)
+								.append("InfoCreated",
+										new Document("CreateDate", LocalDateTime.now())
+										.append("CreateUserID", header.getUserId())
+										.append("CreateUserName", header.getUserName())
+										.append("CreateUserFullName", header.getUserFullName()));
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+						collection.insertOne(docUpsert);
+						mongoClient.close();
+
+						dshhdVuList.clear();
+						listHHDVu.clear();
+						checkMaHD = false;
+					} else if (dem == 1) {
+						int stt = 1;
+						int k = i;
+						DSHHDVu dshhdVu = new DSHHDVu();
+						String STT = String.valueOf(stt);
+						Double thanhTien = eInvoiceMTTExcelFormList.get(k).getThanhTien();
+						Double tienThue = eInvoiceMTTExcelFormList.get(k).getTienThue();
+						Double tongTien = eInvoiceMTTExcelFormList.get(k).getTongTien();
+
+						dshhdVu.setSTT(STT);
+						dshhdVu.setProductName(eInvoiceMTTExcelFormList.get(k).getTenHangHoa());
+						dshhdVu.setProductCode(eInvoiceMTTExcelFormList.get(k).getMaHangHoa());
+						dshhdVu.setUnit(eInvoiceMTTExcelFormList.get(k).getDonViTinh());
+						dshhdVu.setQuantity(eInvoiceMTTExcelFormList.get(k).getSoLuong());
+						dshhdVu.setPrice(eInvoiceMTTExcelFormList.get(k).getDonGia());
+						dshhdVu.setTotal(eInvoiceMTTExcelFormList.get(k).getThanhTien());
+						dshhdVu.setVATRate(eInvoiceMTTExcelFormList.get(k).getThueSuat());
+						dshhdVu.setVATAmount(eInvoiceMTTExcelFormList.get(k).getTienThue());
+						dshhdVu.setAmount(tongTien);
+						dshhdVu.setFeature(eInvoiceMTTExcelFormList.get(k).getTinhChat());
+
+						dshhdVuList.add(dshhdVu);
+
+						List<Object> listHHDVus = new ArrayList<Object>();
+						HashMap<String, Object> hItem1 = null;
+						hItem1 = new LinkedHashMap<String, Object>();
+						hItem1.put("STT", dshhdVu.getSTT());
+						hItem1.put("ProductName", dshhdVu.getProductName());
+						hItem1.put("ProductCode", dshhdVu.getProductCode());
+						hItem1.put("SLo", dshhdVu.getSLo());
+						hItem1.put("HanSD", dshhdVu.getHanSD());
+						hItem1.put("Unit", dshhdVu.getUnit());
+						hItem1.put("Quantity", dshhdVu.getQuantity());
+						hItem1.put("Price", dshhdVu.getPrice());
+						hItem1.put("Total", dshhdVu.getTotal());
+						hItem1.put("VATRate", dshhdVu.getVATRate());
+						hItem1.put("VATAmount", dshhdVu.getVATAmount());
+						hItem1.put("Amount", dshhdVu.getAmount());
+						hItem1.put("Feature", dshhdVu.getFeature());
+						listHHDVus.add(hItem1);
+
+						String TTBChu = commons.formatNumberReal(tongTien).replaceAll(",", "");
+						String TTBCHU = ChuyenSangChu(TTBChu);
+						String tongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+						// Thông tin hóa đơn - TTChung
+						String MaHD = eInvoiceMTTExcelFormList.get(i).getMaHD();
+						String THDon = Integer.parseInt(tempLoaiHoaDon) == 1 ? "Hóa đơn giá trị gia tăng TT 78"
+								: "Hóa đơn bán hàng";
+						String MauSoHD = mauSoHdon;
+						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
+						String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
+						LocalDateTime NLap = LocalDateTime.now();
+						String HTTToanCode = "";
+						String HTTToan = "";
+						switch (tempHinhThucThanhToan) {
+						case "1":
+							HTTToanCode = "1";
+							HTTToan = "Tiền mặt";
+							break;
+						case "2":
+							HTTToanCode = "2";
+							HTTToan = "Chuyển khoản";
+							break;
+						case "3":
+							HTTToanCode = "3";
+							HTTToan = "Tiền mặt/Chuyển khoản";
+							break;
+						case "4":
+							HTTToanCode = "4";
+							HTTToan = "Đối trừ công nợ";
+							break;
+						case "5":
+							HTTToanCode = "5";
+							HTTToan = "Không thu tiền";
+							break;
+						default:
+							break;
+						}
+
+						// Thông tin người bán - Thông tin người mua - NDHDon
+						String Ten = docTmp.getEmbedded(Arrays.asList("Name"), "").toString();
+						String MST = docTmp.getEmbedded(Arrays.asList("TaxCode"), "").toString();
+						String DChi = docTmp.getEmbedded(Arrays.asList("Address"), "").toString();
+						String SDThoai = docTmp.getEmbedded(Arrays.asList("Phone"), "").toString();
+						String DCTDTu = docTmp.getEmbedded(Arrays.asList("Email"), "").toString();
+						String STKNHang = docTmp.getEmbedded(Arrays.asList("BankAccount", "AccountNumber"), "")
+								.toString();
+						String TNHang = docTmp.getEmbedded(Arrays.asList("BankAccount", "BankName"), "").toString();
+						String Fax = docTmp.getEmbedded(Arrays.asList("Fax"), "").toString();
+						String Website = docTmp.getEmbedded(Arrays.asList("Website"), "").toString();
+
+						// Một số thông tin khác
+						String MTDiep = "";
+						String secureKey = "";
+
+						// Setting
+						String pathDir = "";
+						File file1 = null;
+						Path path1 = null;
+						ObjectId objectIdEInvoice = null;
+						String fileNameXML = "";
+						objectIdEInvoice = new ObjectId();
+						String taxCode = "";
+						taxCode = docTmp.getString("TaxCode");
+						path1 = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode,
+								docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString());
+						pathDir = path1.toString();
+						file1 = path1.toFile();
+						if (!file1.exists())
+							file1.mkdirs();
+						fileNameXML = objectIdEInvoice.toString() + ".xml";
+						secureKey = commons.csRandomNumbericString(6);
+
+						// XML
+						dbf = DocumentBuilderFactory.newInstance();
+						db = dbf.newDocumentBuilder();
+						doc = db.newDocument();
+						doc.setXmlStandalone(true);
+
+						root = doc.createElement("HDon");
+						root.setAttribute("Id", "DLieu0");
+						doc.appendChild(root);
+
+						elementContent = doc.createElement("DLHDon");
+						elementContent.setAttribute("Id", "data");
+						root.appendChild(elementContent);
+
+						elementSubTmp = null;
+						elementSubTmp01 = null;
+						elementSubContent = doc.createElement("TTChung");
+						elementTmp = null;
+
+						elementSubContent
+								.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", THDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon", KHMSHDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon", KHHDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon", "")); // SE PHAT
+
+						// Ngày lập
+						elementSubContent.appendChild(
+								commons.createElementWithValue(doc, "NLap", NLap.format(DateTimeFormatter.ISO_DATE)));
+
+						// Đơn vị tiền tệ
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", tempLoaiTien));
+
+						// Tỷ giá
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", tempTyGia));
+
+						// Hình thức thanh toán
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "HTTToan", HTTToan));
+						// MST tổ chức cung cấp giải pháp HĐĐT
+						elementSubContent
+								.appendChild(commons.createElementWithValue(doc, "MSTTCGP", SystemParams.MSTTCGP));
+
+						// THONG TIN KHAC
+
+						elementTmp = doc.createElement("TTKhac");
+						elementTmp
+								.appendChild(commons.createElementTTKhac(doc, "HoaDon_Loai", "string", tempLoaiHoaDon));
+						elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
+						elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
+						elementTmp.appendChild(
+								commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+
+						elementSubContent.appendChild(elementTmp);
+						elementContent.appendChild(elementSubContent);
+
+						// NDHDon: Nội dung hóa đơn
+						elementSubContent = doc.createElement("NDHDon");
+						// NGUOI BAN
+						elementTmp = doc.createElement("NBan");
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", Ten));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MST));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoai));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", DCTDTu));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", STKNHang));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TNHang", TNHang));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Fax", Fax));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Website", Website));
+
+						/* ADD THONG TIN KHAC */
+						elementSubTmp = doc.createElement("TTKhac");
+						elementSubTmp.appendChild(
+								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+
+						elementSubTmp
+								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
+						elementSubTmp
+								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
+
+						elementTmp.appendChild(elementSubTmp);
+						elementSubContent.appendChild(elementTmp);
+
+						// NGUOI MUA
+						elementTmp = doc.createElement("NMua");
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", tempTenDonVi));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", tempMST));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", tempDChiKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", tempSdtKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", tempMailKH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", tempTenNM));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", tempStkNH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TNHang", tempTenNH));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+						elementSubContent.appendChild(elementTmp);
+
+						mapVATAmount = new LinkedHashMap<String, Double>();
+						mapAmount = new LinkedHashMap<String, Double>();
+						elementTmp = doc.createElement("DSHHDVu"); // HH-DV
+
+						for (Object o : listHHDVus) {
+							if (!"".equals(o.equals("/ProductName"))) {
+								JsonNode h = Json.serializer().nodeFromObject(o);
+								tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
+										.replaceAll(",", "");
+								switch (tmp) {
+								case "0":
+									tmp = "-1";
+									break;
+								case "1":
+									tmp = "0%";
+									break;
+								case "5":
+								case "8":
+								case "10":
+									tmp += "%";
+									break;
+								case "-1":
+									tmp = "KCT";
+									break;
+								case "-2":
+									tmp = "KKKNT";
+									break;
+								default:
+									break;
+								}
+
+								if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
+										|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))
+										|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									mapAmount.compute(tmp, (f, v) -> {
+										return (v == null ? commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
+												* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
+												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1));
+									});
+									mapVATAmount.compute(tmp, (f, v) -> {
+										return (v == null
+												? commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1)
+												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
+														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
+																: 1));
+									});
+								}
+
+								elementSubTmp = doc.createElement("HHDVu");
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
+										commons.getTextJsonNode(h.at("/Feature"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "STT",
+										commons.getTextJsonNode(h.at("/STT"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "MHHDVu",
+										commons.getTextJsonNode(h.at("/ProductCode"))));
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "THHDVu",
+										commons.getTextJsonNode(h.at("/ProductName"))));
+
+								elementSubTmp.appendChild(commons.createElementWithValue(doc, "DVTinh",
+										commons.getTextJsonNode(h.at("/Unit"))));
+
+								if (!("2".equals(commons.getTextJsonNode(h.at("/Feature"))))) { // ||
+																								// "4".equals(commons.getTextJsonNode(o.at("/Feature")))
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong",
+											commons.formatNumberReal(commons.getTextJsonNode(h.at("/Quantity")))
+													.replaceAll(",", "")));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia",
+											commons.formatNumberReal(commons.getTextJsonNode(h.at("/Price")))
+													.replaceAll(",", "")));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
+									elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
+											commons.formatNumberReal(
+													commons.getTextJsonNode(h.at("/Total")).replaceAll(",", ""))
+													.replaceAll(",", "")));
+									if (!tmp.equals("-1") && !tempLoaiHoaDon.equals("2")) {
+										elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
+									}
+								}
+
+								if (!tempLoaiHoaDon.equals("2")) {
+									elementSubTmp01 = doc.createElement("TTKhac");
+
+									if (commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "").equals("")) {
+										elementSubTmp01.appendChild(
+												commons.createElementTTKhac(doc, "VATAmount", "decimal", "0"));
+									} else {
+										elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount",
+												"decimal",
+												commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
+									}
+
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
+											commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
+
+									elementSubTmp.appendChild(elementSubTmp01);
+									elementTmp.appendChild(elementSubTmp);
+								} else {
+									elementSubTmp01 = doc.createElement("TTKhac");
+
+									if (commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "").equals("")) {
+										elementSubTmp01.appendChild(
+												commons.createElementTTKhac(doc, "VATAmount", "decimal", "0"));
+									} else {
+										elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount",
+												"decimal",
+												commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
+									}
+
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
+											commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
+									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
+											commons.getTextJsonNode(h.at("/STT"))));
+
+									elementSubTmp.appendChild(elementSubTmp01);
+									elementTmp.appendChild(elementSubTmp);
+								}
+							}
+						}
+						if (!tempLoaiHoaDon.equals("2")) {
+							elementSubContent.appendChild(elementTmp);
+
+							// Thong tin thanh toan
+							elementTmp = doc.createElement("TToan");
+							elementSubTmp = doc.createElement("THTTLTSuat");
+
+							/* DANH SACH CAC LOAI THUE SUAT */
+							for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
+								if (null != pair.getKey() && !"".equals(pair.getKey())) {
+									if (!pair.getKey().equals("-1")) {
+										elementSubTmp01 = doc.createElement("LTSuat");
+										elementSubTmp01.appendChild(
+												commons.createElementWithValue(doc, "TSuat", pair.getKey()));
+										elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
+												commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",",
+														"")));
+
+										if (tempLoaiTien.equals("VND")) {
+											elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
+													String.format("%.0f", mapVATAmount.get(pair.getKey()))));
+										} else {
+											elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
+													String.format("%.2f", mapVATAmount.get(pair.getKey()))));
+										}
+										elementSubTmp.appendChild(elementSubTmp01);
+									}
+								}
+							}
+							elementTmp.appendChild(elementSubTmp);
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+									commons.formatNumberReal(thanhTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
+									commons.formatNumberReal(tienThue).replaceAll(",", "")));
+
+							elementSubTmp = doc.createElement("DSLPhi");
+							elementSubTmp01 = doc.createElement("LPhi");
+							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TLPhi", ""));
+							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TPhi", "0"));
+							elementSubTmp.appendChild(elementSubTmp01);
+
+							elementTmp.appendChild(elementSubTmp);
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+									commons.formatNumberReal(tongTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
+
+							elementSubTmp = doc.createElement("TTKhac");
+
+							elementTmp.appendChild(elementSubTmp);
+							elementSubContent.appendChild(elementTmp);
+							elementContent.appendChild(elementSubContent);
+						} else {
+							elementSubContent.appendChild(elementTmp);
+
+							// Thong tin thanh toan
+							elementTmp = doc.createElement("TToan");
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+									commons.formatNumberReal(thanhTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
+									commons.formatNumberReal(tienThue).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+									commons.formatNumberReal(tongTien).replaceAll(",", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
+							elementSubContent.appendChild(elementTmp);
+							elementContent.appendChild(elementSubContent);
+						}
+						// END - NDHDon: Nội dung hóa đơn
+
+						isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+						if (!isSdaveFile) {
+							throw new Exception("Lưu dữ liệu không thành công.");
+						}
+						/* END - TAO XML HOA DON */
+
+						String uuid = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+						MTDiep = SystemParams.MSTTCGP
+								+ commons.convertLocalDateTimeToString(LocalDateTime.now(), "yyyyMMddHHmmssSSS")
+								+ uuid.substring(0, 19);
+
+						// lookup data
+						docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
+									.append("MTDiep", MTDiep)
+									.append("EInvoiceDetail", new Document("TTChung",
+											new Document("THDon", THDon)
+											.append("MaHD", MaHD)
+											.append("LoaiHD", tempLoaiHoaDon)
+											.append("MauSoHD", MauSoHD)
+											.append("KHMSHDon", KHMSHDon)
+											.append("KHHDon", KHHDon)
+											.append("NLap", NLap)
+											.append("DVTTe", tempLoaiTien)
+											.append("TGia", tempTyGia)
+											.append("HTTToanCode", HTTToanCode)
+											.append("HTTToan", HTTToan))
+											.append("NDHDon",
+													new Document("NBan",
+															new Document("Ten", Ten)
+															.append("MST", MST)
+															.append("DChi", DChi)
+															.append("SDThoai", SDThoai)
+															.append("DCTDTu", DCTDTu)
+															.append("STKNHang", STKNHang)
+															.append("TNHang", TNHang)
+															.append("Fax", Fax)
+															.append("Website", Website))
+													.append("NMua", new Document("Ten", tempTenDonVi)
+																	.append("MST", "")
+																	.append("DChi", tempDChiKH)
+																	.append("MKHang", "")
+																	.append("SDThoai", tempSdtKH)
+																	.append("CCCDan", tempCccd)
+																	.append("DCTDTu", tempMailKH)
+																	.append("HVTNMHang", tempTenNM)
+																	.append("STKNHang", tempStkNH)
+																	.append("TNHang", tempTenNH)))
+
+											.append("DSHHDVu",listHHDVus)
+											.append("TToan",
+													new Document("TgTCThue", thanhTien)
+													.append("TgTThue", tienThue)
+													.append("TgTTTBSo", tongTien)
+													.append("TgTTTBChu", tongTienBangchu)))
+									.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+									.append("EInvoiceStatus", Constants.INVOICE_STATUS.CREATED)
+									.append("IsDelete", false)
+									.append("SecureKey", secureKey)
+									.append("Dir", pathDir)
+									.append("FileNameXML", fileNameXML)
+									.append("InfoCreated",
+											new Document("CreateDate", LocalDateTime.now())
+											.append("CreateUserID", header.getUserId())
+											.append("CreateUserName", header.getUserName())
+											.append("CreateUserFullName", header.getUserFullName()));
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+							collection.insertOne(docUpsert);
+							mongoClient.close();
+
+							dshhdVuList.clear();
+							listHHDVus.clear();
+							checkMaHD = false;
+					}
+				}
+				i = start;
+				if (dem == 0) {
+					break;
+				}
+
+			}
+			responseStatus = new MspResponseStatus(0, "Thêm thông tin thàng công.");
+			rsp.setResponseStatus(responseStatus);
+
+		} else {
+			responseStatus = new MspResponseStatus(999, "Không thành công");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		return rsp;
+	}
+
+	// Ham lay gia tri cac o trong excel file
+	private static EInvoiceMTTExcelForm extractInfoFromCellAuto(List<Cell> cells) {
+		EInvoiceMTTExcelForm eInvoiceMTTExcelForm = new EInvoiceMTTExcelForm();
+		// Ma hoa don
+		Cell maHD = cells.get(0);
+		if (maHD != null) {
+			switch (maHD.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setMaHD(maHD.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setMaHD((NumberToTextConverter.toText(maHD.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Ma so thue
+		Cell maSoThue = cells.get(1);
+		if (maSoThue != null) {
+			switch (maSoThue.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setMaSoThue(maSoThue.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Ten nguoi mua
+		Cell tenNguoiMua = cells.get(2);
+		if (tenNguoiMua != null) {
+			switch (tenNguoiMua.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTenNguoiMua(tenNguoiMua.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// CCCD
+		Cell cccd = cells.get(3);
+		if (cccd != null) {
+			switch (cccd.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setCccd(cccd.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Ten don vi
+		Cell tenDonvi = cells.get(4);
+		if (tenDonvi != null) {
+			switch (tenDonvi.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTenDonVi(tenDonvi.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Dia chi khach hang
+		Cell diaChiKhachHang = cells.get(5);
+		if (diaChiKhachHang != null) {
+			switch (diaChiKhachHang.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setDiaChiKhachHang(diaChiKhachHang.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+
+		}
+		// Mail khach hang
+		Cell mailKhachHang = cells.get(6);
+		if (mailKhachHang != null) {
+			switch (mailKhachHang.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setMailKhachHang(mailKhachHang.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm
+						.setMailKhachHang((NumberToTextConverter.toText(mailKhachHang.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+
+		}
+		// SDT khach hang
+		Cell sdtKhachHang = cells.get(7);
+		if (sdtKhachHang != null) {
+			switch (sdtKhachHang.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setSdtKhachHang(sdtKhachHang.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// So tai khoan khach hang
+		Cell soTaiKhoan = cells.get(8);
+		if (soTaiKhoan != null) {
+			switch (soTaiKhoan.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setSoTaiKhoan(soTaiKhoan.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Ten ngan hang
+		Cell tenNganHang = cells.get(9);
+		if (tenNganHang != null) {
+			switch (tenNganHang.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTenNganHang(tenNganHang.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setTenNganHang((NumberToTextConverter.toText(tenNganHang.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+
+		}
+
+		// Loai hoa don
+		Cell loaiHoaDon = cells.get(10);
+		if (loaiHoaDon != null) {
+			switch (loaiHoaDon.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setLoaiHoaDon(loaiHoaDon.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setLoaiHoaDon((NumberToTextConverter.toText(loaiHoaDon.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+
+		}
+
+		// hinh thuc thanh toan
+		Cell hinhThucThanhToan = cells.get(11);
+		if (hinhThucThanhToan != null) {
+			switch (hinhThucThanhToan.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setHinhThucThanhToan(hinhThucThanhToan.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm
+						.setHinhThucThanhToan((NumberToTextConverter.toText(hinhThucThanhToan.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Loai tien
+		Cell loaiTien = cells.get(12);
+		if (loaiTien != null) {
+			switch (loaiTien.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setLoaiTien(loaiTien.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+
+		}
+		// Ten hang hoa
+		Cell tenHangHoa = cells.get(13);
+		if (tenHangHoa != null) {
+			switch (tenHangHoa.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTenHangHoa(tenHangHoa.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Ma hang hoa
+		Cell maHangHoa = cells.get(14);
+		if (maHangHoa != null) {
+			switch (maHangHoa.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setMaHangHoa(maHangHoa.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Don vi tinh
+		Cell donViTinh = cells.get(15);
+		if (donViTinh != null) {
+			switch (donViTinh.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setDonViTinh(donViTinh.getStringCellValue().trim());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// So luong
+		Cell soLuong = cells.get(16);
+		if (soLuong != null) {
+			switch (soLuong.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setSoLuong((Double.valueOf((String) soLuong.getStringCellValue().trim())));
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setSoLuong(soLuong.getNumericCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Don gia
+		Cell donGia = cells.get(17);
+		if (donGia != null) {
+			switch (donGia.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setDonGia((Double.valueOf((String) donGia.getStringCellValue().trim())));
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setDonGia(donGia.getNumericCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Thanh tien
+		Cell thanhTien = cells.get(18);
+		if (thanhTien != null) {
+			if (thanhTien.getCellType() == CellType.FORMULA) {
+				switch (thanhTien.getCachedFormulaResultType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setThanhTien((Double.valueOf((String) thanhTien.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setThanhTien(thanhTien.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (thanhTien.getCellType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setThanhTien((Double.valueOf((String) thanhTien.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setThanhTien(thanhTien.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		// Thue suat
+		Cell thueSuat = cells.get(19);
+		if (thueSuat != null) {
+			switch (thueSuat.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setThueSuat((Double.valueOf((String) thueSuat.getStringCellValue().trim())));
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setThueSuat(thueSuat.getNumericCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Tien thue
+		Cell tienThue = cells.get(20);
+		if (tienThue != null) {
+			if (tienThue.getCellType() == CellType.FORMULA) {
+				switch (tienThue.getCachedFormulaResultType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setTienThue((Double.valueOf((String) tienThue.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setTienThue(tienThue.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (tienThue.getCellType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setTienThue((Double.valueOf((String) tienThue.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setTienThue(tienThue.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		// Tinh chat
+		Cell tinhChat = cells.get(21);
+		if (tinhChat != null) {
+			switch (tinhChat.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTinhChat(tinhChat.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setTinhChat((NumberToTextConverter.toText(tinhChat.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// ty gia
+		Cell tyGia = cells.get(22);
+		if (tyGia != null) {
+			switch (tyGia.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setTyGia(tyGia.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setTyGia((NumberToTextConverter.toText(tyGia.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Tong tien
+		Cell tongTien = cells.get(23);
+		if (tongTien != null) {
+			if (tongTien.getCellType() == CellType.FORMULA) {
+				switch (tongTien.getCachedFormulaResultType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setTongTien((Double.valueOf((String) tongTien.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setTongTien(tongTien.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (tongTien.getCellType()) {
+				case STRING:
+					eInvoiceMTTExcelForm.setTongTien((Double.valueOf((String) tongTien.getStringCellValue().trim())));
+					break;
+				case NUMERIC:
+					eInvoiceMTTExcelForm.setTongTien(tongTien.getNumericCellValue());
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		// Tra giá trị của 1 row
+		return eInvoiceMTTExcelForm;
 	}
 
 }
