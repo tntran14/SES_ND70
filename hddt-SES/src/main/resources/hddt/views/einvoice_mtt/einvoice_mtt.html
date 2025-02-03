@@ -855,36 +855,48 @@
 							idx = $(checkRows[0].closest("tr")).index();
 							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 							objDataSend['_id'] = rowData['_id'];
+							
+							var ngayPhatHanh = rowData['NLap'];
+							if (isDifferentDate(ngayPhatHanh)) {
+							    alertConfirm("Hóa đơn có Ngày phát hành không phải hôm nay! Tiếp tục Ký hóa đơn?",
+							    function(e){ mmtSignAjax(); },
+							    function(e){});
+							}else {
+								mmtSignAjax();
+							}
+							
 						
-							$.ajax({	
-								type: "POST",
-								datatype: "json",
-								url: ROOT_PATH + '/main/einvoice_mtt/publish_hd',
-								data: objDataSend,
-								beforeSend: function(req) {
-									initAjaxJsonRequest(req);
-						        	showLoading();
-								},
-								success:function(res) {
-									hideLoading();
-									if(res) {
-										if(res.errorCode == 0) {
-											hideLoading();
-											_gridMain.data("kendoGrid").dataSource.read();		
-											timeoutID = setTimeout(createTDSendTax, 1000);							
-										}else{
-											alertDLSuccess(createObjectError(res).html(), function(){});
-										}
-									}else{
-										alertDLSuccess('unknown error!!!', function(){});
+					function mmtSignAjax() {
+						$.ajax({	
+							type: "POST",
+							datatype: "json",
+							url: ROOT_PATH + '/main/einvoice_mtt/publish_hd',
+							data: objDataSend,
+							beforeSend: function(req) {
+								initAjaxJsonRequest(req);
+					        	showLoading();
+							},
+							success:function(res) {
+								hideLoading();
+								if(res) {
+									if(res.errorCode == 0) {
 										hideLoading();
+										_gridMain.data("kendoGrid").dataSource.read();		
+										timeoutID = setTimeout(createTDSendTax, 1000);							
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
 									}
-								},
-								error:function (xhr, ajaxOptions, thrownError){
-									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-						            hideLoading();
-						        }
-							});	
+								}else{
+									alertDLSuccess('unknown error!!!', function(){});
+									hideLoading();
+								}
+							},
+							error:function (xhr, ajaxOptions, thrownError){
+								alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+					            hideLoading();
+					        }
+						});	
+					}
 						
 					function createTDSendTax(){	
 							$.ajax({
@@ -1051,7 +1063,7 @@
 																    				}else{
 																						hideLoading();
 																						alertDLSuccess(
-																								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																								'<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>',
 																								function myFunction() { timeout = setTimeout(ckserro, 0);});
 																					}
 																    			}
@@ -1064,10 +1076,8 @@
 																    		
 																    		hideLoading();
 																    		alertDLSuccess(
-																					'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																					function myFunction() {
-																						  timeout = setTimeout(ckserro, 0);
-																						}
+																					'Lỗi: Không ký được dữ liệu hóa đơn.',
+																					function myFunction() {}
 																				
 																					);
 																		}
@@ -1103,24 +1113,14 @@
 											        }
 												});										
 		            }else{
-		            	alertDLSuccess(
-								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-								function myFunction() {
-									  timeout = setTimeout(ckserro, 0);
-									});
+		            	alertDLSuccess( 'Lấy chữ ký số không thành công.', function myFunction() {});
 							hideLoading();
 							$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 							return;
 		            }
 		          },
 		          error:function (xhr, ajaxOptions, thrownError){
-		        	  alertDLSuccess(
-								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-								function myFunction() {
-									  timeout = setTimeout(ckserro, 0);
-									}
-							
-								);
+		        	  alertDLSuccess('Lấy chữ ký số không thành công.', function myFunction() {});
 						hideLoading();
 						$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 						return;
@@ -1887,8 +1887,22 @@
 					
 					return text;
 				}
-			
+				
+				// check dateString is today
+				function isDifferentDate(dateString) {
+				    // dateString (type dd/MM/yyyy) 
+				    var [day, month, year] = dateString.split('/'); 
+				    var inputDate = new Date(year, month - 1, day);
 
+				    var today = new Date();
+
+				    return (
+				        inputDate.getDate() !== today.getDate() ||
+				        inputDate.getMonth() !== today.getMonth() ||
+				        inputDate.getFullYear() !== today.getFullYear()
+				    );
+				}
+					
 				</script>
 			</div>
 		</div>

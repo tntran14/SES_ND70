@@ -2562,6 +2562,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
 
 		String keySystem = "";
+		int eInvoiceNumber = 0;
+		eInvoiceNumber = commons.stringToInteger(
+				commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
 
 		String key = "";
 		NodeList nodeList = (NodeList) xPath.evaluate("TTKhac/TTin", nodeTmp, XPathConstants.NODESET);
@@ -2604,6 +2607,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		List<Document> pipeline = null;
 		/* KIEM TRA THONG TIN HOP LE KHONG */
 		Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+				.append("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber)
 				.append("EInvoiceStatus", "PENDING").append("_id", objectId);
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docFind));
@@ -3242,10 +3246,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 		/* KIEM TRA THONG TIN HD CO TON TAI KHONG */
 		docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
-				.append("_id", objectId)/*
-										 * .append("EInvoiceStatus", Constants.INVOICE_STATUS.PENDING)
-										 * .append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
-										 */;
+				.append("_id", objectId);
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docFind));
 
@@ -3280,7 +3281,6 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				new Document("$unwind", new Document("path", "$NLap_MAX").append("preserveNullAndEmptyArrays", true)));
 
 		docTmp = null;
-//		org.w3c.dom.Document rTCTN = null;
 
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
@@ -7246,6 +7246,138 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 		// Tra giá trị của 1 row
 		return eInvoiceMTTExcelForm;
+	}
+
+	@Override
+	public MsgRsp checkSHD(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+
+		ObjectId objectId = null;
+		try {
+			objectId = new ObjectId(_id);
+		} catch (Exception e) {
+		}
+		List<Document> pipeline = null;
+		/* KIEM TRA THONG TIN HOP LE KHONG */
+		Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false).append("_id",
+				objectId);
+		pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match", docFind));
+		pipeline.add(
+				new Document("$project", new Document("_id", 1).append("EInvoiceDetail", 1).append("IssuerId", 1)));
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match",
+								new Document("$expr", new Document("$and",
+										Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+												new Document("$eq",
+														Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+												new Document("$ne", Arrays.asList("$IsDelete", true)),
+												new Document("$in", Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED"))))))),
+						new Document("$group",
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("RecentNlap",
+										new Document("$max", "$EInvoiceDetail.TTChung.NLap")))))
+				.append("as", "MaxNlapInfo")));
+
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match", new Document("$expr", new Document("$and",
+								Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+										new Document("$eq",
+												Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+										new Document("$ne", Arrays.asList("$IsDelete", true)),
+										new Document("$not",
+												new Document("$in", Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED")))))))),
+						new Document("$group",
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("MinSHDon",
+										new Document("$min", "$EInvoiceDetail.TTChung.SHDon")))))
+				.append("as", "MinSHDonInfo")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$MinSHDonInfo").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$MaxNlapInfo").append("preserveNullAndEmptyArrays", true)));
+		Document docTmp = null;
+
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+
+		try {
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+
+		mongoClient.close();
+		if (null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+
+		// lấy SHDon của hd hiện tại
+		int currentInvoiceNumber = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+
+		// lấy ngày lập của hóa đơn hiện tại
+		LocalDate currentNLap = commons.convertDateToLocalDate(
+				docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class));
+
+		// lấy SHDon nhở nhất trong tập SHDon chưa phát hành và đã có SHDon
+		int minInvoiceNumber = 0;
+		if (docTmp.get("MinSHDonInfo") != null)
+			minInvoiceNumber = docTmp.getEmbedded(Arrays.asList("MinSHDonInfo", "MinSHDon"), 0);
+
+		// kiểm tra SHDon hiện tại có phải là số hóa đơn nhỏ nhất trong tập SHDon chưa
+		// phát hành và đã có SHDon không
+		if (currentInvoiceNumber != minInvoiceNumber) {
+			rsp.setResponseStatus(new MspResponseStatus(9999, "Vui lòng ký hóa đơn có Số hóa đơn nhỏ nhất là: "
+					+ commons.formatNumberBillInvoice(minInvoiceNumber)));
+			return rsp;
+		}
+
+		// lấy ngày lập gần nhất
+		LocalDate latestNLap = null;
+		if (docTmp.get("MaxNlapInfo") != null) {
+			latestNLap = commons
+					.convertDateToLocalDate(docTmp.getEmbedded(Arrays.asList("MaxNlapInfo", "RecentNlap"), Date.class));
+		}
+
+		if (latestNLap != null) {
+			if (currentNLap == null) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Hóa đơn không có Ngày phát hành"));
+				return rsp;
+			}
+			if (commons.compareLocalDate(currentNLap, latestNLap) < 0) {
+				rsp.setResponseStatus(new MspResponseStatus(9999,
+						"Vui lòng ký hóa đơn có Ngày phát hành lớn hơn hoặc bằng ngày " + latestNLap));
+				return rsp;
+			}
+		}
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
 	}
 
 }

@@ -3888,11 +3888,31 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
 																"DELETED", "REPLACED", "ADJUSTED"))))))),
 						new Document("$group",
-								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("SHDon",
-										new Document("$max", "$EInvoiceDetail.TTChung.SHDon")))))
-				.append("as", "EInvoiceMAXCQT")));
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("RecentNlap",
+										new Document("$max", "$EInvoiceDetail.TTChung.NLap")))))
+				.append("as", "MaxNlapInfo")));
+
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoice")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match", new Document("$expr", new Document("$and",
+								Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+										new Document("$eq",
+												Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+										new Document("$ne", Arrays.asList("$IsDelete", true)),
+										new Document("$not",
+												new Document("$in", Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED")))))))),
+						new Document("$group",
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("MinSHDon",
+										new Document("$min", "$EInvoiceDetail.TTChung.SHDon")))))
+				.append("as", "MinSHDonInfo")));
 		pipeline.add(new Document("$unwind",
-				new Document("path", "$EInvoiceMAXCQT").append("preserveNullAndEmptyArrays", true)));
+				new Document("path", "$MinSHDonInfo").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$MaxNlapInfo").append("preserveNullAndEmptyArrays", true)));
 		Document docTmp = null;
 
 		MongoClient mongoClient = cfg.mongoClient();
@@ -3911,14 +3931,43 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			return rsp;
 		}
 
-		int invoiceNumberCurrent = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
-		int maxInvoiceSendedCQT = 0;
-		if (docTmp.get("EInvoiceMAXCQT") != null)
-			maxInvoiceSendedCQT = docTmp.getEmbedded(Arrays.asList("EInvoiceMAXCQT", "SHDon"), 0);
-		if (invoiceNumberCurrent == 0 || invoiceNumberCurrent != maxInvoiceSendedCQT + 1) {
-			responseStatus = new MspResponseStatus(9999, "Vui lòng ký từ hóa đơn: " + (maxInvoiceSendedCQT + 1));
-			rsp.setResponseStatus(responseStatus);
+		// lấy SHDon của hd hiện tại
+		int currentInvoiceNumber = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+
+		// lấy ngày lập của hóa đơn hiện tại
+		LocalDate currentNLap = commons.convertDateToLocalDate(
+				docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class));
+
+		// lấy SHDon nhở nhất trong tập SHDon chưa phát hành và đã có SHDon
+		int minInvoiceNumber = 0;
+		if (docTmp.get("MinSHDonInfo") != null)
+			minInvoiceNumber = docTmp.getEmbedded(Arrays.asList("MinSHDonInfo", "MinSHDon"), 0);
+
+		// kiểm tra SHDon hiện tại có phải là số hóa đơn nhỏ nhất trong tập SHDon chưa
+		// phát hành và đã có SHDon không
+		if (currentInvoiceNumber != minInvoiceNumber) {
+			rsp.setResponseStatus(new MspResponseStatus(9999, "Vui lòng ký hóa đơn có Số hóa đơn nhỏ nhất là: "
+					+ commons.formatNumberBillInvoice(minInvoiceNumber)));
 			return rsp;
+		}
+
+		// lấy ngày lập gần nhất
+		LocalDate latestNLap = null;
+		if (docTmp.get("MaxNlapInfo") != null) {
+			latestNLap = commons
+					.convertDateToLocalDate(docTmp.getEmbedded(Arrays.asList("MaxNlapInfo", "RecentNlap"), Date.class));
+		}
+
+		if (latestNLap != null) {
+			if (currentNLap == null) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Hóa đơn không có Ngày phát hành"));
+				return rsp;
+			}
+			if (commons.compareLocalDate(currentNLap, latestNLap) < 0) {
+				rsp.setResponseStatus(new MspResponseStatus(9999,
+						"Vui lòng ký hóa đơn có Ngày phát hành lớn hơn hoặc bằng ngày " + latestNLap));
+				return rsp;
+			}
 		}
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
@@ -4001,25 +4050,25 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		pipeline.add(new Document("$match", docFind));
 		pipeline.add(new Document("$project", new Document("IssuerId", 1).append("EInvoiceDetail", 1).append("_id", 1)
 				.append("SignStatusCode", 1).append("Dir", 1)));
-		pipeline.add(new Document("$lookup", new Document("from", "EInvoice")
-				.append("let",
-						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
-				.append("pipeline", Arrays.asList(
-						new Document("$match",
-								new Document("$expr", new Document("$and",
-										Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
-												new Document("$eq",
-														Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
-												new Document("$ne", Arrays.asList("$IsDelete", true)),
-												new Document("$in", Arrays.asList("$EInvoiceStatus",
-														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
-																"DELETED", "REPLACED", "ADJUSTED"))))))),
-						new Document("$group",
-								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("SHDon",
-										new Document("$max", "$EInvoiceDetail.TTChung.SHDon")))))
-				.append("as", "EInvoiceMAXCQT")));
-		pipeline.add(new Document("$unwind",
-				new Document("path", "$EInvoiceMAXCQT").append("preserveNullAndEmptyArrays", true)));
+//		pipeline.add(new Document("$lookup", new Document("from", "EInvoice")
+//				.append("let",
+//						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+//				.append("pipeline", Arrays.asList(
+//						new Document("$match",
+//								new Document("$expr", new Document("$and",
+//										Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+//												new Document("$eq",
+//														Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+//												new Document("$ne", Arrays.asList("$IsDelete", true)),
+//												new Document("$in", Arrays.asList("$EInvoiceStatus",
+//														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+//																"DELETED", "REPLACED", "ADJUSTED"))))))),
+//						new Document("$group",
+//								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("SHDon",
+//										new Document("$max", "$EInvoiceDetail.TTChung.SHDon")))))
+//				.append("as", "EInvoiceMAXCQT")));
+//		pipeline.add(new Document("$unwind",
+//				new Document("path", "$EInvoiceMAXCQT").append("preserveNullAndEmptyArrays", true)));
 		Document docTmp = null;
 
 
@@ -4039,17 +4088,17 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			return rsp;
 		}
 
-		int invoiceNumberCurrent = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
-		int maxInvoiceSendedCQT = 0;
-		if (docTmp.get("EInvoiceMAXCQT") != null)
-			maxInvoiceSendedCQT = docTmp.getEmbedded(Arrays.asList("EInvoiceMAXCQT", "SHDon"), 0);
-		if (invoiceNumberCurrent == 0 || invoiceNumberCurrent != maxInvoiceSendedCQT + 1) {
-			// responseStatus = new MspResponseStatus(9999, "Có 1 hoặc 1 vài số hóa đơn
-			// trước đó chưa được xử lý xong.<br>Vui lòng kiểm tra lại danh sách hóa đơn.");
-			responseStatus = new MspResponseStatus(9999, "Vui lòng ký từ hóa đơn: " + (maxInvoiceSendedCQT + 1));
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
+//		int invoiceNumberCurrent = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+//		int maxInvoiceSendedCQT = 0;
+//		if (docTmp.get("EInvoiceMAXCQT") != null)
+//			maxInvoiceSendedCQT = docTmp.getEmbedded(Arrays.asList("EInvoiceMAXCQT", "SHDon"), 0);
+//		if (invoiceNumberCurrent == 0 || invoiceNumberCurrent != maxInvoiceSendedCQT + 1) {
+//			// responseStatus = new MspResponseStatus(9999, "Có 1 hoặc 1 vài số hóa đơn
+//			// trước đó chưa được xử lý xong.<br>Vui lòng kiểm tra lại danh sách hóa đơn.");
+//			responseStatus = new MspResponseStatus(9999, "Vui lòng ký từ hóa đơn: " + (maxInvoiceSendedCQT + 1));
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;
+//		}
 
 		String signStatusCode = docTmp.get("SignStatusCode", "");
 		if ("PROCESSING".equals(signStatusCode)) {

@@ -907,7 +907,15 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 			return dto;
 		}
 		
-		
+		// CHECK SHDON CO HOP LE HAY KHONG
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice_mtt/check_shd", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if (rspStatus.getErrorCode() != 0) {
+			dto.setErrorCode(999);
+			dto.setResponseData(rsp.getResponseStatus().getErrorDesc());
+			return dto;
+		}
+		// END CHECK SHDON CO HOP LE HAY KHONG
 		
 		/*THONG TIN TEN FILE*/
 		token = commons.convertLocalDateTimeToString(LocalDateTime.now(), Constants.FORMAT_DATE.FORMAT_DATETIME_DB_FULL) + "-" + commons.csRandomAlphaNumbericString(5);

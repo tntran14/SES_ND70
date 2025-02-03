@@ -948,23 +948,10 @@
 						case 'einvoice-signAll':
 							ids = [];
 							objData = {};
-							checkRows
-									.each(function(i, v) {
-										idx = $(
-												checkRows[i]
-														.closest("tr"))
-												.index();
-										rowData = _gridMain
-												.data(
-														"kendoGrid")
-												.dataItem(
-														_gridMain
-																.find(
-																		' tbody tr')
-																.eq(
-																		idx));
-										ids
-												.push(rowData['_id']);
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
 									});
 							/*CHECK THONG TIN HD*/
 							objData = {
@@ -1541,120 +1528,143 @@
 							idx = $(checkRows[0].closest("tr")).index();
 							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 							objDataSend['_id'] = rowData['_id'];
-							$.ajax({
-								type: "POST",
-								datatype: "json",
-								url: ROOT_PATH + '/main/einvoice-sign/check-data-sign',
-								data: objDataSend,
-								beforeSend: function(req) {
-									initAjaxJsonRequest(req);
-						        	showLoading();
-								},
-								success:function(res) {
-									if(res) {
-										if(res.errorCode == 0) {
-											var responseData = res.responseData;
-											
-											tokenTransaction = responseData['TOKEN'];
-											objDataSend['tokenTransaction'] = tokenTransaction;
-											
-																			
-										   $.ajax({
-		        
-								          url: "http://localhost:11284/getCert",
-								          type: 'POST',
-								          cors: true ,
-									          secure: true,
-								          headers: {
-								            'Access-Control-Allow-Origin': '*',
-								            'Access-Control-Allow-Headers': '*',
-								            'Access-Control-Allow-Private-Network': true
-								          },
-								          beforeSend: function(req) {
-								            initAjaxJsonRequest(req);
-								                showLoading();
-								          },
-								          success:function(res) {
-								            hideLoading();
-								            if(res != null) {
-								            	var cert = res;           	
-								             		$.ajax({
-													type: "POST",
-													url: ROOT_PATH + '/main/common/check-cert',
-													data: {'cert':cert},
-													beforeSend: function(req) {
-														initAjaxJsonRequest(req);
-											        	showLoading();
-													},
-													success:function(res) {
-														hideLoading();
-														if(res) {
-															if(res.errorCode == 0) {
-																
-																var responseData = res.responseData;
-																var check = responseData['check'];
-																
-																if(check==="300"){
-																
-																	alertDLSuccess(
-																			'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																			function myFunction() {
-																				  timeout = setTimeout(ckserro, 0);
-																				}
-																		
-																			);
-														
-																}else{
+							
+							var ngayPhatHanh = rowData['NLap'];
+							if (isDifferentDate(ngayPhatHanh)) {
+							    console.log("ngayPhatHanh khác ngày hôm nay");
+							    alertConfirm("Hóa đơn có Ngày phát hành không phải hôm nay! Tiếp tục Ký hóa đơn?",
+							    function(e){ signAjax(); },
+							    function(e){});
+							}else {
+								signAjax();
+							}
+							
+							function signAjax(){
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/einvoice-sign/check-data-sign',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										if(res) {
+											if(res.errorCode == 0) {
+												var responseData = res.responseData;
+												
+												tokenTransaction = responseData['TOKEN'];
+												objDataSend['tokenTransaction'] = tokenTransaction;
+												
+																				
+											   $.ajax({
+			        
+									          url: "http://localhost:11284/getCert",
+									          type: 'POST',
+									          cors: true ,
+										          secure: true,
+									          headers: {
+									            'Access-Control-Allow-Origin': '*',
+									            'Access-Control-Allow-Headers': '*',
+									            'Access-Control-Allow-Private-Network': true
+									          },
+									          beforeSend: function(req) {
+									            initAjaxJsonRequest(req);
+									                showLoading();
+									          },
+									          success:function(res) {
+									            hideLoading();
+									            if(res != null) {
+									            	var cert = res;           	
+									             		$.ajax({
+														type: "POST",
+														url: ROOT_PATH + '/main/common/check-cert',
+														data: {'cert':cert},
+														beforeSend: function(req) {
+															initAjaxJsonRequest(req);
+												        	showLoading();
+														},
+														success:function(res) {
+															hideLoading();
+															if(res) {
+																if(res.errorCode == 0) {
 																	
-																serialNumber = responseData['Seri'];
-																	datetimeString = responseData['DateTime'];
-																//LAY NOI DUNG FILE XML
-																jQuery.ajax({
-																	url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
-															        cache:false,
-															        xhr:function(){// Seems like the only way to get access to the xhr object
-															            var xhr = new XMLHttpRequest();
-															            xhr.responseType= 'blob'
-															            return xhr;
-															        },
-															        success:function(data, textStatus, xhr) {
-//															        	hideLoading();
-																    	if(xhr.status == 200){
-																    		var blob = new Blob([data], { type: 'octet/stream' });
-																    		var postEnc = new FormData();
-																    			postEnc.append('DateTime', datetimeString);
-																    		postEnc.append('SerialNumber', serialNumber);
-																    		postEnc.append('xmlFile', blob);
-													    				
-																    		var xhrSign = new XMLHttpRequest();
-																    		xhrSign.onreadystatechange = function(e) {
-																    			if(4 == this.readyState) {
-																    				if(this.status == 200){	
-																    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
-																    					blob = new Blob( [this.response], { type : "octet/stream" } );
-																    					showLoading();
-																    				
-																    					formData = new FormData();
-																						formData.append("XMLFileSigned", blob);
-																						formData.append('certificate', base64Cert.replace(/\+/g, "@"));
-																					
+																	var responseData = res.responseData;
+																	var check = responseData['check'];
+																	
+																	if(check==="300"){
+																	
+																		alertDLSuccess(
+																				'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																				function myFunction() {
+																					  timeout = setTimeout(ckserro, 0);
+																					}
+																			
+																				);
+															
+																	}else{
+																		
+																	serialNumber = responseData['Seri'];
+																		datetimeString = responseData['DateTime'];
+																	//LAY NOI DUNG FILE XML
+																	jQuery.ajax({
+																		url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+																        cache:false,
+																        xhr:function(){// Seems like the only way to get access to the xhr object
+																            var xhr = new XMLHttpRequest();
+																            xhr.responseType= 'blob'
+																            return xhr;
+																        },
+																        success:function(data, textStatus, xhr) {
+//																        	hideLoading();
+																	    	if(xhr.status == 200){
+																	    		var blob = new Blob([data], { type: 'octet/stream' });
+																	    		var postEnc = new FormData();
+																	    			postEnc.append('DateTime', datetimeString);
+																	    		postEnc.append('SerialNumber', serialNumber);
+																	    		postEnc.append('xmlFile', blob);
+														    				
+																	    		var xhrSign = new XMLHttpRequest();
+																	    		xhrSign.onreadystatechange = function(e) {
+																	    			if(4 == this.readyState) {
+																	    				if(this.status == 200){	
+																	    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
+																	    					blob = new Blob( [this.response], { type : "octet/stream" } );
+																	    					showLoading();
+																	    				
+																	    					formData = new FormData();
+																							formData.append("XMLFileSigned", blob);
+																							formData.append('certificate', base64Cert.replace(/\+/g, "@"));
 																						
-																						xhrSign = new XMLHttpRequest();
-																						xhrSign.upload.addEventListener('progress', function(e) {
 																							
-																						});
-																						if(xhrSign.upload) {
-																							
-																						};
-																						xhrSign.onreadystatechange = function(e) {
-																							if(4 == this.readyState && this.status == 200) {
-																								var res = xhrSign.response;
-																								if(res){
-																									if(res.errorCode == 0) { 
-																										hideLoading();
-																									     _gridMain.data("kendoGrid").dataSource.read();
-																											  timeoutID = setTimeout(callsend_cqt, 1000);
-														
+																							xhrSign = new XMLHttpRequest();
+																							xhrSign.upload.addEventListener('progress', function(e) {
+																								
+																							});
+																							if(xhrSign.upload) {
+																								
+																							};
+																							xhrSign.onreadystatechange = function(e) {
+																								if(4 == this.readyState && this.status == 200) {
+																									var res = xhrSign.response;
+																									if(res){
+																										if(res.errorCode == 0) { 
+																											hideLoading();
+																										     _gridMain.data("kendoGrid").dataSource.read();
+																												  timeoutID = setTimeout(callsend_cqt, 1000);
+															
+																										}else{
+																											alertDLSuccess(
+																													'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																													function myFunction() {
+																														  timeout = setTimeout(ckserro, 0);
+																														}
+																												
+																													);
+																					            			hideLoading();
+																					            			$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
+																					            		}
 																									}else{
 																										alertDLSuccess(
 																												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
@@ -1663,337 +1673,302 @@
 																													}
 																											
 																												);
-																				            			hideLoading();
-																				            			$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
-																				            		}
-																								}else{
-																									alertDLSuccess(
-																											'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																											function myFunction() {
-																												  timeout = setTimeout(ckserro, 0);
-																												}
-																										
-																											);
-																									hideLoading();
-																									 
-																				            	}
+																										hideLoading();
+																										 
+																					            	}
+																								}
 																							}
-																						}
-																						xhrSign.onerror = function() {
+																							xhrSign.onerror = function() {
+																								
+																							}
+																							xhrSign.ontimeout = function() {
+																								
+																							}
 																							
-																						}
-																						xhrSign.ontimeout = function() {
+																							var urlPost = ROOT_PATH + '/main/einvoice-sign/signFile';
+																							xhrSign.open("POST", urlPost, true);
+																							xhrSign.responseType = 'json';
+																							xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+																							xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
 																							
-																						}
+																							xhrSign.setRequestHeader('Cache-Control', 'no-cache');
 																						
-																						var urlPost = ROOT_PATH + '/main/einvoice-sign/signFile';
-																						xhrSign.open("POST", urlPost, true);
-																						xhrSign.responseType = 'json';
-																						xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
-																						xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
-																						
-																						xhrSign.setRequestHeader('Cache-Control', 'no-cache');
-																					
-																						xhrSign.send(formData);
-																    				}else{
-																						hideLoading();
-																						alertDLSuccess(
-																								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																								function myFunction() {
-																									  timeout = setTimeout(ckserro, 0);
-																									}
-																							
-																								);
-																					}
-																    			}
-																    		}
-																    		xhrSign.open('POST', urlPluginSign + signXML, true);
-																			xhrSign.timeout = 5 * 60 * 1000;
-																			xhrSign.responseType = 'blob';	//or arraybuffer
-																			xhrSign.send(postEnc);
-																    	}else{
-																    		
-																    		hideLoading();
-																    		alertDLSuccess(
-																					'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																					function myFunction() {
-																						  timeout = setTimeout(ckserro, 0);
+																							xhrSign.send(formData);
+																	    				}else{
+																							hideLoading();
+																							alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function myFunction() {});
 																						}
-																				
-																					);
-																		}
-																    
-															        },
-															        error:function(){
-															        	
-															        }
-																});
+																	    			}
+																	    		}
+																	    		xhrSign.open('POST', urlPluginSign + signXML, true);
+																				xhrSign.timeout = 5 * 60 * 1000;
+																				xhrSign.responseType = 'blob';	//or arraybuffer
+																				xhrSign.send(postEnc);
+																	    	}else{
+																	    		
+																	    		hideLoading();
+																	    		alertDLSuccess('Lỗi: Không ký được dữ liệu hóa đơn.', function myFunction() {});
+																			}
+																	    
+																        },
+																        error:function(){
+																        	
+																        }
+																	});
+																	}
+																}else{
+																	alertDLSuccess(createObjectError(res).html(), function(){});
+																	
 																}
 															}else{
-																alertDLSuccess(createObjectError(res).html(), function(){});
-																
-															}
-														}else{
-															alertDLSuccess(
-																	'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																	function myFunction() {
-																		  timeout = setTimeout(ckserro, 0);
-																		}
-																
-																	);
-															hideLoading();
-															
-														}
-														
-													
-													},
-													error:function (xhr, ajaxOptions, thrownError){
-														alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-											            hideLoading();
-											            
-											        }
-												});										
-		            }else{
-		            	alertDLSuccess(
-								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-								function myFunction() {
-									  timeout = setTimeout(ckserro, 0);
-									}
-							
-								);
-													hideLoading();
-													$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
-													return;
-		            }
-		          },
-		          error:function (xhr, ajaxOptions, thrownError){
-		        	  alertDLSuccess(
-								'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-								function myFunction() {
-									  timeout = setTimeout(ckserro, 0);
-									}
-							
-								);
-						hideLoading();
-						$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
-						return;
-		          }
-		        });
-										
-										
-										
-										
-										}else{
-											 $("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
-											hideLoading();
-											alertDLSuccess(createObjectError(res).html(), function(){});
-										}
-									}else{
-										
-										alertDLSuccess(
-												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-												function myFunction() {
-													  timeout = setTimeout(ckserro, 0);
-													}
-											
-												);
-										hideLoading();
-									}
-									function ckserro() {
-										window.open(ROOT_PATH + '/main/hdsduser/63c50e9d96ee0c6d6072b3a1','_blank');
-									}
-									function callsend_cqt() {
-										var objURL = {};
-										  objURL['check'] = ROOT_PATH + '/main/einvoice-send-cqt/check-data';
-						                    objURL['exec'] = ROOT_PATH + '/main/einvoice-send-cqt/exec-data';
-
-						                  $.ajax({
-						                    type: "POST",
-						                    datatype: "json",
-						                    url: objURL['check'],
-						                    data: objDataSend,
-						                    beforeSend: function(req) {
-						                      initAjaxJsonRequest(req);
-						                          showLoading();
-						                    },
-						                    success:function(res) {
-						                      hideLoading();
-						                      if(res) {
-						                        if(res.errorCode == 0) {
-						                          var responseData = res.responseData;
-						                          tokenTransaction = responseData['TOKEN'];
-						                          objDataSend['tokenTransaction'] = tokenTransaction;         
-						                              $.ajax({
-						                                type: "POST",
-						                                datatype: "json",
-						                                url: objURL['exec'],
-						                                data: objDataSend,
-						                                beforeSend: function(req) {
-						                                  initAjaxJsonRequest(req);
-						                                      showLoading();
-						                                },
-						                                success:function(res) {
-						                                  hideLoading();
-						                                  if(res) {
-						                                    if(res.errorCode == 0) {
-						                                     _gridMain.data("kendoGrid").dataSource.read();
-																										 	
-														 timeoutID2 = setTimeout(callrefesh_cqt, 2000);
-															
-						                                    }else{
-						                                      alertDLSuccess(createObjectError(res).html(), function(){});
-						                                    }
-						                                  }else{
-						                                	  alertDLSuccess(
+																alertDLSuccess(
 																		'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																		function myFunction() {
 																			  timeout = setTimeout(ckserro, 0);
 																			}
 																	
 																		);
-						                                    hideLoading();
-						                                  }
-						                                },
-						                                error:function (xhr, ajaxOptions, thrownError){
-						                                  alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-						                                        hideLoading();
-						                                    }
-						                              });
-						                          
-						                        }else{
-						                          alertDLSuccess(createObjectError(res).html(), function(){});
-						                        }
-						                      }else{
-						                    	  alertDLSuccess(
-															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-															function myFunction() {
-																  timeout = setTimeout(ckserro, 0);
-																}
-														
-															);
-						                        hideLoading();
-						                      }
-						                    },
-						                    error:function (xhr, ajaxOptions, thrownError){
-						                      alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-						                            hideLoading();
-						                        }
-						                  });		
-										}
-
-									
-									
-									function callrefesh_cqt() {
-									
-										$.ajax({
-											type: "POST",
-											datatype: "json",
-											url: ROOT_PATH + '/main/einvoices/refresh-status-cqt',
-											data: objDataSend,
-											beforeSend: function(req) {
-												initAjaxJsonRequest(req);
-									        	showLoading();
-											},
-											success:function(res) {
-												hideLoading();						
-												if(res) {
-													if(res.errorCode == 0) {
-														var objURL1 = {};
-														objURL1['check'] = ROOT_PATH + '/main/einvoice-send-emailauto/check-data-send';
-														objURL1['exec'] = ROOT_PATH + '/main/einvoice-send-emailauto/send-mail';
-													
-														$.ajax({
-															type: "POST",
-															datatype: "json",
-															url: objURL1['check'],
-															data: objDataSend,
-															beforeSend: function(req) {
-																initAjaxJsonRequest(req);
-													        	showLoading();
-															},
-															success:function(res) {
 																hideLoading();
-																if(res) {
-																	if(res.errorCode == 0) {
-																		var responseData = res.responseData;
-																		tokenTransaction = responseData['TOKEN'];
-																		
-																		objDataSend['tokenTransaction'] = tokenTransaction;
-
-																				$.ajax({
-																					type: "POST",
-																					datatype: "json",
-																					url: objURL1['exec'],
-																					data: objDataSend,
-																					beforeSend: function(req) {
-																						initAjaxJsonRequest(req);
-																			        	showLoading();
-																					},
-																					success:function(res) {
-																						hideLoading();
-																						if(res) {
-																							if(res.errorCode == 0) {
-																								_gridMain.data("kendoGrid").dataSource.read();
-																							}else{
-																								alertDLSuccess(createObjectError(res).html(), function(){});
-																							}
-																						}else{
-																							alertDLSuccess('unknown error!!!', function(){});
-																							hideLoading();
-																						}
-																					},
-																					error:function (xhr, ajaxOptions, thrownError){
-																						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-																			            hideLoading();
-																			        }
-																				});
-																		
-																			
-																	
-																	}else{
-																		alertDLSuccess(createObjectError(res).html(), function(){});
-																	}
-																}else{
-																	alertDLSuccess('unknown error!!!', function(){});
-																	hideLoading();
-																}
-															},
-															error:function (xhr, ajaxOptions, thrownError){
-																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-													            hideLoading();
-													        }
-														});
-													}else{
-														alertDLSuccess(createObjectError(res).html(), function(){});
-													}
-												}else{
-													alertDLSuccess('unknown error!!!', function(){});
-													hideLoading();
-												}
-											},
-											error:function (xhr, ajaxOptions, thrownError){
-												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-									            hideLoading();
-									        }
-										});		
-										}	
-									
-										function clearAlert() {
-										  clearTimeout(timeoutID);
-										}
-										function clearAlert() {
-											  clearTimeout(timeoutID2);
+																
+															}
+															
+														
+														},
+														error:function (xhr, ajaxOptions, thrownError){
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+												            hideLoading();
+												            
+												        }
+													});										
+			            }else{
+			            	alertDLSuccess('Lấy chữ ký số không thành công.', function myFunction() {});
+														hideLoading();
+														$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
+														return;
+			            }
+			          },
+			          error:function (xhr, ajaxOptions, thrownError){
+			        	  alertDLSuccess('Lấy chữ ký số không thành công.', function myFunction() {});
+							hideLoading();
+							$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
+							return;
+			          }
+			        });
+											
+											
+											
+											
+											}else{
+												 $("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
+												hideLoading();
+												alertDLSuccess(createObjectError(res).html(), function(){});
 											}
-				
-								},
-								error:function (xhr, ajaxOptions, thrownError){
-									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-						            hideLoading();
-						    
-						        }
-								
-							});
-						
+										}else{
+											
+											alertDLSuccess(
+													'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+													function myFunction() {
+														  timeout = setTimeout(ckserro, 0);
+														}
+												
+													);
+											hideLoading();
+										}
+										function ckserro() {
+											window.open(ROOT_PATH + '/main/hdsduser/63c50e9d96ee0c6d6072b3a1','_blank');
+										}
+										function callsend_cqt() {
+											var objURL = {};
+											  objURL['check'] = ROOT_PATH + '/main/einvoice-send-cqt/check-data';
+							                    objURL['exec'] = ROOT_PATH + '/main/einvoice-send-cqt/exec-data';
+
+							                  $.ajax({
+							                    type: "POST",
+							                    datatype: "json",
+							                    url: objURL['check'],
+							                    data: objDataSend,
+							                    beforeSend: function(req) {
+							                      initAjaxJsonRequest(req);
+							                          showLoading();
+							                    },
+							                    success:function(res) {
+							                      hideLoading();
+							                      if(res) {
+							                        if(res.errorCode == 0) {
+							                          var responseData = res.responseData;
+							                          tokenTransaction = responseData['TOKEN'];
+							                          objDataSend['tokenTransaction'] = tokenTransaction;         
+							                              $.ajax({
+							                                type: "POST",
+							                                datatype: "json",
+							                                url: objURL['exec'],
+							                                data: objDataSend,
+							                                beforeSend: function(req) {
+							                                  initAjaxJsonRequest(req);
+							                                      showLoading();
+							                                },
+							                                success:function(res) {
+							                                  hideLoading();
+							                                  if(res) {
+							                                    if(res.errorCode == 0) {
+							                                     _gridMain.data("kendoGrid").dataSource.read();
+																											 	
+															 timeoutID2 = setTimeout(callrefesh_cqt, 2000);
+																
+							                                    }else{
+							                                      alertDLSuccess(createObjectError(res).html(), function(){});
+							                                    }
+							                                  }else{
+							                                	  alertDLSuccess(
+																			'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																			function myFunction() {
+																				  timeout = setTimeout(ckserro, 0);
+																				}
+																		
+																			);
+							                                    hideLoading();
+							                                  }
+							                                },
+							                                error:function (xhr, ajaxOptions, thrownError){
+							                                  alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							                                        hideLoading();
+							                                    }
+							                              });
+							                          
+							                        }else{
+							                          alertDLSuccess(createObjectError(res).html(), function(){});
+							                        }
+							                      }else{
+							                    	  alertDLSuccess(
+																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																function myFunction() {
+																	  timeout = setTimeout(ckserro, 0);
+																	}
+															
+																);
+							                        hideLoading();
+							                      }
+							                    },
+							                    error:function (xhr, ajaxOptions, thrownError){
+							                      alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							                            hideLoading();
+							                        }
+							                  });		
+											}
+
+										
+										
+										function callrefesh_cqt() {
+										
+											$.ajax({
+												type: "POST",
+												datatype: "json",
+												url: ROOT_PATH + '/main/einvoices/refresh-status-cqt',
+												data: objDataSend,
+												beforeSend: function(req) {
+													initAjaxJsonRequest(req);
+										        	showLoading();
+												},
+												success:function(res) {
+													hideLoading();						
+													if(res) {
+														if(res.errorCode == 0) {
+															var objURL1 = {};
+															objURL1['check'] = ROOT_PATH + '/main/einvoice-send-emailauto/check-data-send';
+															objURL1['exec'] = ROOT_PATH + '/main/einvoice-send-emailauto/send-mail';
+														
+															$.ajax({
+																type: "POST",
+																datatype: "json",
+																url: objURL1['check'],
+																data: objDataSend,
+																beforeSend: function(req) {
+																	initAjaxJsonRequest(req);
+														        	showLoading();
+																},
+																success:function(res) {
+																	hideLoading();
+																	if(res) {
+																		if(res.errorCode == 0) {
+																			var responseData = res.responseData;
+																			tokenTransaction = responseData['TOKEN'];
+																			
+																			objDataSend['tokenTransaction'] = tokenTransaction;
+
+																					$.ajax({
+																						type: "POST",
+																						datatype: "json",
+																						url: objURL1['exec'],
+																						data: objDataSend,
+																						beforeSend: function(req) {
+																							initAjaxJsonRequest(req);
+																				        	showLoading();
+																						},
+																						success:function(res) {
+																							hideLoading();
+																							if(res) {
+																								if(res.errorCode == 0) {
+																									_gridMain.data("kendoGrid").dataSource.read();
+																								}else{
+																									alertDLSuccess(createObjectError(res).html(), function(){});
+																								}
+																							}else{
+																								alertDLSuccess('unknown error!!!', function(){});
+																								hideLoading();
+																							}
+																						},
+																						error:function (xhr, ajaxOptions, thrownError){
+																							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+																				            hideLoading();
+																				        }
+																					});
+																			
+																				
+																		
+																		}else{
+																			alertDLSuccess(createObjectError(res).html(), function(){});
+																		}
+																	}else{
+																		alertDLSuccess('unknown error!!!', function(){});
+																		hideLoading();
+																	}
+																},
+																error:function (xhr, ajaxOptions, thrownError){
+																	alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+														            hideLoading();
+														        }
+															});
+														}else{
+															alertDLSuccess(createObjectError(res).html(), function(){});
+														}
+													}else{
+														alertDLSuccess('unknown error!!!', function(){});
+														hideLoading();
+													}
+												},
+												error:function (xhr, ajaxOptions, thrownError){
+													alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+										            hideLoading();
+										        }
+											});		
+											}	
+										
+											function clearAlert() {
+											  clearTimeout(timeoutID);
+											}
+											function clearAlert() {
+												  clearTimeout(timeoutID2);
+												}
+					
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							    
+							        }
+									
+								});
+							}
 							break;
 						case 'einvoice-edit':
 						case 'einvoice-copy':
@@ -2864,6 +2839,20 @@
 					return text;
 				}
 			
+				// check dateString is today
+				function isDifferentDate(dateString) {
+				    // dateString (type dd/MM/yyyy) 
+				    var [day, month, year] = dateString.split('/'); 
+				    var inputDate = new Date(year, month - 1, day);
+
+				    var today = new Date();
+
+				    return (
+				        inputDate.getDate() !== today.getDate() ||
+				        inputDate.getMonth() !== today.getMonth() ||
+				        inputDate.getFullYear() !== today.getFullYear()
+				    );
+				}
 
 				</script>
 			</div>
