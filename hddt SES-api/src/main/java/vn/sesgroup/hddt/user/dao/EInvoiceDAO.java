@@ -37,4 +37,5 @@ public interface EInvoiceDAO {
 	public MsgRsp refreshAllStatusCQT(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp sendMailAll(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp importExcelMisa(JSONRoot jsonRoot)throws Exception;
+	public MsgRsp checkSHDList(JSONRoot jsonRoot) throws Exception;
 }

@@ -1438,11 +1438,6 @@ public class EInvoiceCRUDController extends AbstractController{
 		
 		dem = ids.size();
 		
-//		if(dem>20) {
-//			dto.setErrorCode(1);
-//			dto.setResponseData("Ký hàng loạt chỉ hỗ trợ ký tối đa 20 hóa đơn.");
-//			return dto;
-//		}
 
 		/* LAY THONG TIN DU LIEU XML VE SERVER WEB */
 		dto = new BaseDTO(req);
@@ -1458,9 +1453,9 @@ public class EInvoiceCRUDController extends AbstractController{
 		String check = "error";
 		String enoughSL = "Not Enough";
 		
-		if (null == fileInfo || null == fileInfo.getContentFile()) {
+		if (null == fileInfo) {
 			dto.setErrorCode(999);
-			dto.setResponseData("Số hóa đơn còn lại không đủ để ký.");
+			dto.setResponseData("Không có thông tin file");
 			return dto;
 		}
 		if(fileInfo.getCheck().equals(enoughSL)) {
@@ -1472,10 +1467,18 @@ public class EInvoiceCRUDController extends AbstractController{
 		if(fileInfo.getFormIssueInvoiceID() != "" && fileInfo.getCheck().equals(check))
 		{
 			dto.setErrorCode(999);
-			dto.setResponseData("Ký hàng loạt chỉ hỗ trợ kí cùng 1 mãu số.");
+			dto.setResponseData("Ký hàng loạt chỉ hỗ trợ kí cùng 1 mẫu số.");
 			return dto;
 		}
 		
+		// CHECK SHDON CO HOP LE HAY KHONG
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice/check-shd-list", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() != 0) {			
+			dto.setErrorCode(999);
+			dto.setResponseData(rsp.getResponseStatus().getErrorDesc());
+			return dto;
+		}
 		
 		/*THONG TIN TEN FILE*/
 		token = commons.convertLocalDateTimeToString(LocalDateTime.now(), Constants.FORMAT_DATE.FORMAT_DATETIME_DB_FULL) + "-" + commons.csRandomAlphaNumbericString(5);

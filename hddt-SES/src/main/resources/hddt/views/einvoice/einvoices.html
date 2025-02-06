@@ -1106,9 +1106,10 @@
 														});
 													});
 												} else {
+													$("#f-einvoices").find('#grid').find(".k-pager-refresh").trigger('click');
 													hideLoading();
 													alertDLSuccess(
-															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+															res.responseData,
 															function myFunction() {
 																  timeout = setTimeout(ckserro, 0);
 																}
