@@ -159,17 +159,46 @@
 								</div>
 							</div>
 							<div class="text__primary--c">2.THỜI ĐIỂM TRẢ THU NHẬP</div>
-						<div class="row m-b-15">
-								<div class="col-12 ">
-									<div class="c-f__wrapper">
-										<input id="kibc" name="kibc" class="form-control form-control-sm c-f__textbox" th:value="${KyBaoCao}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
-										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Kỳ báo cáo <span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
-										</fieldset>
+									<div class="row m-b-15">
+										<div class="col-6 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<select class="form-control form-control-sm c-f__textbox" 
+													id="mau-so-tncn" name="mau-so-tncn"
+													th:disabled="${_action_ == 'EDIT' or _action_ == 'DETAIL'}"
+													>
+													<option value=""></option>
+													<th:block th:if="${map_mausotncn != null}">
+														<option th:each="entry : ${map_mausotncn.entrySet()}"
+															th:value="${entry.key}" th:utext="${entry.value}"
+															th:selected="${entry.key == MauSoTNCN}">
+														</option>
+													</th:block>
+												</select>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mẫu số TNCN <span class="text-danger"
+															th:if="${_isedit_}">*</span></label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+										<div class="col-6 ">
+											<div class="c-f__wrapper">
+												<input id="kibc" name="kibc"
+													class="form-control form-control-sm c-f__textbox"
+													th:value="${KyBaoCao}" th:readonly="${!_isedit_}"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Kỳ báo cáo <span class="text-danger"
+															th:if="${_isedit_}">*</span></label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
 									</div>
-								</div>
-							</div>
-							<div class="row m-b-15">
+
+									<div class="row m-b-15">
 									<div class="col-6 ">
 											<div class="c-f__wrapper">
 												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${TuNgay}" th:readonly="${!_isedit_}"  autocomplete="off"/>
@@ -502,7 +531,7 @@ function getPopupDataToSave(){
 	dataPost['ttnkt'] = $('#f-cus-crud').find('#ttnkt').val();
 	dataPost['ttntt'] = $('#f-cus-crud').find('#ttntt').val();
 	dataPost['sttndkt'] = $('#f-cus-crud').find('#sttndkt').val();
-		
+	dataPost['mau-so-tncn'] = $('#f-cus-crud').find('#mau-so-tncn').val();
 	return dataPost;
 }
 </script>

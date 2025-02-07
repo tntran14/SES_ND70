@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
@@ -40,10 +42,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.api.message.JSONRoot;
 import com.api.message.Msg;
+import com.api.message.MsgParam;
+import com.api.message.MsgParams;
 import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import vn.sesgroup.hddt.controller.AbstractController;
 import vn.sesgroup.hddt.dto.BaseDTO;
@@ -92,13 +97,56 @@ public class ChungTuCRUDController extends AbstractController{
 	private String ttnkt;
 	private String ttntt;
 	private String sttndkt;
+	private String mstncn;
 
 	private String _token;
 	private List<String> ids = null;
 	private String fromDate;
 	private String toDate;
 	
-
+	private void LoadParameter(CurrentUserProfile cup, HttpServletRequest req) {
+		try {
+			BaseDTO baseDTO = new BaseDTO(req);
+			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
+			
+			/*DANH SACH THAM SO*/
+			HashMap<String, String> hashConds = null;
+			ArrayList<HashMap<String, String>> conds = null;
+			MsgParam msgParam = null;
+			MsgParams msgParams = new MsgParams();
+			
+			msgParam = new MsgParam();
+			msgParam.setId("param01");
+			msgParam.setParam("DMMSTNCN");
+			msgParams.getParams().add(msgParam);
+			
+			/*END: DANH SACH THAM SO*/
+			msg.setObjData(msgParams);
+			
+			JSONRoot root = new JSONRoot(msg);
+			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			MspResponseStatus rspStatus = rsp.getResponseStatus();
+			
+			if(rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
+				LinkedHashMap<String, String> hItem = null;
+				
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+			
+				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
+					hItem = new LinkedHashMap<String, String>();
+					for(JsonNode o: jsonData.at("/param01")) {
+						hItem.put(commons.getTextJsonNode(o.get("_id")), 
+										commons.getTextJsonNode(o.get("KyHieu")) + "/" + 
+										commons.getTextJsonNode(o.get("Nam")) + "/"+ 
+										commons.getTextJsonNode(o.get("ChungTu")));
+				}		
+					req.setAttribute("map_mausotncn", hItem);
+				}
+			}
+			
+		}catch(Exception e) {}
+	}
+	
 	@RequestMapping(value = "/init", method = {RequestMethod.POST})
 	public String init(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception{
@@ -114,6 +162,7 @@ public class ChungTuCRUDController extends AbstractController{
 		
 		switch (transaction) {
 		case "cttncn-cre":
+			LoadParameter(cup, req);
 			req.setAttribute("KyBaoCao",  LocalDate.now().get(ChronoField.YEAR));
 			header = "Thêm mới chứng từ";
 			action = "CREATE";
@@ -121,11 +170,13 @@ public class ChungTuCRUDController extends AbstractController{
 			req.setAttribute("optHTHDon", "KCT");
 			break;
 		case "cttncn-detail":
+			LoadParameter(cup, req);
 			header = "Chi tiết thông tin chứng từ";
 			action = "DETAIL";
 			isEdit = false;
 			break;
 		case "cttncn-edit":
+			LoadParameter(cup, req);
 			header = "Thay đổi thông tin chứng từ";
 			action = "EDIT";
 			isEdit = true;
@@ -198,7 +249,7 @@ public class ChungTuCRUDController extends AbstractController{
 			req.setAttribute("TongTNKhauTru", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/TongTNKhauTru")));
 			req.setAttribute("TongTNTinhThue", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/TongTNTinhThue")));
 			req.setAttribute("SoTienCaNhanKhauTru", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/SoTienCaNhanKhauTru")));
-	
+			req.setAttribute("MauSoTNCN", commons.getTextJsonNode(jsonData.at("/MauSoHD")));
 			
 			req.setAttribute("Department", commons.getTextJsonNode(jsonData.at("/Department")));
 			
@@ -231,6 +282,7 @@ public class ChungTuCRUDController extends AbstractController{
 		ttnkt = commons.getParameterFromRequest(req, "ttnkt").trim().replaceAll("\\s+", " ");
 		ttntt = commons.getParameterFromRequest(req, "ttntt").trim().replaceAll("\\s+", " ");
 		sttndkt = commons.getParameterFromRequest(req, "sttndkt").trim().replaceAll("\\s+", " ");
+		mstncn = commons.getParameterFromRequest(req, "mau-so-tncn").trim().replaceAll("\\s+", " ");
 
 		if("cttncn-edit".equals(transaction)) {
 			if("".equals(_id)) {
@@ -274,6 +326,10 @@ public class ChungTuCRUDController extends AbstractController{
 			if("".equals(sttndkt)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập số thuế thu nhập cá nhân đã khấu trừ.");
+			}
+			if("".equals(mstncn)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng chọn mẫu số thu nhập cá nhân");
 			}
 			break;
 		case "cttncn-del":
@@ -424,6 +480,7 @@ public class ChungTuCRUDController extends AbstractController{
 			hData.put("TongTNKhauTru", ttnkt);
 			hData.put("TongTNTinhThue", ttntt);
 			hData.put("SoTienCaNhanKhauTru", sttndkt);
+			hData.put("MauSoTNCN", mstncn);
 			break;
 		}
 		

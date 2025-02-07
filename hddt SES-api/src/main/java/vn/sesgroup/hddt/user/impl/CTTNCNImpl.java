@@ -218,12 +218,13 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		String ttnkt = commons.getTextJsonNode(jsonData.at("/TongTNKhauTru")).trim().replaceAll("\\s+", " ");
 		String ttntt = commons.getTextJsonNode(jsonData.at("/TongTNTinhThue")).trim().replaceAll("\\s+", " ");
 		String sttndkt = commons.getTextJsonNode(jsonData.at("/SoTienCaNhanKhauTru")).trim().replaceAll("\\s+", " ");
-
+		String mauSoTNCN = commons.getTextJsonNode(jsonData.at("/MauSoTNCN")).trim().replaceAll("\\s+", " ");
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
 		MspResponseStatus responseStatus = null;
 
 		ObjectId objectId = null;
+		ObjectId mstncnId = null;
 		Document docFind = null;
 		Document docTmp = null;
 		Document docUpsert = null;
@@ -268,8 +269,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		switch (actionCode) {
 		case Constants.MSG_ACTION_CODE.CREATED:
 			objectId = null;
+			mstncnId = null;
 			try {
 				objectId = new ObjectId(header.getIssuerId());
+				mstncnId = new ObjectId(mauSoTNCN);
 			} catch (Exception e) {
 			}
 			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete",
@@ -302,7 +305,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					new Document("from", "DMMSTNCN")
 							.append("pipeline",
 									Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId())
-											.append("IsDelete", new Document("$ne", true)).append("IsActive", true))))
+											.append("IsDelete", new Document("$ne", true)).append("IsActive", true)
+											.append("_id", mstncnId))))
 							.append("as", "DMMSTNCN")));
 			pipeline.add(new Document("$unwind",
 					new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
@@ -486,8 +490,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		case Constants.MSG_ACTION_CODE.MODIFY:
 			objectId = null;
+			mstncnId = null;
 			try {
 				objectId = new ObjectId(_id);
+				mstncnId = new ObjectId(mauSoTNCN);
 			} catch (Exception e) {
 			}
 			ObjectId objectIdIssu = null;
@@ -516,8 +522,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			pipeline.add(new Document("$lookup",
 					new Document("from", "DMMSTNCN")
 							.append("pipeline",
-									Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId())
-											.append("IsDelete", new Document("$ne", true)))))
+									Arrays.asList(new Document("$match", 
+											new Document("IssuerId", header.getIssuerId())
+											.append("IsDelete", new Document("$ne", true))
+											.append("_id", mstncnId))))
 							.append("as", "DMMSTNCN")));
 			pipeline.add(new Document("$unwind",
 					new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
@@ -539,6 +547,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			
+			String mauso1 = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "_id"), ObjectId.class).toString();
 			// int shd = docTmp.getEmbedded(Arrays.asList("SHDon"), 0);
 			// int shd = docTmp.getInteger("SHDon");
 
@@ -673,6 +683,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			docR = collection.findOneAndUpdate(docFind,
 					new Document("$set", new Document("Name", name).append("Code", code)
 							.append("Address", address).append("TaxCode", taxcode).append("CuTru", cutru)
+							.append("MauSoHD", mauso1)
 							
 							.append("CMND-CCCD",
 									new Document("CCCD", cccd).append("CCCDDATE", cccddate)
