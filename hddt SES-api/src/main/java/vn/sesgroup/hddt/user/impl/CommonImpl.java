@@ -2378,9 +2378,20 @@ try {
 
 		pipeline.add(new Document("$lookup",
 				new Document("from", "DMMSTNCN")
+				.append("let",
+						new Document("vMauSoHD", "$MauSoHD"))
 						.append("pipeline",
 								Arrays.asList(new Document("$match",
-										new Document("IssuerId", objectIdIssu.toString()).append("IsDelete", false).append("IsActive", true))))
+//										new Document("IssuerId", objectIdIssu.toString()).append("IsDelete", false).append("IsActive", true))
+										  new Document("$expr",
+			                                        new Document("$and", Arrays.asList(
+			                                                new Document("$eq", Arrays.asList("$_id", new Document("$toObjectId", "$$vMauSoHD"))),
+			                                                new Document("$eq", Arrays.asList("$IssuerId", objectIdIssu.toString())),
+			                                                new Document("$eq", Arrays.asList("$IsDelete", false)),
+			                                                new Document("$eq", Arrays.asList("$IsActive", true))
+			                                        )))
+			                                )
+										))
 						.append("as", "DMMSTNCN")));
 		pipeline.add(
 				new Document("$unwind", new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
