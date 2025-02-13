@@ -3064,7 +3064,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 																"DELETED", "REPLACED", "ADJUSTED"))))))),
 						new Document("$group",
 								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("RecentNlap",
-										new Document("$max", "$EInvoiceDetail.TTChung.Nlap")))))
+										new Document("$max", "$EInvoiceDetail.TTChung.NLap")))))
 				.append("as", "MaxNlapInfo")));
 		pipeline.add(new Document("$lookup", new Document("from", "EInvoicePXKDL")
 				.append("let",
