@@ -206,7 +206,7 @@ public class MauSoTNCNCRUDController extends AbstractController{
 			req.setAttribute("KyHieu", commons.getTextJsonNode(jsonData.at("/KyHieu")));
 			req.setAttribute("SoLuong", commons.getTextJsonNode(jsonData.at("/SoLuong")));
 			req.setAttribute("LoGo", commons.getTextJsonNode(jsonData.at("/LoGo")));
-		
+			req.setAttribute("Nam", commons.getTextJsonNode(jsonData.at("/Nam")));
 			}else {
 			errorDesc = rspStatus.getErrorDesc();
 		}

@@ -248,36 +248,42 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 		              directory.mkdir();
 		          }
 		      //END TAO FOLDER
-		    if(logo == "") {
-		      logo =  (String) docTmp.get("LoGo");
-		    }
-		          
-		          options = new FindOneAndUpdateOptions();
-		          options.upsert(false);
-		          options.maxTime(5000, TimeUnit.MILLISECONDS);
-		          options.returnDocument(ReturnDocument.AFTER);
+				if (logo == "") {
+					logo = (String) docTmp.get("LoGo");
+				}
 
-		      
-		          
-		      	mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMSTNCN");
-				docR =	collection.findOneAndUpdate(docFind,
-			              new Document("$set",
-				                  new Document("IssuerId", header.getIssuerId())
-				                  .append("FileName",docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"), ""))
-				                  .append("LoGo", logo )  
-				                      .append("InfoUpdated",
-				                          new Document("UpdatedDate", LocalDateTime.now())
-				                              .append("UpdatedUserID", header.getUserId())
-				                              .append("UpdatedUserName", header.getUserName())
-				                              .append("UpdatedUserFullName", header.getUserFullName()))),
-				              options);		
-				mongoClient.close();
+				int soLuongDaSuDung = docTmp.get("SoLuong", Integer.class) - docTmp.get("ConLai", Integer.class);
+				if (number < soLuongDaSuDung) {
+					rsp.setResponseStatus(new MspResponseStatus(9999, "Không thể cập nhật Số Lượng nhỏ hơn số mẫu đã sử dụng: "+soLuongDaSuDung));
+					return rsp;
+				}
 				
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
 
-		          responseStatus = new MspResponseStatus(0, "SUCCESS");
-		          rsp.setResponseStatus(responseStatus);
-		          return rsp;
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMSTNCN");
+				docR = collection
+						.findOneAndUpdate(docFind,
+								new Document("$set",
+										new Document("IssuerId", header.getIssuerId())
+												.append("FileName",
+														docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"),""))
+												.append("SoLuong", number).append("DenSo", number)
+												.append("ConLai", number - soLuongDaSuDung)
+												.append("Nam", yearCreated).append("KyHieu", macty).append("LoGo", logo)
+												.append("InfoUpdated", new Document("UpdatedDate", LocalDateTime.now())
+														.append("UpdatedUserID", header.getUserId())
+														.append("UpdatedUserName", header.getUserName())
+														.append("UpdatedUserFullName", header.getUserFullName()))),
+								options);
+				mongoClient.close();
+
+				responseStatus = new MspResponseStatus(0, "SUCCESS");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////

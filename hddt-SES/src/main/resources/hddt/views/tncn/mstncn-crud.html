@@ -34,96 +34,58 @@
                             </div>
                           </div>
                         </div>
-     
- 
-       
 
-                        <div class="row">
-                          <div class="col-12">
-                        
-                            <div class="row">
-                              <div
-                                class="col-6 col-sm-6 col-md-3 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Ký hiệu</div>
-                                <input
-                                  type="text"
-                                    th:value="${KyHieu}"
-                                  class="rm-default form-control form-control-sm text-center"
-                                  id="macty" name="macty"
-                                  autocomplete="off"
-                                  maxlength="2"
-                                   th:readonly="${!_isedit_}"
-                                />
-                              </div>
-                              <div
-                                class="col-6 col-sm-6 col-md-3 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Số lượng</div>
-                                <input
-                                  type="text"
-                                    th:value="${SoLuong}"
-                                  class="rm-default form-control form-control-sm text-center"
-                                  id="sl" name="sl"
-                                  autocomplete="off"
-                               
-                                   th:readonly="${!_isedit_}"
-                                />
-                              </div>
-                              <div
-                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Mẫu số</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                           	
-                                id="khhd" name="khhd"
-                                  autocomplete="off"
-                                  value="CTT56"
-                               
-                                     readonly="readonly"
-                                />
-                              </div>
-                               
-                               <div
-                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">NĂM</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                                 
-                                   id="yearCreated" name="yearCreated"
-                                  autocomplete="off"
-                                  value="2022"
-                                />
-                              </div>
-                              
-                             <div
-                                class="col-6 col-sm-6 col-md-2 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Chứng từ</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                                 
-                                   id="yearCreated" name="yearCreated"
-                                  autocomplete="off"
-                                  value="E"
-                                 
-                                     readonly="readonly"
-                                />
-                              </div>
-                            
-                             
-                            </div>
-                          </div>
-                        </div>
-                   
-                   
-                   
-                    <div class="row">
+							<div class="row">
+								<div class="col-12">
+
+									<div class="row">
+										<div class="col-6 col-sm-6 col-md-3 custom-field m-b-16">
+											<div class="m-b-16">Ký hiệu</div>
+											<input type="text" th:value="${KyHieu}"
+												class="rm-default form-control form-control-sm text-center"
+												id="macty" name="macty" autocomplete="off" maxlength="2"
+												th:readonly="${!_isedit_}" />
+										</div>
+										<div class="col-6 col-sm-6 col-md-3 custom-field m-b-16">
+											<div class="m-b-16">Số lượng</div>
+											<input type="text" th:value="${SoLuong}"
+												class="rm-default form-control form-control-sm text-center"
+												id="sl" name="sl" autocomplete="off"
+												th:readonly="${!_isedit_}" />
+										</div>
+										<div class="col-6 col-sm-6 col-md-2 custom-field m-b-16">
+											<div class="m-b-16">Mẫu số</div>
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												id="khhd" name="khhd" autocomplete="off" value="CTT56"
+												readonly="readonly" />
+										</div>
+
+										<div class="col-6 col-sm-6 col-md-2 custom-field m-b-16">
+											<div class="m-b-16">NĂM</div>
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												id="yearCreated" name="yearCreated" autocomplete="off"
+												th:value="${Nam ?: #dates.year(#dates.createNow())}"
+												th:readonly="${!_isedit_}" />
+										</div>
+
+										<div class="col-6 col-sm-6 col-md-2 custom-field m-b-16">
+											<div class="m-b-16">Chứng từ</div>
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												id="yearCreated" name="yearCreated" autocomplete="off"
+												value="E" readonly="readonly" />
+										</div>
+
+
+									</div>
+								</div>
+							</div>
+
+
+
+							<div class="row">
                           <div
                             class="col-8 col-sm-8 col-md-10 custom-field m-b-16"
                           >
@@ -261,10 +223,7 @@ $("#kh").on("change",function(){
 });
 </script>	
 
-	<script>
-		let currentYear = new Date().getFullYear().toString()
-		  $('#yearCreated').val(currentYear);
-		</script>	
+
 	<script type="text/javascript">
 		$('#f-mstncn-crud #loaihd').change(function (event) {
 			event.preventDefault();/*event.stopPropagation();*/
