@@ -20,6 +20,7 @@ public interface EInvoiceMTTDAO {
 	public MsgRsp createTDSendTax(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp importExcelAuto(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp checkSHD(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp publishHDList(JSONRoot jsonRoot) throws Exception;
 //	public MsgRsp list_send_cqt(JSONRoot jsonRoot) throws Exception;
 //	public MsgRsp sendListCQT(JSONRoot jsonRoot) throws Exception;
 //	public FileInfo getFileForSignMTT(JSONRoot jsonRoot) throws Exception;

@@ -3,9 +3,11 @@ package vn.sesgroup.hddt.controller.einvoice_mtt;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,12 +31,14 @@ import com.api.message.MsgParam;
 import com.api.message.MsgParams;
 import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import vn.sesgroup.hddt.controller.AbstractController;
 import vn.sesgroup.hddt.dto.BaseDTO;
 import vn.sesgroup.hddt.dto.CurrentUserProfile;
+import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.JsonGridDTO;
 import vn.sesgroup.hddt.resources.RestAPIUtility;
 import vn.sesgroup.hddt.utils.Constants;
@@ -469,9 +473,46 @@ public class EInvoiceMTTController extends AbstractController{
 		return dto;
 	}
 	
-	
-	
-	///
+	@RequestMapping(value = "/publish-hd-list",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO publishHDList(Locale locale, HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception {
+		
+		String token = "";
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+			session.removeAttribute(token);
+		}
+		token = commons.csRandomAlphaNumbericString(5);
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		
+		List<String> ids = new ArrayList<String>();
+		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		try {
+			ids = Json.serializer().fromJson(commons.decodeBase64ToString(_ids), new TypeReference<List<String>>() {});
+		} catch (Exception e) {
+			
+		}
+
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		BaseDTO dto = new BaseDTO(req);
+		
+		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNALL);
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("ids", ids);
+		hData.put("SL", ids.size());
+		msg.setObjData(hData);
+		
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice_mtt/publish-hd-list", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() != 0) {			
+			dto.setErrorCode(rspStatus.getErrorCode());
+			dto.setResponseData(rspStatus.getErrorDesc());
+			return dto;
+		}
+		return dto;
+	}
 	
 	
 	public BaseDTO checkDataToRefreshAllStatusCqt(HttpServletRequest req, HttpSession session

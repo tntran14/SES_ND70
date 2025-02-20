@@ -372,5 +372,18 @@ public class EInvoiceMTTController {
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
 	}
+	
+	@PostMapping(value = "/publish-hd-list",
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> publishHDList(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.publishHDList(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
 }
 

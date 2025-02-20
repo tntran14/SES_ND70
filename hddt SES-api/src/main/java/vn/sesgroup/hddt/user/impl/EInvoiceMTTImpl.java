@@ -29,6 +29,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -80,6 +82,7 @@ import vn.sesgroup.hddt.utility.SystemParams;
 @Repository
 @Transactional
 public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
+    private static final Logger logger = LogManager.getLogger(EInvoiceMTTImpl.class);
 
 	@Autowired
 	MongoTemplate mongoTemplate;
@@ -7377,6 +7380,144 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		}
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp publishHDList(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+		
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		
+		String soLuongHD = commons.getTextJsonNode(jsonData.at("/SL")).replaceAll("\\s", "0");
+		
+		ObjectId objectIssuerId = null;
+		try {
+			objectIssuerId = new ObjectId(header.getIssuerId());
+		} catch (Exception e) {}
+		
+		ObjectId objectId = null;
+		Document fillter = null;
+		Document docFind  = null;
+		Document docTmp = null;
+		List<Document> pipeline = null;
+		for (JsonNode o : jsonData.at("/ids")) {
+			String id = commons.getTextJsonNode(o);
+			try {
+				objectId = new ObjectId(id);
+			} catch (Exception e) {
+				
+			}
+			
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("IsDelete", new Document("$ne", true))
+					.append("_id", objectId)
+					.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
+					.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
+			fillter = new Document("_id", 1)
+					.append("EInvoiceDetail", 1)
+					.append("IssuerId", 1);
+			 
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(new Document("$project", fillter));
+			
+			// check info MSHD
+			pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+					.append("let", new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD")
+									.append("vIssuerId", "$IssuerId"))
+					.append("pipeline", 
+							Arrays.asList(new Document("$match", 
+														new Document("$expr", 
+																new Document("$and",
+																Arrays.asList(
+																		new Document("$gt", Arrays.asList("$ConLai", 0)),
+																		new Document("$eq", Arrays.asList("$IsActive", true)),
+																		new Document("$ne", Arrays.asList("$IsDelete", true)),
+																		new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
+																		new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))
+																		))))))
+					.append("as", "DMMauSoKyHieu")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+			
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+				logger.error("Error when access mongoDB: ", e.getMessage(), e);
+			}
+			mongoClient.close();
+			
+			if (null == docTmp) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn."));
+				return rsp;
+			}
+			if (null == docTmp.get("DMMauSoKyHieu")) {
+				rsp.setResponseStatus( new MspResponseStatus(9999, "Hết số hóa đơn."));
+				return rsp;
+			}
+			
+			String mauSoHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), String.class);
+			String vIssuerId = header.getIssuerId();
+			// get max release date and max shd signed
+			
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", new Document("IssuerId", vIssuerId)
+			        .append("EInvoiceDetail.TTChung.MauSoHD", mauSoHD)
+			        .append("IsDelete", new Document("$ne", true))
+			        .append("EInvoiceStatus", new Document("$in", Arrays.asList(
+			                "COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO", "DELETED", "REPLACED", "ADJUSTED"
+			        )))));
+			pipeline.add(new Document("$group", new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD")
+			        .append("RecentNlap", new Document("$max", "$EInvoiceDetail.TTChung.NLap"))));
+			
+//			pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+//
+//					.append("pipeline", Arrays.asList(
+//							new Document("$match", new Document("$expr", new Document("$and",
+//									Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", vIssuerId)),
+//											new Document("$eq",
+//													Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", mauSoHD)),
+//											new Document("$ne", Arrays.asList("$IsDelete", true)),
+//											new Document("$not",
+//													new Document("$in", Arrays.asList("$EInvoiceStatus",
+//															Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+//																	"DELETED", "REPLACED", "ADJUSTED")))))))),
+//							new Document("$group",
+//									new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("MinSHDon",
+//											new Document("$min", "$EInvoiceDetail.TTChung.SHDon")))))
+//					.append("as", "MinSHDonInfo")));
+//			pipeline.add(new Document("$unwind",
+//					new Document("path", "$MinSHDonInfo").append("preserveNullAndEmptyArrays", true)));
+			
+			Document docInfo = null;
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docInfo = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+				logger.error("Error when access mongoDB: ", e.getMessage(), e);
+			}
+			mongoClient.close();
+			
+		
+		
+		
+		}// end for
+		
 		return rsp;
 	}
 

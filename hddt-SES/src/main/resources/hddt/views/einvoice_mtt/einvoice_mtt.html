@@ -237,9 +237,17 @@
                             				</button>-->
                             				<button type="button" title="Ký hóa đơn" data-action="einvoice_mtt-sign" class="btns ky_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-sign|')}"  >
                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hóa đơn</span>
-                            				</button>                       
-                            			
-                            			</div>
+                            				</button>
+
+											<button type="button" title="Ký hàng loạt"
+												data-action="einvoice_mtt-signAll"
+												class="btns ky_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-signAll|')}">
+												<i class="mdi mdi-account-check-outline"> </i><span
+													class="d-none d-md-inline">Ký hàng loạt</span>
+											</button>
+
+										</div>
                             		</div>
                             	</div>
                             </div>
@@ -407,7 +415,7 @@
 				    	],
 						dataBound: function(e) {
 							
-							$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-detail"], button[data-action="einvoice_mtt-edit"],button[data-action="einvoice_mtt-copy"], button[data-action="einvoice_mtt-sign"], button[data-action="einvoice_mtt-cre-dc-tt"]').prop('disabled', true);
+							$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-detail"], button[data-action="einvoice_mtt-edit"],button[data-action="einvoice_mtt-copy"], button[data-action="einvoice_mtt-sign"], button[data-action="einvoice_mtt-cre-dc-tt"], button[data-action="einvoice_mtt-signAll"]').prop('disabled', true);
 							
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -598,6 +606,7 @@
 						
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-delete"]').prop('disabled', 'CREATED' == rowData['EInvoiceStatus']? false: true);
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-sign"]').prop('disabled', 'NOSIGN' == rowData['SignStatusCode']? false: true);
+						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-signAll"]').prop('disabled', 'NOSIGN' == rowData['SignStatusCode']? false: true);
 						//$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-edit"]').prop('disabled', 'CREATED' == rowData['EInvoiceStatus']? false: true);
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-edit"]').prop('disabled', 'NOSIGN' == rowData['SignStatusCode']? false: true);
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-publish"]').prop('disabled', 'CREATED' == rowData['EInvoiceStatus']? false: true);	
@@ -634,6 +643,7 @@
 				              $("#f-einvoice_mtt").find('button[data-action="einvoice-xml"]').prop('disabled', true);
 				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-edit"]').prop('disabled', true);
 				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-sign"]').prop('disabled', true);
+				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-signAll"]').prop('disabled', true);
 				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-delete"]').prop('disabled', true);
 						}
 						if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
@@ -710,7 +720,7 @@
 							var signDate = '';
 						//////////////////////////////
 						var rowData = null;
-						var actionCheck = '|einvoice_mtt-edit|einvoice_mtt-copy|einvoice_mtt-delete|einvoice_mtt-delete_|einvoice-pdfAll|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice_mtt-sign|einvoice-detail|einvoice-refreshAll|einvoice_mtt-send-cqt|';
+						var actionCheck = '|einvoice_mtt-edit|einvoice_mtt-copy|einvoice_mtt-delete|einvoice_mtt-delete_|einvoice-pdfAll|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice_mtt-sign|einvoice_mtt-signAll|einvoice-detail|einvoice-refreshAll|einvoice_mtt-send-cqt|';
 						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 						var ids = null;
 						var idx = -1;
@@ -849,7 +859,69 @@
 						        }
 							});
 							break;
-				
+							
+						case 'einvoice_mtt-signAll':
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
+									});
+							
+							objData = {
+								_ids : encodeObjJsonBase64UTF8(ids)
+							};
+// 							dsID = {
+// 								_token : encodeObjJsonBase64UTF8(ids)
+// 							};
+							
+							startProcessSign();
+							
+							function startProcessSign() {
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/einvoice_mtt/publish-hd-list',
+									data: objData,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							            if(res) {
+											if(res.errorCode == 0) {
+												hideLoading();
+												_gridMain.data("kendoGrid").dataSource.read();		
+												timeoutID = setTimeout(createTDsSendTax, 1000);							
+											}else{
+												alertDLSuccess(createObjectError(res).html(), function(){});
+											}
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+							        }
+								});
+							}
+							
+							function createTDsSendTax(){
+								
+							}
+							
+							function signAllHD() {
+								
+							}
+							
+							
+							
+							break;
 						case 'einvoice_mtt-sign':
 							objDataSend = {};
 							idx = $(checkRows[0].closest("tr")).index();
