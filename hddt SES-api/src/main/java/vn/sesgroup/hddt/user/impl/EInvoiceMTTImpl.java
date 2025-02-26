@@ -1,5 +1,6 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,6 +67,7 @@ import com.mongodb.client.model.ReturnDocument;
 
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
+import vn.sesgroup.hddt.dto.GetXMLInfoXMLDTO;
 import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.model.DSHHDVu;
 import vn.sesgroup.hddt.model.EInvoiceExcelForm;
@@ -78,6 +82,7 @@ import vn.sesgroup.hddt.utility.Json;
 import vn.sesgroup.hddt.utility.MailUtils;
 import vn.sesgroup.hddt.utility.MailjetSender;
 import vn.sesgroup.hddt.utility.SystemParams;
+import vn.sesgroup.hddt.utility.UpdateSignedMultiBillReq;
 
 @Repository
 @Transactional
@@ -7389,69 +7394,65 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		MsgHeader header = msg.getMsgHeader();
 		MsgPage page = msg.getMsgPage();
 		Object objData = msg.getObjData();
-		
+
 		JsonNode jsonData = null;
 		if (objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
 		} else {
 			throw new Exception("Lỗi dữ liệu đầu vào");
 		}
-		
+
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
-		
+
 		String soLuongHD = commons.getTextJsonNode(jsonData.at("/SL")).replaceAll("\\s", "0");
-		
+
 		ObjectId objectIssuerId = null;
 		try {
 			objectIssuerId = new ObjectId(header.getIssuerId());
-		} catch (Exception e) {}
-		
+		} catch (Exception e) {
+		}
+
 		ObjectId objectId = null;
 		Document fillter = null;
-		Document docFind  = null;
+		Document docFind = null;
 		Document docTmp = null;
+		FindOneAndUpdateOptions options = null;
 		List<Document> pipeline = null;
 		for (JsonNode o : jsonData.at("/ids")) {
 			String id = commons.getTextJsonNode(o);
 			try {
 				objectId = new ObjectId(id);
 			} catch (Exception e) {
-				
+
 			}
-			
-			docFind = new Document("IssuerId", header.getIssuerId())
-					.append("IsDelete", new Document("$ne", true))
+
+			docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
 					.append("_id", objectId)
 					.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
 					.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
-			fillter = new Document("_id", 1)
-					.append("EInvoiceDetail", 1)
-					.append("IssuerId", 1);
-			 
+			fillter = new Document("_id", 1).append("EInvoiceDetail", 1).append("IssuerId", 1).append("Dir", 1)
+					.append("SignStatusCode", 1).append("MCCQT", 1);
+
 			pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match", docFind));
 			pipeline.add(new Document("$project", fillter));
-			
+
 			// check info MSHD
 			pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
-					.append("let", new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD")
-									.append("vIssuerId", "$IssuerId"))
-					.append("pipeline", 
-							Arrays.asList(new Document("$match", 
-														new Document("$expr", 
-																new Document("$and",
-																Arrays.asList(
-																		new Document("$gt", Arrays.asList("$ConLai", 0)),
-																		new Document("$eq", Arrays.asList("$IsActive", true)),
-																		new Document("$ne", Arrays.asList("$IsDelete", true)),
-																		new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
-																		new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))
-																		))))))
+					.append("let",
+							new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD").append("vIssuerId",
+									"$IssuerId"))
+					.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr", new Document("$and",
+							Arrays.asList(new Document("$gt", Arrays.asList("$ConLai", 0)),
+									new Document("$eq", Arrays.asList("$IsActive", true)),
+									new Document("$ne", Arrays.asList("$IsDelete", true)),
+									new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
+									new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))))))))
 					.append("as", "DMMauSoKyHieu")));
 			pipeline.add(new Document("$unwind",
 					new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
-			
+
 			MongoClient mongoClient = cfg.mongoClient();
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
 			try {
@@ -7460,49 +7461,29 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				logger.error("Error when access mongoDB: ", e.getMessage(), e);
 			}
 			mongoClient.close();
-			
+
 			if (null == docTmp) {
 				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn."));
 				return rsp;
 			}
 			if (null == docTmp.get("DMMauSoKyHieu")) {
-				rsp.setResponseStatus( new MspResponseStatus(9999, "Hết số hóa đơn."));
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Hết số hóa đơn."));
 				return rsp;
 			}
-			
+
 			String mauSoHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), String.class);
 			String vIssuerId = header.getIssuerId();
 			// get max release date and max shd signed
-			
+
 			pipeline = new ArrayList<Document>();
-			pipeline.add(new Document("$match", new Document("IssuerId", vIssuerId)
-			        .append("EInvoiceDetail.TTChung.MauSoHD", mauSoHD)
-			        .append("IsDelete", new Document("$ne", true))
-			        .append("EInvoiceStatus", new Document("$in", Arrays.asList(
-			                "COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO", "DELETED", "REPLACED", "ADJUSTED"
-			        )))));
+			pipeline.add(new Document("$match",
+					new Document("IssuerId", vIssuerId).append("EInvoiceDetail.TTChung.MauSoHD", mauSoHD)
+							.append("IsDelete", new Document("$ne", true))
+							.append("EInvoiceStatus", new Document("$in", Arrays.asList("COMPLETE", "ERROR_CQT",
+									"PROCESSING", "XOABO", "DELETED", "REPLACED", "ADJUSTED")))));
 			pipeline.add(new Document("$group", new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD")
-			        .append("RecentNlap", new Document("$max", "$EInvoiceDetail.TTChung.NLap"))));
-			
-//			pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
-//
-//					.append("pipeline", Arrays.asList(
-//							new Document("$match", new Document("$expr", new Document("$and",
-//									Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", vIssuerId)),
-//											new Document("$eq",
-//													Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", mauSoHD)),
-//											new Document("$ne", Arrays.asList("$IsDelete", true)),
-//											new Document("$not",
-//													new Document("$in", Arrays.asList("$EInvoiceStatus",
-//															Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
-//																	"DELETED", "REPLACED", "ADJUSTED")))))))),
-//							new Document("$group",
-//									new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("MinSHDon",
-//											new Document("$min", "$EInvoiceDetail.TTChung.SHDon")))))
-//					.append("as", "MinSHDonInfo")));
-//			pipeline.add(new Document("$unwind",
-//					new Document("path", "$MinSHDonInfo").append("preserveNullAndEmptyArrays", true)));
-			
+					.append("RecentNlap", new Document("$max", "$EInvoiceDetail.TTChung.NLap"))));
+
 			Document docInfo = null;
 			mongoClient = cfg.mongoClient();
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
@@ -7512,13 +7493,857 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				logger.error("Error when access mongoDB: ", e.getMessage(), e);
 			}
 			mongoClient.close();
-			
-		
-		
-		
-		}// end for
-		
+
+			// check date of invoice
+			LocalDate currentLocalDate = LocalDate.now();
+			LocalDate latestNLap = null;
+
+			if (docInfo != null && docInfo.get("RecentNlap") != null) {
+				latestNLap = commons
+						.convertDateToLocalDate(docInfo.getEmbedded(Arrays.asList("RecentNlap"), Date.class));
+			}
+
+			LocalDate localDateOfInvoice = null;
+			if (docTmp.get("EInvoiceDetail") != null) {
+				localDateOfInvoice = commons.convertDateToLocalDate(
+						docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class));
+			}
+
+			if (latestNLap != null) {
+				if (localDateOfInvoice.compareTo(latestNLap) < 0) {
+					rsp.setResponseStatus(new MspResponseStatus(9999,
+							"Tồn tại hóa đơn có ngày phát hành nhỏ hơn ngày " + latestNLap));
+					return rsp;
+				}
+
+			}
+			if (localDateOfInvoice.compareTo(currentLocalDate) > 0) {
+				rsp.setResponseStatus(
+						new MspResponseStatus(9999, "Ngày phát hành của hóa đơn không được lớn hơn ngày hiện tại."));
+				return rsp;
+			}
+
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", new Document("$expr",
+					new Document("$and", Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", vIssuerId)),
+							new Document("$eq", Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", mauSoHD)),
+							new Document("$ne", Arrays.asList("$IsDelete", true)),
+							new Document("$in", Arrays.asList("$EInvoiceStatus", Arrays.asList("COMPLETE", "ERROR_CQT",
+									"PROCESSING", "PENDING", "XOABO", "DELETED", "REPLACED", "ADJUSTED"))))))));
+			pipeline.add(new Document("$group", new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD")
+					.append("MaxSHDon", new Document("$max", "$EInvoiceDetail.TTChung.SHDon"))));
+
+			Document docInfo1 = null;
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docInfo1 = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+				logger.error("Error when access mongoDB: ", e.getMessage(), e);
+			}
+			mongoClient.close();
+
+			// check shd of invoice
+			String dir = docTmp.get("Dir", "");
+			String fileName = "";
+			String check_file_signed = docTmp.get("SignStatusCode", "NOSIGN");
+			String idOfInvoice = docTmp.getObjectId("_id").toString();
+			String loaiHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "LoaiHD"), "");
+
+			if (check_file_signed.equals("SIGNED")) {
+				fileName = idOfInvoice + "_signed.xml";
+			} else {
+				fileName = idOfInvoice + ".xml";
+			}
+
+			File file = new File(dir, fileName);
+			if (!file.exists()) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Tập tin không tồn tại."));
+				return rsp;
+			}
+
+			int shdOfCurrentInvoice = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+			int invoiceNumber = 0;
+			if (shdOfCurrentInvoice == 0) {
+				int maxInvoiceNumber = 0;
+				if (docInfo1.get("MaxSHDon") != null)
+					maxInvoiceNumber = docInfo1.getEmbedded(Arrays.asList("MaxSHDon"), 0);
+				invoiceNumber = maxInvoiceNumber + 1;
+			}
+
+			/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD VA MA CQT */
+			org.w3c.dom.Document doc = commons.fileToDocument(file);
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", doc, XPathConstants.NODE);
+			Node nodeMaCQT = (Node) xPath.evaluate("/HDon", doc, XPathConstants.NODE);
+			Node nodeTmp = null;
+			nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+			Element elementSub = (Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE);
+			if (null == elementSub) {
+				elementSub = doc.createElement("SHDon");
+				elementSub.setTextContent(String.valueOf(invoiceNumber));
+				nodeTmp.appendChild(elementSub);
+			} else {
+				elementSub.setTextContent(String.valueOf(invoiceNumber));
+			}
+
+			Document docIssuerInfo = null;
+			Document findUser = new Document("_id", objectIssuerId).append("IsActive", true).append("IsDelete",
+					new Document("$ne", true));
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			try {
+				docIssuerInfo = collection.find(findUser).allowDiskUse(true).iterator().next();
+			} catch (Exception ex) {
+
+			}
+			mongoClient.close();
+
+			if (null == docIssuerInfo) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng."));
+				return rsp;
+			}
+
+			String MaCQT = docIssuerInfo.get("MaCQT", "");
+			if (MaCQT.equals("")) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Vui lòng cập nhật mã doanh nghiệp!!!"));
+				return rsp;
+			}
+
+			/* CHECK HOA DON DA CO MA CQT CHUA */
+			String MCCQT = docTmp.get("MCCQT", "");
+
+			if (MCCQT.equals("")) {
+				/* TAO prefixUserID CAP NHAT SO LogNextSequence DB */
+				String prefixUserID = "";
+
+				mongoClient = cfg.mongoClient();
+
+				int seq = getValueForNextSequenceAdmin(mongoTemplate, header.getIssuerId(),
+						Constants.NEXT_SEQUENCE.EINVOICEMTT, MaCQT);
+				prefixUserID = StringUtils.leftPad(String.valueOf(seq), 11, "0");
+
+				// GHEP MA CQT
+
+				String NgayLap = LocalDate.now().toString();
+
+				String[] split_year = NgayLap.split("-");
+
+				String year_ = split_year[0];
+
+				String year = year_.substring(2, 4);
+
+				String maCQT = "M" + loaiHD + "-" + year + "-" + MaCQT + "-" + prefixUserID;
+
+				Element elementSub_cqt = (Element) xPath.evaluate("MCCQT", nodeMaCQT, XPathConstants.NODE);
+				if (null == elementSub_cqt) {
+					elementSub_cqt = doc.createElement("MCCQT");
+					elementSub_cqt.setTextContent(String.valueOf(maCQT));
+					nodeMaCQT.appendChild(elementSub_cqt);
+				} else {
+					elementSub_cqt.setTextContent(String.valueOf(maCQT));
+				}
+
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setFileName(fileName);
+				fileInfo.setContentFile(commons.docW3cToByte(doc));
+
+				// SAVE FILE
+				String filename_publish = idOfInvoice + "_pending.xml";
+				File file_publish = new File(dir, filename_publish);
+				FileUtils.writeByteArrayToFile(new File(file_publish.toString()), fileInfo.getContentFile());
+
+				/* UPDATE EINVOICE - STATUS */
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+				collection.findOneAndUpdate(docFind,
+						new Document("$set",
+								new Document("EInvoiceDetail.TTChung.SHDon", invoiceNumber).append("MCCQT", maCQT)
+										.append("PublishStatus", true).append("EInvoiceStatus", "PENDING")),
+						options);
+				mongoClient.close();
+
+				// Update DMMauSoKyHieu
+				if (shdOfCurrentInvoice == 0) {
+					String idDMMSKH = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class)
+							.toString();
+					int getSL = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0);
+					int CL = getSL - invoiceNumber;
+					ObjectId objectIdMS = null;
+					try {
+						objectIdMS = new ObjectId(idDMMSKH);
+					} catch (Exception e) {
+					}
+					Document docFindMS = null;
+					docFindMS = new Document("IssuerId", header.getIssuerId())
+							.append("IsDelete", new Document("$ne", true)).append("IsActive", true)
+							.append("_id", objectIdMS);
+
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
+					collection.findOneAndUpdate(docFindMS,
+							new Document("$set", new Document("ConLai", CL).append("SHDHT", invoiceNumber)), options);
+					mongoClient.close();
+				}
+
+			}
+		}
+		rsp.setResponseStatus(new MspResponseStatus(0, "SUCCESS"));
 		return rsp;
 	}
 
+	@Override
+	public MsgRsp createTDSendTaxList(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+
+		String soLuongHD = commons.getTextJsonNode(jsonData.at("/SL")).replaceAll("\\s", "0");
+
+		ObjectId objectId = null;
+		Document docFind = null;
+		Document docTmp = null;
+		org.w3c.dom.Document doc = null;
+		List<Document> pipeline = null;
+		for (JsonNode o : jsonData.at("/ids")) {
+			String id = commons.getTextJsonNode(o);
+			try {
+				objectId = new ObjectId(id);
+			} catch (Exception e) {
+			}
+
+			/* KIEM TRA THONG TIN HD CO TON TAI KHONG */
+			docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+					.append("_id", objectId);
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+
+			docTmp = null;
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+
+			if (docTmp == null) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn!!!"));
+				return rsp;
+			}
+
+			File file = null;
+			String dir = docTmp.get("Dir", "");
+			String fileName = id + "_pending.xml";
+
+			file = new File(dir, fileName);
+			if (!file.exists() || !file.isFile()) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy file thông tin hóa đơn!!!"));
+				return rsp;
+			}
+
+			doc = null;
+			doc = commons.fileToDocument(file, true);
+			if (null == doc) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy file thông tin hóa đơn!!!"));
+				return rsp;
+			}
+
+			String MTDiep = docTmp.get("MTDiep", "");
+			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
+
+			/* TAO XML THONG DIEP GUI DI */
+			DocumentBuilderFactory dbf1 = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db1 = dbf1.newDocumentBuilder();
+
+			org.w3c.dom.Document docTD = db1.newDocument();
+			docTD.setXmlStandalone(true);
+
+			Element root = docTD.createElement("TDiep");
+			docTD.appendChild(root);
+
+			Element elementContent = docTD.createElement("TTChung");
+
+			elementContent.appendChild(
+					commons.createElementWithValue(docTD, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBan1));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MNGui", SystemParams.MSTTCGP));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MNNhan", SystemParams.MSTDVTN));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MLTDiep", "206"));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MTDiep", MTDiep));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MTDTChieu", ""));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "MST", MST));
+			elementContent.appendChild(commons.createElementWithValue(docTD, "SLuong", "1"));
+			root.appendChild(elementContent);
+
+			elementContent = docTD.createElement("DLieu");
+			Element docElement = doc.getDocumentElement();
+			Node copiedRoot = docTD.importNode(docElement, true);
+			elementContent.appendChild(copiedRoot);
+			root.appendChild(elementContent);
+
+			boolean isSaved = false;
+			String fileName_TD = id + "_preparingSendCQT.xml";
+
+			try {
+				isSaved = commons.docW3cToFile(docTD, dir, fileName_TD);
+			} catch (Exception e) {
+			}
+			if (!isSaved) {
+				rsp.setResponseStatus(new MspResponseStatus(9999, "Lưu tập tin gửi thuế không thành công."));
+				return rsp;
+			}
+			/* CAP NHAT LAI TRANG THAI DANG CHO XU LY */
+			FindOneAndUpdateOptions options = null;
+			options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			collection.findOneAndUpdate(docFind,
+					new Document("$set", new Document("CreateTDStatus", true)
+							.append("CreateTDStatus_Date", LocalDateTime.now()).append("InfoCreateTDStatus",
+									new Document("Date", LocalDateTime.now()).append("UserID", header.getUserId())
+											.append("UserName", header.getUserName())
+											.append("UserFullName", header.getUserFullName()))),
+					options);
+			mongoClient.close();
+
+		}
+
+		rsp.setResponseStatus(new MspResponseStatus(0, "SUCCESS"));
+		return rsp;
+	}
+
+	@Override
+	public FileInfo getFileForSignAll(JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = new FileInfo();
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		Object objData = msg.getObjData();
+
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		List<GetXMLInfoXMLDTO> arrFileInfos = new ArrayList<>();
+		List<Long> invoiceNumbers = new ArrayList<Long>();
+		ObjectId objectId = null;
+		Document fillter = null;
+		Document docFind = null;
+		Document docTmp = null;
+		List<Document> pipeline = null;
+		String idMauSoKyHieu = "";
+		for (JsonNode o : jsonData.at("/ids")) {
+			String id = commons.getTextJsonNode(o);
+			try {
+				objectId = new ObjectId(id);
+			} catch (Exception e) {
+			}
+
+			docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+					.append("_id", objectId)
+					.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
+					.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
+			fillter = new Document("_id", 1).append("EInvoiceDetail", 1).append("IssuerId", 1).append("Dir", 1)
+					.append("SignStatusCode", 1).append("MCCQT", 1).append("FileNameXML", 1);
+
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(new Document("$project", fillter));
+
+			// check info MSHD
+			pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+					.append("let",
+							new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD").append("vIssuerId",
+									"$IssuerId"))
+					.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr", new Document("$and",
+							Arrays.asList(new Document("$gt", Arrays.asList("$ConLai", 0)),
+									new Document("$eq", Arrays.asList("$IsActive", true)),
+									new Document("$ne", Arrays.asList("$IsDelete", true)),
+									new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
+									new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))))))))
+					.append("as", "DMMauSoKyHieu")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			docTmp=null;
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+				logger.error("Error when access mongoDB: ", e.getMessage(), e);
+			}
+			mongoClient.close();
+
+			if (null == docTmp) {
+				fileInfo.setCheck("Không tìm thấy thông tin hóa đơn.");
+				return fileInfo;
+			}
+
+			String idMauSo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
+
+			if (idMauSoKyHieu == "")
+				idMauSoKyHieu = idMauSo;
+
+			if (idMauSoKyHieu != "" && !idMauSoKyHieu.equals(idMauSo)) {
+				fileInfo.setCheck("Ký hàng loạt chỉ hỗ trợ kí cùng 1 mẫu số.");
+				return fileInfo;
+			}
+
+			int invoiceNumber = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+			invoiceNumbers.add((long) invoiceNumber);
+
+			String dir = docTmp.get("Dir", "");
+			String fileName = docTmp.get("FileNameXML", "");
+
+			String fileNamePending = id + "_preparingSendCQT.xml";
+			File file = new File(dir, fileNamePending);
+
+			if (!file.exists()) {
+				fileInfo.setCheck("File gửi cơ quan thuế không tồn tại.");
+				return fileInfo;
+			}
+			org.w3c.dom.Document doc = commons.fileToDocument(file);
+			GetXMLInfoXMLDTO getXMLInfoXMLDTO = null;
+			getXMLInfoXMLDTO = new GetXMLInfoXMLDTO();
+			getXMLInfoXMLDTO.setFileName(fileName);
+			getXMLInfoXMLDTO.setFileData(commons.docW3cToByte(doc));
+			getXMLInfoXMLDTO.setShd(invoiceNumber);
+			getXMLInfoXMLDTO.setIDMSHDon(idMauSoKyHieu);
+			arrFileInfos.add(getXMLInfoXMLDTO);
+
+		}
+
+		fileInfo.setCheck("");
+		fileInfo.setFormIssueInvoiceID(idMauSoKyHieu);
+		fileInfo.setNumbers(invoiceNumbers);
+		fileInfo.setArrFileInfos(arrFileInfos);
+
+		return fileInfo;
+	}
+
+	@Override
+	public MsgRsp checkSHDList(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		// get ids of shd
+		List<ObjectId> objectIds = new ArrayList<>();
+		for (JsonNode o : jsonData.at("/ids")) {
+			String _id = commons.getTextJsonNode(o);
+			try {
+				objectIds.add(new ObjectId(_id));
+			} catch (Exception e) {
+			}
+		}
+
+		if (objectIds.isEmpty()) {
+			rsp.setResponseStatus(new MspResponseStatus(9999, "Lỗi khi lấy dữ liệu đầu vào"));
+			return rsp;
+		}
+
+		// get info to check
+		List<Document> pipeline = null;
+		Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false).append("_id",
+				objectIds.get(0));
+		pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match", docFind));
+		pipeline.add(
+				new Document("$project", new Document("_id", 1).append("EInvoiceDetail", 1).append("IssuerId", 1)));
+
+		// get release data of invoices
+		pipeline.add(
+				new Document("$lookup",
+						new Document("from", "EInvoiceMTT")
+								.append("let",
+										new Document("ids", objectIds))
+								.append("pipeline", Arrays.asList(
+										new Document("$match",
+												new Document("$expr",
+														new Document("$in", Arrays.asList("$_id", "$$ids")))),
+										new Document("$project", new Document("EInvoiceDetail", 1).append("_id", 1))))
+								.append("as", "InvoiceDetailList")));
+		// get missing invoices
+		pipeline.add(new Document("$addFields",
+				new Document("minSHDon", new Document("$min", "$InvoiceDetailList.EInvoiceDetail.TTChung.SHDon"))
+						.append("maxSHDon", new Document("$max", "$InvoiceDetailList.EInvoiceDetail.TTChung.SHDon"))));
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD")
+								.append("minSHD", "$minSHDon").append("maxSHD", "$maxSHDon")
+								.append("existingSHD", "$InvoiceDetailList.EInvoiceDetail.TTChung.SHDon"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match", new Document("$expr", new Document("$and", Arrays.asList(
+								new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+								new Document("$eq", Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+								new Document("$ne", Arrays.asList("$IsDelete", true)),
+								new Document("$gte", Arrays.asList("$EInvoiceDetail.TTChung.SHDon", "$$minSHD")),
+								new Document("$lte", Arrays.asList("$EInvoiceDetail.TTChung.SHDon", "$$maxSHD")),
+								new Document("$not",
+										new Document("$in",
+												Arrays.asList("$EInvoiceDetail.TTChung.SHDon", "$$existingSHD"))),
+								new Document("$not",
+										new Document("$in",
+												Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED")))))))),
+						new Document("$project", new Document("EInvoiceDetail", 1).append("_id", 1))))
+				.append("as", "MissingInvoices")));
+
+		// get the largest release date of the invoice signed
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match",
+								new Document("$expr", new Document("$and",
+										Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+												new Document("$eq",
+														Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+												new Document("$ne", Arrays.asList("$IsDelete", true)),
+												new Document("$in", Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED"))))))),
+						new Document("$group",
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("RecentNlap",
+										new Document("$max", "$EInvoiceDetail.TTChung.NLap")))))
+				.append("as", "MaxNlapInfo")));
+
+		// get the smallest invoice number
+		pipeline.add(new Document("$lookup", new Document("from", "EInvoiceMTT")
+				.append("let",
+						new Document("vIssuerId", "$IssuerId").append("vMauSo", "$EInvoiceDetail.TTChung.MauSoHD"))
+				.append("pipeline", Arrays.asList(
+						new Document("$match", new Document("$expr", new Document("$and",
+								Arrays.asList(new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+										new Document("$eq",
+												Arrays.asList("$EInvoiceDetail.TTChung.MauSoHD", "$$vMauSo")),
+										new Document("$ne", Arrays.asList("$IsDelete", true)),
+										new Document("$not",
+												new Document("$in", Arrays.asList("$EInvoiceStatus",
+														Arrays.asList("COMPLETE", "ERROR_CQT", "PROCESSING", "XOABO",
+																"DELETED", "REPLACED", "ADJUSTED")))))))),
+						new Document("$group",
+								new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("MinSHDon",
+										new Document("$min", "$EInvoiceDetail.TTChung.SHDon")))))
+				.append("as", "MinSHDonInfo")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$MinSHDonInfo").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$MaxNlapInfo").append("preserveNullAndEmptyArrays", true)));
+
+		Document docTmp = null;
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+
+		try {
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+
+		mongoClient.close();
+		if (null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+
+		int minInvoiceNumber = 0;
+		if (docTmp.get("MinSHDonInfo") != null) {
+			minInvoiceNumber = docTmp.getEmbedded(Arrays.asList("MinSHDonInfo", "MinSHDon"), 0);
+		}
+
+		LocalDate latestNLap = null;
+		if (docTmp.get("MaxNlapInfo") != null) {
+			latestNLap = commons
+					.convertDateToLocalDate(docTmp.getEmbedded(Arrays.asList("MaxNlapInfo", "RecentNlap"), Date.class));
+		}
+
+		List<Document> invoiceDetailList = new ArrayList<>();
+		if (docTmp.containsKey("InvoiceDetailList") && docTmp.get("InvoiceDetailList") instanceof List) {
+			invoiceDetailList = docTmp.getList("InvoiceDetailList", Document.class);
+		}
+		Map<Integer, LocalDate> tempMap = new HashMap<Integer, LocalDate>();
+		if (invoiceDetailList != null) {
+			int shd = 0;
+			LocalDate date = null;
+			for (Document doc : invoiceDetailList) {
+				shd = doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+				date = commons.convertDateToLocalDate(
+						doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class));
+				tempMap.put(shd, date);
+			}
+
+			// check not exist smallest invoice number of invoice set have number
+			if (!tempMap.containsKey(minInvoiceNumber)) {
+				rsp.setResponseStatus(new MspResponseStatus(9999,
+						"Ký các hóa đơn không thành công. Vui lòng ký trước hoặc ký bao gồm hóa đơn "
+								+ commons.formatNumberBillInvoice(minInvoiceNumber)));
+				return rsp;
+			}
+		} else {
+			rsp.setResponseStatus(new MspResponseStatus(9999, "Không tìm thấy thông tin các hóa đơn."));
+			return rsp;
+		}
+
+		// check not missing invoice in invoice set from smallest invoice number to
+		// largest invoice number
+		List<Document> missingInvoices = new ArrayList<Document>();
+		if (docTmp.containsKey("MissingInvoices") && docTmp.get("MissingInvoices") instanceof List) {
+			missingInvoices = docTmp.getList("MissingInvoices", Document.class);
+		}
+
+		StringBuffer sb = new StringBuffer();
+		if (missingInvoices.size() > 0) {
+			for (Document doc : missingInvoices) {
+				sb.append(commons.formatNumberBillInvoice(
+						doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)));
+				sb.append(" ");
+			}
+			rsp.setResponseStatus(new MspResponseStatus(9999,
+					"Ký các hóa đơn không thành công. Vui lòng ký các hóa đơn liền kề. ( thiếu hóa đơn " + sb.toString()
+							+ ")"));
+			return rsp;
+		}
+
+		// check contain release date < lastest release date
+		sb = new StringBuffer();
+		if (latestNLap != null) {
+			for (Map.Entry<Integer, LocalDate> entry : tempMap.entrySet()) {
+				if (commons.compareLocalDate(entry.getValue(), latestNLap) < 0) {
+					sb.append(commons.formatNumberBillInvoice(entry.getKey()));
+					sb.append("");
+				}
+			}
+		}
+
+		if (sb.length() > 0) {
+			rsp.setResponseStatus(new MspResponseStatus(9999, "Tồn tại hóa đơn " + sb.toString()
+					+ "có ngày phát hành nhỏ hơn ngày phát hành của hóa đơn đã ký gần nhất " + latestNLap));
+			return rsp;
+		}
+
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp signAll(UpdateSignedMultiBillReq input, JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+
+		List<String> DsFile = new ArrayList<>();
+
+		int count = 0;
+		String hdError = "";
+		String mauso = input.getFormIssueInvoiceID();
+		String taxCode = input.getTaxcode();
+		String[] split_mst = taxCode.split("_");
+		int dem_mst = split_mst.length;
+		if (dem_mst == 2) {
+			taxCode = split_mst[0];
+		}
+
+		Path path = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode, mauso);
+		String urlPath = path.toString();
+		File file = path.toFile();
+		if (!file.exists())
+			file.mkdirs();
+
+		byte[] buffer = new byte[1024];
+		ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(input.getFileData()));
+		ZipEntry ze = zis.getNextEntry();
+		while (ze != null) {
+			if (!ze.isDirectory()) {
+				String tenfileky = ze.getName().replaceAll("\\.xml", "");
+				File newFile = new File(urlPath, tenfileky + "_signed.xml");
+				DsFile.add(tenfileky);
+				new File(newFile.getParent()).mkdirs();
+				FileOutputStream fos = new FileOutputStream(newFile);
+				int len;
+				while ((len = zis.read(buffer)) > 0) {
+					fos.write(buffer, 0, len);
+				}
+				fos.flush();
+				fos.close();
+			}
+			ze = zis.getNextEntry();
+		}
+		zis.close();
+
+		for (int k = 0; k < DsFile.size(); k++) {
+			String fileName = DsFile.get(k) + "_signed.xml";
+			File fileKy = new File(urlPath, fileName);
+			if (!fileKy.exists() || !fileKy.isFile()) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy file hóa đơn thực hiện ký.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
+			org.w3c.dom.Document xmlDoc = commons.fileToDocument(fileKy);
+			int eInvoiceNumber = 0;
+			String keySystem = "";
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			Node nodeDLHDon = (Node) xPath.evaluate("/TDiep/DLieu/HDon/DLHDon[@Id='data']", xmlDoc,
+					XPathConstants.NODE);
+			Node nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+
+			eInvoiceNumber = commons.stringToInteger(
+					commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
+
+			String key = "";
+			NodeList nodeList = (NodeList) xPath.evaluate("TTKhac/TTin", nodeTmp, XPathConstants.NODESET);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				key = commons
+						.getTextFromNodeXML((Element) xPath.evaluate("TTruong", nodeList.item(i), XPathConstants.NODE));
+				if ("SystemKey".equals(key)) {
+					keySystem = commons.getTextFromNodeXML(
+							(Element) xPath.evaluate("DLieu", nodeList.item(i), XPathConstants.NODE));
+					break;
+				}
+			}
+
+			/* LAY THONG TIN NGAY LAP - NGAY KY TRONG FILE XML */
+			String NLap = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeTmp, XPathConstants.NODE));
+
+			LocalDate ldNLap = null;
+			try {
+				ldNLap = commons.convertStringToLocalDate(NLap, "yyyy-MM-dd");
+			} catch (Exception e) {
+			}
+
+			ObjectId objectId = null;
+			try {
+				objectId = new ObjectId(keySystem);
+			} catch (Exception e) {
+			}
+			List<Document> pipeline = null;
+			/* KIEM TRA THONG TIN HOP LE KHONG */
+			Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+					.append("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber).append("EInvoiceStatus", "PENDING")
+					.append("_id", objectId);
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(new Document("$lookup",
+					new Document("from", "EInvoiceMTT").append("pipeline",
+							Arrays.asList(new Document("$match",
+									new Document("IssuerId", header.getIssuerId())
+											.append("EInvoiceDetail.TTChung.MauSoHD", mauso)
+											.append("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber)
+											.append("IsActive", true).append("IsDelete", false))
+
+							)).append("as", "EInvoiceInfo")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$EInvoiceInfo").append("preserveNullAndEmptyArrays", true)));
+			Document docTmp = null;
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+
+			mongoClient.close();
+			if (null == docTmp) {
+				count += 1;
+				hdError += eInvoiceNumber + ",";
+				break;
+			}
+			if (docTmp.get("EInvoiceInfo") != null) {
+				count += 1;
+				hdError += eInvoiceNumber + ",";
+				break;
+			}
+
+			String signStatusCode = docTmp.get("SignStatusCode", "");
+			if ("PROCESSING".equals(signStatusCode)) {
+				count += 1;
+				hdError += eInvoiceNumber + ",";
+				break;
+			}
+
+			/* KIEM TRA NGAY LAP TRONG HE THONG - NGAY LAP TRONG XML */
+			LocalDate ldNLapSystem = commons.convertDateToLocalDate(
+					docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class));
+			if (commons.compareLocalDate(ldNLap, ldNLapSystem) != 0) {
+				count += 1;
+				hdError += eInvoiceNumber + ",";
+				break;
+			}
+
+			/* CAP NHAT DB */
+			FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+			objectId = null;
+			try {
+				objectId = new ObjectId(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""));
+			} catch (Exception e) {
+			}
+			if (null == objectId) {
+				throw new Exception("Không tìm thấy mẫu số hóa đơn.");
+			}
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			collection.findOneAndUpdate(docFind,
+					new Document("$set", new Document("SignStatusCode", "SIGNED").append("InfoSigned",
+							new Document("SignedDate", LocalDateTime.now()).append("SignedUserID", header.getUserId())
+									.append("SignedUserName", header.getUserName())
+									.append("SignedUserFullName", header.getUserFullName()))),
+					options);
+			mongoClient.close();
+		}
+		if (count != 0) {
+			responseStatus = new MspResponseStatus(9999, count + " Hóa đơn ký không thành công là : " + hdError);
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
 }

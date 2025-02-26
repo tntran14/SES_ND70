@@ -2,6 +2,7 @@ package vn.sesgroup.hddt.controller.einvoice_mtt;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -15,6 +16,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +58,7 @@ import com.api.message.MsgParam;
 import com.api.message.MsgParams;
 import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -62,6 +66,7 @@ import vn.sesgroup.hddt.controller.AbstractController;
 import vn.sesgroup.hddt.dto.BaseDTO;
 import vn.sesgroup.hddt.dto.CurrentUserProfile;
 import vn.sesgroup.hddt.dto.FileInfo;
+import vn.sesgroup.hddt.dto.GetXMLInfoXMLDTO;
 import vn.sesgroup.hddt.dto.IssuerInfo;
 import vn.sesgroup.hddt.dto.JsonGridDTO;
 import vn.sesgroup.hddt.dto.LoginRes;
@@ -1757,5 +1762,155 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		return dtoRes;
 	}
 	
+	@RequestMapping(value = "/check-data-signAll", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO signAll(Locale locale, HttpServletRequest req, HttpSession session,
+			@RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception {
+		List<String> ids = new ArrayList<String>();
+		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		try {
+			ids = Json.serializer().fromJson(commons.decodeBase64ToString(_ids), new TypeReference<List<String>>() {
+			});
+		} catch (Exception e) {
+
+		}
+
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		BaseDTO dto = new BaseDTO(req);
+
+		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNALL);
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("ids", ids);
+		hData.put("SL", ids.size());
+		msg.setObjData(hData);
+		JSONRoot root = new JSONRoot(msg);
+
+		// CHECK SHDON CO HOP LE HAY KHONG
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice_mtt/check-shd-list", cup.getLoginRes().getToken(),
+				HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if (rspStatus.getErrorCode() != 0) {
+			dto.setErrorCode(999);
+			dto.setResponseData(rsp.getResponseStatus().getErrorDesc());
+			return dto;
+		}
+
+		// Get file for sign
+		FileInfo fileInfo = restAPI.callAPIGetFileInfo("/einvoice_mtt/get-file-for-signAll",
+				cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		if (fileInfo.getCheck() != "") {
+			dto.setErrorCode(999);
+			dto.setResponseData(fileInfo.getCheck());
+			return dto;
+		}
+
+		/* THONG TIN TEN FILE */
+		String token = commons.convertLocalDateTimeToString(LocalDateTime.now(),
+				Constants.FORMAT_DATE.FORMAT_DATETIME_DB_FULL) + "-" + commons.csRandomAlphaNumbericString(5);
+		token += ".xml";
+		File file = new File(SystemParams.DIR_TMP_SAVE_FILES);
+		file.mkdirs();
+		/* END - LAY THONG TIN DU LIEU XML VE SERVER WEB */
+
+		String time = commons.convertLocalDateTimeToString(LocalDateTime.now(),
+				Constants.FORMAT_DATE.FORMAT_DATETIME_DB_FULL);
+
+		// VONG LAP XML TRONG ZIP
+		List<GetXMLInfoXMLDTO> arrFileInfos = fileInfo.getArrFileInfos();
+
+		ZipOutputStream zout = null;
+		FileOutputStream fos = null;
+		if (arrFileInfos != null) {
+			try {
+				arrFileInfos = fileInfo.getArrFileInfos();
+				fos = new FileOutputStream(new File(file, token + ".zip"));
+				zout = new ZipOutputStream(fos);
+				for (GetXMLInfoXMLDTO o : arrFileInfos) {
+					zout.putNextEntry(new ZipEntry(o.getFileName()));
+					zout.write(o.getFileData());
+					zout.closeEntry();
+				}
+				zout.close();
+				fos.close();
+				// END VONG LAP
+
+				HashMap<String, Object> hR = new HashMap<String, Object>();
+				hR.put("Token", token);
+				hR.put("DateTime", LocalDateTime.now().toString());
+				hR.put("Time", time);
+				hR.put("TaxCode", cup.getUsername());
+				hR.put("Numbers", fileInfo.getNumbers());
+				hR.put("FormIssueInvoiceID", fileInfo.getFormIssueInvoiceID());
+				dto.setResponseData(hR);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+
+		} else {
+			dto.setErrorCode(999);
+			dto.setResponseData("Không tìm thấy dữ liệu hóa đơn.");
+			return dto;
+		}
+		return dto;
+	}
+
+	@RequestMapping(value = "/sign-file-all", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseBody
+	public BaseDTO processSignFileAll(HttpServletRequest req, HttpSession session,
+			@RequestAttribute(name = "transaction", value = "", required = false) String transaction,
+			@RequestParam(value = "zipFile", required = false) MultipartFile multipartFile,
+			@RequestParam(value = "Numbers", required = true) String numbers,
+			@RequestParam(value = "FormIssueInvoiceID", required = true) String formIssueInvoiceID,
+			@RequestParam(value = "Certificate", required = true) String certificate) throws Exception {
+		BaseDTO dtoRes = new BaseDTO(req);
+
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		String luu = cup.getUsername() + "/" + formIssueInvoiceID;
+		Msg msg = dtoRes.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNED);
+		HashMap<String, Object> hData = new HashMap<>();
+
+		msg.setObjData(hData);
+		JSONRoot root = new JSONRoot(msg);
+
+		/* CONNECT TO API */
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		headers.add(APIParams.API_LICENSE_KEY_NAME, APIParams.HTTP_LICENSEKEY);
+		headers.add(Constants.TOKEN_HEADER, cup.getLoginRes().getToken());
+
+		MultiValueMap<String, String> fileMap = null;
+		HttpEntity<byte[]> fileEntity = null;
+		ContentDisposition contentDisposition = null;
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		body.add("Base64JsonRoot", commons.encodeStringBase64(Json.serializer().toString(root)));
+
+		/* ADD DU LIEU XML DA KY */
+		fileMap = new LinkedMultiValueMap<String, String>();
+		contentDisposition = ContentDisposition.builder("form-data").name("zipFile").filename(luu).build();
+		fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+		fileEntity = new HttpEntity<byte[]>(multipartFile.getBytes(), fileMap);
+		body.add("zipFile", fileEntity);
+		body.add("Ten", luu);
+		HttpEntity<MultiValueMap<String, Object>> requestBody = new HttpEntity<>(body, headers);
+		String url = "/einvoice_mtt/signAll";
+		ResponseEntity<MsgRsp> result = restTemplate.exchange(APIParams.HTTP_URI + url, HttpMethod.POST, requestBody,
+				MsgRsp.class);
+		/* END - CONNECT TO API */
+		if (result.getStatusCode() == org.springframework.http.HttpStatus.OK) {
+			MsgRsp rsp = result.getBody();
+			MspResponseStatus rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				dtoRes.setErrorCode(0);
+				dtoRes.setResponseData("Thực hiện ký hóa đơn thành công.");
+			} else {
+				dtoRes = new BaseDTO(rspStatus.getErrorCode(), rspStatus.getErrorDesc());
+			}
+		} else {
+			dtoRes = new BaseDTO(result.getStatusCode().value(), "Thực hiện ký hóa đơn không thành công.");
+		}
+		return dtoRes;
+	}
 }
 	

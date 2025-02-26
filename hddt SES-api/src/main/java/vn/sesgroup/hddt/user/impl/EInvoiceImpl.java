@@ -11693,10 +11693,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 		// check contain release date < lastest release date
 		sb = new StringBuffer();
-		for (Map.Entry<Integer, LocalDate> entry : tempMap.entrySet()) {
-			if (commons.compareLocalDate(entry.getValue(), latestNLap) < 0) {
-				sb.append(commons.formatNumberBillInvoice(entry.getKey()));
-				sb.append("");
+		if (latestNLap != null) {
+			for (Map.Entry<Integer, LocalDate> entry : tempMap.entrySet()) {
+				if (commons.compareLocalDate(entry.getValue(), latestNLap) < 0) {
+					sb.append(commons.formatNumberBillInvoice(entry.getKey()));
+					sb.append("");
+				}
 			}
 		}
 

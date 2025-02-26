@@ -861,67 +861,266 @@
 							break;
 							
 						case 'einvoice_mtt-signAll':
-							ids = [];
-							objData = {};
-							checkRows.each(function(i, v) {
-								idx = $(checkRows[i].closest("tr")).index();
-								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
-								ids.push(rowData['_id']);
-									});
-							
-							objData = {
-								_ids : encodeObjJsonBase64UTF8(ids)
-							};
-// 							dsID = {
-// 								_token : encodeObjJsonBase64UTF8(ids)
-// 							};
-							
-							startProcessSign();
-							
-							function startProcessSign() {
-								$.ajax({
-									type: "POST",
-									datatype: "json",
-									url: ROOT_PATH + '/main/einvoice_mtt/publish-hd-list',
-									data: objData,
-									beforeSend: function(req) {
-										initAjaxJsonRequest(req);
-							        	showLoading();
-									},
-									success:function(res) {
-										hideLoading();
-										
-									},
-									error:function (xhr, ajaxOptions, thrownError){
-										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-							            hideLoading();
-							            if(res) {
-											if(res.errorCode == 0) {
+								ids = [];
+								objData = {};
+								checkRows.each(function (i, v) {
+									idx = $(checkRows[i].closest("tr")).index();
+									rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+									ids.push(rowData['_id']);
+								});
+
+								objData = {
+									_ids: encodeObjJsonBase64UTF8(ids)
+								};
+								// 							dsID = {
+								// 								_token : encodeObjJsonBase64UTF8(ids)
+								// 							};
+
+								startProcessSign();
+
+								function startProcessSign() {
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/einvoice_mtt/publish-hd-list',
+										data: objData,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											hideLoading();
+											if (res) {
+												if (res.errorCode == 0) {
+													hideLoading();
+													_gridMain.data("kendoGrid").dataSource.read();
+													timeoutID = setTimeout(createTDsSendTax, 1000);
+												} else {
+													alertDLSuccess(createObjectError(res).html(), function () { });
+												}
+											} else {
+												alertDLSuccess('unknown error!!!', function () { });
 												hideLoading();
-												_gridMain.data("kendoGrid").dataSource.read();		
-												timeoutID = setTimeout(createTDsSendTax, 1000);							
-											}else{
-												alertDLSuccess(createObjectError(res).html(), function(){});
 											}
-										}else{
-											alertDLSuccess('unknown error!!!', function(){});
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
 											hideLoading();
 										}
-							        }
-								});
-							}
-							
-							function createTDsSendTax(){
-								
-							}
-							
-							function signAllHD() {
-								
-							}
-							
-							
-							
-							break;
+									});
+								}
+
+								function createTDsSendTax() {
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/einvoice_mtt/create-td-send-tax-list',
+										data: objData,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											hideLoading();
+											if (res.errorCode == 0) {
+												_gridMain.data("kendoGrid").dataSource.read();
+												timeoutID = setTimeout(signAllHD, 1000);
+											} else {
+												alertDLSuccess(createObjectError(res).html(), function () { });
+												hideLoading();
+											}
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+											hideLoading();
+										}
+									});
+								}
+
+								function signAllHD() {
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/einvoice_mtt-sign/check-data-signAll',
+										data: objData,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											if (res) {
+												if (res.errorCode == 0) {
+													var responseData = res.responseData;
+													var token = responseData.Token;
+													var time = responseData.Time;
+													var numbers = responseData.Numbers;
+													var formIssueInvoiceID = responseData.FormIssueInvoiceID;
+													var taxCode = responseData.TaxCode;
+													datetimeString = responseData.DateTime;
+
+													var shd = responseData.SHD;
+													// 													  objData = {
+													// 													    _token: encodeObjJsonBase64UTF8(tokenTransaction)
+													// 													  };
+													// 													  objData['tokenTransaction'] = tokenTransaction;
+
+													var urlOrigin = window.location.origin;
+													// 													  var urlPathname = window.location.pathname;
+													var url = urlOrigin;
+													var link = taxCode + "," + time + "," + token;
+
+													url += ROOT_PATH + '/InvoiceUtility/downloadFileForSignMulti/' + link;
+
+													getCert(function (e) {
+														if (null == e) {
+															hideLoading();
+															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+															alertDLSuccess('Lấy chữ ký số không thành công.', function myFunction() { });
+														}
+
+														checkToken(function (e) {
+															if (e) {
+																showLoading();
+
+																serialNumber = serialNumber['Seri'];
+																var postEnc = new FormData();
+																postEnc.append('DateTime', datetimeString);
+																postEnc.append('SerialNumber', serialNumber);
+																postEnc.append('UrlDecode', base64.encode(base64._utf8_encode(url)));
+
+																var xhrSignMulti = new XMLHttpRequest();
+																xhrSignMulti.onreadystatechange = function () {
+																	if (this.readyState == 4) {
+																		hideLoading();
+																		if (this.status == 200) {
+																			var blob = new Blob([this.response], {
+																				type: "application/zip"
+																			});
+																			var formData = new FormData();
+																			formData.append(_csrf_name, _csrf_value);
+																			formData.append("Numbers", base64.encode(base64._utf8_encode(JSON.stringify(numbers))));
+																			formData.append("FormIssueInvoiceID", formIssueInvoiceID);
+																			formData.append("zipFile", blob);
+																			formData.append("Certificate", base64Cert.replace(/\+/g, "@"));
+																			signFileMulti(formData);
+
+																		} else if (this.status == 401) {
+																			alertDLSuccess('<span class="text-error">Lỗi trong quá trình ký tập tin.<span>',
+																				function myFunction() { });
+																		} else {
+																			alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																				function myFunction() { });
+																		}
+																	}
+																}
+																xhrSignMulti.open('POST', urlPluginSign + signMultiXML, true);
+																xhrSignMulti.timeout = 5 * 60 * 1000;
+																xhrSignMulti.responseType = 'blob'; //or arraybuffer
+																xhrSignMulti.send(postEnc);
+															}
+														});
+
+													});
+												} else {
+													$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+													hideLoading();
+													alertDLSuccess(res.responseData, function myFunction() { });
+												}
+											} else {
+												hideLoading();
+												alertDLSuccess("Lỗi khi thực hiện ký hóa đơn.",
+													function myFunction() { });
+											}
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+											hideLoading();
+										}
+									});
+								}
+
+								function signFileMulti(formData) {
+									$.ajax({
+										url: ROOT_PATH + '/main/einvoice_mtt-sign/sign-file-all',
+										type: 'POST',
+										data: formData,
+										async: false,
+										cache: false,
+										contentType: false,
+										enctype: 'multipart/form-data',
+										processData: false,
+										dataType: 'json',
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res, textStatus, xhr) {
+											hideLoading();
+											if (res) {
+												if (res.errorCode == 0) {
+													$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+													hideLoading();
+													/* timeoutID = setTimeout(callsend_cqtAll,1000); */
+													alertDLSuccess(res.responseData,
+														function myFunction() { });
+												} else {
+													alertDLSuccess(res.responseData,
+														function myFunction() { });
+												}
+											} else {
+												alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+													function myFunction() { });
+												hideLoading();
+											}
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+												function myFunction() { });
+											hideLoading();
+										}
+									});
+								}
+
+								function checkToken(cb) {
+									serialNumber = '';
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH
+											+ '/main/common/check-cert',
+										data: {
+											'cert': base64Cert
+										},
+
+										beforeSend: function (
+											req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											hideLoading();
+											if (res) {
+												if (res.errorCode == 0) {
+													serialNumber = res.responseData;
+													cb(serialNumber)
+												} else {
+													alertDLSuccess('Lỗi khi kiểm tra chữ ký.', function myFunction() { });
+												}
+											} else {
+												alertDLSuccess('Lỗi khi kiểm tra chữ ký.', function myFunction() { });
+												hideLoading();
+											}
+										},
+										error: function (
+											xhr,
+											ajaxOptions,
+											thrownError) {
+											alertDLSuccess('Lỗi khi kiểm tra chữ ký.', function myFunction() { });
+											hideLoading();
+										}
+									});
+								}
+								break;
 						case 'einvoice_mtt-sign':
 							objDataSend = {};
 							idx = $(checkRows[0].closest("tr")).index();

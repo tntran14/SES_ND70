@@ -6,6 +6,7 @@ import com.api.message.JSONRoot;
 import com.api.message.MsgRsp;
 
 import vn.sesgroup.hddt.dto.FileInfo;
+import vn.sesgroup.hddt.utility.UpdateSignedMultiBillReq;
 
 public interface EInvoiceMTTDAO {
 	public MsgRsp crud(JSONRoot jsonRoot) throws Exception;
@@ -21,6 +22,10 @@ public interface EInvoiceMTTDAO {
 	public MsgRsp importExcelAuto(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp checkSHD(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp publishHDList(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp createTDSendTaxList(JSONRoot jsonRoot) throws Exception;
+	public FileInfo getFileForSignAll(JSONRoot jsonRoot)throws Exception;
+	public MsgRsp checkSHDList(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp signAll(UpdateSignedMultiBillReq input, JSONRoot jsonRoot)throws Exception;
 //	public MsgRsp list_send_cqt(JSONRoot jsonRoot) throws Exception;
 //	public MsgRsp sendListCQT(JSONRoot jsonRoot) throws Exception;
 //	public FileInfo getFileForSignMTT(JSONRoot jsonRoot) throws Exception;

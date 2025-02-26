@@ -605,4 +605,36 @@ public class EInvoiceMTTController extends AbstractController{
 		return dto;
 	}
 	
+	@RequestMapping(value = "/create-td-send-tax-list",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO createTDSendTaxList(Locale locale, HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception {
+		List<String> ids = new ArrayList<String>();
+		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		try {
+			ids = Json.serializer().fromJson(commons.decodeBase64ToString(_ids), new TypeReference<List<String>>() {});
+		} catch (Exception e) {
+			
+		}
+
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		BaseDTO dto = new BaseDTO(req);
+		
+		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNALL);
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("ids", ids);
+		hData.put("SL", ids.size());
+		msg.setObjData(hData);
+		
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice_mtt/create-td-send-tax-list", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() != 0) {			
+			dto.setErrorCode(rspStatus.getErrorCode());
+			dto.setResponseData(rspStatus.getErrorDesc());
+			return dto;
+		}
+		return dto;
+	}
+	
 }
