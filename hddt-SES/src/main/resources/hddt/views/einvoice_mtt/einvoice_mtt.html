@@ -872,9 +872,9 @@
 								objData = {
 									_ids: encodeObjJsonBase64UTF8(ids)
 								};
-								// 							dsID = {
-								// 								_token : encodeObjJsonBase64UTF8(ids)
-								// 							};
+								dsID = {
+									_ids: encodeObjJsonBase64UTF8(ids)
+								};
 
 								startProcessSign();
 
@@ -889,10 +889,8 @@
 											showLoading();
 										},
 										success: function (res) {
-											hideLoading();
 											if (res) {
 												if (res.errorCode == 0) {
-													hideLoading();
 													_gridMain.data("kendoGrid").dataSource.read();
 													timeoutID = setTimeout(createTDsSendTax, 1000);
 												} else {
@@ -921,7 +919,6 @@
 											showLoading();
 										},
 										success: function (res) {
-											hideLoading();
 											if (res.errorCode == 0) {
 												_gridMain.data("kendoGrid").dataSource.read();
 												timeoutID = setTimeout(signAllHD, 1000);
@@ -959,13 +956,7 @@
 													datetimeString = responseData.DateTime;
 
 													var shd = responseData.SHD;
-													// 													  objData = {
-													// 													    _token: encodeObjJsonBase64UTF8(tokenTransaction)
-													// 													  };
-													// 													  objData['tokenTransaction'] = tokenTransaction;
-
 													var urlOrigin = window.location.origin;
-													// 													  var urlPathname = window.location.pathname;
 													var url = urlOrigin;
 													var link = taxCode + "," + time + "," + token;
 
@@ -973,7 +964,6 @@
 
 													getCert(function (e) {
 														if (null == e) {
-															hideLoading();
 															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 															alertDLSuccess('Lấy chữ ký số không thành công.', function myFunction() { });
 														}
@@ -991,7 +981,6 @@
 																var xhrSignMulti = new XMLHttpRequest();
 																xhrSignMulti.onreadystatechange = function () {
 																	if (this.readyState == 4) {
-																		hideLoading();
 																		if (this.status == 200) {
 																			var blob = new Blob([this.response], {
 																				type: "application/zip"
@@ -1007,9 +996,11 @@
 																		} else if (this.status == 401) {
 																			alertDLSuccess('<span class="text-error">Lỗi trong quá trình ký tập tin.<span>',
 																				function myFunction() { });
+																			hideLoading();
 																		} else {
 																			alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																				function myFunction() { });
+																			hideLoading();
 																		}
 																	}
 																}
@@ -1038,7 +1029,7 @@
 										}
 									});
 								}
-
+								let alertMS = "";
 								function signFileMulti(formData) {
 									$.ajax({
 										url: ROOT_PATH + '/main/einvoice_mtt-sign/sign-file-all',
@@ -1055,17 +1046,14 @@
 											showLoading();
 										},
 										success: function (res, textStatus, xhr) {
-											hideLoading();
 											if (res) {
 												if (res.errorCode == 0) {
-													$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
-													hideLoading();
-													/* timeoutID = setTimeout(callsend_cqtAll,1000); */
-													alertDLSuccess(res.responseData,
-														function myFunction() { });
+													alertMS += res.responseData + " ";
+													timeoutID = setTimeout(callsend_cqtAll, 1000);
 												} else {
 													alertDLSuccess(res.responseData,
 														function myFunction() { });
+													hideLoading();
 												}
 											} else {
 												alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
@@ -1076,6 +1064,76 @@
 										error: function (xhr, ajaxOptions, thrownError) {
 											alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 												function myFunction() { });
+											hideLoading();
+										}
+									});
+								}
+
+								function callsend_cqtAll() {
+									var objURL = {};
+									objURL['check'] = ROOT_PATH + '/main/einvoice_mtt-send-cqtAll/check-dataAll';
+									objURL['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-cqtAll/exec-dataAll';
+
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: objURL['check'],
+										data: dsID,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											if (res) {
+												if (res.errorCode == 0) {
+													var responseData = res.responseData;
+													dsID['tokenTransaction'] = responseData['TOKEN'];
+													$.ajax({
+														type: "POST",
+														datatype: "json",
+														url: objURL['exec'],
+														data: dsID,
+														beforeSend: function (req) {
+															initAjaxJsonRequest(req);
+															showLoading();
+														},
+														success: function (res) {
+															hideLoading();
+															if (res) {
+																if (res.errorCode == 0) {
+																	alertDLSuccess(alertMS + res.responseData,
+																		function () { });
+																} else {
+																	alertDLSuccess(createObjectError(res).html(),
+																		function () { });
+																}
+															} else {
+																alertDLSuccess('Gửi hóa đơn đến cqt lỗi.', function () { });
+															}
+															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+														},
+														error: function (xhr, ajaxOptions, thrownError) {
+															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+															hideLoading();
+														}
+													});
+
+
+
+
+												} else {
+													alertDLSuccess(createObjectError(res).html(), function () { });
+													hideLoading();
+												}
+											} else {
+												alertDLSuccess('Kiểm tra dữ liệu gửi cqt lỗi.', function () { });
+												hideLoading();
+											}
+
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
 											hideLoading();
 										}
 									});
@@ -1098,13 +1156,14 @@
 											showLoading();
 										},
 										success: function (res) {
-											hideLoading();
+											// 											hideLoading();
 											if (res) {
 												if (res.errorCode == 0) {
 													serialNumber = res.responseData;
 													cb(serialNumber)
 												} else {
 													alertDLSuccess('Lỗi khi kiểm tra chữ ký.', function myFunction() { });
+													hideLoading();
 												}
 											} else {
 												alertDLSuccess('Lỗi khi kiểm tra chữ ký.', function myFunction() { });

@@ -2193,7 +2193,169 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			
+		case Constants.MSG_ACTION_CODE.SEND_CQTALL:
+			objectId = null;
+			String id = "";
+			int count = 0;
+			String hdError = "";
+			for (JsonNode o : jsonData.at("/_ids")) {
+				id = commons.getTextJsonNode(o);
+				try {
+					objectId = new ObjectId(id);
+				} catch (Exception e) {
+				}
 
+				docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+						.append("_id", objectId).append("EInvoiceStatus", Constants.INVOICE_STATUS.PENDING)
+						.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED);
+
+				pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$match", docFind));
+				pipeline.add(new Document("$project",
+						new Document("_id", 1).append("Dir", 1).append("MTDiep", 1).append("EInvoiceDetail", 1)));
+				docTmp = null;
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+				try {
+					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+				} catch (Exception ex) {
+
+				}
+				mongoClient.close();
+
+				if (null == docTmp) {
+					count++;
+					break;
+				}
+				int invoiceNumberCurrent = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+				String dira = docTmp.get("Dir", "");
+
+				String fileNamea = "";
+				fileNamea = id + "_signed.xml";
+
+				file = new File(dira, fileNamea);
+				if (!file.exists() || !file.isFile()) {
+					count += 1;
+					hdError += invoiceNumberCurrent + ",";
+					break;
+				}
+
+				doc = commons.fileToDocument(file, true);
+				if (null == doc) {
+					count += 1;
+					hdError += invoiceNumberCurrent + ",";
+					break;
+				}
+
+				org.w3c.dom.Document rTCTNa = null;
+				org.w3c.dom.Document rTCTN1a = null;
+				String codeTTTNhana = "";
+				String MaKetQuaa = "";
+				String CQT_MLTDiepa = "";
+				Node nodeKetQuaTraCuua = null;
+				MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
+				MTDiep = docTmp.get("MTDiep", "");
+
+				try {
+					rTCTN1a = tctnService.callTraCuuThongDiep(MTDiep);
+				} catch (Exception e) {
+				}
+
+				if (rTCTN1a == null) {
+					try {
+						rTCTN1a = tctnService.callTraCuuThongDiep(MTDiep);
+					} catch (Exception e) {
+					}
+				}
+
+				XPath xPath11 = XPathFactory.newInstance().newXPath();
+				nodeKetQuaTraCuua = (Node) xPath11.evaluate("/KetQuaTraCuu", rTCTN1a, XPathConstants.NODE);
+				MaKetQuaa = commons.getTextFromNodeXML(
+						(Element) xPath11.evaluate("MaKetQua", nodeKetQuaTraCuua, XPathConstants.NODE));
+
+				if ("2".equals(MaKetQuaa)) {
+					try {
+						rTCTNa = tctnService.callTiepNhanThongDiepMTT(doc);
+					} catch (Exception e) {
+					}
+					XPath xPath = XPathFactory.newInstance().newXPath();
+					Node nodeDLHDon = (Node) xPath.evaluate("/TDiep", rTCTNa, XPathConstants.NODE);
+					codeTTTNhana = commons.getTextFromNodeXML(
+							(Element) xPath.evaluate("DLieu/TBao/TTTNhan", nodeDLHDon, XPathConstants.NODE));
+				} else {
+					Node nodeTDiep = null;
+					for (int i = 1; i <= 5; i++) {
+						if (xPath11.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuua, XPathConstants.NODE) == null)
+							break;
+						nodeTDiep = (Node) xPath11.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuua,
+								XPathConstants.NODE);
+						if (xPath11.evaluate("DLieu/*/MCCQT", nodeTDiep, XPathConstants.NODE) != null)
+							break;
+					}
+					CQT_MLTDiepa = commons.getTextFromNodeXML(
+							(Element) xPath11.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+
+					if ("202".equals(CQT_MLTDiepa)) {
+						codeTTTNhan = MaKetQuaa;
+					}
+					if ("204".equals(CQT_MLTDiepa)) {
+						count += 1;
+						hdError += invoiceNumberCurrent + ",";
+						break;
+					}
+				}
+
+				switch (codeTTTNhana) {
+				case "1":
+					count += 1;
+					hdError += invoiceNumberCurrent + ",";
+					break;
+				case "2":
+					count += 1;
+					hdError += invoiceNumberCurrent + ",";
+					break;
+				case "3":
+					count += 1;
+					hdError += invoiceNumberCurrent + ",";
+					break;
+				default:
+
+					break;
+				}
+
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+				collection.findOneAndUpdate(docFind,
+						new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.PROCESSING)
+								.append("SendCQT_Date", LocalDateTime.now()).append("InfoSendCQT",
+										new Document("Date", LocalDateTime.now()).append("UserID", header.getUserId())
+												.append("UserName", header.getUserName())
+												.append("UserFullName", header.getUserFullName()))),
+						options);
+				mongoClient.close();
+
+				name_company = removeAccent(header.getUserFullName());
+				format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+				time_dem = LocalDateTime.now();
+				time = time_dem.format(format_time);
+				System.out.println(time + name_company + " Vua gui CQT hoa don tu may tinh tien.");
+			}
+			if (count != 0) {
+				responseStatus = new MspResponseStatus(9999,
+						count + " Hóa đơn gửi cqt không thành công là : " + hdError);
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
 		default:
 			responseStatus = new MspResponseStatus(9998, Constants.MAP_ERROR.get(9998));
 			rsp.setResponseStatus(responseStatus);
