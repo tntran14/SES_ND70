@@ -269,7 +269,7 @@ public class LoginController extends AbstractController{
 	        	sbRights.append("issu-contract-expires-active|issu-contract-expires-deactive|");
 	        	
 	        	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
-	        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|");
+	        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-send-cqtAll|einvoice_mtt-sendAll-email-auto|");
 
 			}else {
         	
@@ -382,7 +382,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("tkdsmtt|tkdsmtt-export-excel-detail|tkdsmtt-export-excel-general|");
         	      	
         	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
-        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-send-cqtAll|");
+        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-sendAll-email-auto|einvoice_mtt-send-cqtAll|");
 
           	sbRights.append("statistic-report|statistic-report-export|statistic-report-backup|");
           	

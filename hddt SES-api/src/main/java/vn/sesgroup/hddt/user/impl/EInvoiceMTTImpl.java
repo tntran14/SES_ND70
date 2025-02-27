@@ -26,6 +26,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -47,6 +55,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
@@ -72,6 +81,7 @@ import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.model.DSHHDVu;
 import vn.sesgroup.hddt.model.EInvoiceExcelForm;
 import vn.sesgroup.hddt.model.EInvoiceMTTExcelForm;
+import vn.sesgroup.hddt.resources.JmsParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.EInvoiceMTTDAO;
 import vn.sesgroup.hddt.user.dao.SendMailAsyncDAO;
@@ -96,9 +106,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 	ConfigConnectMongo cfg;
 
 	@Autowired
+	private JmsTemplate jmsTemplate;
+
+	@Autowired
 	SendMailAsyncDAO sendMailAsyncDAO;
+	
 	@Autowired
 	TCTNService tctnService;
+	
 	@Autowired
 	JPUtils jpUtils;
 	Document docUpsert = null;
@@ -8503,6 +8518,224 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			responseStatus = new MspResponseStatus(9999, count + " Hóa đơn ký không thành công là : " + hdError);
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
+		}
+		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp sendMailAll(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		// CHECK SERVER ACTIVE MQ
+		boolean checkStatusMQ = false;
+		ConnectionFactory connectionFactory = null;
+		Connection connection = null;
+		Session session = null;
+		Destination destination = null;
+		MessageProducer producer = null;
+
+		try {
+			connectionFactory = jmsTemplate.getConnectionFactory();
+			connection = connectionFactory.createConnection();
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			destination = session.createQueue(JmsParams.QUEUE_BULK_MAIL);
+			producer = session.createProducer(destination);
+			producer.setDeliveryMode(DeliveryMode.PERSISTENT); // LUU DU LIEU KHI RESTART ACTIVEMQ
+			checkStatusMQ = true;
+		} catch (Exception e) {
+		}
+
+		if (!checkStatusMQ) {
+			responseStatus = new MspResponseStatus(9999, "Kết nối đến Server Send Mail không thành công.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		// END CHECK ACTIVE MQ
+
+		Document docFind = null;
+		Document docTmp = null;
+		List<Document> pipeline = null;
+		String uidTmp = commons.convertLocalDateTimeToString(LocalDateTime.now(),
+				Constants.FORMAT_DATE.FORMAT_DATE_TIME_YYYYMMDD_HHMMSS) + "-" + commons.csRandomAlphaNumbericString(10);
+		String ApiKey = "";
+		String NBanTen = "";
+		String SecretKey = "";
+		String EmailAddress = "";
+		String MailJet = "";
+		String check_mail = "";
+		MailConfig mailConfig = null;
+
+		ObjectId objectId = null;
+		for (JsonNode o : jsonData.at("/_ids")) {
+			String _id = commons.getTextJsonNode(o);
+			objectId = null;
+			try {
+				objectId = new ObjectId(_id);
+			} catch (Exception e) {
+				continue;
+			}
+
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("MCCQT", new Document("$exists", true).append("$ne", null)).append("_id", objectId);
+
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+
+			pipeline.add(
+					new Document("$lookup",
+							new Document("from", "ConfigEmail").append("let", new Document("vIssuerId", "$IssuerId"))
+									.append("pipeline", Arrays.asList(new Document("$match",
+											new Document("$expr",
+													new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))))))
+									.append("as", "ConfigEmail")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$ConfigEmail").append("preserveNullAndEmptyArrays", true)));
+
+			pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+					.append("let",
+							new Document("vIssuerId", "$IssuerId").append("vMauSoHD",
+									"$EInvoiceDetail.TTChung.MauSoHD"))
+					.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr", new Document("$and",
+							Arrays.asList(new Document("$eq", Arrays.asList("$$vIssuerId", "$IssuerId")),
+									new Document("$eq",
+											Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD"))))))))
+					.append("as", "DMMauSoKyHieu")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+
+			pipeline.add(new Document("$lookup",
+					new Document("from", "UserConFig")
+							.append("pipeline",
+									Arrays.asList(new Document("$match",
+											new Document("viewshd", "Y").append("IssuerId", header.getIssuerId()))))
+							.append("as", "UserConFig")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
+
+			pipeline.add(new Document("$lookup",
+					new Document("from", "ConfigMailJet")
+							.append("pipeline", Arrays.asList(new Document("$match", new Document("IsActive", true))))
+							.append("as", "ConfigMailJet")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$ConfigMailJet").append("preserveNullAndEmptyArrays", true)));
+
+			pipeline.add(new Document("$lookup", new Document("from", "DMFooterWeb").append("pipeline",
+					Arrays.asList(new Document("$match", new Document("IsActive", true).append("IsDelete", false)),
+							new Document("$project", new Document("Noidung", 1)), new Document("$limit", 1)))
+					.append("as", "DMFooterWeb")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMFooterWeb").append("preserveNullAndEmptyArrays", true)));
+
+			docTmp = null;
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+
+			mongoClient.close();
+			if (null == docTmp) {
+				continue;
+			}
+
+			if (docTmp.get("ConfigEmail") == null) {
+				continue;
+			}
+
+			String TaxCode = header.getUserName();
+			String Name = header.getUserFullName();
+			NBanTen = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), "");
+			MailJet = docTmp.getEmbedded(Arrays.asList("ConfigEmail", "MailJet"), "");
+
+			mailConfig = new MailConfig(docTmp.get("ConfigEmail", Document.class));
+			mailConfig.setNameSend(NBanTen);
+
+			ApiKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "ApiKey"), "");
+			SecretKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "SecretKey"), "");
+			EmailAddress = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "EmailAddress"), "");
+
+			if (!NBanTen.equals("")) {
+				if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N")) {
+					check_mail = "MailJet";
+				} else {
+					check_mail = "MailServer";
+				}
+
+				Document docInsert = new Document("IssuerId", header.getIssuerId()).append("InfoServerID", uidTmp)
+						.append("MailUsingType", check_mail).append("TaxCode", TaxCode).append("Name", Name)
+						.append("Data", docTmp).append("FuncSend", Constants.SendMailFromFunc.Bulk)
+						.append("InfoCreated",
+								new Document("CreateDate", LocalDateTime.now())
+										.append("CreateUserID", header.getUserId())
+										.append("CreateUserName", header.getUserName())
+										.append("CreateUserFullName", header.getUserFullName()));
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMail");
+				collection.insertOne(docInsert);
+				mongoClient.close();
+			}
+		}
+		if (!MailJet.equals("") && mailConfig != null && !NBanTen.equals("")) {
+
+			if (check_mail.equals("MailJet")) {
+
+				MongoClient mongoClient = cfg.mongoClient();
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+						.getCollection("LogBulkEMailInfoServer");
+				collection.insertOne(new Document("IssuerId", header.getIssuerId()).append("InfoServerID", uidTmp)
+						.append("MailUsingType", "MailJet")
+						.append("MailjetInfo", new Document("ApiKey", ApiKey).append("SecretKey", SecretKey)
+								.append("EmailAddress", EmailAddress).append("NameSend", mailConfig.getNameSend())
+
+						));
+				mongoClient.close();
+
+			} else {
+
+				boolean IsAutoSend = mailConfig.isAutoSend();
+				boolean IsSSL = mailConfig.isSSL();
+				boolean IsTLS = mailConfig.isTLS();
+
+				MongoClient mongoClient = cfg.mongoClient();
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+						.getCollection("LogBulkEMailInfoServer");
+				collection.insertOne(new Document("IssuerId", header.getIssuerId()).append("InfoServerID", uidTmp)
+						.append("MailUsingType", check_mail).append("MailServer",
+								new Document("SmtpServer", mailConfig.getSmtpServer())
+										.append("Port", mailConfig.getSmtpPort())
+										.append("EmailAddress", mailConfig.getEmailAddress())
+										.append("PassWord", mailConfig.getEmailPassword())
+										.append("NameSend", mailConfig.getNameSend()).append("IsAutoSend", IsAutoSend)
+										.append("IsSSL", IsSSL).append("IsTLS", IsTLS))
+
+				);
+				mongoClient.close();
+			}
+
+			/* INSERT DATA TO QUEUE */
+			try {
+				TextMessage objectMessage = null;
+				objectMessage = session.createTextMessage(uidTmp);
+				producer.send((Message) objectMessage);
+			} catch (Exception e) {
+			}
 		}
 		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
 		rsp.setResponseStatus(responseStatus);

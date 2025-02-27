@@ -448,5 +448,18 @@ public class EInvoiceMTTController {
 		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
 				.body(dao.signAll(input, jsonRoot));
 	}
+	
+	@RequestMapping(value = "/send-mailAll", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> sendMailAll(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.sendMailAll(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
 }
 

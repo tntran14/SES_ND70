@@ -484,8 +484,10 @@ public class EInvoiceCRUDController extends AbstractController{
 				req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
 				req.setAttribute("HTTToan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToan")));
 				req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
-				req.setAttribute("NLap", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
-				
+				if (!transaction.equals("einvoice-copy")) {
+					req.setAttribute("NLap", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+
+				}				
 				
 				if (action != "COPY" && TCTBao.equals("")) {
 					req.setAttribute("MaHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MaHD")));

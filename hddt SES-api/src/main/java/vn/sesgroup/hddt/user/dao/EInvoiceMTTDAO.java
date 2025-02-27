@@ -26,6 +26,7 @@ public interface EInvoiceMTTDAO {
 	public FileInfo getFileForSignAll(JSONRoot jsonRoot)throws Exception;
 	public MsgRsp checkSHDList(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp signAll(UpdateSignedMultiBillReq input, JSONRoot jsonRoot)throws Exception;
+	public MsgRsp sendMailAll(JSONRoot jsonRoot) throws Exception;
 //	public MsgRsp list_send_cqt(JSONRoot jsonRoot) throws Exception;
 //	public MsgRsp sendListCQT(JSONRoot jsonRoot) throws Exception;
 //	public FileInfo getFileForSignMTT(JSONRoot jsonRoot) throws Exception;

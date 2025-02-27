@@ -43,7 +43,9 @@ import vn.sesgroup.hddt.utils.SystemParams;
 	"/einvoice_mtt-del",
 	"/einvoice_mtt-send-cqt",
 	"/einvoice_mtt-send-cqtAll",
-	"/einvoice_mtt-send-emailauto"
+	"/einvoice_mtt-send-emailauto",
+	"/einvoice_mtt-sendAll-email-auto"
+	
 })
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class EInvoiceMTTActionIDController extends AbstractController{
@@ -444,6 +446,98 @@ public class EInvoiceMTTActionIDController extends AbstractController{
 			dtoRes.setErrorCode(rspStatus.getErrorCode());
 			dtoRes.setResponseData(rspStatus.getErrorDesc());
 		}
+		return dtoRes;
+	}
+	
+
+	@RequestMapping(value = "/check-data-sendAll",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO execCheckDataToSaveAll(Locale locale, HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
+		String token = "";
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+			session.removeAttribute(token);
+		}
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		
+		BaseDTO dto = new BaseDTO();
+			
+		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		if ("".equals(_ids)) {
+			dto.setErrorCode(999);
+			dto.getErrorMessages().add("Không tìm thấy thông tin hóa đơn.");
+			dto.setResponseData(Constants.MAP_ERROR.get(999));
+			return dto;
+		}
+		
+		token = commons.csRandomAlphaNumbericString(30);
+		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+		HashMap<String, String> hInfo = new HashMap<String, String>();
+		hInfo.put("TOKEN", token);
+		dto.setResponseData(hInfo);
+		dto.setErrorCode(0);
+		return dto;
+	}
+	
+	@RequestMapping(value = "/send-mailAll",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO execSendMailAll(HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
+			, @RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction) throws Exception{
+		BaseDTO dtoRes = new BaseDTO();
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();	
+		
+		/*CHECK TOKEN*/
+		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
+				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		if ("".equals(token) || !tokenTransaction.equals(token)) {
+			dtoRes.setErrorCode(1);
+			dtoRes.setResponseData("Token giao dịch không hợp lệ.");
+			return dtoRes;
+		}
+		/*END: CHECK TOKEN*/
+		
+		String actionCode = "";
+		switch (transaction) {
+		case "einvoice_mtt-sendAll-email-auto":
+			actionCode = Constants.MSG_ACTION_CODE.SEND;
+			break;
+		default:
+			dtoRes = new BaseDTO();
+			dtoRes.setErrorCode(998);
+			dtoRes.setResponseData("Không tìm thấy chức năng giao dịch.");
+			return dtoRes;
+		}
+		
+		dtoRes = new BaseDTO(req);
+		Msg msg = dtoRes.createMsg(cup, actionCode);
+		HashMap<String, Object> hData = new HashMap<>();
+
+		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		List<String> ids = new ArrayList<String>();
+		try {
+			ids = Json.serializer().fromJson(commons.decodeBase64ToString(_ids), new TypeReference<List<String>>() {
+			});
+		} catch (Exception e) {
+		}
+
+		hData.put("_ids", ids);
+		msg.setObjData(hData);
+		
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice_mtt/send-mailAll", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() == 0) {
+			dtoRes.setErrorCode(0);
+			dtoRes.setResponseData("Gửi email hóa đơn thành công.");
+		}else {
+			dtoRes.setErrorCode(rspStatus.getErrorCode());
+			dtoRes.setResponseData(rspStatus.getErrorDesc());
+		}
+		
 		return dtoRes;
 	}
 

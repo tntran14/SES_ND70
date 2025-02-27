@@ -1049,7 +1049,8 @@
 											if (res) {
 												if (res.errorCode == 0) {
 													alertMS += res.responseData + " ";
-													timeoutID = setTimeout(callsend_cqtAll, 1000);
+													callsend_cqtAll();
+													
 												} else {
 													alertDLSuccess(res.responseData,
 														function myFunction() { });
@@ -1098,13 +1099,12 @@
 															showLoading();
 														},
 														success: function (res) {
-															hideLoading();
 															if (res) {
 																if (res.errorCode == 0) {
-																	alertDLSuccess(alertMS + res.responseData,
-																		function () { });
+																	alertMS+=res.responseData + " ";
+																	sendMailAll();
 																} else {
-																	alertDLSuccess(createObjectError(res).html(),
+																	alertDLSuccess(alertMS + res.responseData,
 																		function () { });
 																}
 															} else {
@@ -1137,6 +1137,71 @@
 											hideLoading();
 										}
 									});
+								}
+								
+								function sendMailAll() {
+									var objURL = {};
+									objURL['check'] = ROOT_PATH + '/main/einvoice_mtt-sendAll-email-auto/check-data-sendAll';
+									objURL['exec'] = ROOT_PATH + '/main/einvoice_mtt-sendAll-email-auto/send-mailAll';
+									
+									$.ajax({
+										type: "POST",
+										  datatype: "json",
+										  url: objURL['check'],
+										  data: objData,
+										  beforeSend: function(req) {
+										    initAjaxJsonRequest(req);
+										    showLoading();
+										  },
+										  success: function(res) {
+											  if (res) {
+												  if (res.errorCode == 0) {
+													  var responseData = res.responseData;
+												        objData['tokenTransaction'] = responseData['TOKEN'];
+												        
+												        $.ajax({
+												        	 type: "POST",
+												             datatype: "json",
+												             url: objURL['exec'],
+												             data: objData,
+												             beforeSend: function(req) {
+												               initAjaxJsonRequest(req);
+												               showLoading();
+												             },
+												             success: function(res) {
+												                 hideLoading();
+												                 if (res) {
+												               	   	alertDLSuccess(alertMS + res.responseData,
+																	function () { });         
+												                 } else {
+												                   alertDLSuccess('Lỗi trong quá trình gửi mail.',
+												                   function() {});
+												                 }
+												               },
+												             error: function(xhr, ajaxOptions, thrownError) {
+												                 alertDLSuccess(xhr.status + " - " + xhr.responseText,
+												                 function() {});
+												                 hideLoading();
+												               }
+												        });
+													  
+													  } else {
+													        alertDLSuccess(createObjectError(res).html(),
+													                function() {});
+													              }
+											  } else {
+											      alertDLSuccess('Lỗi khi kiểm tra lúc gửi mail.',
+											      function() {});
+											      hideLoading();
+											    }
+										  },
+										  error: function(xhr, ajaxOptions, thrownError) {
+											    alertDLSuccess(xhr.status + " - " + xhr.responseText,
+											    function() {});
+											    hideLoading();
+											  }
+									});
+									
 								}
 
 								function checkToken(cb) {
