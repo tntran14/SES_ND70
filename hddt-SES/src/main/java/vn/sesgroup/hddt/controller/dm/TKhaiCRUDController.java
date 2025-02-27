@@ -317,7 +317,9 @@ public class TKhaiCRUDController extends AbstractController{
 			req.setAttribute("DCLHe", commons.getTextJsonNode(jsonData.at("/DCLHe")));
 			req.setAttribute("DCTDTu", commons.getTextJsonNode(jsonData.at("/DCTDTu")));
 			req.setAttribute("DTLHe", commons.getTextJsonNode(jsonData.at("/DTLHe")));
-			req.setAttribute("nLap", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			if (!action.equals("COPY")) {
+				req.setAttribute("nLap", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));				
+			}
 			
 			req.setAttribute("optHTHDon", commons.getTextJsonNode(jsonData.at("/HTHDon")));
 			req.setAttribute("optPThuc", commons.getTextJsonNode(jsonData.at("/PThuc")));
