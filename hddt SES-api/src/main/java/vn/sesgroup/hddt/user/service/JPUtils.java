@@ -3671,7 +3671,7 @@ else {
 			  
 				if(check > 1) {														
 		         String nam = words[1];		      
-		         reportParams.put("CNTraTNhapYear", nam);				
+//		         reportParams.put("CNTraTNhapYear", nam);				
 	      
 				String TuNgay = 	docTmp.getEmbedded(Arrays.asList("TuNgay"), "");
 				String DenNgay = 	docTmp.getEmbedded(Arrays.asList("DenNgay"), "");
@@ -3680,7 +3680,7 @@ else {
 			             nam = words[2];
 			           thang = words[1];
 			      int    tuthang = Integer.parseInt(thang);
-			   
+			      reportParams.put("CNTraTNhapYear", nam);
 			      words = DenNgay.split("/");
 		             nam = words[2];
 		           thang = words[1];
