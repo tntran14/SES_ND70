@@ -351,7 +351,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				thang1 = words1[1];
 				number1 = Integer.parseInt(thang1);
 
-				ngayluu = number + "-" + number1 + "/" + kibc;
+//				ngayluu = number + "-" + number1 + "/" + kibc;
+				ngayluu = number + "-" + number1 + "/" + nam1;
 
 				words = tungay.split("/");
 				nam = words[2];
@@ -571,8 +572,9 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				thang1 = words1[1];
 				number1 = Integer.parseInt(thang1);
 
-				ngayluu = number + "-" + number1 + "/" + kibc;
-
+//				ngayluu = number + "-" + number1 + "/" + kibc;
+				ngayluu = number + "-" + number1 + "/" + nam1;
+				
 				words = tungay.split("/");
 				nam = words[2];
 				thang = words[1];
@@ -1525,8 +1527,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				thang1 = words1[1];
 				number1 = Integer.parseInt(thang1);
 
-				ngayluu = number + "-" + number1 + "/" + KyBaoCaoForm;
-
+//				ngayluu = number + "-" + number1 + "/" + KyBaoCaoForm;
+				ngayluu = number + "-" + number1 + "/" + nam1;
 				words = TuNgayForm.split("/");
 				nam = words[2];
 				thang = words[1];
