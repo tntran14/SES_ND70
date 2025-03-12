@@ -864,7 +864,9 @@
 		            	var responseData = res.responseData;	  
 		                $('#f-einvoice_mtt-crud').find('#kh-ten-don-vi').val(res.responseData['ten_cong_ty']);
 		                $('#f-einvoice_mtt-crud').find('#kh-dia-chi').val(res.responseData['dia_chi']);
-		               /*  $('#f-einvoice_mtt-crud').find('#kh-ho-ten-nguoi-mua').val(res.responseData['ChuSoHuu']); */
+		                $('#f-einvoice_mtt-crud').find('#kh-so-dt').val(res.responseData['dien_thoai']);	
+		                
+		                alertDLSuccess("Lưu ý đây là thông tin gợi ý. Xin quý khách vui lòng kiểm tra lại thông tin !!!");
 		              }else{
 		            		$('#f-einvoice_mtt-crud').find('#kh-makhachhang,#kh-ho-ten-nguoi-mua,#kh-ten-don-vi').val('');
 		    				$('#f-einvoice_mtt-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');

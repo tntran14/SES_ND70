@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -5206,5 +5208,115 @@ try {
 			rsp.setObjData(mapDataR);
 			return rsp;
 		}
+		
+		private String convertURL(String url) {
+			Pattern pattern = Pattern.compile("/ma-so-thue/(.+)-mst-([\\d-]+)\\.html");
+			Matcher matcher = pattern.matcher(url);
 
+			if (matcher.find()) {
+				String companyName = matcher.group(1);
+				String mst = matcher.group(2);
+
+				return mst + "-" + companyName;
+			}
+			return "Invalid URL format";
+		}
+
+		private String getUrl(String taxCode) {
+			String url = "https://thuvienphapluat.vn/ma-so-thue/tra-cuu-ma-so-thue-doanh-nghiep?timtheo=ma-so-thue&tukhoa="
+					+ taxCode
+					+ "&ngaycaptu=&ngaycapden=&ngaydongmsttu=&ngaydongmstden=&vondieuletu=&vondieuleden=&loaihinh=0&nganhnghe=0&tinhthanhpho=0&quanhuyen=0&phuongxa=0";
+			try {
+				org.jsoup.nodes.Document doc = Jsoup.connect(url).userAgent(
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+						.timeout(10 * 1000).get();
+
+				Elements elements = doc.select("table tr.item_mst td").get(1).select("a[href]");
+				Element element = elements.first();
+				if (element != null) {
+					return convertURL(element.attr("href"));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return "";
+		}
+
+		@Override
+		public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception {
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			Object objData = msg.getObjData();
+
+			MsgRsp rsp = new MsgRsp(header);
+			MspResponseStatus responseStatus = null;
+
+			JsonNode jsonData = null;
+			String taxCode = "";
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+				taxCode = commons.getTextJsonNode(jsonData.at("/MST")).trim().replaceAll("\\s+", " ");
+			}
+
+			HashMap<String, String> hR = new HashMap<String, String>();
+
+			String url = "https://masothue.com/" + getUrl(taxCode);
+			try {
+				org.jsoup.nodes.Document doc = Jsoup.connect(url).userAgent(
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+						.timeout(10 * 1000).get();
+
+				Element element1 = doc.select("table.table-taxinfo thead tr").get(0);
+				String companyName = element1.text();
+				hR.put("ten_cong_ty", companyName);
+
+				Elements elements = doc.select("table.table-taxinfo tbody tr");
+				int size = elements.size();
+				if (size >= 3) {
+					elements.remove(size - 1);
+					elements.remove(size - 2);
+					elements.remove(size - 3);
+				}
+
+				Elements eTmps = null;
+				String title = "";
+				String val = "";
+				Element t = null;
+				Element v = null;
+				for (Element element : elements) {
+					eTmps = element.select("td");
+					t = eTmps.get(0);
+					v = eTmps.get(1);
+					if (v == null || t == null) {
+						break;
+					}
+					title = t.text().trim();
+					val = v.text().trim();
+					switch (title) {
+					case "Địa chỉ":
+						hR.put("dia_chi", val);
+						break;
+					case "Điện thoại":
+						hR.put("dien_thoai", val);
+						break;
+					default:
+						break;
+					}
+				}
+				System.out.println();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail.");
+				rsp.setResponseStatus(responseStatus);
+				rsp.setObjData(hR);
+				return rsp;
+			}
+
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+			rsp.setObjData(hR);
+			return rsp;
+
+		}
 }

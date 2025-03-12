@@ -3109,13 +3109,14 @@ public class CommonController extends AbstractController{
 					msg.setObjData(hData);
 					
 					JSONRoot root = new JSONRoot(msg);					
-					MsgRsp rsp = restAPI.callAPINormal("/commons/detailMaSoThue", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+					MsgRsp rsp = restAPI.callAPINormal("/commons/detailTaxCode", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 					MspResponseStatus rspStatus = rsp.getResponseStatus();
 					if(rspStatus.getErrorCode() == 0) {				
 						JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 						HashMap<String, String> hR = new HashMap<String, String>();						
 						hR.put("ten_cong_ty", commons.getTextJsonNode(jsonData.at("/ten_cong_ty")));
-						hR.put("dia_chi", commons.getTextJsonNode(jsonData.at("/dia_chi")));		
+						hR.put("dia_chi", commons.getTextJsonNode(jsonData.at("/dia_chi")));	
+						hR.put("dien_thoai", commons.getTextJsonNode(jsonData.at("/dien_thoai")));
 						dtoRes.setErrorCode(0);
 						dtoRes.setResponseData(hR);
 					}else {

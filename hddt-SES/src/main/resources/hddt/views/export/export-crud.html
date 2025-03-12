@@ -972,7 +972,8 @@ $(function(){
 	            	var responseData = res.responseData;	  
 	                $('#f-export-crud').find('#kh-ten-don-vi').val(res.responseData['ten_cong_ty']);
 	                $('#f-export-crud').find('#kh-dia-chi').val(res.responseData['dia_chi']);
-	               /*  $('#f-export-crud').find('#kh-ho-ten-ng-xuat').val(res.responseData['ChuSoHuu']); */
+	                $('#f-export-cruds').find('#kh-so-dt').val(res.responseData['dien_thoai']);	
+
 	                $("#AlertMessage").html("Lưu ý đây là thông tin gợi ý. Xin quý khách vui lòng kiểm tra lại thông tin !!!");
 	                AlertMessage = 123;
 	              }else{

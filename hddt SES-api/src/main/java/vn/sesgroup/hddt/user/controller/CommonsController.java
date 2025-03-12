@@ -488,6 +488,17 @@ public class CommonsController {
 			return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
 		}
 		
+		@RequestMapping(value = "/detailTaxCode", method = RequestMethod.POST, consumes = {
+				MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+				produces = { MediaType.APPLICATION_JSON_VALUE })
+		public ResponseEntity<?> detailTaxCode(@RequestBody JSONRoot jsonRoot) throws Exception {
+			MsgRsp rsp = dao.scratchingTaxCode(jsonRoot);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+			return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+		}
+		
 		@RequestMapping(value = "/view-pdf-tiepnhan", method = RequestMethod.POST,
 				consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
 				produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
