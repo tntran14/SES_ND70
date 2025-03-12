@@ -50,7 +50,7 @@
 										<div class="row m-b-15">
 					<div class="col-12 ">
 									<div class="c-f__wrapper">
-										<input id="ktn" name="ktn" class="form-control form-control-sm c-f__textbox" th:value="${KhoanThuNhap}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<input id="ktn" name="ktn" onchange="setTemplateForGrid('ktn',this.value)" class="form-control form-control-sm c-f__textbox" th:value="${KhoanThuNhap}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Khoản thu nhập<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
 										</fieldset>
