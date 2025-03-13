@@ -98,6 +98,10 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 				    new Document("DSCTSSDung.DNgay", -1) 
 				  )  
 				);
+    	pipeline.add(new Document("$group", new Document("_id", "$MST")
+    		    .append("document", new Document("$first", "$$ROOT"))));
+
+    	pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
         pipeline.addAll(createFacetForSearchNotSort(page));
         cursor = mongoTemplate.getCollection("DMCTSo").aggregate(pipeline).allowDiskUse(true);
         iter = cursor.iterator();
@@ -259,15 +263,16 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
             int posRowData = 1;
 
             Document docMatch = new Document("IsDelete", new Document("$ne", true));
+            buildDocMatch(name, mst, toDate, fromDate, docMatch);
             pipeline = new ArrayList<>();
 
             pipeline.add(new Document("$match", docMatch));
             pipeline.add(new Document("$match", new Document("TenNnt", new Document("$ne", null).append("$ne", ""))));
+			pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", -1)));
+			pipeline.add(new Document("$group",
+					new Document("_id", "$MST").append("document", new Document("$first", "$$ROOT"))));
 
-            buildDocMatch(name, mst, toDate, fromDate, docMatch);
-
-
-            pipeline.add(new Document("$match", docMatch));
+			pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
             cursor = mongoTemplate.getCollection("DMCTSo").aggregate(pipeline).allowDiskUse(true);
             iter = cursor.iterator();
             List<Document> rows = new ArrayList<>();
