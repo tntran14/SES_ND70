@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -168,6 +169,31 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 				objectIdUser = new ObjectId(header.getUserId());
 			}catch(Exception e) {}
 			
+			// Kiem tra da co chu ky so chua
+			pipeline = new ArrayList<Document>();
+			Date currentDate = new Date(); 
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("IsDelete",new Document("$ne", true))
+					.append("DSCTSSDung.DNgay", new Document("$gte", currentDate));  
+					;
+			pipeline.add(new Document("$match", docFind));
+
+			System.out.println();
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMCTSo");
+			docTmp = null;
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Quý khách vui lòng vào menu Hệ Thống/Chứng thư số để thêm chữ ký số vào hệ thống trước khi Đăng ký tờ khai 01.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
 			/*KIEM TRA THONG TIN KHACH HANG - USER - TINH THANH - CO QUAN THUE CO TON TAI KHONG*/
 			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", new Document("$ne", true));
 			pipeline = new ArrayList<Document>();
@@ -218,9 +244,9 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 				
 		
 			
-			MongoClient mongoClient = cfg.mongoClient();
-			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
-
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			docTmp = null;
 			try {
 				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 			} catch (Exception e) {
@@ -1541,7 +1567,7 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 	
 			 mongoClient = cfg.mongoClient();
 				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMCTSo");
-				collection.insertOne(docUpsert);
+//				collection.insertOne(docUpsert);
 				mongoClient.close();
 			//END DMCTSo
 			
