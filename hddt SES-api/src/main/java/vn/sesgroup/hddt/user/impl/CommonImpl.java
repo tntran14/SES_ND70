@@ -5296,9 +5296,6 @@ try {
 					case "Địa chỉ":
 						hR.put("dia_chi", val);
 						break;
-					case "Điện thoại":
-						hR.put("dien_thoai", val);
-						break;
 					default:
 						break;
 					}

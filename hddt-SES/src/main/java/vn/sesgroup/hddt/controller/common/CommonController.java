@@ -3116,7 +3116,6 @@ public class CommonController extends AbstractController{
 						HashMap<String, String> hR = new HashMap<String, String>();						
 						hR.put("ten_cong_ty", commons.getTextJsonNode(jsonData.at("/ten_cong_ty")));
 						hR.put("dia_chi", commons.getTextJsonNode(jsonData.at("/dia_chi")));	
-						hR.put("dien_thoai", commons.getTextJsonNode(jsonData.at("/dien_thoai")));
 						dtoRes.setErrorCode(0);
 						dtoRes.setResponseData(hR);
 					}else {
