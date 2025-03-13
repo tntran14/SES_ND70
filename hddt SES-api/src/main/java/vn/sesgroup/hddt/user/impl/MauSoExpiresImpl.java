@@ -1,8 +1,11 @@
 package vn.sesgroup.hddt.user.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -196,11 +199,12 @@ public class MauSoExpiresImpl extends AbstractDAO implements MauSoExpiresDAO {
 		MsgRsp rsp = new MsgRsp(header);
 		MspResponseStatus responseStatus = null;
 		Document docTmp = null;
-
+		int currentYear = LocalDate.now().getYear();
+		
 		List<Document> pipeline = new ArrayList<Document>();
 
 		Document docCheck = new Document("ActiveFlag", true);
-		Document docMatch = new Document("IsDelete", new Document("$ne", true)).append("NamPhatHanh", 2023);
+		Document docMatch = new Document("IsDelete", new Document("$ne", true)).append("NamPhatHanh", currentYear);
 
 		String issuer_ = null;
 		if (!"".equals(mst)) {
@@ -571,9 +575,10 @@ public class MauSoExpiresImpl extends AbstractDAO implements MauSoExpiresDAO {
 				int posRowData = 1;
 
 				pipeline = new ArrayList<Document>();
+				int currentYear = LocalDate.now().getYear();
 
 				Document docCheck = new Document("ActiveFlag", true);
-				Document docMatch = new Document("IsDelete", new Document("$ne", true)).append("NamPhatHanh", 2023);
+				Document docMatch = new Document("IsDelete", new Document("$ne", true)).append("NamPhatHanh", currentYear);
 
 				String issuer_ = null;
 				if (!"".equals(mst)) {
