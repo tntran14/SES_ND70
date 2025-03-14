@@ -387,7 +387,7 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
     }
 
     private void buildDocMatch(String name, String mst, String toDate, String fromDate, Document docMatch) {
-        Document docMatchDateTN = null;
+//        Document docMatchDateTN = null;
         Document docMatchDateDN = null;
         LocalDate dateTo = null;
         LocalDate dateFrom = null;
@@ -396,12 +396,12 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
         dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
                 null : commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
         if (null != dateFrom || null != dateTo) {
-            docMatchDateTN = new Document();
+//            docMatchDateTN = new Document();
             docMatchDateDN = new Document();
             if (null != dateFrom)
-            	docMatchDateTN.append("$gte", dateFrom);
+            	docMatchDateDN.append("$gte", dateFrom);
             if (null != dateTo)
-                docMatchDateDN.append("$lt", dateTo);
+                docMatchDateDN.append("$lte", dateTo);
         }
 
         if (!"".equals(name))
@@ -409,8 +409,8 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 
         if (!"".equals(mst))
             docMatch.append("MST", commons.regexEscapeForMongoQuery(mst));
-        if (null != docMatchDateTN)
-            docMatch.append("DSCTSSDung.TNgay", docMatchDateTN);
+//        if (null != docMatchDateTN)
+//            docMatch.append("DSCTSSDung.TNgay", docMatchDateTN);
         if (null != docMatchDateDN)
             docMatch.append("DSCTSSDung.DNgay", docMatchDateDN);
     }
