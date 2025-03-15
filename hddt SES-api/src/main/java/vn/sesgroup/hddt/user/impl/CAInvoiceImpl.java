@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -229,11 +230,18 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
             styleInfoR.setFont(fontDetail);
             styleInfoR.setLocked(false);
             setStyleInfo(styleInfoR);
-
+            
+            CreationHelper createHelper = wb.getCreationHelper();
+            CellStyle dateCellStyle = wb.createCellStyle();
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+            dateCellStyle.setAlignment(HorizontalAlignment.CENTER); // Căn giữa ngang
+            dateCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            setStyleInfo(dateCellStyle);
+            
             setCellStyle(wb);
             int countRow =1;
-            List<String> headers = Arrays.asList(new String[]{"STT", "Tên người nộp thuế", "Mã số thuế",
-                    "Nhà cung cấp", "Ngày bắt đầu", "Ngày hết hạn"});
+			List<String> headers = Arrays.asList(
+					new String[] { "STT", "Khách hàng", "Mã số thuế", "Ngày hết hạn", "Ngày bắt đầu", "Nhà cung cấp" });
             row = sheet.getRow(0);
             if (null == row)
                 row = sheet.createRow(0);
@@ -251,11 +259,11 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
                 else if (i == 2)
                     sheet.setColumnWidth(i, 6000);
                 else if (i == 3)
-                    sheet.setColumnWidth(i, 10000);
+                    sheet.setColumnWidth(i, 5000);
                 else if (i == 4)
                     sheet.setColumnWidth(i, 5000);
                 else if (i == 5)
-                    sheet.setColumnWidth(i, 5000);
+                    sheet.setColumnWidth(i, 10000);
                 else
                     sheet.setColumnWidth(i, 3000);
             }
@@ -320,24 +328,20 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
                             cell = row.getCell(3);
                             if (cell == null)
                                 cell = row.createCell(3);
-                            cell.setCellStyle(styleInfoC);
-                            cell.setCellValue(doc1.get("TTChuc", ""));
-
+                            cell.setCellStyle(dateCellStyle);
+                            cell.setCellValue(commons.convertDateToLocalDateTime(doc1.get("DNgay", Date.class)));
+                            
                             cell = row.getCell(4);
                             if (cell == null)
                                 cell = row.createCell(4);
-                            cell.setCellStyle(styleInfoL);
-                            cell.setCellValue(commons.convertLocalDateTimeToString(
-                                    commons.convertDateToLocalDateTime(doc1.get("TNgay", Date.class)),
-                                    Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+                            cell.setCellStyle(dateCellStyle);
+                            cell.setCellValue(commons.convertDateToLocalDateTime(doc1.get("TNgay", Date.class)));
 
                             cell = row.getCell(5);
                             if (cell == null)
                                 cell = row.createCell(5);
                             cell.setCellStyle(styleInfoL);
-                            cell.setCellValue(commons.convertLocalDateTimeToString(
-                                    commons.convertDateToLocalDateTime(doc1.get("DNgay", Date.class)),
-                                    Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+                            cell.setCellValue(doc1.get("TTChuc", ""));
 
                             posRowData++;
                             countRow++;
