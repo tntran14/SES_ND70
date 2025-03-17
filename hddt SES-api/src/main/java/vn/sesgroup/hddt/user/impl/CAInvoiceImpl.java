@@ -196,7 +196,7 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
             fontHeader.setFontName("Times New Roman");
             fontHeader.setItalic(false);
             fontHeader.setBold(true);
-            fontHeader.setColor(IndexedColors.WHITE.index);
+            fontHeader.setColor(IndexedColors.BLACK.index);
 
             CellStyle styleHeader = null;
             styleHeader = wb.createCellStyle();
