@@ -835,10 +835,10 @@
 			case 'back':
 				$('#divMainContent').show();
 				$('#divSubContent').hide(function(){$(this).empty();});
-				try{
-					if($('#f-einvoices').find('#grid').length > 0)
-						$('#f-einvoices').find('#grid').data("kendoGrid").dataSource.read();
-				}catch(err){}
+// 				try{
+// 					if($('#f-einvoices').find('#grid').length > 0)
+// 						$('#f-einvoices').find('#grid').data("kendoGrid").dataSource.read();
+// 				}catch(err){}
 				break;
 		
 			case 'accept':
@@ -877,6 +877,10 @@
 											if(res) {
 												if(res.errorCode == 0) {
 													$('#f-einvoice-crud').find('button[data-action="back"]').trigger('click');
+									 				try{
+								 					if($('#f-einvoices').find('#grid').length > 0)
+								 						$('#f-einvoices').find('#grid').data("kendoGrid").dataSource.read();
+								 				}catch(err){}
 												}else{
 													alertDLSuccess(createObjectError(res).html(), function(){});
 												}
