@@ -53,40 +53,46 @@
                             </div>
                           </div>
                         </div>
-                        <div class="row">
-                          <div
-                            class="col-8 col-sm-8 col-md-10 custom-field m-b-16"
-                          >
-                            <div class="c-f__wrapper">
-                             	<input class="form-control form-control-sm c-f__textbox" th:value="${PhoiHD}" th:readonly="true" th:if="${!_isedit_}" type="text" autocomplete="off"  />
-									<select class="form-control form-control-sm c-f__textbox" id="phoi" name="phoi" th:if="${_isedit_}" >
-										<option value=""></option>
-										<th:block th:if="${map_phoi != null}">
-											<option th:each="entry : ${map_phoi.entrySet()}"
-												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${PhoiHDCode == entry.key}" > </option>
-										</th:block>
-									</select>
-                              <fieldset aria-hidden="true" class="c-f__set">
-                                <legend class="c-f__legend">
-                                  <label>Phôi hóa đơn</label>
-                                </legend>
-                              </fieldset>
-                            </div>
-                          </div>
-                          <div
-                            class="col-4 col-sm-4 col-md-2 none-padding-left"
-                          >
-                       
-<button type="button"  data-action="viewimg" class="btns btns-search_auto__ses hover-up__ses w-100p m-t-0 m-b-0"
-  title="Xem hình ảnh mẫu hóa đơn" data-toggle="modal" data-target="#form">   Xem ảnh</button>
+							<div class="row">
+								<div class="col-8 col-sm-8 col-md-10 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${PhoiHD}" th:readonly="true" th:if="${!_isedit_}"
+											type="text" autocomplete="off" /> 
+<!-- 										<select -->
+<!-- 											class="form-control form-control-sm c-f__textbox" id="phoi" -->
+<!-- 											name="phoi" th:if="${_isedit_}"> -->
+<!-- 											<option value=""></option> -->
+<!-- 											<th:block th:if="${map_phoi != null}"> -->
+<!-- 												<option th:each="entry : ${map_phoi.entrySet()}" -->
+<!-- 													th:value="${entry.key}" th:utext="${entry.value}" -->
+<!-- 													th:selected="${PhoiHDCode == entry.key}"></option> -->
+<!-- 											</th:block> -->
+<!-- 										</select> -->
+
+										<input class="form-control form-control-sm c-f__textbox"
+											id="phoiInput" name="phoi" type="text" autocomplete="off"
+											placeholder="Nhập mã hóa đơn..." th:value="${PhoiHD}"
+											th:readonly="false" th:if="${_isedit_}"/>
+										<ul id="suggestions" class="autocomplete-list"></ul>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Phôi hóa đơn</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-4 col-sm-4 col-md-2 none-padding-left">
+
+									<button type="button" data-action="viewimg"
+										class="btns btns-search_auto__ses hover-up__ses w-100p m-t-0 m-b-0"
+										title="Xem hình ảnh mẫu hóa đơn" data-toggle="modal"
+										data-target="#form">Xem ảnh</button>
+								</div>
+							</div>
 
 
-
-                          </div>
-                        </div>
-                   
-
-                        <div class="row">
+							<div class="row">
                           <div class="col-12">
                         
                             <div class="row">
@@ -502,6 +508,7 @@
 		var rowsTMP = [];
 		var vIsEdit = [[${_isedit_}]];
 		_gridSub01 = $('#f-mauhd-crud').find('#grid');
+		var mapPhoi = {};
 		</script>
 		
 	 <script>
@@ -525,7 +532,72 @@ $("#loaihd").on("change",function(){
 });
 </script>
 
- <script type="text/javascript">
+<script type="text/javascript">
+$(document).ready(function () {
+    mapPhoi = {}; 
+    var $input = $("#phoiInput");
+    var $suggestions = $("#suggestions");
+
+    setTimeout(function () {
+        var map = $('#f-mauhd-crud').find('#khhd').val();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: ROOT_PATH + "/common/get-phoi",
+            data: { "loaihd_ma": map },
+            beforeSend: function (req) {
+                initAjaxJsonArrayRequest(req);
+            },
+            success: function (res) {
+                if (res && $.isArray(res)) {
+                    mapPhoi = {}; 
+                    $.each(res, function (index, item) {
+                    	 var key = item["Images"] ? item["Images"] : index;
+                        mapPhoi[key] = item["Name"];
+                    });
+                   
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.error("Lỗi khi gọi API:", thrownError);
+            }
+        });
+    }, 1000);
+
+    $input.on("click input", function () {
+        var query = $(this).val().toLowerCase();
+        $suggestions.empty();
+
+        Object.keys(mapPhoi).forEach(function (key) {
+            var value = mapPhoi[key];
+            if (!query || value.toLowerCase().includes(query)) { 
+                // Nếu query rỗng hoặc tìm thấy kết quả khớp
+                $suggestions.append(`<li data-value="${key}">${value}</li>`);
+            }
+        });
+
+        if ($suggestions.children().length > 0) {
+            $suggestions.show();
+        } else {
+            $suggestions.hide();
+        }
+    });
+
+    $suggestions.on("click", "li", function () {
+        var value = $(this).text();
+        $input.val(value);
+        $suggestions.hide();
+    });
+
+    $(document).on("click", function (event) {
+        if (!$(event.target).closest("#phoiInput, #suggestions").length) {
+            $suggestions.hide();
+        }
+    });
+});
+</script>
+
+ <!-- <script type="text/javascript">
 		$('#f-mauhd-crud #phoi').one('click',function (event) {
 			event.preventDefault();
 			var map = $('#f-mauhd-crud').find('#khhd').val();
@@ -563,7 +635,7 @@ $("#loaihd").on("change",function(){
 			        $('#phoi').trigger('click');
 			    }, 1000);
 			});
-		</script>
+		</script> -->
 	<script>
 		let currentYear = new Date().getFullYear().toString().slice(2)
 		  $('#yearCreated').val(currentYear);
@@ -575,7 +647,7 @@ $("#loaihd").on("change",function(){
 			var _val = $(this).val();
 			
 			$('#f-mauhd-crud').find('#phoi').empty();
-			$('#f-mauhd-crud').find('#phoi').append($("<option></option>").text('').val(''));
+// 			$('#f-mauhd-crud').find('#phoi').append($("<option></option>").text('').val(''));
 			
 			if('' == _val || _val == undefined) return;
 			
@@ -588,19 +660,18 @@ $("#loaihd").on("change",function(){
 				beforeSend: function(req) {
 					initAjaxJsonArrayRequest(req);
 				},
-				success:function(res) {
-					if(res && $.isArray(res)) {
-						$.each(res, function(index, item) {
-							$('#f-mauhd-crud').find('#phoi').append(
-								$("<option></option>").text(item['Name']).val(item['Images'])
-							);
-						});
-						
-					}
-				
-				},
-				error:function (xhr, ajaxOptions, thrownError){
-		        }
+				 success: function (res) {
+		                if (res && $.isArray(res)) {
+		                    mapPhoi = {}; 
+		                    $.each(res, function (index, item) {
+		                    	 var key = item["Images"] ? item["Images"] : index;
+		                        mapPhoi[key] = item["Name"];
+		                    });
+		                }
+		            },
+		            error: function (xhr, ajaxOptions, thrownError) {
+		                console.error("Lỗi khi gọi API:", thrownError);
+		            }
 			});
 		});
 
@@ -718,7 +789,7 @@ $("#loaihd").on("change",function(){
 		},
 		add: function (e, data) {
 			var id = $(this).attr('id');
-			$('#' + id + 'Name, #' + id + 'NameSystem').val('');
+			$('#' + id + 'Name, #' + id + 'NameSystem').val(''); 
 			data.submit();
 		},
 		progressall: function (e, data) {
@@ -730,6 +801,8 @@ $("#loaihd").on("change",function(){
 				if(res.errorCode == 0) {
 					$('#' + res.responseData.id).val(res.responseData.value);
 					$('#' + res.responseData.id + 'System').val(res.responseData.valueSystem);
+				} else {
+					alertDLSuccess(res.errorDesc, function(){});
 				}
 			}
 		},
@@ -792,8 +865,10 @@ $("#loaihd").on("change",function(){
             		var dataPost = {};
             		dataPost['_id'] = $('#f-mauhd-crud').find('input[name="_id"]').val();
             		dataPost['loaihd'] = $('#f-mauhd-crud').find('#loaihd').val();
-            		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoi').val();
-            		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoi').find('option:selected').text();
+//             		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoi').val();
+//             		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoi').find('option:selected').text();
+            		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoiInput').val();
+            		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoiInput').val();
             		dataPost['khhd'] = $('#f-mauhd-crud').find('#khhd').val();
             		dataPost['macqt'] = $('#f-mauhd-crud').find('#macqt').val();
             		dataPost['yearCreated'] = $('#f-mauhd-crud').find('#yearCreated').val();

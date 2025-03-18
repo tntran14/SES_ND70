@@ -514,6 +514,7 @@ public class MauHDCRUDController extends AbstractController{
 					double sizeFile = multiFile.getSize()/1024D;
 					if(sizeFile > SystemParams.MAX_SIZE_IMAGE_LOGO_KB) {
 						dto.setErrorCode(1);
+						dto.setErrorDesc("File vượt quá kích thước 200Kb");
 						return dto;
 					}
 					
