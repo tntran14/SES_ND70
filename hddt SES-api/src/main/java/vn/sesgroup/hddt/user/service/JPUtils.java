@@ -650,36 +650,36 @@ else {
 					}
 					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
 					
-					if(0 == startRowGroup) {
-						groupPageIDX++;
-						for(int i = 0; i < numberRowInPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}else if(startRowGroup <= numberRowInPage) {
-						for(int i = startRowGroup; i < numberRowInPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}else {
-						for(int i = startRowGroup; i < numberRowInPageMultiPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-						groupPageIDX++;
-						for(int i = 0; i < numberRowInPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}
+//					if(0 == startRowGroup) {
+//						groupPageIDX++;
+//						for(int i = 0; i < numberRowInPage; i++) {
+//							hItem = new HashMap<>();
+//							hItem.put("ProdName", " ");
+//							hItem.put("GroupPageIDX", groupPageIDX);
+//							arrayData.add(hItem);
+//						}
+//					}else if(startRowGroup <= numberRowInPage) {
+//						for(int i = startRowGroup; i < numberRowInPage; i++) {
+//							hItem = new HashMap<>();
+//							hItem.put("ProdName", " ");
+//							hItem.put("GroupPageIDX", groupPageIDX);
+//							arrayData.add(hItem);
+//						}
+//					}else {
+//						for(int i = startRowGroup; i < numberRowInPageMultiPage; i++) {
+//							hItem = new HashMap<>();
+//							hItem.put("ProdName", " ");
+//							hItem.put("GroupPageIDX", groupPageIDX);
+//							arrayData.add(hItem);
+//						}
+//						groupPageIDX++;
+//						for(int i = 0; i < numberRowInPage; i++) {
+//							hItem = new HashMap<>();
+//							hItem.put("ProdName", " ");
+//							hItem.put("GroupPageIDX", groupPageIDX);
+//							arrayData.add(hItem);
+//						}
+//					}
 				}else {
 					for(int i = 0; i < nodeListHHDVu.getLength(); i++) {
 						nodeTmp = nodeListHHDVu.item(i);
@@ -753,17 +753,18 @@ else {
 							groupPageIDX++;
 						}
 					}
-					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
+					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) 
+						groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
 					
-					/*ADD THEM DU LIEU CHO DU TRANG*/
-					if(startRowGroup > 0 || nodeListHHDVu.getLength() == 0) {
-						for(int i = startRowGroup; i < numberRowInPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}
+//					/*ADD THEM DU LIEU CHO DU TRANG*/
+//					if(startRowGroup > 0 || nodeListHHDVu.getLength() == 0) {
+//						for(int i = startRowGroup; i < numberRowInPage; i++) {
+//							hItem = new HashMap<>();
+//							hItem.put("ProdName", " ");
+//							hItem.put("GroupPageIDX", groupPageIDX);
+//							arrayData.add(hItem);
+//						}
+//					}
 				}
 				
 			}		
