@@ -110,12 +110,12 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			// Chờ tất cả các CompletableFuture hoàn thành
 			CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
 			// Sắp xếp lại danh sách dataList theo thứ tự số number
-			Collections.sort(listpool, (d1, d2) -> Integer.compare(d1.getNumber(), d2.getNumber()));
+			Collections.sort(listpool, (d1, d2) -> Integer.compare(d2.getNumber(), d1.getNumber()));
 			List<String> listFileNamePdfFinalAll = listpool.stream().map(PoolData::getString)
 					.collect(Collectors.toList());
 			// Đóng ExecutorService và đợi tất cả các nhiệm vụ con hoàn thành
 			executorService.shutdown();
-			executorService.shutdown();
+//			executorService.shutdown();
 			executorService.awaitTermination(2_000, TimeUnit.MILLISECONDS);
 			completableFutures.clear();
 			listpool.clear();
@@ -255,6 +255,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 
 				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
 				String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
+				int invoiceNumber = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
 				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
 				String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"),
 						"");
@@ -303,15 +304,15 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 					file = new File(dir, docTmp.get("_id") + "_final.pdf");
 					try (OutputStream fileOuputStream = new FileOutputStream(file)) {
 						baosPDF.writeTo(fileOuputStream);
-						String threadName = Thread.currentThread().getName();
+//						String threadName = Thread.currentThread().getName();
 						// Tìm vị trí của dấu gạch ngang cuối cùng trong chuỗi
-						int dashIndex = threadName.lastIndexOf("-");
+//						int dashIndex = threadName.lastIndexOf("-");
 						// Trích xuất phần tử sau dấu gạch ngang cuối cùng
-						String numberString = threadName.substring(dashIndex + 1);
+//						String numberString = threadName.substring(dashIndex + 1);
 						// Chuyển đổi chuỗi thành số nguyên
-						int number = Integer.parseInt(numberString);
+//						int number = Integer.parseInt(numberString);
 
-						listpool.add(new PoolData(number, file.getAbsolutePath()));
+						listpool.add(new PoolData(invoiceNumber, file.getAbsolutePath()));
 						//giai phong du lieu
 						fileOuputStream.close();
 						  baosPDF.close();
