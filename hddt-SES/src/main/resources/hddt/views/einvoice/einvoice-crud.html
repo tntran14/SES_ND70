@@ -750,7 +750,7 @@
 				 tong_da_co_thue = int_ttien_truoc_thue + int_ttien_thue;
 					$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(tong_da_co_thue)
 					FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);		
-					$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(tong_da_co_thue.toFixed(4)), loai_tien_tt));
+					$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(tong_da_co_thue.toFixed(4), loai_tien_tt));
 			 }else{
 				 var USD_ = parseInt(usd_, 10);
 				 tong_da_co_thue =  fl_ttien_truoc_thue + fl_ttien_thue;
@@ -1465,13 +1465,13 @@
 		
 			if(sumAmountAfterTax < 0) {
   if(viewmoney === 'Y') {
-  	$('#f-einvoice-crud').find('#tien-bang-chu').val("Điều chỉnh âm "+readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));	
+  	$('#f-einvoice-crud').find('#tien-bang-chu').val("Điều chỉnh âm "+readMoneyInWords(sumAmountAfterTax.toFixed(4)), loai_tien_tt);	
   }
   else {
-		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));	
+		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4)), loai_tien_tt);	
 	}
 } else {
-	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));	
+	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4)), loai_tien_tt);	
 }
 
 		

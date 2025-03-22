@@ -1217,7 +1217,7 @@
 		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
 			FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 			
-			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 			
 			calcTienQuyDoi();
 		}
@@ -1226,7 +1226,7 @@
 			$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
 			$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
 			$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
-			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 			
 			calcTienQuyDoi();
 		}	

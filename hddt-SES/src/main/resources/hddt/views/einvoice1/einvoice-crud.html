@@ -1554,7 +1554,7 @@
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 
             sumAmountAfterTax = sumAmountAfterTax - soTienGiam;
-    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
         } else {
         	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
@@ -1563,7 +1563,7 @@
     		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
     			
-    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
         }
 		
 	}

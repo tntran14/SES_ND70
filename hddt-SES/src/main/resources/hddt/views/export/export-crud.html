@@ -1496,7 +1496,7 @@ function calcTotalAmount(){
 		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
 		FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 		
-		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 		
 		calcTienQuyDoi();
 	}
@@ -1507,7 +1507,7 @@ function calcTotalAmount(){
 	
 		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
 		
-		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 		
 		calcTienQuyDoi();
 	}	
