@@ -1454,7 +1454,7 @@ public class EInvoiceCRUDController extends AbstractController{
 				HttpMethod.POST, root);
 		String check = "error";
 		String enoughSL = "Not Enough";
-		
+		String lock = "LOCK";
 		if (null == fileInfo) {
 			dto.setErrorCode(999);
 			dto.setResponseData("Không có thông tin file");
@@ -1463,6 +1463,13 @@ public class EInvoiceCRUDController extends AbstractController{
 		if(fileInfo.getCheck().equals(enoughSL)) {
 			dto.setErrorCode(999);
 			dto.setResponseData("Số hóa đơn còn lại không đủ để ký.");
+			return dto;
+		}
+		
+		if(fileInfo.getCheck().equals(lock))
+		{
+			dto.setErrorCode(999);
+			dto.setResponseData("Tồn tại user đang thực hiện Ký hàng loạt, vui lòng thử lại.");
 			return dto;
 		}
 		

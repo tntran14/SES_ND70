@@ -23,7 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -98,7 +100,7 @@ import vn.sesgroup.hddt.utility.UpdateSignedMultiBillReq;
 @Transactional
 public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 	private static final Logger log = LogManager.getLogger(EInvoiceImpl.class);
-
+	private final ConcurrentHashMap<String, ReentrantLock> issuerLocks_sign = new ConcurrentHashMap<>();
 	@Autowired
 	ConfigConnectMongo cfg;
 
@@ -3550,47 +3552,66 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		} catch (Exception e) {
 		}
 
-		/* NHO KIEM TRA XEM CO HD NAO DANG KY KHONG */
-		FindOneAndUpdateOptions options = null;
+		String issuerId = header.getIssuerId();
+		issuerLocks_sign.putIfAbsent(issuerId, new ReentrantLock());
+		ReentrantLock lock = issuerLocks_sign.get(issuerId);
 
-		Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-				.append("_id", objectId)
-				.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
-				.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
+		if (lock.tryLock()) {
+			try {
+				/* NHO KIEM TRA XEM CO HD NAO DANG KY KHONG */
+				FindOneAndUpdateOptions options = null;
 
-		Document fillter = new Document("_id", 1).append("IssuerId", 1).append("Dir", 1).append("FileNameXML", 1)
-				.append("MCCQT", 1).append("MTDiep", 1).append("EInvoiceDetail", 1);
+				Document docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+						.append("_id", objectId)
+						.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
+						.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
 
-		List<Document> pipeline = new ArrayList<Document>();
-		pipeline.add(new Document("$match", docFind));
-		pipeline.add(new Document("$project", fillter));
-		/* KIEM TRA THONG TIN MAU HD */
-		pipeline.add(
-				new Document("$lookup",
-						new Document("from", "DMMauSoKyHieu").append("let",
-								new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD").append("vIssuerId",
-										"$IssuerId"))
-								.append("pipeline", Arrays.asList(
-										new Document("$match", new Document("$expr", new Document("$and",
-												Arrays.asList(new Document("$gt", Arrays.asList("$ConLai", 0)),
-														new Document("$eq", Arrays.asList("$IsActive", true)),
-														new Document("$ne", Arrays.asList("$IsDelete", true)),
-														new Document("$eq",
-																Arrays.asList(new Document("$toString", "$_id"),
-																		"$$vMauSoHD")),
-														new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
-														new Document("$eq",
-																Arrays.asList("$NamPhatHanh", currentYear)))))),
-										new Document("$project", new Document("_id", 1).append("Status", 1)
-												.append("SHDHT", 1).append("SoLuong", 1).append("ConLai", 1))
+				Document fillter = new Document("_id", 1).append("IssuerId", 1).append("Dir", 1)
+						.append("FileNameXML", 1).append("MCCQT", 1).append("MTDiep", 1).append("EInvoiceDetail", 1);
 
-								)).append("as", "DMMauSoKyHieu")));
-		pipeline.add(new Document("$unwind",
-				new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
-		Document docTmp = null;
+				List<Document> pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$match", docFind));
+				pipeline.add(new Document("$project", fillter));
+				/* KIEM TRA THONG TIN MAU HD */
+				pipeline.add(
+						new Document("$lookup",
+								new Document("from", "DMMauSoKyHieu")
+										.append("let",
+												new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD")
+														.append("vIssuerId", "$IssuerId"))
+										.append("pipeline",
+												Arrays.asList(
+														new Document("$match", new Document("$expr",
+																new Document("$and", Arrays.asList(
+																		new Document("$gt",
+																				Arrays.asList("$ConLai", 0)),
+																		new Document(
+																				"$eq",
+																				Arrays.asList("$IsActive", true)),
+																		new Document(
+																				"$ne",
+																				Arrays.asList("$IsDelete", true)),
+																		new Document("$eq",
+																				Arrays.asList(new Document("$toString",
+																						"$_id"), "$$vMauSoHD")),
+																		new Document(
+																				"$eq",
+																				Arrays.asList("$IssuerId",
+																						"$$vIssuerId")),
+																		new Document("$eq",
+																				Arrays.asList("$NamPhatHanh",
+																						currentYear)))))),
+														new Document("$project",
+																new Document("_id", 1).append("Status", 1)
+																		.append("SHDHT", 1).append("SoLuong", 1)
+																		.append("ConLai", 1))
 
-		pipeline.add(
-				new Document("$lookup",
+												)).append("as", "DMMauSoKyHieu")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+				Document docTmp = null;
+
+				pipeline.add(new Document("$lookup",
 						new Document("from", "EInvoice")
 								.append("pipeline", Arrays.asList(
 										new Document("$match",
@@ -3600,243 +3621,244 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 												new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("SHDon",
 														new Document("$max", "$EInvoiceDetail.TTChung.SHDon")))))
 								.append("as", "NLap_MAX")));
-		pipeline.add(
-				new Document("$unwind", new Document("path", "$NLap_MAX").append("preserveNullAndEmptyArrays", true)));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$NLap_MAX").append("preserveNullAndEmptyArrays", true)));
 
+				MongoClient mongoClient = cfg.mongoClient();
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+				try {
+					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+				} catch (Exception e) {
 
+				}
 
-		MongoClient mongoClient = cfg.mongoClient();
-		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		try {
-			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
-		} catch (Exception e) {
+				mongoClient.close();
 
-		}
+				if (null == docTmp) {
+					return fileInfo;
+				}
+				if (null == docTmp.get("DMMauSoKyHieu")) {
+					fileInfo.setCheck("Hết số hóa đơn. Vui lòng kiểm tra lại!!!");
+					return fileInfo;
+				}
 
-		mongoClient.close();
+				// CHECK STATUS CO DC ACTIVE CHUA
+				boolean check_active = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Status"), false);
+				if (check_active == true) {
+					fileInfo.setCheck("Mẫu hóa đơn đang được admin xử lý. Vui lòng chờ trong giây lát!!!");
+					return fileInfo;
+				}
+				// END CHECK STATUS
 
-		if (null == docTmp) {
-			return fileInfo;
-		}
-		if (null == docTmp.get("DMMauSoKyHieu")) {
-			fileInfo.setCheck("Hết số hóa đơn. Vui lòng kiểm tra lại!!!");
-			return fileInfo;
-		}
+				String mauSoHdon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 
-		// CHECK STATUS CO DC ACTIVE CHUA
-		boolean check_active = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Status"), false);
-		if (check_active == true) {
-			fileInfo.setCheck("Mẫu hóa đơn đang được admin xử lý. Vui lòng chờ trong giây lát!!!");
-			return fileInfo;
-		}
-		// END CHECK STATUS
+				String ngayLap = commons.convertLocalDateTimeToString(
+						commons.convertDateToLocalDateTime(
+								docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+						"dd/MM/yyyy");
 
-		String mauSoHdon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
-
-		String ngayLap = commons.convertLocalDateTimeToString(
-				commons.convertDateToLocalDateTime(
-						docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-				"dd/MM/yyyy");
-
-		// CHECK NGAY LAP SO HOA DON LON NHAT
-		List<Document> pipeline1 = null;
-		pipeline1 = new ArrayList<Document>();
-		pipeline1.add(new Document("$match", docFind));
-		pipeline1
-				.add(new Document("$lookup", new Document("from", "EInvoice")
-						.append("pipeline",
-								Arrays.asList(
+				// CHECK NGAY LAP SO HOA DON LON NHAT
+				List<Document> pipeline1 = null;
+				pipeline1 = new ArrayList<Document>();
+				pipeline1.add(new Document("$match", docFind));
+				pipeline1.add(new Document("$lookup",
+						new Document("from", "EInvoice")
+								.append("pipeline", Arrays.asList(
 										new Document("$match",
 												new Document("IsDelete", false).append("SignStatusCode", "SIGNED")
 														.append("EInvoiceDetail.TTChung.MauSoHD", mauSoHdon)),
 										new Document("$group",
 												new Document("_id", "$EInvoiceDetail.TTChung.MauSoHD").append("SHDon",
 														new Document("$max", "$EInvoiceDetail.TTChung.SHDon")))))
-						.append("as", "NLap_MAX")));
-		pipeline1.add(
-				new Document("$unwind", new Document("path", "$NLap_MAX").append("preserveNullAndEmptyArrays", true)));
-		Document docTmp7 = null;
+								.append("as", "NLap_MAX")));
+				pipeline1.add(new Document("$unwind",
+						new Document("path", "$NLap_MAX").append("preserveNullAndEmptyArrays", true)));
+				Document docTmp7 = null;
 
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+				try {
+					docTmp7 = collection.aggregate(pipeline1).allowDiskUse(true).iterator().next();
+				} catch (Exception e) {
 
-		mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		try {
-			docTmp7 = collection.aggregate(pipeline1).allowDiskUse(true).iterator().next();
-		} catch (Exception e) {
+				}
 
-		}
+				mongoClient.close();
+				// END CHECK NGAY LAP
 
-		mongoClient.close();
-		// END CHECK NGAY LAP
+				if (docTmp7 != null) {
+					// LAY NGAY LAP SO HOA DON
+					String nl_mshd = docTmp7.getEmbedded(Arrays.asList("NLap_MAX", "_id"), "");
+					int nl_shdon = docTmp7.getEmbedded(Arrays.asList("NLap_MAX", "SHDon"), 0);
 
-		if (docTmp7 != null) {
-			// LAY NGAY LAP SO HOA DON
-			String nl_mshd = docTmp7.getEmbedded(Arrays.asList("NLap_MAX", "_id"), "");
-			int nl_shdon = docTmp7.getEmbedded(Arrays.asList("NLap_MAX", "SHDon"), 0);
-
-			Document docFindNLap = new Document("IssuerId", header.getIssuerId())
-					.append("EInvoiceDetail.TTChung.SHDon", nl_shdon)
-					.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
-					.append("EInvoiceStatus",
-							new Document("$in",
+					Document docFindNLap = new Document("IssuerId", header.getIssuerId())
+							.append("EInvoiceDetail.TTChung.SHDon", nl_shdon)
+							.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
+							.append("EInvoiceStatus", new Document("$in",
 									Arrays.asList(Constants.INVOICE_STATUS.COMPLETE, Constants.INVOICE_STATUS.PENDING,
 											Constants.INVOICE_STATUS.ERROR_CQT, Constants.INVOICE_STATUS.PROCESSING,
 											Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)))
-					.append("EInvoiceDetail.TTChung.MauSoHD", nl_mshd).append("IsDelete", false);
+							.append("EInvoiceDetail.TTChung.MauSoHD", nl_mshd).append("IsDelete", false);
 
-			Document docTmp2 = null;
+					Document docTmp2 = null;
 
-			mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-			try {
-				docTmp2 = collection.find(docFindNLap).allowDiskUse(true).iterator().next();
-			} catch (Exception e) {
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+					try {
+						docTmp2 = collection.find(docFindNLap).allowDiskUse(true).iterator().next();
+					} catch (Exception e) {
 
-			}
+					}
 
-			mongoClient.close();
+					mongoClient.close();
 
-			if (docTmp2 != null) {
-				String nlap_shd_max = commons.convertLocalDateTimeToString(
-						commons.convertDateToLocalDateTime(
-								docTmp2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-						"dd/MM/yyyy");
+					if (docTmp2 != null) {
+						String nlap_shd_max = commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(docTmp2
+										.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"dd/MM/yyyy");
 
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+						LocalDate localDate1 = LocalDate.parse(ngayLap, formatter);
+						LocalDate localDate2 = LocalDate.parse(nlap_shd_max, formatter);
+						LocalDate NHT = LocalDate.now();
+						if (localDate1.compareTo(localDate2) < 0) {
+							fileInfo.setCheck("Ngày lập hóa đơn không được nhỏ hơn ngày " + nlap_shd_max
+									+ " của hóa đơn trước đó. Vui lòng chọn lại ngày lập.");
+							return fileInfo;
+						}
+						if (localDate1.compareTo(NHT) > 0) {
+							fileInfo.setCheck(
+									"Ngày lập của hóa đơn đang ký không được lớn hơn ngày hiện tại. vui lòng chọn lại ngày lập.");
+							return fileInfo;
+						}
+
+					}
+				}
+				// CHECK TRUONG HOP CHUA CO SO HOA DON
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 				LocalDate localDate1 = LocalDate.parse(ngayLap, formatter);
-				LocalDate localDate2 = LocalDate.parse(nlap_shd_max, formatter);
 				LocalDate NHT = LocalDate.now();
-				if (localDate1.compareTo(localDate2) < 0) {
-					fileInfo.setCheck("Ngày lập hóa đơn không được nhỏ hơn ngày " + nlap_shd_max
-							+ " của hóa đơn trước đó. Vui lòng chọn lại ngày lập.");
-					return fileInfo;
-				}
 				if (localDate1.compareTo(NHT) > 0) {
 					fileInfo.setCheck(
 							"Ngày lập của hóa đơn đang ký không được lớn hơn ngày hiện tại. vui lòng chọn lại ngày lập.");
 					return fileInfo;
 				}
+				// END LAY NGAY LAP
 
+				/* AP DUNG 1 FILE TRUOC */
+				String dir = docTmp.get("Dir", "");
+				String fileName = docTmp.get("FileNameXML", "");
+				File file = new File(dir, fileName);
+
+				if (!file.exists())
+					return fileInfo;
+				String idDMMSKH = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
+				ObjectId objectIdMS = null;
+				try {
+					objectIdMS = new ObjectId(idDMMSKH);
+				} catch (Exception e) {
+				}
+				/* TAO SO HD VA GHI DU LIEU VO FILE */
+				int checkshd = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+				int checkshdht = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SHDHT"), 0);
+				int sl = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0);
+				int cl = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "ConLai"), 0);
+				int checktontai = sl - cl;
+				int ktshdht = 0;
+				/// kiem tra chưa co bien nhung da co hoa don
+				// tim hoa don moi nhat
+				if (checkshdht == 0 && checktontai > 0) {
+					pipeline = null;
+					Document docMatch = new Document("IssuerId", header.getIssuerId())
+							.append("EInvoiceDetail.TTChung.MauSoHD", idDMMSKH).append("IsDelete", false)
+							.append("EInvoiceStatus", new Document("$in", Arrays.asList("DELETED", "DELETE",
+									"ERROR_CQT", "XOABO", "COMPLETE", "PROCESSING")));
+
+					pipeline = new ArrayList<Document>();
+					pipeline.add(new Document("$match", docMatch));
+					pipeline.add(new Document("$addFields", new Document("SHDon", new Document("$ifNull",
+							Arrays.asList("$EInvoiceDetail.TTChung.SHDon", Integer.MAX_VALUE)))));
+					pipeline.add(new Document("$sort",
+							new Document("EInvoiceDetail.TTChung.MauSoHD", -1).append("SHDon", -1).append("_id", -1)));
+					Document docTmp1 = null;
+
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+					try {
+						docTmp1 = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+					} catch (Exception e) {
+
+					}
+
+					mongoClient.close();
+
+					ktshdht = docTmp1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+				}
+				///////////////// sau khi check lay ra shd lon nhat
+				if (ktshdht > 0) {
+					checkshdht = ktshdht;
+				}
+
+				int getSL = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0);
+				int eInvoiceNumber = 0;
+
+				if (checkshd == 0) {
+					eInvoiceNumber = checkshdht + 1;
+				} else {
+					eInvoiceNumber = checkshd;
+				}
+				int sht = checkshdht + 1;
+				int CL = getSL - sht;
+
+				/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD */
+				org.w3c.dom.Document doc = commons.fileToDocument(file);
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", doc, XPathConstants.NODE);
+				Node nodeTmp = null;
+				nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+
+				Element elementSub = (Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE);
+				if (null == elementSub) {
+					elementSub = doc.createElement("SHDon");
+					elementSub.setTextContent(String.valueOf(eInvoiceNumber));
+					nodeTmp.appendChild(elementSub);
+				} else {
+					elementSub.setTextContent(String.valueOf(eInvoiceNumber));
+				}
+
+				fileInfo.setFileName(fileName);
+				fileInfo.setContentFile(commons.docW3cToByte(doc));
+
+				/* UPDATE EINVOICE - STATUS */
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+				collection.findOneAndUpdate(docFind,
+						new Document("$set", new Document("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber)
+								.append("EInvoiceStatus", "PENDING")),
+						options);
+				mongoClient.close();
+				if (checkshd == 0) {
+					Document docFindMS = null;
+					docFindMS = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+							.append("IsActive", true).append("_id", objectIdMS);
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
+					collection.findOneAndUpdate(docFindMS,
+							new Document("$set", new Document("ConLai", CL).append("SHDHT", sht)), options);
+					mongoClient.close();
+				}
+			} finally {
+				lock.unlock();
 			}
-		}
-		// CHECK TRUONG HOP CHUA CO SO HOA DON
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
-		LocalDate localDate1 = LocalDate.parse(ngayLap, formatter);
-		LocalDate NHT = LocalDate.now();
-		if (localDate1.compareTo(NHT) > 0) {
-			fileInfo.setCheck(
-					"Ngày lập của hóa đơn đang ký không được lớn hơn ngày hiện tại. vui lòng chọn lại ngày lập.");
-			return fileInfo;
-		}
-		// END LAY NGAY LAP
-
-		/* AP DUNG 1 FILE TRUOC */
-		String dir = docTmp.get("Dir", "");
-		String fileName = docTmp.get("FileNameXML", "");
-		File file = new File(dir, fileName);
-
-		if (!file.exists())
-			return fileInfo;
-		String idDMMSKH = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
-		ObjectId objectIdMS = null;
-		try {
-			objectIdMS = new ObjectId(idDMMSKH);
-		} catch (Exception e) {
-		}
-		/* TAO SO HD VA GHI DU LIEU VO FILE */
-		int checkshd = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
-		int checkshdht = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SHDHT"), 0);
-		int sl = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0);
-		int cl = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "ConLai"), 0);
-		int checktontai = sl - cl;
-		int ktshdht = 0;
-///kiem tra chưa co bien nhung da co hoa don
-//tim hoa don moi nhat
-		if (checkshdht == 0 && checktontai > 0) {
-			pipeline = null;
-			Document docMatch = new Document("IssuerId", header.getIssuerId())
-					.append("EInvoiceDetail.TTChung.MauSoHD", idDMMSKH).append("IsDelete", false)
-					.append("EInvoiceStatus", new Document("$in",
-							Arrays.asList("DELETED", "DELETE", "ERROR_CQT", "XOABO", "COMPLETE", "PROCESSING")));
-
-			pipeline = new ArrayList<Document>();
-			pipeline.add(new Document("$match", docMatch));
-			pipeline.add(new Document("$addFields", new Document("SHDon",
-					new Document("$ifNull", Arrays.asList("$EInvoiceDetail.TTChung.SHDon", Integer.MAX_VALUE)))));
-			pipeline.add(new Document("$sort",
-					new Document("EInvoiceDetail.TTChung.MauSoHD", -1).append("SHDon", -1).append("_id", -1)));
-			Document docTmp1 = null;
-
-
-			mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-			try {
-				docTmp1 = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
-			} catch (Exception e) {
-
-			}
-
-			mongoClient.close();
-
-			ktshdht = docTmp1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
-		}
-/////////////////sau khi check lay ra shd lon nhat
-		if (ktshdht > 0) {
-			checkshdht = ktshdht;
-		}
-
-		int getSL = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0);
-		int eInvoiceNumber = 0;
-
-		if (checkshd == 0) {
-			eInvoiceNumber = checkshdht + 1;
 		} else {
-			eInvoiceNumber = checkshd;
-		}
-		int sht = checkshdht + 1;
-		int CL = getSL - sht;
-
-		/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD */
-		org.w3c.dom.Document doc = commons.fileToDocument(file);
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", doc, XPathConstants.NODE);
-		Node nodeTmp = null;
-		nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
-
-		Element elementSub = (Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE);
-		if (null == elementSub) {
-			elementSub = doc.createElement("SHDon");
-			elementSub.setTextContent(String.valueOf(eInvoiceNumber));
-			nodeTmp.appendChild(elementSub);
-		} else {
-			elementSub.setTextContent(String.valueOf(eInvoiceNumber));
-		}
-
-		fileInfo.setFileName(fileName);
-		fileInfo.setContentFile(commons.docW3cToByte(doc));
-
-		/* UPDATE EINVOICE - STATUS */
-		options = new FindOneAndUpdateOptions();
-		options.upsert(false);
-		options.maxTime(5000, TimeUnit.MILLISECONDS);
-		options.returnDocument(ReturnDocument.AFTER);
-
-		 mongoClient = cfg.mongoClient();
-		 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		collection.findOneAndUpdate(docFind, new Document("$set",
-				new Document("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber).append("EInvoiceStatus", "PENDING")),
-				options);	
-		mongoClient.close();
-		if (checkshd == 0) {
-			Document docFindMS = null;
-			docFindMS = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-					.append("IsActive", true).append("_id", objectIdMS);
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
-			collection.findOneAndUpdate(docFindMS,
-					new Document("$set", new Document("ConLai", CL).append("SHDHT", sht)), options);
-			mongoClient.close();
-		
+			fileInfo.setCheck("Tồn tại user đang thực hiện Ký, vui lòng thử lại.");
+			return fileInfo;
 		}
 		return fileInfo;
 	}
@@ -8556,7 +8578,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		rsp.setObjData(mapDataR);
 		return rsp;
 	}
-
+	 
 	@Override
 	public FileInfo getFileForSignAll(JSONRoot jsonRoot) throws Exception {
 				FileInfo fileInfo = new FileInfo();				
@@ -8667,7 +8689,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					
 					
 					
-					
+			
 					IdMauSo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 					try {
 						objectIdMS = new ObjectId(IdMauSo);
@@ -8690,189 +8712,179 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					}
 				}
 
-					
-				for(JsonNode o: jsonData.at("/id")) {					  
-					String _id = commons.getTextJsonNode(o);	
-				int currentYear = LocalDate.now().get(ChronoField.YEAR);
-				shdky = 0;
-				ObjectId objectId = null;
-				try {
-					objectId = new ObjectId(_id);
-				}catch(Exception e) {}
-				
-				/*NHO KIEM TRA XEM CO HD NAO DANG KY KHONG*/
-			
-				Document fillter = new Document("_id", 1)
-						.append("IssuerId", 1)
-						.append("Dir", 1)
-						.append("FileNameXML", 1)				
-						.append("MCCQT", 1)
-						.append("MTDiep", 1)
-						.append("EInvoiceDetail", 1);
-				
-				 docFind = new Document("IssuerId", header.getIssuerId())
-						.append("IsDelete", new Document("$ne", true)).append("_id", objectId)
-						.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
-						.append("SignStatusCode", new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
-				
-				List<Document> pipeline = new ArrayList<Document>();
-				pipeline.add(new Document("$match", docFind));
-				pipeline.add(new Document("$project", fillter));
-				/*KIEM TRA THONG TIN MAU HD*/
-				pipeline.add(
-					new Document("$lookup", 
-						new Document("from", "DMMauSoKyHieu")
-						.append("let", new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD").append("vIssuerId", "$IssuerId"))
-						.append("pipeline", 
-							Arrays.asList(
-								new Document("$match",
-									new Document("$expr", 
-										new Document("$and", 
-											Arrays.asList(
-												new Document("$gt", Arrays.asList("$ConLai", 0)),
-												new Document("$eq", Arrays.asList("$IsActive", true)),
-												new Document("$ne", Arrays.asList("$IsDelete", true)),
-												new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
-												new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
-												new Document("$eq", Arrays.asList("$NamPhatHanh", currentYear))
-											)
-										)
-									)
-								),
-								new Document("$project", new Document("_id", 1).append("Status", 1).append("SHDHT", 1).append("SoLuong", 1).append("ConLai", 1).append("TuSo", 1))
+				String issuerId = header.getIssuerId();
+				issuerLocks_sign.putIfAbsent(issuerId, new ReentrantLock());
+				ReentrantLock lock = issuerLocks_sign.get(issuerId);
 
-							)
-						)
-						.append("as", "DMMauSoKyHieu")
-					)
-				);
-				pipeline.add(new Document("$unwind", new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
-				
-				Document docTmp = null;
-			
-				
-				MongoClient mongoClient = cfg.mongoClient();
-				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-				try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-					
-				mongoClient.close();
-				
-				if(null == docTmp) {
-					return fileInfo;
-				}	
-				 docFind2= new Document("IssuerId", header.getIssuerId())
-						.append("IsDelete", new Document("$ne", true)).append("_id", objectIdMS);
-				if(IDMS == "") {
-					IDMS = IdMauSo;
-				}
-				if(IDMS != "" && !IDMS.equals(IdMauSo)) {
-					fileInfo.setFormIssueInvoiceID(IDMS);
-					fileInfo.setCheck("error");
-					return fileInfo;
-				}
-				try {
-					objectIdMS = new ObjectId(IdMauSo);
-				}catch(Exception e) {}
-			   
-				/*AP DUNG 1 FILE TRUOC*/
-				String dir = docTmp.get("Dir", "");
-				String fileName = docTmp.get("FileNameXML", "");
-				File file = new File(dir, fileName);
-				
-				if(!file.exists()) return fileInfo;
-			
-				/*TAO SO HD VA GHI DU LIEU VO FILE*/
-			
-				int shdcheck  = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail","TTChung","SHDon"), 0);
-					if(shdcheck > 0) {
-							 eInvoiceNumber = shdcheck;
-							
-					}
-					else {		
-				 eInvoiceNumber = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0)
-						- docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "ConLai"), 0)
-						+ docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "TuSo"), 0);
-					shdky +=1;
-				// eInvoiceNumber = eInvoiceNumber + shd;
-				// shd  = shd +1 ;
-					}
-					checkshd = eInvoiceNumber;
-				/*DOC DU LIEU XML, VA GHI DU LIEU VO SO HD*/
-					billNumbers.add((long) eInvoiceNumber);
-				/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD */
-				org.w3c.dom.Document doc = commons.fileToDocument(file);
-				XPath xPath = XPathFactory.newInstance().newXPath();
-				Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", doc, XPathConstants.NODE);
-				
-			
-				
-				
-				Node nodeTmp = null;
-				nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+				if (lock.tryLock()) {
+					try {
+						for (JsonNode o : jsonData.at("/id")) {
+							String _id = commons.getTextJsonNode(o);
+							int currentYear = LocalDate.now().get(ChronoField.YEAR);
+							shdky = 0;
+							ObjectId objectId = null;
+							try {
+								objectId = new ObjectId(_id);
+							} catch (Exception e) {
+							}
 
-				Element elementSub = (Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE);
-				if (null == elementSub) {
-					elementSub = doc.createElement("SHDon");
-					elementSub.setTextContent(String.valueOf(eInvoiceNumber));
-					nodeTmp.appendChild(elementSub);
+							/* NHO KIEM TRA XEM CO HD NAO DANG KY KHONG */
+
+							Document fillter = new Document("_id", 1).append("IssuerId", 1).append("Dir", 1)
+									.append("FileNameXML", 1).append("MCCQT", 1).append("MTDiep", 1)
+									.append("EInvoiceDetail", 1);
+
+							docFind = new Document("IssuerId", header.getIssuerId())
+									.append("IsDelete", new Document("$ne", true)).append("_id", objectId)
+									.append("EInvoiceStatus", new Document("$in", Arrays.asList("CREATED", "PENDING")))
+									.append("SignStatusCode",
+											new Document("$in", Arrays.asList("NOSIGN", "PROCESSING")));
+
+							List<Document> pipeline = new ArrayList<Document>();
+							pipeline.add(new Document("$match", docFind));
+							pipeline.add(new Document("$project", fillter));
+							/* KIEM TRA THONG TIN MAU HD */
+							pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu").append("let",
+									new Document("vMauSoHD", "$EInvoiceDetail.TTChung.MauSoHD").append("vIssuerId",
+											"$IssuerId"))
+									.append("pipeline", Arrays.asList(
+											new Document("$match", new Document("$expr", new Document("$and",
+													Arrays.asList(new Document("$gt", Arrays.asList("$ConLai", 0)),
+															new Document("$eq", Arrays.asList("$IsActive", true)),
+															new Document("$ne", Arrays.asList("$IsDelete", true)),
+															new Document("$eq",
+																	Arrays.asList(new Document("$toString", "$_id"),
+																			"$$vMauSoHD")),
+															new Document("$eq",
+																	Arrays.asList("$IssuerId", "$$vIssuerId")),
+															new Document("$eq",
+																	Arrays.asList("$NamPhatHanh", currentYear)))))),
+											new Document("$project",
+													new Document("_id", 1).append("Status", 1).append("SHDHT", 1)
+															.append("SoLuong", 1).append("ConLai", 1).append("TuSo", 1))
+
+									)).append("as", "DMMauSoKyHieu")));
+							pipeline.add(new Document("$unwind",
+									new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+
+							Document docTmp = null;
+
+							MongoClient mongoClient = cfg.mongoClient();
+							MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+									.getCollection("EInvoice");
+							try {
+								docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+
+							mongoClient.close();
+
+							if (null == docTmp) {
+								return fileInfo;
+							}
+							docFind2 = new Document("IssuerId", header.getIssuerId())
+									.append("IsDelete", new Document("$ne", true)).append("_id", objectIdMS);
+							if (IDMS == "") {
+								IDMS = IdMauSo;
+							}
+							if (IDMS != "" && !IDMS.equals(IdMauSo)) {
+								fileInfo.setFormIssueInvoiceID(IDMS);
+								fileInfo.setCheck("error");
+								return fileInfo;
+							}
+							try {
+								objectIdMS = new ObjectId(IdMauSo);
+							} catch (Exception e) {
+							}
+
+							/* AP DUNG 1 FILE TRUOC */
+							String dir = docTmp.get("Dir", "");
+							String fileName = docTmp.get("FileNameXML", "");
+							File file = new File(dir, fileName);
+
+							if (!file.exists())
+								return fileInfo;
+
+							/* TAO SO HD VA GHI DU LIEU VO FILE */
+
+							int shdcheck = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+							if (shdcheck > 0) {
+								eInvoiceNumber = shdcheck;
+
+							} else {
+								eInvoiceNumber = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "SoLuong"), 0)
+										- docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "ConLai"), 0)
+										+ docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "TuSo"), 0);
+								shdky += 1;
+								// eInvoiceNumber = eInvoiceNumber + shd;
+								// shd = shd +1 ;
+							}
+							checkshd = eInvoiceNumber;
+							/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD */
+							billNumbers.add((long) eInvoiceNumber);
+							/* DOC DU LIEU XML, VA GHI DU LIEU VO SO HD */
+							org.w3c.dom.Document doc = commons.fileToDocument(file);
+							XPath xPath = XPathFactory.newInstance().newXPath();
+							Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", doc,
+									XPathConstants.NODE);
+
+							Node nodeTmp = null;
+							nodeTmp = (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+
+							Element elementSub = (Element) xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE);
+							if (null == elementSub) {
+								elementSub = doc.createElement("SHDon");
+								elementSub.setTextContent(String.valueOf(eInvoiceNumber));
+								nodeTmp.appendChild(elementSub);
+							} else {
+								elementSub.setTextContent(String.valueOf(eInvoiceNumber));
+							}
+							fileInfo.setFileName(fileName);
+							fileInfo.setContentFile(commons.docW3cToByte(doc));
+
+							GetXMLInfoXMLDTO getXMLInfoXMLDTO = null;
+							getXMLInfoXMLDTO = new GetXMLInfoXMLDTO();
+							getXMLInfoXMLDTO.setFileName(file.getName());
+							getXMLInfoXMLDTO.setFileData(commons.docW3cToByte(doc));
+							getXMLInfoXMLDTO.setShd(eInvoiceNumber);
+							getXMLInfoXMLDTO.setIDMSHDon(IdMauSo);
+							arrFileInfos.add(getXMLInfoXMLDTO);
+
+							/* UPDATE EINVOICE - STATUS */
+							options = new FindOneAndUpdateOptions();
+							options.upsert(false);
+							options.maxTime(5000, TimeUnit.MILLISECONDS);
+							options.returnDocument(ReturnDocument.AFTER);
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+							collection.findOneAndUpdate(docFind,
+									new Document("$set", new Document("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber)
+											.append("EInvoiceStatus", "PENDING")
+
+									), options);
+							mongoClient.close();
+
+							if (shdky != 0) {
+
+								mongoClient = cfg.mongoClient();
+								collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
+								collection.findOneAndUpdate(docFind2,
+										new Document("$inc", new Document("ConLai", -1).append("SHDHT", +1)),
+
+										options);
+								mongoClient.close();
+							}
+						}
+					} finally {
+						lock.unlock();
+					}
 				} else {
-					elementSub.setTextContent(String.valueOf(eInvoiceNumber));
+					fileInfo.setCheck("LOCK");
+					return fileInfo;
 				}
-				fileInfo.setFileName(fileName);
-				fileInfo.setContentFile(commons.docW3cToByte(doc));
-				
-				GetXMLInfoXMLDTO getXMLInfoXMLDTO = null;
-				getXMLInfoXMLDTO = new GetXMLInfoXMLDTO();
-				getXMLInfoXMLDTO.setFileName(file.getName());		
-				getXMLInfoXMLDTO.setFileData(commons.docW3cToByte(doc));	
-				getXMLInfoXMLDTO.setShd(eInvoiceNumber);
-				getXMLInfoXMLDTO.setIDMSHDon(IdMauSo);
-				arrFileInfos.add(getXMLInfoXMLDTO);
 
-				/*UPDATE EINVOICE - STATUS*/
-				options = new FindOneAndUpdateOptions();
-				options.upsert(false);
-				options.maxTime(5000, TimeUnit.MILLISECONDS);
-				options.returnDocument(ReturnDocument.AFTER);
-				
-				
-				mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-				collection.findOneAndUpdate(
-						docFind,
-						new Document("$set", 
-							new Document("EInvoiceDetail.TTChung.SHDon", eInvoiceNumber)
-							.append("EInvoiceStatus", "PENDING")
-						
-						),
-						options
-					);		
-				mongoClient.close();
-				
-				
-				if(shdky != 0) {
-				
-					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
-					collection.findOneAndUpdate(
-							docFind2,
-							new Document("$inc", 
-									new Document("ConLai", -1).append("SHDHT", +1)
-								), 
-
-						
-							options
-						);
-					mongoClient.close();
-				}
-			
-			}
-		
-				
 				fileInfo.setCheck("");
 				fileInfo.setFormIssueInvoiceID(IDMS);
 				fileInfo.setNumbers(billNumbers);
