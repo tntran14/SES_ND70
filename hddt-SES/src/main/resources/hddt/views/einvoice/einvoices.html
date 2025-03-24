@@ -1652,7 +1652,7 @@
 																									if(res){
 																										if(res.errorCode == 0) { 
 																											hideLoading();
-																										     _gridMain.data("kendoGrid").dataSource.read();
+// 																										     _gridMain.data("kendoGrid").dataSource.read();
 																												  timeoutID = setTimeout(callsend_cqt, 1000);
 															
 																										}else{
@@ -1812,14 +1812,16 @@
 							                                  hideLoading();
 							                                  if(res) {
 							                                    if(res.errorCode == 0) {
-							                                     _gridMain.data("kendoGrid").dataSource.read();
+// 							                                     _gridMain.data("kendoGrid").dataSource.read();
 																											 	
 															 timeoutID2 = setTimeout(callrefesh_cqt, 2000);
 																
 							                                    }else{
+							                                    	_gridMain.data("kendoGrid").dataSource.read();
 							                                      alertDLSuccess(createObjectError(res).html(), function(){});
 							                                    }
 							                                  }else{
+							                                	  _gridMain.data("kendoGrid").dataSource.read();
 							                                	  alertDLSuccess(
 																			'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																			function myFunction() {
@@ -1831,15 +1833,18 @@
 							                                  }
 							                                },
 							                                error:function (xhr, ajaxOptions, thrownError){
+							                                	_gridMain.data("kendoGrid").dataSource.read();
 							                                  alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 							                                        hideLoading();
 							                                    }
 							                              });
 							                          
 							                        }else{
+							                        	_gridMain.data("kendoGrid").dataSource.read();
 							                          alertDLSuccess(createObjectError(res).html(), function(){});
 							                        }
 							                      }else{
+							                    	  _gridMain.data("kendoGrid").dataSource.read();
 							                    	  alertDLSuccess(
 																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																function myFunction() {
@@ -1851,6 +1856,7 @@
 							                      }
 							                    },
 							                    error:function (xhr, ajaxOptions, thrownError){
+							                    	_gridMain.data("kendoGrid").dataSource.read();
 							                      alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 							                            hideLoading();
 							                        }
@@ -1908,17 +1914,18 @@
 																						success:function(res) {
 																							hideLoading();
 																							if(res) {
-																								if(res.errorCode == 0) {
-																									_gridMain.data("kendoGrid").dataSource.read();
-																								}else{
+																								if(res.errorCode != 0) {
 																									alertDLSuccess(createObjectError(res).html(), function(){});
 																								}
+                                                                                                	
 																							}else{
 																								alertDLSuccess('unknown error!!!', function(){});
 																								hideLoading();
 																							}
+																							_gridMain.data("kendoGrid").dataSource.read();
 																						},
 																						error:function (xhr, ajaxOptions, thrownError){
+																							_gridMain.data("kendoGrid").dataSource.read();
 																							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 																				            hideLoading();
 																				        }
@@ -1927,27 +1934,33 @@
 																				
 																		
 																		}else{
+																			_gridMain.data("kendoGrid").dataSource.read();
 																			alertDLSuccess(createObjectError(res).html(), function(){});
 																		}
 																	}else{
+																		_gridMain.data("kendoGrid").dataSource.read();
 																		alertDLSuccess('unknown error!!!', function(){});
 																		hideLoading();
 																	}
 																},
 																error:function (xhr, ajaxOptions, thrownError){
+																	_gridMain.data("kendoGrid").dataSource.read();
 																	alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 														            hideLoading();
 														        }
 															});
 														}else{
+															_gridMain.data("kendoGrid").dataSource.read();
 															alertDLSuccess(createObjectError(res).html(), function(){});
 														}
 													}else{
+														_gridMain.data("kendoGrid").dataSource.read();
 														alertDLSuccess('unknown error!!!', function(){});
 														hideLoading();
 													}
 												},
 												error:function (xhr, ajaxOptions, thrownError){
+													_gridMain.data("kendoGrid").dataSource.read();
 													alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 										            hideLoading();
 										        }
