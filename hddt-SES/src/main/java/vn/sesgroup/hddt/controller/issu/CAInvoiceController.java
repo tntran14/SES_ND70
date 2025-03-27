@@ -147,12 +147,24 @@ public class CAInvoiceController extends AbstractController {
 				for (JsonNode row : rows) {
 					hItem = new HashMap<String, String>();
 
-//					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
 					hItem.put("TenNnt", commons.getTextJsonNode(row.at("/TenNnt")));
 					hItem.put("MST", commons.getTextJsonNode(row.at("/MST")));
 					hItem.put("TenNCC", commons.getTextJsonNode(row.at("/TenNCC")));
 					hItem.put("TuNgay", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/TuNgay").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					hItem.put("DenNgay",commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/DenNgay").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					
+					hItem.put("IssuerPhone", commons.getTextJsonNode(row.at("/IssuerPhone")));
+					hItem.put("IssuerEmail", commons.getTextJsonNode(row.at("/IssuerEmail")));
+					
+					hItem.put("NameUser", commons.getTextJsonNode(row.at("/NameUser")));
+					hItem.put("EmailUser", commons.getTextJsonNode(row.at("/EmailUser")));
+					hItem.put("PhoneUser", commons.getTextJsonNode(row.at("/PhoneUser")));
+					hItem.put("EmailUserLh", commons.getTextJsonNode(row.at("/EmailUserLh")));
+					
+					hItem.put("TKhaiName", commons.getTextJsonNode(row.at("/TKhaiName")));
+					hItem.put("TKhaiEmail", commons.getTextJsonNode(row.at("/TKhaiEmail")));
+					hItem.put("TKhaiPhone", commons.getTextJsonNode(row.at("/TKhaiPhone")));
+					
 					grid.getRows().add(hItem);
 				}
 			}

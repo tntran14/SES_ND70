@@ -124,7 +124,6 @@
 				$(function(){
 					dateInputFormat($('#f-ca-invoice').find('#to-date'));
 					dateInputFormat($('#f-ca-invoice').find('#from-date'));
-					
 					_gridMain.kendoGrid({
 						dataSource: new kendo.data.DataSource({
 							transport: {
@@ -187,38 +186,83 @@
 				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
 				        },
 				        columns: [
-				        	{field: 'STT', width: '30px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				        	{field: 'STT', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
 				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
 				  			},
-				  			{field: 'isCheck', title: '', width: '30px', encoded: false
+				  			{field: 'isCheck', title: '', width: '50px', encoded: false
 								, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
 								, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 							},
 				  	
-							{field: 'TenNnt', width: '220px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Khách hàng</a>',
+							{field: 'TenNnt', width: '300px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Khách hàng</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
-							{field: 'MST', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+							{field: 'MST', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 							
-							{field: 'DenNgay', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày hết hạn</a>',
+							{field: 'DenNgay', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày hết hạn</a>',
 								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 							
-							{field: 'TuNgay', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày bắt đầu</a>',
+							{field: 'TuNgay', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày bắt đầu</a>',
 								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 							
-							{field: 'TenNCC', width: '180px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên nhà cung cấp</a>',
+							{field: 'TenNCC', width: '300px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên nhà cung cấp</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'IssuerPhone', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">SĐT khách hàng</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'IssuerEmail', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mail khách hàng</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'NameUser', width: '170px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên liên hệ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'EmailUser', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email liên hệ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'PhoneUser', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">SĐT liên hệ</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'EmailUserLh', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Email nhận thông tin</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'TKhaiName', width: '170px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">DK01 Tên liên hệ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'TKhaiEmail', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">DK01 Email liên hệ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							
+							{field: 'TKhaiPhone', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">DK01 SĐT liên hệ</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 						
