@@ -47,6 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -6885,6 +6886,14 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					skipHeader = false;
 					continue;
 				}
+				
+				Cell firstCell = row1.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (firstCell != null) {
+				    String cellValue = getCellValueAsString(firstCell);
+				    if ("END".equalsIgnoreCase(cellValue.trim())) {
+				        break; 
+				    }
+				}
 
 				List<Cell> cells = new ArrayList<Cell>();
 				int lastColumn = Math.max(row1.getLastCellNum(), 23);
@@ -8024,6 +8033,22 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			return rsp;
 		}
 		return rsp;
+	}
+	private String getCellValueAsString(Cell cell) {
+	    switch (cell.getCellType()) {
+	        case STRING:
+	            return cell.getStringCellValue();
+	        case NUMERIC:
+	                return String.valueOf(cell.getNumericCellValue());
+	        case BOOLEAN:
+	            return String.valueOf(cell.getBooleanCellValue());
+	        case FORMULA:
+	            return cell.getCellFormula();
+	        case BLANK:
+	            return "";
+	        default:
+	            return "";
+	    }
 	}
 
 	// HAM DEM SO O TRONG FILE EXCEL AUTO
