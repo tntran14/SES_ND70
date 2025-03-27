@@ -299,22 +299,23 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
             
             setCellStyle(wb);
             int countRow =1;
-			List<String> headers = Arrays.asList(new String[] { "STT", "Khách hàng", "Mã số thuế", "Ngày hết hạn",
-					"Ngày bắt đầu", "Nhà cung cấp", "SĐT khách hàng", "Mail khách hàng", "Tên liên hệ", "Email liên hệ", "SĐT liên hệ", "Email nhận thông tin", "DK01 Tên liên hệ",
-					"DK01 Email liên hệ", "DK01 SĐT liên hệ" });
-            row = sheet.getRow(0);
-            if (null == row)
-                row = sheet.createRow(0);
-            row.setHeight((short) 500);
-            for (int i = 0; i < headers.size(); i++) {
-                cell = row.getCell(i);
-                if (cell == null)
-                    cell = row.createCell(i);
-                cell.setCellStyle(styleHeader);
-                cell.setCellValue(headers.get(i));
-                switch (i) {
-                case 0:
-                    sheet.setColumnWidth(i, 2000);
+			List<String> headers = Arrays.asList(
+					new String[] { "STT", "Khách hàng", "Mã số thuế", "Ngày hết hạn", "Ngày bắt đầu", "Nhà cung cấp",
+							"SĐT khách hàng", "Mail khách hàng", "Tên liên hệ", "Email liên hệ", "SĐT liên hệ",
+							"Email nhận thông tin", "Tên liên hệ DK01", "Email liên hệ DK01", "SĐT liên hệ DK01" });
+			row = sheet.getRow(0);
+			if (null == row)
+				row = sheet.createRow(0);
+			row.setHeight((short) 500);
+			for (int i = 0; i < headers.size(); i++) {
+				cell = row.getCell(i);
+				if (cell == null)
+					cell = row.createCell(i);
+				cell.setCellStyle(styleHeader);
+				cell.setCellValue(headers.get(i));
+				switch (i) {
+				case 0:
+					sheet.setColumnWidth(i, 2000);
 					break;
 				case 1:
 				case 8:
