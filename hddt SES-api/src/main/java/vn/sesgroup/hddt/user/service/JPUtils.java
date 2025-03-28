@@ -3725,39 +3725,40 @@ else {
 		      
 				int check = words.length;
 			  
-				if(check > 1) {														
-		         String nam = words[1];		      
-		         reportParams.put("CNTraTNhapYear", nam);				
-	      
-				String TuNgay = 	docTmp.getEmbedded(Arrays.asList("TuNgay"), "");
-				String DenNgay = 	docTmp.getEmbedded(Arrays.asList("DenNgay"), "");
-				String thang = "";
-				  words = TuNgay.split("/");
-			             nam = words[2];
-			           thang = words[1];
-			      int    tuthang = Integer.parseInt(thang);
-			      words = DenNgay.split("/");
-		             nam = words[2];
-		           thang = words[1];
-		      int    denthang = Integer.parseInt(thang);
+				if (check > 1) {
+					String nam = words[1];
+					reportParams.put("CNTraTNhapYear", nam);
 
-		      for(int i = tuthang; i<=denthang; i++) {  	
-		    	  if(i == denthang)
-		    	  {
-		    		  thangnv += i;
-		    	  }
-		    	  else {
-		    		  thangnv += i +",";
-		    	  }
-		    	  
-		      }
-		      reportParams.put("CNTraTNhapMonth", thangnv);
-		            
-			  }else {
-				   String nam = words[0];		      
-			         reportParams.put("CNTraTNhapYear", nam);		
-			         reportParams.put("CNTraTNhapMonth", "1,2,3,4,5,6,7,8,9,10,11,12");
-			  }
+					String TuNgay = docTmp.getEmbedded(Arrays.asList("TuNgay"), "");
+					String DenNgay = docTmp.getEmbedded(Arrays.asList("DenNgay"), "");
+					String thang = "";
+					words = TuNgay.split("/");
+					nam = words[2];
+					thang = words[1];
+					int tuthang = Integer.parseInt(thang);
+					words = DenNgay.split("/");
+					nam = words[2];
+					thang = words[1];
+					int denthang = Integer.parseInt(thang);
+
+					for (int i = tuthang; i <= denthang; i++) {
+						if (i == denthang) {
+							thangnv += i;
+						} else {
+							thangnv += i + ",";
+						}
+
+					}
+					reportParams.put("CNTraTNhapMonth", thangnv);
+					reportParams.put("CNTraTNhapFrom", String.valueOf(tuthang));
+					reportParams.put("CNTraTNhapTo", String.valueOf(denthang));
+				} else {
+					String nam = words[0];
+					reportParams.put("CNTraTNhapYear", nam);
+					reportParams.put("CNTraTNhapMonth", "1,2,3,4,5,6,7,8,9,10,11,12");
+					reportParams.put("CNTraTNhapFrom", "1");
+					reportParams.put("CNTraTNhapTo", "12");
+				}
 		      
 		      
 		      
@@ -3775,25 +3776,21 @@ else {
 				
 				
 				List<HashMap<String, Object>> arrayData = new ArrayList<>();
-				HashMap<String, Object> hItem = null;
-				
-				int lenProName = 0;
-				String productName = "";
-				int startRowGroup = 0;
-				
-				
-				startRowGroup = 0;
-			
-				
+//				HashMap<String, Object> hItem = null;
+//				int lenProName = 0;
+//				String productName = "";
+//				int startRowGroup = 0;
+//				
+//				
+//				startRowGroup = 0;
 				JRDataSource jds = null;
 				jds = new JRBeanCollectionDataSource(arrayData);
 				
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				JasperReport jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
 				JasperPrint jp = JasperFillManager.fillReport(jr, reportParams, jds);
-				Exporter exporter = null;
-				
-				exporter = new JRPdfExporter();
+
+				Exporter exporter = new JRPdfExporter();
 				exporter.setExporterInput(new SimpleExporterInput(jp));
 				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
 		        SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
