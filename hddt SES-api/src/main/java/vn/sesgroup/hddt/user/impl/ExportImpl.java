@@ -4112,6 +4112,15 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 					skipHeader = false;
 					continue;
 				}
+				
+				Cell firstCell = row1.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (firstCell != null) {
+				    String cellValue = commons.getCellValueAsString(firstCell);
+				    if ("END".equalsIgnoreCase(cellValue.trim())) {
+				        break; 
+				    }
+				}
+				
 				List<Cell> cells = new ArrayList<Cell>();
 				int lastColumn = Math.max(row1.getLastCellNum(), 23);
 

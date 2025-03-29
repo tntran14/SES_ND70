@@ -5790,16 +5790,6 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
 	}
-
-	private boolean isRowEmpty(Row row) {
-		for (int i = 0; i < 25; i++) {
-			Cell cell = row.getCell(i);
-			if (cell != null && cell.getCellType() != CellType.BLANK) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	@Override
 	public MsgRsp importExcelAuto(JSONRoot jsonRoot) throws Exception {
@@ -5946,9 +5936,12 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					continue;
 				}
 
-				// check contain null row
-				if (isRowEmpty(row1)) {
-					continue;
+				Cell firstCell = row1.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (firstCell != null) {
+				    String cellValue = commons.getCellValueAsString(firstCell);
+				    if ("END".equalsIgnoreCase(cellValue.trim())) {
+				        break; 
+				    }
 				}
 
 				List<Cell> cells = new ArrayList<Cell>();

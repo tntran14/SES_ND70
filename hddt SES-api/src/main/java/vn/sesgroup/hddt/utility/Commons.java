@@ -917,4 +917,22 @@ public class Commons {
 		    }
 		    return "";
 		  }
+
+		  // Lấy giá trị của cell convert to String
+			public String getCellValueAsString(Cell cell) {
+				switch (cell.getCellType()) {
+				case STRING:
+					return cell.getStringCellValue();
+				case NUMERIC:
+					return String.valueOf(cell.getNumericCellValue());
+				case BOOLEAN:
+					return String.valueOf(cell.getBooleanCellValue());
+				case FORMULA:
+					return cell.getCellFormula();
+				case BLANK:
+					return "";
+				default:
+					return "";
+				}
+			}
 }
