@@ -215,10 +215,6 @@
 			case 'back':
 				$('#divMainContent').show();
 				$('#divSubContent').hide(function(){$(this).empty();});
-				try{
-					if($('#f-qly-mauhd').find('#grid').length > 0)
-						$('#f-qly-mauhd').find('#grid').data("kendoGrid").dataSource.read();
-				}catch(err){}
 				break;
 		
 			case 'accept':
@@ -257,7 +253,10 @@
 											if(res) {
 												if(res.errorCode == 0) {
 													$('#f-mauhd-crud').find('button[data-action="back"]').trigger('click');
-													location.reload();
+													try{
+														if($('#f-qly-mauhd').find('#grid').length > 0)
+															$('#f-qly-mauhd').find('#grid').data("kendoGrid").dataSource.read();
+													}catch(err){}
 												}else{
 													alertDLSuccess(createObjectError(res).html(), function(){});
 												}
