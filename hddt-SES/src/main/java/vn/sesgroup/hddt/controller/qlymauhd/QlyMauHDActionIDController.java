@@ -78,10 +78,10 @@ public class QlyMauHDActionIDController extends AbstractController{
 			messageConfirm = "Bạn có muốn xóa mẫu hóa đơn này không?";
 			break;
 		case "qly-mauhd-active":
-			messageConfirm = "Bạn có muốn kích hoạt hợp đồng không?";
+			messageConfirm = "Bạn có muốn kích hoạt phôi này không?";
 			break;
 		case "qly-mauhd-deactive":
-			messageConfirm = "Bạn có muốn chặn hợp đồng này không?";
+			messageConfirm = "Bạn có muốn hủy kích hoạt phôi này không?";
 			break;
 		default:
 			dto = new BaseDTO();
