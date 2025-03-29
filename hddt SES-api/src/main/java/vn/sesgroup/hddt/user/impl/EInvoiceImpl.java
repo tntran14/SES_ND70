@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -9789,12 +9790,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-
-		if (!checkStatusMQ) {
-			responseStatus = new MspResponseStatus(9999, "Kết nối đến Server Send Mail không thành công.");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
 		// END CHECK ACTIVE MQ
 
 		Document docFind = null;
@@ -9884,6 +9879,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 
 			if (docTmp.get("ConfigEmail") == null) {
+				continue;
+			}
+			
+			if(!commons.isValidEmailAddress(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), ""))) {
 				continue;
 			}
 

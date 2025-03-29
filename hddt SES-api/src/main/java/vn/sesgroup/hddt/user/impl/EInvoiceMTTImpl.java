@@ -8700,6 +8700,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			if (docTmp.get("ConfigEmail") == null) {
 				continue;
 			}
+			
+			if(!commons.isValidEmailAddress(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), ""))){
+				continue;
+			}
 
 			String TaxCode = header.getUserName();
 			String Name = header.getUserFullName();
