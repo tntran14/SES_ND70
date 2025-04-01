@@ -649,53 +649,7 @@ else {
 						}
 					}
 					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
-					
-					int addRows = -1;
-					if (startRowGroup > 0 && startRowGroup <= 10) {
-						switch (startRowGroup) {
-						case 1:
-							addRows = 10;
-							break;
-						case 2:
-							addRows = 9;
-							break;
-						case 3:
-							addRows = 8;
-							break;
-						case 4:
-							addRows = 7;
-							break;
-						case 5:
-							addRows = 6;
-							break;
-						case 6:
-							addRows = 5;
-							break;
-						case 7:
-							addRows = 4;
-							break;
-						case 8:
-							addRows = 3;
-							break;
-						case 9:
-							addRows = 2;
-							break;
-						case 10:
-							addRows = 1;
-							break;
-						default:
-							break;
-						}
-					}
-					if (addRows > 0) {
-						for (int i = 0; i < addRows; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}
-					
+										
 //					if(0 == startRowGroup) {
 //						groupPageIDX++;
 //						for(int i = 0; i < numberRowInPage; i++) {
@@ -801,16 +755,6 @@ else {
 					}
 					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) 
 						groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
-					
-//					/*ADD THEM DU LIEU CHO DU TRANG*/
-					if (startRowGroup > 0 && startRowGroup < numberRowInPage) {
-						for (int i = startRowGroup; i < numberRowInPage; i++) {
-							hItem = new HashMap<>();
-							hItem.put("ProdName", " ");
-							hItem.put("GroupPageIDX", groupPageIDX);
-							arrayData.add(hItem);
-						}
-					}
 					
 //					if(startRowGroup > 0 || nodeListHHDVu.getLength() == 0) {
 //						for(int i = startRowGroup; i < numberRowInPage; i++) {
