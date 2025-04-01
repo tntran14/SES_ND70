@@ -321,7 +321,7 @@
 		<script type="text/javascript">
 		transactionMain = '[[${transaction}]]';
 		var rowsTMP = [];
-		var vIsEdit = [[${_isedit_}]];
+		var vIsEdit = '[[${_isedit_}]]';
 	
 		</script>
 		<script type="text/javascript">
@@ -364,6 +364,7 @@ $('#f-cus-crud').find('button[data-action]').click(function (event) {
 				$('#f-cus-crud').find('#name').val(mst);
 				$('#f-cus-crud').find('#taxcode').val(e['TaxCode'] == null? '': e['TaxCode']);
 				$('#f-cus-crud').find('#address').val(e['Address'] == null? '': e['Address']);
+				$('#f-cus-crud').find('#sdtlh').val(e['ContactPhone'] == null? '': e['ContactPhone']);
 				$('#f-cus-crud').find('#code').val(e['Code'] == null? '': e['Code']);
 				$('#f-cus-crud').find('#cccd').val(e['CCCD'] == null? '': e['CCCD']);
 				$('#f-cus-crud').find('#cccddate').val(e['CCCDDATE'] == null? '': e['CCCDDATE']);
@@ -390,15 +391,16 @@ $('#f-cus-crud').find('button[data-action]').click(function (event) {
 			case 'nv-add':				
 				var dataPost = {};	
 				
-	dataPost['name'] = $('#f-cus-crud').find('#name').val();
-	dataPost['code'] = $('#f-cus-crud').find('#code').val();
-	dataPost['address'] = $('#f-cus-crud').find('#address').val();
-	dataPost['taxcode'] = $('#f-cus-crud').find('#taxcode').val();
-	dataPost['optHTHDon'] = $('#f-cus-crud').find('input[name="optHTHDon"]:checked').val();
-	dataPost['cccd'] = $('#f-cus-crud').find('#cccd').val();
-	dataPost['qt'] = $('#f-cus-crud').find('#qt').val();
-	dataPost['cccddate'] = $('#f-cus-crud').find('#cccddate').val();
-	dataPost['cccdaddress'] = $('#f-cus-crud').find('#cccdaddress').val();
+				dataPost['name'] = $('#f-cus-crud').find('#name').val();
+				dataPost['code'] = $('#f-cus-crud').find('#code').val();
+				dataPost['address'] = $('#f-cus-crud').find('#address').val();
+				dataPost['phone'] = $('#f-cus-crud').find('#sdtlh').val();
+				dataPost['taxcode'] = $('#f-cus-crud').find('#taxcode').val();
+				dataPost['optHTHDon'] = $('#f-cus-crud').find('input[name="optHTHDon"]:checked').val();
+				dataPost['cccd'] = $('#f-cus-crud').find('#cccd').val();
+				dataPost['qt'] = $('#f-cus-crud').find('#qt').val();
+				dataPost['cccddate'] = $('#f-cus-crud').find('#cccddate').val();
+				dataPost['cccdaddress'] = $('#f-cus-crud').find('#cccdaddress').val();
 	
 				$.ajax({
 					type: "POST",

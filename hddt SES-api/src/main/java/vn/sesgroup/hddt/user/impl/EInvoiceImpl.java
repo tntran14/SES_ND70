@@ -4384,6 +4384,16 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi",
 						nodeTDiep, XPathConstants.NODE));
 				CQT_MLTDiep1 = checkMLTDiep;
+				break;
+			}
+			if (checkMLTDiep.equals("-1")) {
+				check_ = true;
+				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MLoi",
+						nodeTDiep, XPathConstants.NODE));
+				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa",
+						nodeTDiep, XPathConstants.NODE));
+				CQT_MLTDiep1 = checkMLTDiep;
+				break;
 			}
 
 		}
@@ -4393,7 +4403,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-
+		
 		CQT_MLTDiep = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
 		MTDTChieu = commons
@@ -4440,11 +4450,11 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 
-		if ("|202|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
-			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
+//		if ("|202|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
+//			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;
+//		}
 
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
