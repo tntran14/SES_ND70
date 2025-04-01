@@ -84,7 +84,24 @@
 									</div>
 								</div>
 							</div>
-								<div class="row m-b-15">
+									<div class="row m-b-15">
+										<div class="col-12 ">
+											<div class="c-f__wrapper">
+
+												<input id="sdtlh" name="sdtlh"
+													class="form-control form-control-sm c-f__textbox"
+													th:value="${ContactPhone}" th:readonly="${!_isedit_}"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Số điện thoại liên hệ</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									
+									<div class="row m-b-15">
 								<div class="col-6 ">
 									<div class="c-f__wrapper">
 										<input id="taxcode" name="taxcode" class="form-control form-control-sm c-f__textbox" th:value="${TaxCode}"  th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
@@ -229,17 +246,26 @@
 									</div>
 								</div>
 							</div>
-							<!-- <div class="row m-b-15">
-							<div class="col-12 ">
-									<div class="c-f__wrapper">
-										<input id="tdtn" name="tdtn" class="form-control form-control-sm c-f__textbox" th:value="${TDTN}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
-										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Thời điểm thu nhập<span class="text-danger" th:if="${_isedit_}" >*</span></label></legend>
-										</fieldset>
+
+									<div class="row m-b-15">
+										<div class="col-12">
+											<div class="c-f__wrapper">
+												<input id="kdtnndkh" name="kdtnndkh"
+													onchange="setTemplateForGrid('kdtnndkh',this.value)"
+													class="form-control form-control-sm c-f__textbox"
+													th:value="${KhoanTuThienNhanDaoKhuyenHoc}" th:readonly="${!_isedit_}"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Khoản đóng từ thiện, nhân đạo, khuyến học<span
+															class="text-danger" th:if="${_isedit_}">*</span></label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
 									</div>
-								</div>
-					</div> -->
-										<div class="row m-b-15">
+
+									<div class="row m-b-15">
 					<div class="col-12">
 									<div class="c-f__wrapper">
 										<input id="ttnkt" name="ttnkt" onchange="setTemplateForGrid('ttnkt',this.value)" class="form-control form-control-sm c-f__textbox" th:value="${TongTNKhauTru}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
@@ -427,7 +453,7 @@ $('#f-cus-crud').find('button[data-action]').click(function (event) {
 						
 						alertConfirm(confirmText,
 							function(e){
-								$.ajax({
+								$. ajax({
 									type: "POST",
 									datatype: "json",
 									url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
@@ -493,6 +519,9 @@ function setTemplateForGrid(key,data){
 		$('#f-cus-crud').find('#kbh').val(formatter.format(data));
 		}
 		break;
+	case 'kdtnndkh':
+		$('#f-cus-crud').find('#kdtnndkh').val(formatter.format(data));
+		break;
 	case 'ttnkt':
 		$('#f-cus-crud').find('#ttnkt').val(formatter.format(data));
 		break;
@@ -532,6 +561,8 @@ function getPopupDataToSave(){
 	dataPost['ttntt'] = $('#f-cus-crud').find('#ttntt').val();
 	dataPost['sttndkt'] = $('#f-cus-crud').find('#sttndkt').val();
 	dataPost['mau-so-tncn'] = $('#f-cus-crud').find('#mau-so-tncn').val();
+	dataPost['sdtlh'] = $('#f-cus-crud').find('#sdtlh').val();
+	dataPost['kdtnndkh'] = $('#f-cus-crud').find('#kdtnndkh').val();
 	return dataPost;
 }
 </script>

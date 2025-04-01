@@ -219,6 +219,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		String ttntt = commons.getTextJsonNode(jsonData.at("/TongTNTinhThue")).trim().replaceAll("\\s+", " ");
 		String sttndkt = commons.getTextJsonNode(jsonData.at("/SoTienCaNhanKhauTru")).trim().replaceAll("\\s+", " ");
 		String mauSoTNCN = commons.getTextJsonNode(jsonData.at("/MauSoTNCN")).trim().replaceAll("\\s+", " ");
+		String sdtlh = commons.getTextJsonNode(jsonData.at("/ContactPhone")).trim().replaceAll("\\s+", " ");
+		String kdttndkh = commons.getTextJsonNode(jsonData.at("/KhoanTuThienNhanDaoKhuyenHoc")).trim().replaceAll("\\s+", " ");
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
 		MspResponseStatus responseStatus = null;
@@ -435,6 +437,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "QuocTich", qt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CuTru", cutru));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", address));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", sdtlh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", cccd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", cccddate));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", cccdaddress));
@@ -444,6 +447,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent = doc.createElement("TTTTNCNKT");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanThu", ktn));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanBH", kbh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanTuThienNhanDaoKhuyenHoc", kdttndkh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ThoiDiemTraTNMonth", thangnv));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ThoiDiemTraTNYear", kibc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "TongThuKhauTru", ttnkt));
@@ -458,25 +462,46 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 			String secureKey = commons.csRandomNumbericString(6);
 
-			docUpsert = new Document("_id", objectIdTK).append("IssuerId", header.getIssuerId())
-					.append("SecureKey", secureKey).append("MauSoHD", mauso).append("Name", name).append("Code", code)
-					.append("Address", address).append("TaxCode", taxcode).append("CuTru", cutru).append("KyHieu", kh)
+			docUpsert = new Document("_id", objectIdTK)
+					.append("IssuerId", header.getIssuerId())
+					.append("SecureKey", secureKey)
+					.append("MauSoHD", mauso)
+					.append("Name", name)
+					.append("Code", code)
+					.append("Address", address)
+					.append("ContactPhone", sdtlh)
+					.append("TaxCode", taxcode)
+					.append("CuTru", cutru)
+					.append("KyHieu", kh)
 					.append("CMND-CCCD",
-							new Document("CCCD", cccd).append("CCCDDATE", cccddate).append("CCCDADDRESS", cccdaddress)
-									.append("QuocTich", qt))
-					.append("TNCNKhauTru", new Document("KhoanThuNhap", ktn)
-
-							.append("KhoanBaoHiem", kbh).append("TongTNKhauTru", ttnkt).append("TongTNTinhThue", ttntt)
+							new Document("CCCD", cccd)
+							.append("CCCDDATE", cccddate)
+							.append("CCCDADDRESS", cccdaddress)
+							.append("QuocTich", qt))
+					.append("TNCNKhauTru", 
+							new Document("KhoanThuNhap", ktn)
+							.append("KhoanBaoHiem", kbh)
+							.append("KhoanTuThienNhanDaoKhuyenHoc", kdttndkh)
+							.append("TongTNKhauTru", ttnkt)
+							.append("TongTNTinhThue", ttntt)
 							.append("SoTienCaNhanKhauTru", sttndkt))
-					.append("KyBaoCao", kibc).append("TuNgay", tungay).append("DenNgay", denngay)
-					.append("DateSave", ngayluu).append("Dir", dir).append("FileNameXML", fileNameXML)
-					.append("IsActive", true).append("IsDelete", false)
+					.append("KyBaoCao", kibc)
+					.append("TuNgay", tungay)
+					.append("DenNgay", denngay)
+					.append("DateSave", ngayluu)
+					.append("Dir", dir)
+					.append("FileNameXML", fileNameXML)
+					.append("IsActive", true)
+					.append("IsDelete", false)
 					.append("SignStatus", Constants.INVOICE_SIGN_STATUS.NOSIGN)
-					.append("Status", Constants.INVOICE_STATUS.CREATED).append("Date", LocalDate.now().toString())
-					.append("DateTime", LocalDate.now()).append("InfoCreated",
-							new Document("CreateDate", LocalDateTime.now()).append("CreateUserID", header.getUserId())
-									.append("CreateUserName", header.getUserName())
-									.append("CreateUserFullName", header.getUserFullName()));
+					.append("Status", Constants.INVOICE_STATUS.CREATED)
+					.append("Date", LocalDate.now().toString())
+					.append("DateTime", LocalDate.now())
+					.append("InfoCreated",
+							new Document("CreateDate", LocalDateTime.now())
+							.append("CreateUserID", header.getUserId())
+							.append("CreateUserName", header.getUserName())
+							.append("CreateUserFullName", header.getUserFullName()));
 
 		
 			mongoClient = cfg.mongoClient();
@@ -652,6 +677,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "QuocTich", qt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CuTru", cutru));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", address));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", sdtlh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", cccd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", cccddate));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", cccdaddress));
@@ -661,6 +687,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent = doc.createElement("TTTTNCNKT");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanThu", ktn));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanBH", kbh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanTuThienNhanDaoKhuyenHoc", kdttndkh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ThoiDiemTraTNMonth", thangnv1));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ThoiDiemTraTNYear", kibc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "TongThuKhauTru", ttnkt));
@@ -683,26 +710,41 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			mongoClient = cfg.mongoClient();
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("ChungTuTNCN");
 			docR = collection.findOneAndUpdate(docFind,
-					new Document("$set", new Document("Name", name).append("Code", code)
-							.append("Address", address).append("TaxCode", taxcode).append("CuTru", cutru)
+					new Document("$set",
+							new Document("Name", name)
+							.append("Code", code)
+							.append("Address", address)
+							.append("ContactPhone", sdtlh)
+							.append("TaxCode", taxcode)
+							.append("CuTru", cutru)
 							.append("MauSoHD", mauso1)
-							
 							.append("CMND-CCCD",
-									new Document("CCCD", cccd).append("CCCDDATE", cccddate)
-											.append("CCCDADDRESS", cccdaddress).append("QuocTich", qt))
-							.append("TNCNKhauTru", new Document("KhoanThuNhap", ktn)
-
-									.append("KhoanBaoHiem", kbh).append("TongTNKhauTru", ttnkt)
-									.append("TongTNTinhThue", ttntt).append("SoTienCaNhanKhauTru", sttndkt))
-							.append("KyBaoCao", kibc).append("TuNgay", tungay).append("DenNgay", denngay)
-							.append("TuNgay", tungay).append("DenNgay", denngay).append("DateSave", ngayluu)
+									new Document("CCCD", cccd)
+									.append("CCCDDATE", cccddate)
+									.append("CCCDADDRESS", cccdaddress)
+									.append("QuocTich", qt))
+							.append("TNCNKhauTru", 
+									new Document("KhoanThuNhap", ktn)
+									.append("KhoanBaoHiem", kbh)
+									.append("KhoanTuThienNhanDaoKhuyenHoc", kdttndkh)
+									.append("TongTNKhauTru", ttnkt)
+									.append("TongTNTinhThue", ttntt)
+									.append("SoTienCaNhanKhauTru", sttndkt))
+							.append("KyBaoCao", kibc)
+							.append("TuNgay", tungay)
+							.append("DenNgay", denngay)
+							.append("TuNgay", tungay)
+							.append("DenNgay", denngay)
+							.append("DateSave", ngayluu)
 							.append("Date", LocalDate.now().toString())
 							.append("DateTime", LocalDate.now())
-							.append("IsActive", true).append("IsDelete", false).append("InfoUpdated",
+							.append("IsActive", true)
+							.append("IsDelete", false)
+							.append("InfoUpdated",
 									new Document("UpdatedDate", LocalDateTime.now())
-											.append("UpdatedUserID", header.getUserId())
-											.append("UpdatedUserName", header.getUserName())
-											.append("UpdatedUserFullName", header.getUserFullName()))),
+									.append("UpdatedUserID", header.getUserId())
+									.append("UpdatedUserName", header.getUserName())
+									.append("UpdatedUserFullName", header.getUserFullName()))),
 					options);	
 			mongoClient.close();
 			

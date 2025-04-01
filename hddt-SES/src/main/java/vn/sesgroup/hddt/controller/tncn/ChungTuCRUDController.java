@@ -81,6 +81,7 @@ public class ChungTuCRUDController extends AbstractController{
 	private String name;
 	private String code;
 	private String address;
+	private String sdtlh;
 	private String taxcode;
 	private String optHTHDon;
 	private String cccd;
@@ -93,6 +94,7 @@ public class ChungTuCRUDController extends AbstractController{
 	
 	private String ktn;
 	private String tdtn;
+	private String kdtnndkh;
 	private String kbh;
 	private String ttnkt;
 	private String ttntt;
@@ -229,7 +231,7 @@ public class ChungTuCRUDController extends AbstractController{
 		
 			req.setAttribute("Code", commons.getTextJsonNode(jsonData.at("/Code")));
 			req.setAttribute("Name", commons.getTextJsonNode(jsonData.at("/Name")));
-			req.setAttribute("Phone", commons.getTextJsonNode(jsonData.at("/Phone")));
+			req.setAttribute("ContactPhone", commons.getTextJsonNode(jsonData.at("/ContactPhone")));
 			req.setAttribute("Address", commons.getTextJsonNode(jsonData.at("/Address")));
 			req.setAttribute("TuNgay", commons.getTextJsonNode(jsonData.at("/TuNgay")));
 			req.setAttribute("DenNgay", commons.getTextJsonNode(jsonData.at("/DenNgay")));
@@ -246,6 +248,7 @@ public class ChungTuCRUDController extends AbstractController{
 			req.setAttribute("KhoanThuNhap", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/KhoanThuNhap")));
 		
 			req.setAttribute("KhoanBaoHiem", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/KhoanBaoHiem")));
+			req.setAttribute("KhoanTuThienNhanDaoKhuyenHoc", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/KhoanTuThienNhanDaoKhuyenHoc")));
 			req.setAttribute("TongTNKhauTru", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/TongTNKhauTru")));
 			req.setAttribute("TongTNTinhThue", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/TongTNTinhThue")));
 			req.setAttribute("SoTienCaNhanKhauTru", commons.getTextJsonNode(jsonData.at("/TNCNKhauTru/SoTienCaNhanKhauTru")));
@@ -283,6 +286,8 @@ public class ChungTuCRUDController extends AbstractController{
 		ttntt = commons.getParameterFromRequest(req, "ttntt").trim().replaceAll("\\s+", " ");
 		sttndkt = commons.getParameterFromRequest(req, "sttndkt").trim().replaceAll("\\s+", " ");
 		mstncn = commons.getParameterFromRequest(req, "mau-so-tncn").trim().replaceAll("\\s+", " ");
+		sdtlh = commons.getParameterFromRequest(req, "sdtlh").trim().replaceAll("\\s+", " ");
+		kdtnndkh = commons.getParameterFromRequest(req, "kdtnndkh").trim().replaceAll("\\s+", " ");
 
 		if("cttncn-edit".equals(transaction)) {
 			if("".equals(_id)) {
@@ -302,22 +307,20 @@ public class ChungTuCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập Kì báo cáo.");
 			}
-//			if("".equals(tungay)) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Vui lòng nhập Ngày bắt đầu trả thu nhập.");
-//			}
-//			if("".equals(denngay)) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Vui lòng nhập Ngày kết thúc trả thu nhập .");
-//			}
+
 			if("".equals(ktn)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng nhập khoản thu nhập .");
+				dto.getErrorMessages().add("Vui lòng nhập khoản thu nhập.");
+			}
+			
+			if("".equals(kdtnndkh)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập khoản đóng từ thiện, nhân đạo, khuyến học.");
 			}
 			
 			if("".equals(ttnkt)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng nhập tổng thu nhập chịu thuế phải khấu trừ .");
+				dto.getErrorMessages().add("Vui lòng nhập tổng thu nhập chịu thuế phải khấu trừ.");
 			}
 			if("".equals(ttntt)) {
 				dto.setErrorCode(1);
@@ -329,7 +332,7 @@ public class ChungTuCRUDController extends AbstractController{
 			}
 			if("".equals(mstncn)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng chọn mẫu số thu nhập cá nhân");
+				dto.getErrorMessages().add("Vui lòng chọn mẫu số thu nhập cá nhân.");
 			}
 			break;
 		case "cttncn-del":
@@ -463,6 +466,7 @@ public class ChungTuCRUDController extends AbstractController{
 			hData.put("Name", name);
 			hData.put("Code", code);
 			hData.put("Address", address);
+			hData.put("ContactPhone", sdtlh);
 			hData.put("Taxcode", taxcode);
 			hData.put("CuTru", optHTHDon);
 			hData.put("CCCD", cccd);
@@ -475,6 +479,7 @@ public class ChungTuCRUDController extends AbstractController{
 			
 			
 			hData.put("KhoanThuNhap", ktn);
+			hData.put("KhoanTuThienNhanDaoKhuyenHoc", kdtnndkh);
 			hData.put("DateThuNhap", tdtn);
 			hData.put("KhoanBaoHiem", kbh);
 			hData.put("TongTNKhauTru", ttnkt);
