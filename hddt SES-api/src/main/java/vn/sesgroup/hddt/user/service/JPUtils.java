@@ -755,7 +755,15 @@ else {
 					}
 					if(0 == startRowGroup && nodeListHHDVu.getLength() > 0) 
 						groupPageIDX--;		//BO BOT TRANG CUOI CUNG VI KHONG CO DU LIEU
-					
+					if (startRowGroup > 0 && startRowGroup < numberRowInPage) {
+						for (int i = startRowGroup; i < numberRowInPage; i++) {
+							hItem = new HashMap<>();
+							hItem.put("ProdName", " ");
+							hItem.put("GroupPageIDX", groupPageIDX);
+							arrayData.add(hItem);
+						}
+					}
+
 //					if(startRowGroup > 0 || nodeListHHDVu.getLength() == 0) {
 //						for(int i = startRowGroup; i < numberRowInPage; i++) {
 //							hItem = new HashMap<>();
