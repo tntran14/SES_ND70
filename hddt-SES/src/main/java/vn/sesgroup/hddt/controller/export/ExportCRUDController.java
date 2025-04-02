@@ -530,7 +530,7 @@ public class ExportCRUDController extends AbstractController{
 		khTkTaiNganHang = commons.getParameterFromRequest(req, "kh-tk-tai-ngan-hang").trim().replaceAll("\\s+", " ");
 		tongTienTruocThue = commons.getParameterFromRequest(req, "tong-tien-truoc-thue").replaceAll("\\s", "");
 		loaiTienTt = commons.getParameterFromRequest(req, "loai-tien-tt").replaceAll("\\s", "");
-		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("\\s", "");
+		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("(\\s|,)", "");
 		tongTienThueGtgt = commons.getParameterFromRequest(req, "tong-tien-thue-gtgt").replaceAll("\\s", "");
 		tongTienDaCoThue = commons.getParameterFromRequest(req, "tong-tien-da-co-thue").replaceAll("\\s", "");
 		tienBangChu = commons.getParameterFromRequest(req, "tien-bang-chu").trim().replaceAll("\\s+", " ");
