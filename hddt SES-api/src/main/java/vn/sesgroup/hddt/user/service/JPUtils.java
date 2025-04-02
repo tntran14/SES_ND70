@@ -3611,6 +3611,9 @@ else {
 				reportParams.put("NNThueDChiORSDThoai", 
 						docTmp.getEmbedded(Arrays.asList("Address"), "")
 				);
+				reportParams.put("NNSDTLienHe", 
+						docTmp.getEmbedded(Arrays.asList("ContactPhone"), "")
+				);
 				reportParams.put("NNThueCMND", 
 						docTmp.getEmbedded(Arrays.asList("CMND-CCCD","CCCD"), "")
 				);
@@ -3624,6 +3627,7 @@ else {
 				
 				String CNhanTNhap = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","KhoanThuNhap"), "").replaceAll("\\₫", "");
 				String CNhanBHiem = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","KhoanBaoHiem"), "").replaceAll("\\₫", "");
+				String CNTThienNDaoKhuyenHoc = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","KhoanTuThienNhanDaoKhuyenHoc"), "").replaceAll("\\₫", "");
 				String CNTongTNhapChiuThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","TongTNKhauTru"), "").replaceAll("\\₫", "");
 				String CNTongTNhapTinhThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","TongTNTinhThue"), "").replaceAll("\\₫", "");
 				String CNTNhapDaKhauTru = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru","SoTienCaNhanKhauTru"), "").replaceAll("\\₫", "");
@@ -3632,6 +3636,7 @@ else {
 				
 				reportParams.put("CNhanTNhap", CNhanTNhap);
 				reportParams.put("CNhanBHiem", CNhanBHiem);
+				reportParams.put("CNTThienNDaoKhuyenHoc", CNTThienNDaoKhuyenHoc);
 				reportParams.put("CNTongTNhapChiuThue", CNTongTNhapChiuThue);
 				reportParams.put("CNTongTNhapTinhThue", CNTongTNhapTinhThue);
 				reportParams.put("CNTNhapDaKhauTru", CNTNhapDaKhauTru);
