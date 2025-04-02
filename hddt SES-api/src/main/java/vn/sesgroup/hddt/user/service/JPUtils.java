@@ -1635,14 +1635,13 @@ else {
 			
 			List<HashMap<String, Object>> arrayData = new ArrayList<>();
 			HashMap<String, Object> hItem = null;
-			
-			int lenProName = 0;
-			String productName = "";
-			int startRowGroup = 0;
-			
-			
-			startRowGroup = 0;
-		
+
+			for (int i = 0; i < numberRowInPage; i++) {
+				hItem = new HashMap<>();
+				hItem.put("ProdName", " ");
+				hItem.put("GroupPageIDX", 0);
+				arrayData.add(hItem);
+			}
 			
 			JRDataSource jds = null;
 			jds = new JRBeanCollectionDataSource(arrayData);
