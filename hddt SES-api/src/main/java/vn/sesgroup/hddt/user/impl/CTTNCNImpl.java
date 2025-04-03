@@ -1,10 +1,12 @@
 package vn.sesgroup.hddt.user.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,11 +63,15 @@ import com.mongodb.client.model.UpdateOptions;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.GetXMLInfoXMLDTO;
+import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.model.CT_TNCNExcelForm;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.CTTNCNDAO;
+import vn.sesgroup.hddt.user.service.JPUtils;
 import vn.sesgroup.hddt.utility.Constants;
 import vn.sesgroup.hddt.utility.Json;
+import vn.sesgroup.hddt.utility.MailUtils;
+import vn.sesgroup.hddt.utility.MailjetSender;
 import vn.sesgroup.hddt.utility.SystemParams;
 import vn.sesgroup.hddt.utility.UpdateSignedMultiBillReq;
 
@@ -76,6 +83,11 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 	ConfigConnectMongo cfg;
 
 	Document docUpsert = null;
+	
+	private MailjetSender mailJet = new MailjetSender();
+	private MailUtils mailUtils = new MailUtils();
+	@Autowired
+	JPUtils jpUtils;
 
 	@Override
 	public MsgRsp list(JSONRoot jsonRoot) throws Exception {
@@ -2671,4 +2683,310 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 	}
 
+	@Override
+	public MsgRsp sendMail(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+		String _title = commons.getTextJsonNode(jsonData.at("/_title")).trim().replaceAll("\\s+", " ");
+		String _email = commons.getTextJsonNode(jsonData.at("/_email")).trim().replaceAll("\\s+", " ");
+		String _emailcc = commons.getTextJsonNode(jsonData.at("/_emailcc")).trim().replaceAll("\\s+", " ");
+		String _content = commons.getTextJsonNode(jsonData.at("/_content")).trim().replaceAll("\\s+", " ");
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+
+		ObjectId objectId = null;
+		ObjectId objectIdIssu = null;
+		try {
+			objectId = new ObjectId(_id);
+			objectIdIssu = new ObjectId(header.getIssuerId());
+		} catch (Exception e) {
+		}
+
+		Document docFind = null;
+		Document docTmp = null;
+		List<Document> pipeline = null;
+
+		try {
+			docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId);
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			
+			pipeline.add(
+					new Document("$lookup",
+							new Document("from", "Issuer")
+									.append("pipeline",
+											Arrays.asList(new Document("$match", new Document("_id", objectIdIssu)
+													.append("IsDelete", new Document("$ne", true)))))
+									.append("as", "Issuer")));
+			pipeline.add(new Document("$unwind", new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+			
+			
+			pipeline.add(new Document("$lookup", new Document("from", "ConfigEmail")
+							.append("let", new Document("vIssuerId", "$IssuerId"))
+							.append("pipeline", Arrays.asList(
+												new Document("$match",new Document("$expr",
+																		new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId"))))))
+							.append("as", "ConfigEmail")));
+			pipeline.add(new Document("$unwind", new Document("path", "$ConfigEmail").append("preserveNullAndEmptyArrays", true)));
+			
+			
+			pipeline.add(new Document("$lookup", new Document("from", "DMMSTNCN")
+							.append("let",new Document("vIssuerId", "$IssuerId")
+									.append("vMauSoHD","$MauSoHD"))
+							.append("pipeline", Arrays.asList(
+												new Document("$match", 
+														new Document("$expr", 
+																new Document("$and",Arrays.asList(
+																		new Document("$eq", Arrays.asList("$$vIssuerId", "$IssuerId")),
+																		new Document("$eq",Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD")),
+																		new Document("$eq", Arrays.asList("$IsDelete", false)),
+							                                            new Document("$eq", Arrays.asList("$IsActive", true))
+																		))))
+											))
+							.append("as", "DMMSTNCN")));
+			pipeline.add(new Document("$unwind", new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
+			
+			
+			pipeline.add(new Document("$lookup", new Document("from", "UserConFig")
+							.append("pipeline", Arrays.asList(
+												new Document("$match",
+															new Document("viewshd", "Y")
+															.append("IssuerId", header.getIssuerId()))))
+							.append("as", "UserConFig")));
+			pipeline.add(new Document("$unwind", new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
+
+			
+			pipeline.add(new Document("$lookup", new Document("from", "ConfigMailJet")
+							.append("pipeline", Arrays.asList(
+									new Document("$match", 
+											new Document("IsActive", true))))
+							.append("as", "ConfigMailJet")));
+			pipeline.add(new Document("$unwind", new Document("path", "$ConfigMailJet").append("preserveNullAndEmptyArrays", true)));
+
+			
+			pipeline.add(new Document("$lookup", new Document("from", "DMFooterWeb")
+					.append("pipeline", Arrays.asList(
+							new Document("$match", 
+									new Document("IsActive", true)
+									.append("IsDelete", false)),
+							new Document("$project", new Document("Noidung", 1)),
+							new Document("$limit", 1)))
+					.append("as", "DMFooterWeb")));
+			pipeline.add(new Document("$unwind", new Document("path", "$DMFooterWeb").append("preserveNullAndEmptyArrays", true)));
+			
+			pipeline.add(new Document("$lookup", new Document("from", "PramLink")
+							.append("pipeline",Arrays.asList(
+												new Document("$match",
+														new Document("$expr", new Document("IsDelete", false))),
+												new Document("$project", 
+														new Document("_id", 1)
+														.append("LinkPortal", 1))))
+							.append("as", "PramLink")));
+			pipeline.add(new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
+
+
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("ChungTuTNCN");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+
+			mongoClient.close();
+		} catch (Exception e) {
+			responseStatus = new MspResponseStatus(9999,
+					"Cấu hình mail gửi hóa đơn không hợp lệ. Vui lòng cấu hình lại mail server!!!");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+
+		if (null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+		if (docTmp.get("ConfigEmail") == null) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin email gửi.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+
+		String CheckFooterMail = docTmp.getEmbedded(Arrays.asList("UserConFig", "footermail"), "");
+		if (!CheckFooterMail.equals("Y")) {
+			_content = commons.decodeURIComponent(_content);
+			String noidung = docTmp.getEmbedded(Arrays.asList("DMFooterWeb", "Noidung"), "");
+			_content += noidung;
+		} else {
+			_content = commons.decodeURIComponent(_content);
+		}
+
+		String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
+		String MailJet = docTmp.getEmbedded(Arrays.asList("ConfigEmail", "MailJet"), "");
+		String dir = docTmp.getString("Dir");
+		String statusCode = docTmp.get("SignStatus", "");
+		String status = docTmp.get("Status", "");
+		String soHD = commons.formatNumberBillInvoice(docTmp.get("SHDon", 0));
+		int SoHDon = docTmp.get("SHDon", 0);
+		String mauHD = docTmp.get("KyHieu", "");
+		
+		String fileNamePDF = _id + ".pdf";
+		if (Constants.INVOICE_STATUS.DELETED.equals(status))
+			fileNamePDF = _id + "-deleted.pdf";
+		String fileName = _id + ".xml";
+		String fileNameXML = _id + ".xml";
+		File file = null;
+		/* KIEM TRA XEM CO FILE PDF CHUA; NEU CHUA CO THI TAO FILE PDF */
+		if (docTmp.get("DMMSTNCN") != null) {
+			fileName = _id + ".xml";
+			if ("SIGNED".equals(statusCode)) {
+				fileName = _id + "_signed.xml";
+			}
+			
+			file = new File(dir, fileName);
+			if (file.exists() && file.isFile()) {
+				String imgLogo = docTmp.get("LoGo", "");
+				
+				String kh = docTmp.get("KyHieu", "");
+				String ms = docTmp.get("MauSo", "");
+
+				org.w3c.dom.Document doc = commons.fileToDocument(file);
+				
+				String fileNameJP = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "FileName"), "");
+				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+				
+				ByteArrayOutputStream baosPDF = null;
+				baosPDF = jpUtils.viewpdfcttncn(fileJP, doc, docTmp,
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN",
+								docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), imgLogo).toString(),
+						kh, ms, link, false, Constants.INVOICE_STATUS.XOABO.equals(status));
+				
+				if (null != baosPDF) {
+					try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
+						baosPDF.writeTo(fileOuputStream);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		/* END - KIEM TRA XEM CO FILE PDF CHUA; NEU CHUA CO THI TAO FILE PDF */
+		List<String> listFiles = new ArrayList<>();
+		List<String> listNames = new ArrayList<>();
+		
+		if ("SIGNED".equals(statusCode)) {
+			fileNameXML = _id + "_signed.xml";
+		}
+		file = new File(dir, fileNameXML);
+		if (file.exists() && file.isFile()) {
+			listFiles.add(file.toString());
+			listNames.add(mauHD + "-" + soHD + ".xml");
+		}
+		
+		file = new File(dir, fileNamePDF);
+		if (file.exists() && file.isFile()) {
+			listFiles.add(file.toString());
+			listNames.add(mauHD + "-" + soHD + ".pdf");
+		}
+		
+		/* THUC HIEN GUI MAIL */
+		MailConfig mailConfig = new MailConfig(docTmp.get("ConfigEmail", Document.class));
+		mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("InfoCreated", "CreateUserFullName"), ""));
+
+		boolean boo = false;
+
+		String email_gui = "";
+
+		if (_email != "" || _emailcc != "") {
+			if (_email != "" && _emailcc == "") {
+				email_gui = _email;
+			} else if (_email == "" && _emailcc != "") {
+				email_gui = _emailcc;
+			} else {
+				email_gui = _email + "," + _emailcc;
+			}
+			
+			// KIỂM TRA GỬI MAIL THƯỜNG HAY MAILJET
+			if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N") && !email_gui.equals("")) {
+				String ApiKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "ApiKey"), "");
+				String SecretKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "SecretKey"), "");
+				String EmailAddress = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "EmailAddress"), "");
+				mailConfig.setEmailAddress(ApiKey);
+				mailConfig.setEmailPassword(SecretKey);
+				mailConfig.setSmtpServer(EmailAddress);
+				boo = mailJet.sendMailJet(mailConfig, _title, _content, email_gui, listFiles, listNames, true);
+
+			} else {
+				boo = mailUtils.sendMail(mailConfig, _title, _content, email_gui, listFiles, listNames, true);
+			}
+			
+			
+			try {
+				MongoClient mongoClient = cfg.mongoClient();
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+						.getCollection("LogEmailUser");
+				collection.insertOne(new Document("IssuerId", header.getIssuerId()).append("Title", _title)
+						.append("Email", email_gui).append("IsActive", boo).append("MailCheck", boo)
+						.append("IsDelete", false).append("EmailContent", _content)
+
+				);
+				mongoClient.close();
+
+				/* LOG BAO CAO THONG KE */
+				String name = docTmp.get("Name", "");
+				String code = docTmp.get("Code", "");
+				String address = docTmp.get("Address", "");
+				String contactPhone = docTmp.get("ContactPhone", "");
+				String taxCode = docTmp.get("TaxCode", "");
+				String kyHieu = docTmp.get("KyHieu", "");
+				String cccd = docTmp.getEmbedded(Arrays.asList("CMND-CCCD", "CCCD"), "");
+				String kyBaoCao = docTmp.get("KyBaoCao", "");
+				String tuNgay = docTmp.get("TuNgay", "");
+				String denNgay = docTmp.get("DenNgay", "");
+				int shd = docTmp.get("SHDon", 0);
+				String date = docTmp.get("Date", "");
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("BaoCaoThongKeCTTNCN");
+				collection.insertOne(
+						new Document("IssuerId", header.getIssuerId())
+						.append("Name", name)
+						.append("Code", code)
+						.append("Address", address)
+						.append("ContactPhone", contactPhone)
+						.append("TaxCode", taxCode)
+						.append("KyHieu", kyHieu)
+						.append("CCCD", cccd)
+						.append("KyBaoCao", kyBaoCao)
+						.append("TuNgay", tuNgay)
+						.append("DenNgay", denNgay)
+						.append("SHDon", shd)
+						.append("EmailGuiCTTNCN", email_gui)
+						.append("Date", date)
+						.append("IsDelete", false));
+				mongoClient.close();
+
+			} catch (Exception ex) {
+			}
+			
+			
+		}
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
 }

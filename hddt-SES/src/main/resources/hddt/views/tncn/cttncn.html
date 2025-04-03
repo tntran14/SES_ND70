@@ -263,6 +263,12 @@
 									rowData = _gridMain.data("kendoGrid").dataItem($tr);
 									window.open(ROOT_PATH + '/common/viewpdfcttncn/' + rowData['_id'],'_blank');
 									break;
+								case 'send-email':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-send-mail/init', objData, false, function(e){
+									});
+									break;
 							
 								default:
 									break;
@@ -1087,36 +1093,32 @@
 					$('#f-cttncn').find('button[data-action="cttncn-delete"]').prop('disabled', checkRows.length == 0);
 				} 
 				function setTemplateForGridMAIN(key, data){
-					var acti = data['IsActive'];
-					var eInvoiceStatus = data['Status'];
-			
+					var status = data['Status']?? "";
+					var signStatus = data['SignStatus']?? "";
 					var text = '';
-					
 					switch (key) {
 					case 'func':
-					
 						text += '<i title="Xem mẫu chứng từ" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="viewpdftncn" ></i>';
 						
-						/* if('Đã phát hành' == eInvoiceStatus){
-							text += '<i title="Xóa bỏ" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';
-						}	 */					
-						break;
-					 case 'Status':
-					
-						 if('Đã xóa bỏ' == eInvoiceStatus){
-							text = '<div style="background: red;border-radius: 10px;color: white;">' + eInvoiceStatus + '</div>';
-						}else{
-							text = '<div>' + eInvoiceStatus + '</div>';
+						if ('Đã phát hành' == status && signStatus == 'Đã ký') {
+							text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-email" ></i>';
 						}
 						
-						
-						break; 
+						break;
+					case 'Status':
+
+						if ('Đã xóa bỏ' == status) {
+							text = '<div style="background: red;border-radius: 10px;color: white;">'+ status + '</div>';
+						} else {
+							text = '<div>' + status + '</div>';
+						}
+
+						break;
 					default:
 						break;
 					}
-					
 					return text;
-				}		
+					}
 				</script>
 			</div>
 		</div>

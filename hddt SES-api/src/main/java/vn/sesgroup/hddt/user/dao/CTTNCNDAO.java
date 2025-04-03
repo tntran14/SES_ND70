@@ -17,4 +17,5 @@ public interface CTTNCNDAO {
 	MsgRsp importExcel(JSONRoot jsonRoot) throws Exception;
 	public FileInfo getFileForSignAll(JSONRoot jsonRoot)throws Exception;
 	public Object signAll(UpdateSignedMultiBillReq input, JSONRoot jsonRoot)throws Exception;
+	public MsgRsp sendMail(JSONRoot jsonRoot) throws Exception;
 }

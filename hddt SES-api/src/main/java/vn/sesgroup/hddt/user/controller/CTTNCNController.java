@@ -199,4 +199,17 @@ public class CTTNCNController {
 				.cacheControl(CacheControl.noCache())
 				.body(dao.signAll(input, jsonRoot));
 	}
+	
+	@RequestMapping(value = "/send-mail", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> sendMail(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.sendMail(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
 }
