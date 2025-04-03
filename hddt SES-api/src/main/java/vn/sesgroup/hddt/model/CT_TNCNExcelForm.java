@@ -6,6 +6,8 @@ private String MST;
 private String TenNV;
 private String MaNV;
 private String DiaChiNV;
+private String SDTLienHe;
+private String EmailLienHe;
 private String CMND;
 private String NgayCap;
 private String NoiCap;
@@ -16,6 +18,7 @@ private String TuNgay;
 private String DenNgay;
 private String KhoanTN;
 private Double KhoanDongBHBB;
+private Double KhoanDongTTNDKH;
 private Double TongTNChiuThuePhaiKT;
 private Double TongThuNhapTinhThue;
 private Double SoThueTNCNDaKT;
@@ -25,9 +28,9 @@ public CT_TNCNExcelForm() {
 
 
 
-public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, String diaChiNV, String cMND,
+public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, String diaChiNV,String sdtLienHe,String emailLienHe, String cMND,
 		String ngayCap, String noiCap, String quocTich, String caNhanCuTru, String kyBaoCao, String tuNgay,
-		String denNgay, String khoanTN, Double khoanDongBHBB, Double tongTNChiuThuePhaiKT, Double tongThuNhapTinhThue,
+		String denNgay, String khoanTN, Double khoanDongBHBB, Double khoanDongTTNDKH, Double tongTNChiuThuePhaiKT, Double tongThuNhapTinhThue,
 		Double soThueTNCNDaKT) {
 	super();
 	MaCT = maCT;
@@ -35,6 +38,8 @@ public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, Stri
 	TenNV = tenNV;
 	MaNV = maNV;
 	DiaChiNV = diaChiNV;
+	SDTLienHe = sdtLienHe;
+	EmailLienHe = emailLienHe;
 	CMND = cMND;
 	NgayCap = ngayCap;
 	NoiCap = noiCap;
@@ -45,6 +50,7 @@ public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, Stri
 	DenNgay = denNgay;
 	KhoanTN = khoanTN;
 	KhoanDongBHBB = khoanDongBHBB;
+	KhoanDongTTNDKH = khoanDongTTNDKH;
 	TongTNChiuThuePhaiKT = tongTNChiuThuePhaiKT;
 	TongThuNhapTinhThue = tongThuNhapTinhThue;
 	SoThueTNCNDaKT = soThueTNCNDaKT;
@@ -90,6 +96,22 @@ public String getDiaChiNV() {
 
 public void setDiaChiNV(String diaChiNV) {
 	DiaChiNV = diaChiNV;
+}
+
+public String getSDTLienHe() {
+	return SDTLienHe;
+}
+
+public void setSDTLienHe(String sDTLienHe) {
+	SDTLienHe = sDTLienHe;
+}
+
+public String getEmailLienHe() {
+	return EmailLienHe;
+}
+
+public void setEmailLienHe(String emailLienHe) {
+	EmailLienHe = emailLienHe;
 }
 
 public String getCMND() {
@@ -194,6 +216,14 @@ public Double getSoThueTNCNDaKT() {
 
 public void setSoThueTNCNDaKT(Double soThueTNCNDaKT) {
 	SoThueTNCNDaKT = soThueTNCNDaKT;
+}
+
+public Double getKhoanDongTTNDKH() {
+	return KhoanDongTTNDKH;
+}
+
+public void setKhoanDongTTNDKH(Double khoanDongTTNDKH) {
+	KhoanDongTTNDKH = khoanDongTTNDKH;
 }
 
 

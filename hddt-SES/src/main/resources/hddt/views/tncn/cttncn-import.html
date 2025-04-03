@@ -28,23 +28,27 @@
                             		  <input type="button" class="btns btns-export__ses hover-up__ses" value="Tải excel mẫu tại đây"  onclick="DownloadFile('MauUploadCT_TNCN-TT78.xlsx')" ></input>
                             	</div>
 						</div>
-				<!-- 		<div class="row mt-3">			
-						<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
-									<div class="c-f__wrapper">							
-										<select id="mau-so-hdon" name="mau-so-hdon" class="form-control form-control-sm c-f__textbox">
-											<option value=""></option>
-											<th:block th:if="${map_mausokyhieu != null}">
-												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
-													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${MauSoHD == entry.key}" > </option>
-											</th:block>
-										</select>
-										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Chọn mẫu số<span class="text-danger">*</span></label></legend>
-										</fieldset>
-									</div>
-								</div>					
-						</div> -->
-	                                       
+						<div class="row mt-3">
+							<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
+								<div class="c-f__wrapper">
+									<select id="mau-so-hdon" name="mau-so-hdon"
+										class="form-control form-control-sm c-f__textbox">
+										<option value=""></option>
+										<th:block th:if="${map_mausotncn != null}">
+											<option th:each="entry : ${map_mausotncn.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}"
+												></option>
+										</th:block>
+									</select>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend">
+											<label>Chọn mẫu số<span class="text-danger">*</span></label>
+										</legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+
 					</div>
 					<div class="row"><div class="col-12 p-l-0"><hr style="margin: 0 0 0px 0;"></div></div>
 					<div class="form-group m-b-0">

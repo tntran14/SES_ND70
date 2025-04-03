@@ -89,10 +89,16 @@ public class ChungTuSendMailController extends AbstractController {
 
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 
-			StringBuffer title = new StringBuffer();
+			
 			String emailReceive = "";
 			String tmp = "";
 
+			tmp = commons.getTextJsonNode(jsonData.at("/ContactEmail"));
+			if (!"".equals(tmp)) {
+				emailReceive = tmp;
+			}
+			
+			StringBuffer title = new StringBuffer();
 			title.append(ii.getTaxCode());
 			title.append(" ");
 			title.append(ii.getName());

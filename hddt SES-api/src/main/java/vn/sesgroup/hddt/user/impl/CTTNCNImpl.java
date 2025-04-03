@@ -1346,26 +1346,22 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		}
 
 		String dataFileName = commons.getTextJsonNode(jsonData.at("/DataFileName")).replaceAll("\\s", "");
-		// String mauSoHdon =
-		// commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
+		 String mauSoTNCN = commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
 		// Start
 		ObjectId objectId = null;
 		ObjectId objectIdUser = null;
+		ObjectId mstncnId = null;
 		List<Document> pipeline = null;
 		Iterable<Document> cursor = null;
 		Iterator<Document> iter = null;
 
-		//
-		objectId = null;
-		objectIdUser = null;
 		try {
 			objectId = new ObjectId(header.getIssuerId());
-		} catch (Exception e) {
-		}
-		try {
+			mstncnId = new ObjectId(mauSoTNCN);
 			objectIdUser = new ObjectId(header.getUserId());
 		} catch (Exception e) {
 		}
+
 
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match",
@@ -1435,7 +1431,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				}
 				
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 17);
+				int lastColumn = Math.max(row1.getLastCellNum(), 20);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -1475,6 +1471,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			String tempTenNV = "";
 			String tempMaNV = "";
 			String tempDChiNV = "";
+			String tempSDTLH = "";
+			String tempEmailLH = "";
 			String tempCMND = "";
 			String tempNgayCap = "";
 			String tempNoiCap = "";
@@ -1485,6 +1483,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			String tempDenNgay = "";
 			String tempKhoanThuNhap = "";
 			Double tempKhoanDongBHBB = 0.0;
+			Double tempKhoanDongTTNDKH = 0.0;
 			Double tempTongTNChiuThuePhaiKT = 0.0;
 			Double tempTongThuNhapTinhThue = 0.0;
 			Double tempSoThueTNCNDaKT = 0.0;
@@ -1506,6 +1505,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 						tempTenNV = ctTNCNExcelFormList.get(i).getTenNV();
 						tempMaNV = ctTNCNExcelFormList.get(i).getMaNV();
 						tempDChiNV = ctTNCNExcelFormList.get(i).getDiaChiNV();
+						tempSDTLH = ctTNCNExcelFormList.get(i).getSDTLienHe();
+						tempEmailLH = ctTNCNExcelFormList.get(i).getEmailLienHe();
 						tempCMND = ctTNCNExcelFormList.get(i).getCMND();
 						tempNgayCap = ctTNCNExcelFormList.get(i).getNgayCap();
 						tempNoiCap = ctTNCNExcelFormList.get(i).getNoiCap();
@@ -1516,6 +1517,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 						tempDenNgay = ctTNCNExcelFormList.get(i).getDenNgay();
 						tempKhoanThuNhap = ctTNCNExcelFormList.get(i).getKhoanTN();
 						tempKhoanDongBHBB = ctTNCNExcelFormList.get(i).getKhoanDongBHBB();
+						tempKhoanDongTTNDKH = ctTNCNExcelFormList.get(i).getKhoanDongTTNDKH();
 						tempTongTNChiuThuePhaiKT = ctTNCNExcelFormList.get(i).getTongTNChiuThuePhaiKT();
 						tempTongThuNhapTinhThue = ctTNCNExcelFormList.get(i).getTongThuNhapTinhThue();
 						tempSoThueTNCNDaKT = ctTNCNExcelFormList.get(i).getSoThueTNCNDaKT();
@@ -1537,6 +1539,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				String TenForm = tempTenNV;
 				String MaForm = tempMaNV;
 				String DCNVForm = tempDChiNV;
+				String SDTLHForm = tempSDTLH;
+				String EmailLHForm = tempEmailLH;
 				String CMNDMForm = tempCMND;
 				String NgayCapForm = tempNgayCap;
 				String NoiCapForm = tempNoiCap;
@@ -1547,6 +1551,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				String DenNgayForm = tempDenNgay;
 				String KhoangTNForm = tempKhoanThuNhap;
 				Double KhoanDongBHBBForm = tempKhoanDongBHBB;
+				Double KhoanDongTTNDKHForm = tempKhoanDongTTNDKH;
 				Double TongTNChiuThuePhaiKTForm = tempTongTNChiuThuePhaiKT;
 				Double TongThuNhapTinhThueForm = tempTongThuNhapTinhThue;
 				Double SoThueTNCNDaKTForm = tempSoThueTNCNDaKT;
@@ -1655,8 +1660,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 					pipeline.add(new Document("$lookup", new Document("from", "DMMSTNCN")
 							.append("pipeline",
-									Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId())
-											.append("IsDelete", new Document("$ne", true)).append("IsActive", true))))
+									Arrays.asList(
+										new Document("$match", new Document("IssuerId", header.getIssuerId())
+											.append("IsDelete", new Document("$ne", true)).append("IsActive", true)
+											.append("_id", mstncnId))))
 							.append("as", "DMMSTNCN")));
 					pipeline.add(new Document("$unwind",
 							new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
@@ -1744,6 +1751,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "QuocTich", QuocTichForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CuTru", CuTru));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", DCNVForm));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", SDTLHForm));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactEmail", EmailLHForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", CMNDMForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", NgayCapForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", NoiCapForm));
@@ -1756,7 +1765,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					if (KhoanDongBHBBForm != null) {
 						KhoanDongBHBB = FormatNumber.format(KhoanDongBHBBForm);
 					}
-
+					String KhoanDongTTNDKH = "";
+					if (KhoanDongTTNDKHForm != null) {
+						KhoanDongTTNDKH = FormatNumber.format(KhoanDongTTNDKHForm);
+					}
 					String TongThuNhapTinhThue = FormatNumber.format(TongThuNhapTinhThueForm);
 					String SoThueTNCNDaKT = FormatNumber.format(SoThueTNCNDaKTForm);
 					/* THONG TIN THUE THU NHAP CA NHAN KHAU TRU */
@@ -1767,6 +1779,13 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					} else {
 						elementSubContent
 								.appendChild(commons.createElementWithValue(doc, "KhoanBH", "₫" + KhoanDongBHBB));
+					}
+					
+					if (KhoanDongTTNDKH.equals("")) {
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "KhoanTTNDKH", ""));
+					} else {
+						elementSubContent
+								.appendChild(commons.createElementWithValue(doc, "KhoanTTNDKH", "₫" + KhoanDongTTNDKH));
 					}
 
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "ThoiDiemTraTNMonth", thangnv));
@@ -1793,14 +1812,21 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 						docUpsert = new Document("_id", objectIdTK).append("IssuerId", header.getIssuerId())
 								.append("SecureKey", secureKey).append("MauSoHD", mauso).append("Name", TenForm)
-								.append("Code", MaForm).append("Address", DCNVForm).append("TaxCode", MSTForm)
+								.append("Code", MaForm)
+								.append("Address", DCNVForm)
+								.append("ContactPhone", SDTLHForm)
+								.append("ContactEmail", EmailLHForm)
+								.append("TaxCode", MSTForm)
 								.append("CuTru", CuTru).append("KyHieu", kh)
 								.append("CMND-CCCD",
-										new Document("CCCD", CMNDMForm).append("CCCDDATE", NgayCapForm)
-												.append("CCCDADDRESS", NoiCapForm).append("QuocTich", QuocTichForm))
-								.append("TNCNKhauTru", new Document("KhoanThuNhap", KhoangTNForm)
-
+										new Document("CCCD", CMNDMForm)
+										.append("CCCDDATE", NgayCapForm)
+										.append("CCCDADDRESS", NoiCapForm)
+										.append("QuocTich", QuocTichForm))
+								.append("TNCNKhauTru",
+										new Document("KhoanThuNhap", KhoangTNForm)
 										.append("KhoanBaoHiem", KhoanDongBHBB)
+										.append("KhoanTuThienNhanDaoKhuyenHoc", "₫" + KhoanDongTTNDKH)
 										.append("TongTNKhauTru", "₫" + TongTNChiuThuePhaiKT)
 										.append("TongTNTinhThue", "₫" + TongThuNhapTinhThue)
 										.append("SoTienCaNhanKhauTru", "₫" + SoThueTNCNDaKT))
@@ -1826,7 +1852,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					} else {
 						docUpsert = new Document("_id", objectIdTK).append("IssuerId", header.getIssuerId())
 								.append("SecureKey", secureKey).append("MauSoHD", mauso).append("Name", TenForm)
-								.append("Code", MaForm).append("Address", DCNVForm).append("TaxCode", MSTForm)
+								.append("Code", MaForm).append("Address", DCNVForm)
+								.append("ContactPhone", SDTLHForm)
+								.append("ContactEmail", EmailLHForm)
+								.append("TaxCode", MSTForm)
 								.append("CuTru", CuTru).append("KyHieu", kh)
 								.append("CMND-CCCD",
 										new Document("CCCD", CMNDMForm).append("CCCDDATE", NgayCapForm)
@@ -1834,6 +1863,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 								.append("TNCNKhauTru", new Document("KhoanThuNhap", KhoangTNForm)
 
 										.append("KhoanBaoHiem", "₫" + KhoanDongBHBB)
+										.append("KhoanTuThienNhanDaoKhuyenHoc", "₫" + KhoanDongTTNDKH)
 										.append("TongTNKhauTru", "₫" + TongTNChiuThuePhaiKT)
 										.append("TongTNTinhThue", "₫" + TongThuNhapTinhThue)
 										.append("SoTienCaNhanKhauTru", "₫" + SoThueTNCNDaKT))
@@ -1957,10 +1987,43 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			default:
 				break;
 			}
-
 		}
+		
+		// SDT lien he
+		Cell sdtLienHe = cells.get(5);
+		if (sdtLienHe != null) {
+			switch (sdtLienHe.getCellType()) {
+			case STRING:
+				ctTNCNExcelForm.setSDTLienHe(sdtLienHe.getStringCellValue());
+				break;
+			case NUMERIC:
+				ctTNCNExcelForm.setSDTLienHe((NumberToTextConverter.toText(sdtLienHe.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// Email lien he
+		Cell emailLienHe = cells.get(6);
+		if (emailLienHe != null) {
+			switch (emailLienHe.getCellType()) {
+			case STRING:
+				ctTNCNExcelForm.setEmailLienHe(emailLienHe.getStringCellValue());
+				break;
+			case NUMERIC:
+				ctTNCNExcelForm.setEmailLienHe((NumberToTextConverter.toText(emailLienHe.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
 		// CMND - CCCD
-		Cell CMND = cells.get(5);
+		Cell CMND = cells.get(7);
 		if (CMND != null) {
 			switch (CMND.getCellType()) {
 			case STRING:
@@ -1977,7 +2040,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Ngày cấp
-		Cell NCap = cells.get(6);
+		Cell NCap = cells.get(8);
 		if (NCap != null) {
 			switch (NCap.getCellType()) {
 			case STRING:
@@ -1993,7 +2056,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Nơi cấp
-		Cell NoiCap = cells.get(7);
+		Cell NoiCap = cells.get(9);
 		if (NoiCap != null) {
 			switch (NoiCap.getCellType()) {
 			case STRING:
@@ -2009,7 +2072,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Quốc tịch
-		Cell QuocTich = cells.get(8);
+		Cell QuocTich = cells.get(10);
 		if (QuocTich != null) {
 			switch (QuocTich.getCellType()) {
 			case STRING:
@@ -2026,7 +2089,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Cá nhân cư trú
-		Cell CNCTru = cells.get(9);
+		Cell CNCTru = cells.get(11);
 		if (CNCTru != null) {
 			switch (CNCTru.getCellType()) {
 			case STRING:
@@ -2042,7 +2105,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Kỳ báo cáo
-		Cell KBCao = cells.get(10);
+		Cell KBCao = cells.get(12);
 		if (KBCao != null) {
 			switch (KBCao.getCellType()) {
 			case STRING:
@@ -2059,7 +2122,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Từ ngày
-		Cell TuNgay = cells.get(11);
+		Cell TuNgay = cells.get(13);
 		if (TuNgay != null) {
 			switch (TuNgay.getCellType()) {
 			case STRING:
@@ -2076,7 +2139,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		}
 
 		// Đến ngày
-		Cell DenNgay = cells.get(12);
+		Cell DenNgay = cells.get(14);
 		if (DenNgay != null) {
 			switch (DenNgay.getCellType()) {
 			case STRING:
@@ -2092,7 +2155,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Khoan thu nhap
-		Cell KTNhap = cells.get(13);
+		Cell KTNhap = cells.get(15);
 		if (KTNhap != null) {
 			switch (KTNhap.getCellType()) {
 			case STRING:
@@ -2106,8 +2169,9 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				break;
 			}
 		}
+		
 		// Khoan dong bao hiem
-		Cell KhoanDongBHBB = cells.get(14);
+		Cell KhoanDongBHBB = cells.get(16);
 		if (KhoanDongBHBB != null && (KhoanDongBHBB.getCellType() == CellType.FORMULA)) {
 			switch (KhoanDongBHBB.getCachedFormulaResultType()) {
 			case STRING:
@@ -2137,8 +2201,38 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 
+		// Khoan dong tu thien
+		Cell KhoanDongTTNDKH = cells.get(17);
+		if (KhoanDongTTNDKH != null && (KhoanDongTTNDKH.getCellType() == CellType.FORMULA)) {
+			switch (KhoanDongTTNDKH.getCachedFormulaResultType()) {
+			case STRING:
+				ctTNCNExcelForm.setKhoanDongTTNDKH((Double.valueOf((String) KhoanDongTTNDKH.getStringCellValue())));
+				break;
+			case NUMERIC:
+				ctTNCNExcelForm.setKhoanDongTTNDKH(KhoanDongTTNDKH.getNumericCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		if (KhoanDongTTNDKH != null) {
+			switch (KhoanDongTTNDKH.getCellType()) {
+			case STRING:
+				ctTNCNExcelForm.setKhoanDongTTNDKH((Double.valueOf((String) KhoanDongTTNDKH.getStringCellValue())));
+				break;
+			case NUMERIC:
+				ctTNCNExcelForm.setKhoanDongTTNDKH(KhoanDongTTNDKH.getNumericCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
 		// Tổng thu nhập chịu thuế phải KT
-		Cell TongTNChiuthueKT = cells.get(15);
+		Cell TongTNChiuthueKT = cells.get(18);
 		if (TongTNChiuthueKT != null && (TongTNChiuthueKT.getCellType() == CellType.FORMULA)) {
 			switch (TongTNChiuthueKT.getCachedFormulaResultType()) {
 			case STRING:
@@ -2172,7 +2266,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		// Tổng thu nhập tính thuế
 
-		Cell TongTNTThue = cells.get(16);
+		Cell TongTNTThue = cells.get(19);
 		if (TongTNTThue != null && (TongTNTThue.getCellType() == CellType.FORMULA)) {
 			switch (TongTNTThue.getCachedFormulaResultType()) {
 			case STRING:
@@ -2202,7 +2296,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Số thuế TNCN đã KT
-		Cell SoThueTNCNDaKT = cells.get(17);
+		Cell SoThueTNCNDaKT = cells.get(20);
 		if (SoThueTNCNDaKT != null && (SoThueTNCNDaKT.getCellType() == CellType.FORMULA)) {
 			switch (SoThueTNCNDaKT.getCachedFormulaResultType()) {
 			case STRING:
@@ -2803,7 +2897,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			try {
 				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 			} catch (Exception e) {
-
+				
 			}
 
 			mongoClient.close();
@@ -2835,13 +2929,11 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			_content = commons.decodeURIComponent(_content);
 		}
 
-		String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
 		String MailJet = docTmp.getEmbedded(Arrays.asList("ConfigEmail", "MailJet"), "");
 		String dir = docTmp.getString("Dir");
 		String statusCode = docTmp.get("SignStatus", "");
 		String status = docTmp.get("Status", "");
 		String soHD = commons.formatNumberBillInvoice(docTmp.get("SHDon", 0));
-		int SoHDon = docTmp.get("SHDon", 0);
 		String mauHD = docTmp.get("KyHieu", "");
 		
 		String fileNamePDF = _id + ".pdf";

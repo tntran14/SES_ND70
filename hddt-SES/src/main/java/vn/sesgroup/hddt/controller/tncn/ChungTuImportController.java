@@ -62,17 +62,7 @@ public class ChungTuImportController extends AbstractController{
 			
 			msgParam = new MsgParam();
 			msgParam.setId("param01");
-			msgParam.setParam("DMPaymentType");
-			msgParams.getParams().add(msgParam);
-			
-			msgParam = new MsgParam();
-			msgParam.setId("param02");
-			msgParam.setParam("DMMauSoKyHieuForCreate");
-			msgParams.getParams().add(msgParam);
-			
-			msgParam = new MsgParam();
-			msgParam.setId("param03");
-			msgParam.setParam("DMCurrencies");
+			msgParam.setParam("DMMSTNCN");
 			msgParams.getParams().add(msgParam);
 			
 			/*END: DANH SACH THAM SO*/
@@ -89,29 +79,12 @@ public class ChungTuImportController extends AbstractController{
 				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
 					for(JsonNode o: jsonData.at("/param01")) {
-						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
-					}
-					req.setAttribute("map_paymenttype", hItem);
-				}
-				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
-					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param02")) {
-						if("1".equals(commons.getTextJsonNode(o.get("KHMSHDon")))){
-						hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));
-						}
-					}
-					req.setAttribute("map_mausokyhieu", hItem);
-				}
-				if(null != jsonData.at("/param03") && jsonData.at("/param03") instanceof ArrayNode) {
-					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param03")) {
-						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("code")));
-						if(action.equals("CREATE") && null != o.get("IsDefault") && o.get("IsDefault").asBoolean(false)) {
-							loaiTienTt = commons.getTextJsonNode(o.get("code"));
-							req.setAttribute("DVTTe", loaiTienTt);
-						}
-					}
-					req.setAttribute("map_currencies", hItem);
+						hItem.put(commons.getTextJsonNode(o.get("_id")), 
+										commons.getTextJsonNode(o.get("KyHieu")) + "/" + 
+										commons.getTextJsonNode(o.get("Nam")) + "/"+ 
+										commons.getTextJsonNode(o.get("ChungTu")));
+				}		
+					req.setAttribute("map_mausotncn", hItem);
 				}
 			}
 			
@@ -132,7 +105,7 @@ public class ChungTuImportController extends AbstractController{
 			, CurrentUserProfile cup) throws Exception{
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);
-		//mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
+		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
 		dataFileName = commons.getParameterFromRequest(req, "dataFileName").replaceAll("\\s", "");
 		if("".equals(dataFileName)) {
 			dto.setErrorCode(1);
@@ -208,7 +181,7 @@ public class ChungTuImportController extends AbstractController{
 		Msg msg = dtoRes.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
 		HashMap<String, Object> hData = new HashMap<>();
 		hData.put("DataFileName", dataFileName);
-		//hData.put("MauSoHdon", mauSoHdon);
+		hData.put("MauSoHdon", mauSoHdon);
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/cttncn/import-data", cup.getLoginRes().getToken(), HttpMethod.POST, root);
