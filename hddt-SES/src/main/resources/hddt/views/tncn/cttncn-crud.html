@@ -84,23 +84,53 @@
 									</div>
 								</div>
 							</div>
-									<div class="row m-b-15">
-										<div class="col-12 ">
-											<div class="c-f__wrapper">
 
+									<div class="row m-b-15">
+										<div class="col-6 ">
+											<div class="c-f__wrapper">
+												<input id="contactEmail" name="contactEmail"
+													class="form-control form-control-sm c-f__textbox"
+													th:value="${ContactEmail}" th:readonly="${!_isedit_}"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Email</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+
+										<div class="col-6 ">
+											<div class="c-f__wrapper">
 												<input id="sdtlh" name="sdtlh"
 													class="form-control form-control-sm c-f__textbox"
 													th:value="${ContactPhone}" th:readonly="${!_isedit_}"
 													type="text" autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
 													<legend class="c-f__legend">
-														<label>Số điện thoại liên hệ</label>
+														<label>Điện thoại</label>
 													</legend>
 												</fieldset>
 											</div>
 										</div>
 									</div>
-									
+
+									<div class="row m-b-15">
+										<div class="col-12 ">
+											<div class="c-f__wrapper">
+												<input id="emailcc" name="emailcc"
+													class="form-control form-control-sm c-f__textbox"
+													th:value="${EmailCC}" th:readonly="${!_isedit_}"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>EmailCC (cách nhau bởi dấu ,)</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+
 									<div class="row m-b-15">
 								<div class="col-6 ">
 									<div class="c-f__wrapper">
@@ -257,8 +287,7 @@
 													type="text" autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
 													<legend class="c-f__legend">
-														<label>Khoản đóng từ thiện, nhân đạo, khuyến học<span
-															class="text-danger" th:if="${_isedit_}">*</span></label>
+														<label>Khoản đóng từ thiện, nhân đạo, khuyến học</label>
 													</legend>
 												</fieldset>
 											</div>
@@ -395,6 +424,8 @@ $('#f-cus-crud').find('button[data-action]').click(function (event) {
 				dataPost['code'] = $('#f-cus-crud').find('#code').val();
 				dataPost['address'] = $('#f-cus-crud').find('#address').val();
 				dataPost['phone'] = $('#f-cus-crud').find('#sdtlh').val();
+				dataPost['email'] = $('#f-cus-crud').find('#contactEmail').val();
+				dataPost['emailcc'] = $('#f-cus-crud').find('#emailcc').val();
 				dataPost['taxcode'] = $('#f-cus-crud').find('#taxcode').val();
 				dataPost['optHTHDon'] = $('#f-cus-crud').find('input[name="optHTHDon"]:checked').val();
 				dataPost['cccd'] = $('#f-cus-crud').find('#cccd').val();
@@ -564,6 +595,8 @@ function getPopupDataToSave(){
 	dataPost['sttndkt'] = $('#f-cus-crud').find('#sttndkt').val();
 	dataPost['mau-so-tncn'] = $('#f-cus-crud').find('#mau-so-tncn').val();
 	dataPost['sdtlh'] = $('#f-cus-crud').find('#sdtlh').val();
+	dataPost['contactEmail'] = $('#f-cus-crud').find('#contactEmail').val();
+	dataPost['emailcc'] = $('#f-cus-crud').find('#emailcc').val();
 	dataPost['kdtnndkh'] = $('#f-cus-crud').find('#kdtnndkh').val();
 	return dataPost;
 }

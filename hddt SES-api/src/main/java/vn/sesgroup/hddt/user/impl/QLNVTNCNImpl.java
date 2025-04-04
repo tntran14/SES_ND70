@@ -92,6 +92,7 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 		
 
 		Document fillter = new Document("_id", 1).append("Code", 1).append("Department", 1)
+				.append("Email", 1).append("EmailCC", 1)
 				.append("TaxCode", 1).append("Name", 1).append("Phone", 1).append("Date", 1).append("CMND-CCCD", 1)
 				.append("Address", 1).append("CuTru", 1).append("InfoCreated", 1);
 		
@@ -147,6 +148,8 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 				hItem.put("TaxCode", doc.get("TaxCode"));
 				hItem.put("Name", doc.get("Name"));
 				hItem.put("Phone", doc.get("Phone"));
+				hItem.put("Email", doc.get("Email"));
+				hItem.put("EmailCC", doc.get("EmailCC"));
 				hItem.put("Date", doc.get("Date"));
 				hItem.put("CMND-CCCD", doc.get("CMND-CCCD"));
 				hItem.put("Address", doc.get("Address"));
@@ -185,6 +188,8 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 		String code = commons.getTextJsonNode(jsonData.at("/Code")).trim().replaceAll("\\s+", " ");
 		String name = commons.getTextJsonNode(jsonData.at("/Name"));
 		String phone = commons.getTextJsonNode(jsonData.at("/Phone")).trim().replaceAll("\\s+", " ");
+		String email = commons.getTextJsonNode(jsonData.at("/Email")).trim().replaceAll("\\s+", " ");
+		String emailcc = commons.getTextJsonNode(jsonData.at("/EmailCC")).trim().replaceAll("\\s+", " ");
 		String address = commons.getTextJsonNode(jsonData.at("/Address")).trim().replaceAll("\\s+", " ");
 		String department = commons.getTextJsonNode(jsonData.at("/Department")).trim().replaceAll("\\s+", " ");
 		String cccd = commons.getTextJsonNode(jsonData.at("/CCCD")).trim().replaceAll("\\s+", " ");
@@ -279,6 +284,8 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 					.append("Code", code)
 					.append("Name", name)
 					.append("Phone", phone)
+					.append("Email", email)
+					.append("EmailCC", emailcc)
 					.append("Address", address)
 					.append("Department", department)
 					.append("CuTru", cutru)				
@@ -354,7 +361,6 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 						new Document("TaxCode", taxCode)
 						.append("Code", code)
 						.append("Name", name)
-						.append("Phone", phone)
 						.append("Address", address)
 						.append("Department", department)
 						.append("CuTru", cutru)	

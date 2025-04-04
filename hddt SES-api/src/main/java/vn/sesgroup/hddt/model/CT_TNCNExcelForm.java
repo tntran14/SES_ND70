@@ -8,6 +8,7 @@ private String MaNV;
 private String DiaChiNV;
 private String SDTLienHe;
 private String EmailLienHe;
+private String EmailCC;
 private String CMND;
 private String NgayCap;
 private String NoiCap;
@@ -28,7 +29,7 @@ public CT_TNCNExcelForm() {
 
 
 
-public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, String diaChiNV,String sdtLienHe,String emailLienHe, String cMND,
+public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, String diaChiNV,String sdtLienHe,String emailLienHe, String emailCC,String cMND,
 		String ngayCap, String noiCap, String quocTich, String caNhanCuTru, String kyBaoCao, String tuNgay,
 		String denNgay, String khoanTN, Double khoanDongBHBB, Double khoanDongTTNDKH, Double tongTNChiuThuePhaiKT, Double tongThuNhapTinhThue,
 		Double soThueTNCNDaKT) {
@@ -40,6 +41,7 @@ public CT_TNCNExcelForm(String maCT, String mST, String tenNV, String maNV, Stri
 	DiaChiNV = diaChiNV;
 	SDTLienHe = sdtLienHe;
 	EmailLienHe = emailLienHe;
+	EmailCC = emailCC;
 	CMND = cMND;
 	NgayCap = ngayCap;
 	NoiCap = noiCap;
@@ -226,5 +228,12 @@ public void setKhoanDongTTNDKH(Double khoanDongTTNDKH) {
 	KhoanDongTTNDKH = khoanDongTTNDKH;
 }
 
+public String getEmailCC() {
+	return EmailCC;
+}
+
+public void setEmailCC(String emailCC) {
+	EmailCC = emailCC;
+}
 
 }

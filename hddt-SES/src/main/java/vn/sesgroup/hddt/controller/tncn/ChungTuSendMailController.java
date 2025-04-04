@@ -46,8 +46,10 @@ public class ChungTuSendMailController extends AbstractController {
 	private String errorCode;
 	private String errorDesc;
 	private String _id;
+	private String _ids;
 	private String _title;
 	private String _email;
+	private String _emailcc;
 	private String _content;
 
 	@RequestMapping(value = "/init", method = { RequestMethod.POST })
@@ -89,13 +91,17 @@ public class ChungTuSendMailController extends AbstractController {
 
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 
-			
 			String emailReceive = "";
+			String emailCC = "";
 			String tmp = "";
 
 			tmp = commons.getTextJsonNode(jsonData.at("/ContactEmail"));
 			if (!"".equals(tmp)) {
 				emailReceive = tmp;
+			}
+			tmp = commons.getTextJsonNode(jsonData.at("/EmailCC"));
+			if (!"".equals(tmp)) {
+				emailCC = tmp;
 			}
 			
 			StringBuffer title = new StringBuffer();
@@ -142,6 +148,7 @@ public class ChungTuSendMailController extends AbstractController {
 			req.setAttribute("_id", _id);
 			req.setAttribute("Title", title.toString());
 			req.setAttribute("EmailReceive", emailReceive);
+			req.setAttribute("EmailCC", emailCC);
 			req.setAttribute("EmailContent", sb.toString());
 		} else {
 			errorCode = "505";

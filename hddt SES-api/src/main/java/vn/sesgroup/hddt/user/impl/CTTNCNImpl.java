@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +25,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -42,6 +51,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
@@ -53,6 +63,7 @@ import com.api.message.MsgHeader;
 import com.api.message.MsgPage;
 import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -65,6 +76,7 @@ import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.GetXMLInfoXMLDTO;
 import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.model.CT_TNCNExcelForm;
+import vn.sesgroup.hddt.resources.JmsParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.CTTNCNDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
@@ -86,6 +98,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 	
 	private MailjetSender mailJet = new MailjetSender();
 	private MailUtils mailUtils = new MailUtils();
+	@Autowired
+	private JmsTemplate jmsTemplate;
 	@Autowired
 	JPUtils jpUtils;
 
@@ -232,6 +246,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		String sttndkt = commons.getTextJsonNode(jsonData.at("/SoTienCaNhanKhauTru")).trim().replaceAll("\\s+", " ");
 		String mauSoTNCN = commons.getTextJsonNode(jsonData.at("/MauSoTNCN")).trim().replaceAll("\\s+", " ");
 		String sdtlh = commons.getTextJsonNode(jsonData.at("/ContactPhone")).trim().replaceAll("\\s+", " ");
+		String email = commons.getTextJsonNode(jsonData.at("/ContactEmail")).trim().replaceAll("\\s+", " ");
+		String emailcc = commons.getTextJsonNode(jsonData.at("/EmailCC")).trim().replaceAll("\\s+", " ");
 		String kdttndkh = commons.getTextJsonNode(jsonData.at("/KhoanTuThienNhanDaoKhuyenHoc")).trim().replaceAll("\\s+", " ");
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -450,6 +466,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CuTru", cutru));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", address));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", sdtlh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactEmail", email));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "EmailCC", emailcc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", cccd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", cccddate));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", cccdaddress));
@@ -482,6 +500,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					.append("Code", code)
 					.append("Address", address)
 					.append("ContactPhone", sdtlh)
+					.append("ContactEmail", email)
+					.append("EmailCC", emailcc)
 					.append("TaxCode", taxcode)
 					.append("CuTru", cutru)
 					.append("KyHieu", kh)
@@ -690,6 +710,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CuTru", cutru));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", address));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", sdtlh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactEmail", email));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "EmailCC", emailcc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", cccd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", cccddate));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", cccdaddress));
@@ -727,6 +749,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 							.append("Code", code)
 							.append("Address", address)
 							.append("ContactPhone", sdtlh)
+							.append("ContactEmail", email)
+							.append("EmailCC", emailcc)
 							.append("TaxCode", taxcode)
 							.append("CuTru", cutru)
 							.append("MauSoHD", mauso1)
@@ -1431,7 +1455,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				}
 				
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 20);
+				int lastColumn = Math.max(row1.getLastCellNum(), 21);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -1473,6 +1497,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			String tempDChiNV = "";
 			String tempSDTLH = "";
 			String tempEmailLH = "";
+			String tempEmailCC = "";
 			String tempCMND = "";
 			String tempNgayCap = "";
 			String tempNoiCap = "";
@@ -1507,6 +1532,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 						tempDChiNV = ctTNCNExcelFormList.get(i).getDiaChiNV();
 						tempSDTLH = ctTNCNExcelFormList.get(i).getSDTLienHe();
 						tempEmailLH = ctTNCNExcelFormList.get(i).getEmailLienHe();
+						tempEmailCC = ctTNCNExcelFormList.get(i).getEmailCC();
 						tempCMND = ctTNCNExcelFormList.get(i).getCMND();
 						tempNgayCap = ctTNCNExcelFormList.get(i).getNgayCap();
 						tempNoiCap = ctTNCNExcelFormList.get(i).getNoiCap();
@@ -1541,6 +1567,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				String DCNVForm = tempDChiNV;
 				String SDTLHForm = tempSDTLH;
 				String EmailLHForm = tempEmailLH;
+				String EmailCCForm = tempEmailCC;
 				String CMNDMForm = tempCMND;
 				String NgayCapForm = tempNgayCap;
 				String NoiCapForm = tempNoiCap;
@@ -1753,6 +1780,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "Address", DCNVForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactPhone", SDTLHForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "ContactEmail", EmailLHForm));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "EmailCC", EmailCCForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCD", CMNDMForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDDATE", NgayCapForm));
 					elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDADDRESS", NoiCapForm));
@@ -1816,6 +1844,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 								.append("Address", DCNVForm)
 								.append("ContactPhone", SDTLHForm)
 								.append("ContactEmail", EmailLHForm)
+								.append("EmailCC", EmailCCForm)
 								.append("TaxCode", MSTForm)
 								.append("CuTru", CuTru).append("KyHieu", kh)
 								.append("CMND-CCCD",
@@ -1855,6 +1884,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 								.append("Code", MaForm).append("Address", DCNVForm)
 								.append("ContactPhone", SDTLHForm)
 								.append("ContactEmail", EmailLHForm)
+								.append("EmailCC", EmailCCForm)
 								.append("TaxCode", MSTForm)
 								.append("CuTru", CuTru).append("KyHieu", kh)
 								.append("CMND-CCCD",
@@ -2022,8 +2052,26 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		
+		// Email cc
+		Cell emailCC = cells.get(7);
+		if (emailCC != null) {
+			switch (emailCC.getCellType()) {
+			case STRING:
+				ctTNCNExcelForm.setEmailCC(emailCC.getStringCellValue());
+				break;
+			case NUMERIC:
+				ctTNCNExcelForm.setEmailCC((NumberToTextConverter.toText(emailCC.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+				
+		
 		// CMND - CCCD
-		Cell CMND = cells.get(7);
+		Cell CMND = cells.get(8);
 		if (CMND != null) {
 			switch (CMND.getCellType()) {
 			case STRING:
@@ -2040,7 +2088,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Ngày cấp
-		Cell NCap = cells.get(8);
+		Cell NCap = cells.get(9);
 		if (NCap != null) {
 			switch (NCap.getCellType()) {
 			case STRING:
@@ -2056,7 +2104,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Nơi cấp
-		Cell NoiCap = cells.get(9);
+		Cell NoiCap = cells.get(10);
 		if (NoiCap != null) {
 			switch (NoiCap.getCellType()) {
 			case STRING:
@@ -2072,7 +2120,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Quốc tịch
-		Cell QuocTich = cells.get(10);
+		Cell QuocTich = cells.get(11);
 		if (QuocTich != null) {
 			switch (QuocTich.getCellType()) {
 			case STRING:
@@ -2089,7 +2137,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Cá nhân cư trú
-		Cell CNCTru = cells.get(11);
+		Cell CNCTru = cells.get(12);
 		if (CNCTru != null) {
 			switch (CNCTru.getCellType()) {
 			case STRING:
@@ -2105,7 +2153,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Kỳ báo cáo
-		Cell KBCao = cells.get(12);
+		Cell KBCao = cells.get(13);
 		if (KBCao != null) {
 			switch (KBCao.getCellType()) {
 			case STRING:
@@ -2122,7 +2170,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		}
 		// Từ ngày
-		Cell TuNgay = cells.get(13);
+		Cell TuNgay = cells.get(14);
 		if (TuNgay != null) {
 			switch (TuNgay.getCellType()) {
 			case STRING:
@@ -2139,7 +2187,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		}
 
 		// Đến ngày
-		Cell DenNgay = cells.get(14);
+		Cell DenNgay = cells.get(15);
 		if (DenNgay != null) {
 			switch (DenNgay.getCellType()) {
 			case STRING:
@@ -2155,7 +2203,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Khoan thu nhap
-		Cell KTNhap = cells.get(15);
+		Cell KTNhap = cells.get(16);
 		if (KTNhap != null) {
 			switch (KTNhap.getCellType()) {
 			case STRING:
@@ -2171,7 +2219,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		}
 		
 		// Khoan dong bao hiem
-		Cell KhoanDongBHBB = cells.get(16);
+		Cell KhoanDongBHBB = cells.get(17);
 		if (KhoanDongBHBB != null && (KhoanDongBHBB.getCellType() == CellType.FORMULA)) {
 			switch (KhoanDongBHBB.getCachedFormulaResultType()) {
 			case STRING:
@@ -2202,7 +2250,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		}
 
 		// Khoan dong tu thien
-		Cell KhoanDongTTNDKH = cells.get(17);
+		Cell KhoanDongTTNDKH = cells.get(18);
 		if (KhoanDongTTNDKH != null && (KhoanDongTTNDKH.getCellType() == CellType.FORMULA)) {
 			switch (KhoanDongTTNDKH.getCachedFormulaResultType()) {
 			case STRING:
@@ -2232,7 +2280,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Tổng thu nhập chịu thuế phải KT
-		Cell TongTNChiuthueKT = cells.get(18);
+		Cell TongTNChiuthueKT = cells.get(19);
 		if (TongTNChiuthueKT != null && (TongTNChiuthueKT.getCellType() == CellType.FORMULA)) {
 			switch (TongTNChiuthueKT.getCachedFormulaResultType()) {
 			case STRING:
@@ -2266,7 +2314,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		// Tổng thu nhập tính thuế
 
-		Cell TongTNTThue = cells.get(19);
+		Cell TongTNTThue = cells.get(20);
 		if (TongTNTThue != null && (TongTNTThue.getCellType() == CellType.FORMULA)) {
 			switch (TongTNTThue.getCachedFormulaResultType()) {
 			case STRING:
@@ -2296,7 +2344,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			}
 		}
 		// Số thuế TNCN đã KT
-		Cell SoThueTNCNDaKT = cells.get(20);
+		Cell SoThueTNCNDaKT = cells.get(21);
 		if (SoThueTNCNDaKT != null && (SoThueTNCNDaKT.getCellType() == CellType.FORMULA)) {
 			switch (SoThueTNCNDaKT.getCachedFormulaResultType()) {
 			case STRING:

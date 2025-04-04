@@ -158,7 +158,7 @@ public class TCTNService {
 	
 	public Document callTraCuuThongDiep(String MTDiep) throws Exception{
 		Document r = null;
-		System.out.println(time +" "+"call callTraCuuThongDiep"+" "+MTDiep);
+		System.out.println(LocalDateTime.now().format(format_time) +" "+"call callTraCuuThongDiep"+" "+MTDiep);
 		/*TAO XML THONG DIEP GUI DI*/
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -205,7 +205,7 @@ public class TCTNService {
     	          dao.getAccessTokenVISNAM();    
     	          return null;
     	        }
-    		System.out.println(time +" "+"call callTraCuuThongDiep THANH CONG"+" "+MTDiep);
+    		System.out.println(LocalDateTime.now().format(format_time) +" "+"call callTraCuuThongDiep THANH CONG"+" "+MTDiep);
     		BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
     		StringBuilder sbReceive = new StringBuilder();
     		String output;
@@ -218,7 +218,7 @@ public class TCTNService {
 			
         }catch(Exception ex) {
         	log.error(" >>>>> An exception occurred!", ex);
-        	System.out.println(time +" "+"call callTraCuuThongDiep THAT BAI"+" "+MTDiep);
+        	System.out.println(LocalDateTime.now().format(format_time) +" "+"call callTraCuuThongDiep THAT BAI"+" "+MTDiep);
         }finally {
         	try {conn.disconnect();}catch(Exception e) {}
         }

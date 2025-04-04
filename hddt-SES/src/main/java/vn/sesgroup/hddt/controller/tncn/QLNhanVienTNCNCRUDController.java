@@ -59,6 +59,8 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 	private String name;
 	private String address;
 	private String phone;
+	private String email;
+	private String emailcc;
 	private String department;
 	private String cccd;
 	private String cccddate;
@@ -399,6 +401,8 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		address = commons.getParameterFromRequest(req, "address").trim().replaceAll("\\s+", " ");
 		department = commons.getParameterFromRequest(req, "department").trim().replaceAll("\\s+", " ");
 		phone = commons.getParameterFromRequest(req, "phone").trim().replaceAll("\\s+", " ");
+		email = commons.getParameterFromRequest(req, "email").trim().replaceAll("\\s+", " ");
+		emailcc = commons.getParameterFromRequest(req, "emailcc").trim().replaceAll("\\s+", " ");
 		cccd = commons.getParameterFromRequest(req, "cccd").trim().replaceAll("\\s+", " ");
 		cccddate = commons.getParameterFromRequest(req, "cccddate").trim().replaceAll("\\s+", " ");
 		cccdaddress = commons.getParameterFromRequest(req, "cccdaddress").trim().replaceAll("\\s+", " ");
@@ -414,6 +418,8 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		hData.put("Name", name);
 		hData.put("Address", address);
 		hData.put("Phone", phone);
+		hData.put("Email", email);
+		hData.put("EmailCC", emailcc);
 		hData.put("Department", department);
 		hData.put("CCCD", cccd);
 		hData.put("CCCDDTE", cccddate);

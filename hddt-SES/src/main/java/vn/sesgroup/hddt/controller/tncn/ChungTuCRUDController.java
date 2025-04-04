@@ -82,6 +82,8 @@ public class ChungTuCRUDController extends AbstractController{
 	private String code;
 	private String address;
 	private String sdtlh;
+	private String contactEmail;
+	private String emailcc;
 	private String taxcode;
 	private String optHTHDon;
 	private String cccd;
@@ -232,6 +234,9 @@ public class ChungTuCRUDController extends AbstractController{
 			req.setAttribute("Code", commons.getTextJsonNode(jsonData.at("/Code")));
 			req.setAttribute("Name", commons.getTextJsonNode(jsonData.at("/Name")));
 			req.setAttribute("ContactPhone", commons.getTextJsonNode(jsonData.at("/ContactPhone")));
+			req.setAttribute("ContactEmail", commons.getTextJsonNode(jsonData.at("/ContactEmail")));
+			req.setAttribute("EmailCC", commons.getTextJsonNode(jsonData.at("/EmailCC")));
+
 			req.setAttribute("Address", commons.getTextJsonNode(jsonData.at("/Address")));
 			req.setAttribute("TuNgay", commons.getTextJsonNode(jsonData.at("/TuNgay")));
 			req.setAttribute("DenNgay", commons.getTextJsonNode(jsonData.at("/DenNgay")));
@@ -287,6 +292,8 @@ public class ChungTuCRUDController extends AbstractController{
 		sttndkt = commons.getParameterFromRequest(req, "sttndkt").trim().replaceAll("\\s+", " ");
 		mstncn = commons.getParameterFromRequest(req, "mau-so-tncn").trim().replaceAll("\\s+", " ");
 		sdtlh = commons.getParameterFromRequest(req, "sdtlh").trim().replaceAll("\\s+", " ");
+		contactEmail = commons.getParameterFromRequest(req, "contactEmail").trim().replaceAll("\\s+", " ");
+		emailcc = commons.getParameterFromRequest(req, "emailcc").trim().replaceAll("\\s+", " ");
 		kdtnndkh = commons.getParameterFromRequest(req, "kdtnndkh").trim().replaceAll("\\s+", " ");
 
 		if("cttncn-edit".equals(transaction)) {
@@ -311,11 +318,6 @@ public class ChungTuCRUDController extends AbstractController{
 			if("".equals(ktn)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập khoản thu nhập.");
-			}
-			
-			if("".equals(kdtnndkh)) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng nhập khoản đóng từ thiện, nhân đạo, khuyến học.");
 			}
 			
 			if("".equals(ttnkt)) {
@@ -467,6 +469,8 @@ public class ChungTuCRUDController extends AbstractController{
 			hData.put("Code", code);
 			hData.put("Address", address);
 			hData.put("ContactPhone", sdtlh);
+			hData.put("ContactEmail", contactEmail);
+			hData.put("EmailCC", emailcc);
 			hData.put("Taxcode", taxcode);
 			hData.put("CuTru", optHTHDon);
 			hData.put("CCCD", cccd);

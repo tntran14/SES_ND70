@@ -32,6 +32,14 @@
 							</div>
 						</div>
 						<div class="col-12 m-t-15">
+							<div class="c-f__wrapper">
+								<input id="emailcc" name="emailcc" class="form-control form-control-sm c-f__textbox " th:value="${EmailCC}" type="text" autocomplete="off"  />
+								<fieldset aria-hidden="true" class="c-f__set">
+									<legend class="c-f__legend"><label>EmailCC (Cách nhau bởi dấu ,)</label></legend>
+								</fieldset>
+							</div>
+						</div>
+						<div class="col-12 m-t-15">
 							<textarea id="emailContent" name="emailContent" class="form-control">[[${EmailContent}]]</textarea>
 						</div>
 						
@@ -159,6 +167,7 @@
 		dataPost['_id'] = $('#f-cttncn-send-mail').find('input[name="_id"]').val();
 		dataPost['_title'] = $('#f-cttncn-send-mail').find('#title').val();
 		dataPost['_email'] = $('#f-cttncn-send-mail').find('#email-receive').val();
+		dataPost['_emailcc'] = $('#f-cttncn-send-mail').find('#emailcc').val();
 		dataPost['_content'] = encodeURIComponent(tinymce.get('emailContent').getContent());
 
 		return dataPost;

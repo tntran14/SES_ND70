@@ -177,70 +177,51 @@
                             </div>
                           </div>
                         </div>
-                   
-                   
-                   
-                   
-                   
-                       <div class="row">
-                          <div class="col-12">
-                        
-                            <div class="row">
-                              <div class="col-4 col-sm-4 col-md-4 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Số dòng hiển thị trên hóa đơn 1 trang</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                               th:value="${RowsInPage}"
-                                id="r1p" name="r1p"
-                                  autocomplete="off"
-                                  value=""
-                                  maxlength="2"
-                                   
-                                />
-                              </div>
-                                <div  class="col-4 col-sm-4 col-md-26 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Số dòng hiển thị trên 1 trang của hóa đơn nhiều trang</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                                  th:value="${RowInPageMultiPage}"
-                                   id="rnp" name="rnp"
-                                  autocomplete="off"
-                                  maxlength="2"
-                              
-                                />
-                              </div>
-                       
-                         <div  class="col-4 col-sm-4 col-md-26 custom-field m-b-16"
-                              >
-                                  <div class="m-b-16">Số ký tự trên 1 dòng</div>
-                                <input
-                                  type="text"
-                                  class="rm-default form-control form-control-sm text-center"
-                                  th:value="${CharsInRow}"
-                                   id="CharsInRow" name="CharsInRow"
-                                  autocomplete="off"
-                                  maxlength="3"
-                              
-                                />
-                              </div>
-                              
-                             
-                            </div>
-                          </div>
-                        </div>
-                   
-                   
-                   
-                   
-                   
-                   
-                   
-                   
-                        <div class="form-group row m-t-16">
+
+							<div class="row">
+								<div class="col-12">
+
+									<div class="row">
+										<div class="col-4 col-sm-4 col-md-4 custom-field">
+											<div class="m-b-16">Số dòng hiển thị trên hóa đơn 1
+												trang</div>
+										</div>
+										
+										<div class="col-4 col-sm-4 col-md-26 custom-field">
+											<div class="m-b-16">Số dòng hiển thị trên 1 trang của
+												hóa đơn nhiều trang</div>
+										</div>
+
+										<div class="col-4 col-sm-4 col-md-26 custom-field">
+											<div class="m-b-16">Số ký tự trên 1 dòng</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-4 col-sm-4 col-md-4 custom-field m-b-16">
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												th:value="${RowsInPage}" id="r1p" name="r1p"
+												autocomplete="off" value="" maxlength="2" />
+										</div>
+										
+										<div class="col-4 col-sm-4 col-md-26 custom-field m-b-16">
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												th:value="${RowInPageMultiPage}" id="rnp" name="rnp"
+												autocomplete="off" maxlength="2" />
+										</div>
+
+										<div class="col-4 col-sm-4 col-md-26 custom-field m-b-16">
+											<input type="text"
+												class="rm-default form-control form-control-sm text-center"
+												th:value="${CharsInRow}" id="CharsInRow" name="CharsInRow"
+												autocomplete="off" maxlength="3" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row m-t-16">
                           <div
                             class="offset-0 col-12 offset-md-3 col-sm-12 text-danger small font-italic m-b-5"
                           >
@@ -875,7 +856,7 @@ $(document).ready(function () {
             		dataPost['kh'] = $('#f-mauhd-crud').find('#kh').val();
             		dataPost['macty'] = $('#f-mauhd-crud').find('#macty').val();
             		dataPost['r1p'] = $('#f-mauhd-crud').find('#r1p').val();
-            		dataPost['rnp'] = $('#f-mauhd-crud').find('#rnp').val();
+            		dataPost['rnp'] = $('#f-mauhd-crud').find('#rnp'). val();
             			dataPost['CharsInRow'] = $('#f-mauhd-crud').find('#CharsInRow').val();
             		dataPost['logoFileNameSystem'] = $('#f-mauhd-crud').find('#logoFileNameSystem').val();
             		dataPost['backgroundFileNameSystem'] = $('#f-mauhd-crud').find('#backgroundFileNameSystem').val();

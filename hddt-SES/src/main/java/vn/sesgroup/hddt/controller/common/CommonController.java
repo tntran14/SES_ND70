@@ -1432,7 +1432,9 @@ public class CommonController extends AbstractController{
 					hItem.put("CreateDate", commons.getTextJsonNode(row.at("/CreateDate")));
 					hItem.put("Address", commons.getTextJsonNode(row.at("/Address")));
 					hItem.put("ContactPhone", commons.getTextJsonNode(row.at("/Phone")));
-			
+					hItem.put("ContactEmail", commons.getTextJsonNode(row.at("/Email")));
+					hItem.put("EmailCC", commons.getTextJsonNode(row.at("/EmailCC")));
+					
 					hItem.put("UserCreated", commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName")));
 					if(!row.at("/InfoCreated/CreateDate").isMissingNode() && null != row.at("/InfoCreated/CreateDate")) {
 						try {

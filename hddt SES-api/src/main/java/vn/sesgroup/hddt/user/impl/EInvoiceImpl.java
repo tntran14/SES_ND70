@@ -4443,21 +4443,26 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						options);
 				mongoClient.close();
 				
-				responseStatus = new MspResponseStatus(0,
+				responseStatus = new MspResponseStatus(999,
 						"".equals(MTLoi) ? "CQT chưa có thông báo kết quả trả về." : MTLoi);
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
 		}
 
-//		if ("|202|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
-//			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
-//			rsp.setResponseStatus(responseStatus);
-//			return rsp;
-//		}
-
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
+		
+		if (MCCQT == null || MCCQT.trim().isEmpty()) {
+		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
+			responseStatus = new MspResponseStatus(999,"Kết quả trả về không có MCCQT.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}  else {
+		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+		}
 
 		String dir = docTmp.get("Dir", "");
 		String fileName = _id + "_" + MCCQT + ".xml";
