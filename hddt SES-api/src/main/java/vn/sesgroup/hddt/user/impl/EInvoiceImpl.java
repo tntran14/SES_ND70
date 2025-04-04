@@ -4453,14 +4453,18 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
 		
-		if (MCCQT == null || MCCQT.trim().isEmpty()) {
+		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
 		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
+		    log.error(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
 			responseStatus = new MspResponseStatus(999,"Kết quả trả về không có MCCQT.");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}  else {
 		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
 		}
 
@@ -4495,7 +4499,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 				options);
 		mongoClient2.close();
-		
+		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
+		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete "+MCCQT);
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
+
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete ");
+		log.info("MCCQT: "+MCCQT + " MTDTChieu: "+MTDTChieu);
 		String iddc = "";
 		try {
 			iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), "");
