@@ -4288,7 +4288,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String fileName1 = _id + "_signed.xml";
 		file = new File(dir1, fileName1);
 		MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
-
+		
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+	    		+ "Call tracuuthongdiep1 - MaMTDiep: "+MTDiep);
+		
 		if ("2".equals(MaKetQua)) {
 
 			// call 3 lần mỗi lần 3s
@@ -4355,7 +4358,13 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				return rsp;
 			}
 		}
-
+		
+		
+		
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+	    		+ "Call tracuuthongdiep ss - MaMTDiep: "+MTDiep);
+		
+		
 		Node nodeTDiep = null;
 		String checkMLTDiep = "";
 		boolean check_ = false;
@@ -4408,7 +4417,13 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
 		MTDTChieu = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MTDTChieu", nodeTDiep, XPathConstants.NODE));
-
+		
+		
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+	    		+ "Get tracuuthongdiep - MaMTDiep: "+MTDiep+" CQT_MLTDiep: "+CQT_MLTDiep+" MTDTChieu: " + MTDTChieu);
+		
+		
+		
 		if (!CQT_MLTDiep.equals("202")) {
 			if (check_ == true) {
 				MLoi = MLoi1;
@@ -4453,19 +4468,34 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
 		
+		
+
+		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+	    		+ "Get mccqttracuuthongdiep - MaMTDiep: "+MTDiep+" MCCQT: "+(MCCQT == null || MCCQT.trim().isEmpty() ? "_Rong_":MCCQT)
+	    		+" CQT_MLTDiep: "+CQT_MLTDiep+" MTDTChieu: " + MTDTChieu);
+		
+		
+		
 		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
 		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-		    log.error(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+		    
+		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
+		    
+		    
 			responseStatus = new MspResponseStatus(999,"Kết quả trả về không có MCCQT.");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}  else {
 		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+		    
+		    
 		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+		    
+		    
 		}
 
 		String dir = docTmp.get("Dir", "");
