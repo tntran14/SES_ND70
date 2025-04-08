@@ -283,7 +283,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("issu-contract|issu-contract-cre|issu-contract-db|issu-contract-del|issu-contract-detail|issu-contract-edit|issu-contract-approve|issu-contract-active|issu-contract-deactive|");
         	sbRights.append("tkhai|tkhai-cre|tkhai-edit|tkhai-del|tkhai-detail|tkhai-sign|tkhai-copy|");
         	sbRights.append("mstncn|mstncn-cre|mstncn-edit|mstncn-del|mstncn-detail|mstncn-sign|");
-        	sbRights.append("cttncn|cttncn-cre|cttncn-edit|cttncn-del|cttncn-detail|cttncn-sign|cttncn-import|cttncn-signAll|cttncn-xoabo|cttncn-xml|cttncn-send-mail|");
+        	sbRights.append("cttncn|cttncn-cre|cttncn-edit|cttncn-del|cttncn-detail|cttncn-sign|cttncn-import|cttncn-signAll|cttncn-xoabo|cttncn-xml|cttncn-send-mail|cttncn-pdfAll|");
         	sbRights.append("hdsduser|hdsduser-detail|");
         	sbRights.append("qlnvtncn|qlnvtncn-cre|qlnvtncn-edit|qlnvtncn-del|qlnvtncn-detail|");
         		sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");

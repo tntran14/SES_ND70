@@ -7,4 +7,5 @@ import vn.sesgroup.hddt.dto.FileInfo;
 public interface CommonDAO {
 
 	public FileInfo printEinvoiceAll(JSONRoot jsonRoot)throws Exception;
+	public FileInfo printCttncnAll(JSONRoot jsonRoot)throws Exception;
 }

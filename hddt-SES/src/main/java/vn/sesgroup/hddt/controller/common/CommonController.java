@@ -918,7 +918,85 @@ public class CommonController extends AbstractController{
 	
 	
 	
-	
+		@RequestMapping(value = { "/common/view-pdfAll-cttncn/{_id}"}, method = {
+				RequestMethod.POST, RequestMethod.GET })
+		public void viewPDFAllCTTNCN(Locale locale, HttpServletRequest req, HttpServletResponse resp,
+				HttpSession session, @PathVariable(value = "_id") String _id) throws Exception {
+			PrintWriter writer = null;
+			FileInfo fileInfo = null;
+
+			try {
+				_id = _id.replaceAll("\\s", "");
+				if ("".equals(_id) || null == _id) {
+					resp.setContentType("text/html; charset=utf-8");
+					resp.setCharacterEncoding("UTF-8");
+					resp.setHeader("success", "yes");
+					writer = resp.getWriter();
+					writer.write("Không tìm thấy thông tin chứng từ.");
+					writer.flush();
+					return;
+				}
+
+				CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+				BaseDTO dto = new BaseDTO();
+				dto = new BaseDTO(req);
+				Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
+				HashMap<String, Object> hData = new HashMap<>();
+				hData.put("_token", _id);
+
+				msg.setObjData(hData);
+				JSONRoot root = new JSONRoot(msg);
+				long startTime = System.currentTimeMillis();
+				fileInfo = restAPI.callAPIGetFilePDF("/commons/print-cttncnAll", cup.getLoginRes().getToken(),
+						HttpMethod.POST, root);
+				long endTime = System.currentTimeMillis();
+				long totalTime = (endTime - startTime) / 1000;
+				System.out.println("Thoi gian thuc hien view PDF hang loat: " + totalTime + " giay");
+
+				if (null == fileInfo || null == fileInfo.getContentFile()) {
+					resp.setContentType("text/html; charset=utf-8");
+					resp.setCharacterEncoding("UTF-8");
+					resp.setHeader("success", "yes");
+					writer = resp.getWriter();
+					writer.write("In hóa đơn không thành công.");
+					writer.flush();
+					return;
+				}
+
+				String type = "application/pdf";
+				InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
+				resp.setHeader("Content-Type", type);
+				resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				resp.setHeader("Pragma", "no-cache");
+				resp.setHeader("Expires", "0"); 
+				int bufferSize = 1024;
+				resp.setContentType(type);
+				final byte[] buffer = new byte[bufferSize];
+				int bytesRead;
+				OutputStream out = null;
+				try {
+					out = resp.getOutputStream();
+					while ((bytesRead = inputStream.read(buffer)) > 0) {
+						out.write(buffer, 0, bytesRead);
+					}
+				} finally {
+					if (out != null) {
+						out.flush();
+						out.close();
+					}
+					if (inputStream != null) {
+						inputStream.close();
+					}
+				}
+			} catch (Exception e) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Không tìm thấy thông tin chứng từ. Vui lòng thử lại!!!");
+				writer.flush();
+			}
+		}
 	
 	
 	

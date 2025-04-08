@@ -73,6 +73,9 @@
                             				<button  type="button" title="Xuất XML" data-action="cttncn-xml" class="btns xuat_xml hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-xml|')}">
 										   			<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất XML</span>
 										   </button>
+										   	<button  type="button" title="Xuất PDF hàng loạt" data-action="cttncn-pdfAll" class="btns in_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAll|')}">
+										   			<i class="mdi mdi-file-pdf"> </i><span class="d-none d-md-inline">Xuất PDF hàng loạt</span>
+										   </button>
 											<button type="button" title="Ký" data-action="cttncn-sign" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-sign|')}" th:disabled="true" >
                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký</span>
                             				</button>
@@ -406,6 +409,51 @@
 							/* objData =  encodeObjJsonBase64UTF8(ids);
 							window.open(ROOT_PATH + '/common/cttncnXml/' + objData,'_blank'); */
 						break;
+							
+						case 'cttncn-pdfAll':
+							var objData = null;
+							var ids = null;
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var result = responseData['ID'];
+											  window.open(ROOT_PATH + '/common/view-pdfAll-cttncn/' + result,'_blank');
+											  
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+								            hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
+							break;
 						case 'cttncn-signAll':
 							ids = [];
 							objData = {};
