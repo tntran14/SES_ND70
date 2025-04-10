@@ -46,6 +46,7 @@ import vn.sesgroup.hddt.utility.Commons;
 import vn.sesgroup.hddt.utility.Constants;
 import vn.sesgroup.hddt.utility.Json;
 import vn.sesgroup.hddt.utility.MailUtils;
+import vn.sesgroup.hddt.utility.MailjetSender;
 import vn.sesgroup.hddt.utility.SystemParams;
 
 @Repository
@@ -60,9 +61,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	JPUtils jpUtils;
 	
 	private MailUtils mailUtils = new MailUtils();
-	
-	
-	
+	private MailjetSender mailJet = new MailjetSender();
 	
 	@Override
 	public void sendMailWithQueueBulkMail(String infoServerID) throws Exception {
@@ -835,6 +834,297 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 		}
 		
 	}
-	
 
+
+
+
+	@Override
+	public void sendMailWithQueueBulkMailOnCttncn(String infoServerID) throws Exception {
+		List<Document> pipeline = new ArrayList<Document>();
+		pipeline.add(
+			new Document("$match", new Document("InfoServerID", infoServerID))
+		);
+		pipeline.add(
+			new Document("$lookup", 
+				new Document("from", "LogBulkEMail")
+				.append("pipeline", 
+					Arrays.asList(
+						new Document("$match", new Document("InfoServerID", infoServerID))
+						
+					)
+				)
+				.append("as", "LogBulkEMail")
+			)
+		);
+		pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "PramLink")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", 
+								new Document("$expr", 
+										new Document("IsDelete", false)
+								)
+							)
+						)	
+					)
+					.append("as", "PramLink")
+				)
+			);
+			pipeline.add(
+				new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true))
+			);	
+			pipeline.add(
+					new Document("$lookup", 
+						new Document("from", "PramLink")
+						.append("pipeline", 
+							Arrays.asList(
+								new Document("$match", 
+									new Document("$expr", 
+											new Document("IsDelete", false)
+									)
+								)
+							)	
+						)
+						.append("as", "PramLink")
+					)
+				);
+				pipeline.add(
+					new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true))
+				);
+
+		Document docTmp = null;
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMailInfoServer");
+		try {
+			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();	
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		mongoClient.close();
+		
+		
+		if(docTmp == null) return;
+		
+		String mailType = docTmp.get("MailUsingType", "");
+		String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+
+		StringBuilder title = null;
+		String tmp = "";
+		String email="";
+		String emailcc="";
+		StringBuilder content = null;
+		String emailReceives = "";
+		File file = null;
+		
+		// LAY DANH SACH LogBulkEMail
+		List<Document> toEmails = docTmp.getList("LogBulkEMail", Document.class);
+		if (null == toEmails || toEmails.size() == 0)
+			return;
+
+		for (Document toEmail : toEmails) {
+			// reset var
+			title = new StringBuilder();
+			tmp = "";
+			email="";
+			emailcc="";
+			content = new StringBuilder();
+			emailReceives = "";
+			
+			// set title
+			title.append(toEmail.get("TaxCode", ""));
+			title.append(" ");
+			title.append(toEmail.get("Name", ""));
+			title.append(" Thông báo phát hành Chứng từ khấu trừ thuế");
+			tmp = toEmail.getEmbedded(Arrays.asList("Data","TaxCode"), "");
+			if (!"".equals(tmp)) {
+				title.append(" ");
+				title.append(tmp);
+			}
+			tmp = toEmail.getEmbedded(Arrays.asList("Data","Name"), "");
+			if (!"".equals(tmp)) {
+				title.append(" ");
+				title.append(tmp);
+			}
+			
+			tmp = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""));
+			if (!"".equals(tmp)) {
+				title.append(" - Số Chứng từ ");
+				title.append(tmp);
+				title.append(" (No reply)");
+			}
+			//end set title
+			
+			// set content
+			content.setLength(0);
+			tmp = toEmail.getEmbedded(Arrays.asList("Data","Name"), "");
+			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label>"
+					+ ("".equals(tmp) ? "Nhân viên" : tmp) + "</label><o:p></o:p></span></p>\n");
+			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label>" + toEmail.get("Name", "")
+					+ "</label> xin gửi " + ("".equals(tmp) ? "Nhân viên" : tmp)
+					+ " chứng từ khấu trừ thuế TNCN theo file đính kèm.</span></p>\n");
+			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng!</span></p>");
+
+			content.append("<hr style='margin: 5px 0 5px 0;'>");
+			content.append(
+					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>NHÂN VIÊN VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+			content.append(
+					"<p style='margin-bottom: 0px;'><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>"
+							+ toEmail.get("Name", "").toUpperCase() + "</label><o:p></o:p></span></p>");
+//			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + ii.getAddress()
+//					+ "</span></p>\n");
+			// end set content
+			
+			// set email
+			email=toEmail.getEmbedded(Arrays.asList("Data","ContactEmail"), "");
+			if (email.trim().isEmpty()) break;
+			
+			emailReceives= email;
+			emailcc=toEmail.getEmbedded(Arrays.asList("Data","EmailCC"), "");
+			if (!emailcc.trim().isEmpty()) {
+				emailReceives+=","+emailcc;
+			}
+			// end set email
+			
+			// check contained pdf
+			String id = toEmail.getEmbedded(Arrays.asList("Data", "_id"), ObjectId.class).toString();
+			String status = toEmail.getEmbedded(Arrays.asList("Data","Status"), "");
+			String fileName = id + ".xml";
+			String fileNameXML = id + ".xml";
+			String fileNamePDF = id + ".pdf";
+			if (Constants.INVOICE_STATUS.DELETED.equals(status))
+				fileNamePDF = id + "-deleted.pdf";
+			String statusCode = toEmail.getEmbedded(Arrays.asList("Data","SignStatus"), "");
+			String dir = toEmail.getEmbedded(Arrays.asList("Data","Dir"), "");
+			if ("SIGNED".equals(statusCode)) {
+				fileName = id + "_signed.xml";
+				fileNameXML= id + "_signed.xml";
+			}
+			
+			file = new File(dir, fileName);
+			if (file.exists() && file.isFile()) {
+				String imgLogo = toEmail.getEmbedded(Arrays.asList("Data","DMMSTNCN","LoGo"), "");
+				
+				String kh = toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), "");
+				String ms = toEmail.getEmbedded(Arrays.asList("Data","DMMSTNCN","MauSo"), "");
+
+				org.w3c.dom.Document doc = commons.fileToDocument(file);
+				
+				String fileNameJP = toEmail.getEmbedded(Arrays.asList("Data", "DMMSTNCN", "FileName"), "");
+				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+				ByteArrayOutputStream baosPDF = null;
+				baosPDF = jpUtils.viewpdfcttncn(fileJP, doc, toEmail.get("Data", Document.class),
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN", toEmail.get("TaxCode", ""), imgLogo)
+								.toString(),
+						kh, ms, link, false, Constants.INVOICE_STATUS.XOABO.equals(status));
+
+				if (null != baosPDF) {
+					try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
+						baosPDF.writeTo(fileOuputStream);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			// end check contained pdf
+			
+			String mauHD = toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), "");
+			String soHD = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""));
+			List<String> listFiles = new ArrayList<>();
+			List<String> listNames = new ArrayList<>();
+			
+			if ("SIGNED".equals(statusCode)) {
+				fileNameXML = id + "_signed.xml";
+			}
+			file = new File(dir, fileNameXML);
+			if (file.exists() && file.isFile()) {
+				listFiles.add(file.toString());
+				listNames.add(mauHD + "-" + soHD + ".xml");
+			}
+			
+			file = new File(dir, fileNamePDF);
+			if (file.exists() && file.isFile()) {
+				listFiles.add(file.toString());
+				listNames.add(mauHD + "-" + soHD + ".pdf");
+			}
+			
+			// send mail
+			boolean boo = false;
+			MailConfig mailConfig = new MailConfig(toEmail.getEmbedded(Arrays.asList("Data","ConfigEmail"), Document.class));
+			if (mailType.equals("MailJet")) {
+				mailConfig.setEmailAddress(toEmail.getEmbedded(Arrays.asList("Data","ConfigMailJet","ApiKey"), ""));
+				mailConfig.setEmailPassword(toEmail.getEmbedded(Arrays.asList("Data","ConfigMailJet","SecretKey"), ""));
+				mailConfig.setSmtpServer(toEmail.getEmbedded(Arrays.asList("Data","ConfigMailJet","EmailAddress"), ""));
+				boo = mailJet.sendMailJet(mailConfig, title.toString(), content.toString(), emailReceives, listFiles, listNames, true);
+			} else {
+				boo = mailUtils.sendMail(mailConfig, title.toString(), content.toString(), emailReceives, listFiles, listNames, true);
+			}
+			
+			FindOneAndUpdateOptions options = null;
+			options = new FindOneAndUpdateOptions();
+			options.upsert(true);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+					
+			if(boo == false) {
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMail");
+				collection.findOneAndUpdate(new Document("InfoServerID", infoServerID)
+			   			.append("_id", toEmail.get("_id", ObjectId.class)),
+						new Document("$set",
+								new Document("Status", "error")),							
+															
+						options);
+				mongoClient.close();
+				System.out.println("Gui Email Server den " +emailReceives +" THAT BAI");
+				
+			} else {
+				try {
+					Document docInsert = null;
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName)
+							.getCollection("LogEmailUser");
+					docInsert = new Document("IssuerId", toEmail.get("IssuerId",""))
+							.append("Title", title.toString())
+							.append("Email", emailReceives)
+							.append("IsActive", boo)
+							.append("MailCheck", boo)
+							.append("IsDelete", false)
+							.append("EmailContent", content.toString());
+					collection.insertOne(docInsert);
+
+					/* LOG BAO CAO THONG KE */
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("BaoCaoThongKeCTTNCN");
+					docInsert = new Document("IssuerId", toEmail.get("IssuerId",""))
+							.append("Name", toEmail.getEmbedded(Arrays.asList("Data","Name"), ""))
+							.append("Code", toEmail.getEmbedded(Arrays.asList("Data","Code"), ""))
+							.append("Address", toEmail.getEmbedded(Arrays.asList("Data","Address"), ""))
+							.append("ContactPhone", toEmail.getEmbedded(Arrays.asList("Data","ContactPhone"), ""))
+							.append("TaxCode", toEmail.getEmbedded(Arrays.asList("Data","TaxCode"), ""))
+							.append("KyHieu", toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), ""))
+							.append("CCCD", toEmail.getEmbedded(Arrays.asList("Data","CMND-CCCD","CCCD"), ""))
+							.append("KyBaoCao", toEmail.getEmbedded(Arrays.asList("Data","KyBaoCao"), ""))
+							.append("TuNgay", toEmail.getEmbedded(Arrays.asList("Data","TuNgay"), ""))
+							.append("DenNgay", toEmail.getEmbedded(Arrays.asList("Data","DenNgay"), ""))
+							.append("SHDon", toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""))
+							.append("EmailGuiCTTNCN", emailReceives)
+							.append("Date", toEmail.getEmbedded(Arrays.asList("Data","Date"), ""))
+							.append("IsDelete", false);
+					collection.insertOne(docInsert);
+					
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMail");
+					collection.findOneAndUpdate(new Document("InfoServerID", infoServerID)
+				   			.append("_id", toEmail.get("_id", ObjectId.class)),
+							new Document("$set",
+									new Document("Status", "success")),							
+																
+							options);
+					mongoClient.close();
+					System.out.println("Gui Email Server den " +emailReceives + " THANH CONG");
+
+				} catch (Exception ex) {
+					System.out.println(ex);
+				}
+			}
+		}
+	}
 }

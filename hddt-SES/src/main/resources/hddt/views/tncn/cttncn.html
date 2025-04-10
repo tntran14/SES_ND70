@@ -76,6 +76,9 @@
 										   	<button  type="button" title="Xuất PDF hàng loạt" data-action="cttncn-pdfAll" class="btns in_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAll|')}">
 										   			<i class="mdi mdi-file-pdf"> </i><span class="d-none d-md-inline">Xuất PDF hàng loạt</span>
 										   </button>
+										   <button type="button" title="Send mail all" data-action="cttncn-sendMailAll" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail|')}"  th:disabled="true">
+                            					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Gửi mail hàng loạt</span>
+                            				</button>
 											<button type="button" title="Ký" data-action="cttncn-sign" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-sign|')}" th:disabled="true" >
                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký</span>
                             				</button>
@@ -322,11 +325,13 @@
 						$("#f-cttncn").find('button[data-action="cttncn-signAll"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
 						$("#f-cttncn").find('button[data-action="cttncn-edit"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
 						$("#f-cttncn").find('button[data-action="cttncn-xml"]').prop('disabled', 'Đã ký' == rowData['SignStatus']? false: true);
-						//XOA BO CHUNG TU
+						
 						if('Đã phát hành' == rowData['Status'] && 'Đã ký' == rowData['SignStatus']){						  
 					          	$("#f-cttncn").find('button[data-action="cttncn-xoabo"]').prop('disabled', false);
+					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', false);
 							}else{
 								$("#f-cttncn").find('button[data-action="cttncn-xoabo"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', false);
 							}
 						
 						var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
@@ -1120,6 +1125,87 @@
 						        }
 							});
 							break;
+						case 'cttncn-sendMailAll':									
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
+							});
+							/*CHECK THONG TIN HD*/
+							objData = {
+								_ids : encodeObjJsonBase64UTF8(ids)
+							};
+							dsID = {
+								_token : encodeObjJsonBase64UTF8(ids)
+							};
+						
+							var objURL = {};	
+							objURL['check'] = ROOT_PATH + '/main/cttncn-send-mail/check-data-sendAll';
+							objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mail/send-mailAll';
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: objURL['check'],
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											tokenTransaction = responseData['TOKEN'];
+											
+											objData['tokenTransaction'] = tokenTransaction;
+
+													$.ajax({
+														type: "POST",
+														datatype: "json",
+														url: objURL['exec'],
+														data: objData,
+														beforeSend: function(req) {
+															initAjaxJsonRequest(req);
+												        	showLoading();
+														},
+														success:function(res) {
+															hideLoading();
+															if(res) {
+																if(res.errorCode == 0) {
+																	_gridMain.data("kendoGrid").dataSource.read();
+																}else{
+																	alertDLSuccess(createObjectError(res).html(), function(){});
+																}
+															}else{
+																alertDLSuccess('unknown error!!!', function(){});
+																hideLoading();
+															}
+														},
+														error:function (xhr, ajaxOptions, thrownError){
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+												            hideLoading();
+												        }
+													});
+											
+												
+										
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							}); 
 						default:
 							break;
 						}

@@ -276,4 +276,96 @@ public class ChungTuSendMailController extends AbstractController {
 
 		return dtoRes;
 	}
+	
+	private BaseDTO checkDataSendMailAll(HttpServletRequest req, HttpSession session
+			, String transaction, CurrentUserProfile cup) throws Exception{
+		BaseDTO dto = new BaseDTO();
+		dto.setErrorCode(0);
+	
+		_ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
+		if("".equals(_ids)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Không tìm thấy thông tin hóa đơn.");
+		}
+		
+		return dto;
+	}
+	
+	@RequestMapping(value = "/check-data-sendAll",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO execCheckDataToSaveAll(Locale locale, HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
+		String token = "";
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+			session.removeAttribute(token);
+		}
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		
+		BaseDTO dto = new BaseDTO();
+			
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		dto = checkDataSendMailAll(req, session, transaction, cup);
+		if(0 != dto.getErrorCode()) {
+			dto.setErrorCode(999);
+			dto.setResponseData(Constants.MAP_ERROR.get(999));
+			return dto;
+		}
+		token = commons.csRandomAlphaNumbericString(30);
+		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+		HashMap<String, String> hInfo = new HashMap<String, String>();
+		hInfo.put("TOKEN", token);
+		dto.setResponseData(hInfo);
+		dto.setErrorCode(0);
+		return dto;
+	}
+	
+	@RequestMapping(value = "/send-mailAll",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO execSendMailAll(HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
+			, @RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction) throws Exception{
+		BaseDTO dtoRes = new BaseDTO();
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		dtoRes = checkDataSendMailAll(req, session, transaction, cup);
+		if(0 != dtoRes.getErrorCode()) {
+			dtoRes.setErrorCode(999);
+			dtoRes.setResponseData(Constants.MAP_ERROR.get(999));
+			return dtoRes;
+		}
+		
+		/*CHECK TOKEN*/
+		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
+				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		if ("".equals(token) || !tokenTransaction.equals(token)) {
+			dtoRes.setErrorCode(1);
+			dtoRes.setResponseData("Token giao dịch không hợp lệ.");
+			return dtoRes;
+		}
+		/*END: CHECK TOKEN*/
+		
+		String actionCode = Constants.MSG_ACTION_CODE.CREATED;
+		
+		dtoRes = new BaseDTO(req);
+		Msg msg = dtoRes.createMsg(cup, actionCode);
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("_ids", _ids);
+
+		
+		msg.setObjData(hData);
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/cttncn/send-mailAll", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() == 0) {
+			dtoRes.setErrorCode(0);
+			dtoRes.setResponseData("Gửi email chứng từ thành công.");
+		}else {
+			dtoRes.setErrorCode(rspStatus.getErrorCode());
+			dtoRes.setResponseData(rspStatus.getErrorDesc());
+		}
+		
+		return dtoRes;
+	}
 }

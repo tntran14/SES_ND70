@@ -25,9 +25,20 @@ public class JMSListener
         catch (Exception ex) {}
         if (jmsMessage instanceof ActiveMQTextMessage) {
             final String infoServerID = ((ActiveMQTextMessage)jmsMessage).getText();
+            String type = ((ActiveMQTextMessage)jmsMessage).getStringProperty("TYPE");
             try {
-            	System.out.println("Dang thuc hien gui ActiveMQ");
-                this.dao.sendMailWithQueueBulkMail(infoServerID);
+            	
+            	switch (type) {
+				case "CTTNCN":
+					System.out.println("Dang thuc hien gui ActiveMQ trên CTTNCN");
+					this.dao.sendMailWithQueueBulkMailOnCttncn(infoServerID);
+					break;
+
+				default:
+					System.out.println("Dang thuc hien gui ActiveMQ");
+					this.dao.sendMailWithQueueBulkMail(infoServerID);
+					break;
+				}
             }
             catch (Exception e) {
                 e.printStackTrace();
