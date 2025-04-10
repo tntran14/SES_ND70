@@ -540,30 +540,33 @@ public class CKSImpl extends AbstractDAO implements CKSDAO {
 		pipeline.add(
 				new Document("$lookup",
 						new Document("from", "DMCTSo")
-								.append("pipeline",
-										Arrays.asList(
-												new Document("$match", new Document("IssuerId", header.getIssuerId())
-														// .append("DSCTSSDung.Seri", _id)
-
-														.append("$or",
-																Arrays.asList(new Document("IsActive", true),
-																		new Document("IsActive", null)))
-														.append("IsDelete", new Document("$ne", true))),
-												new Document("$sort", new Document("NLap", -1).append("_id", -1)),
-												new Document("$limit", 1)))
+						.append("pipeline",
+								Arrays.asList(
+									new Document("$match", 
+											new Document("IssuerId", header.getIssuerId())
+												.append("$or",Arrays.asList(
+																new Document("IsActive", true),	
+																new Document("IsActive", null)))
+												.append("IsDelete", new Document("$ne", true))
+												.append("DSCTSSDung.Seri", _id)
+												)
+									)
+						)
 								.append("as", "DMCTSo")));
-		pipeline.add(
-				new Document("$unwind", new Document("path", "$DMCTSo").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$unwind", new Document("path", "$DMCTSo").append("preserveNullAndEmptyArrays", true)));
 
 		pipeline.add(new Document("$lookup", new Document("from", "DMTKhai")
-				.append("pipeline", Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId())
-						// .append("DSCTSSDung.Seri", _id)
-
-						.append("IsDelete", new Document("$ne", true))),
-						new Document("$sort", new Document("NLap", -1).append("_id", -1)), new Document("$limit", 1)))
+				.append("pipeline", 
+						Arrays.asList(
+								new Document("$match", 
+										new Document("IssuerId", header.getIssuerId())
+										.append("IsDelete", new Document("$ne", true))
+										.append("DSCTSSDung.Seri", _id)
+										)
+								)
+						)
 				.append("as", "DMTKhai")));
-		pipeline.add(
-				new Document("$unwind", new Document("path", "$DMTKhai").append("preserveNullAndEmptyArrays", true)));
+		pipeline.add(new Document("$unwind", new Document("path", "$DMTKhai").append("preserveNullAndEmptyArrays", true)));
 
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");

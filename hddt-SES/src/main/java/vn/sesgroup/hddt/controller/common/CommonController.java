@@ -351,39 +351,38 @@ public class CommonController extends AbstractController{
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/cks/check/" + serialNumber, cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-		
-		HashMap<String, String> hItem = null;
-		
-		if(serialNumber.length() % 2 == 1)
-			serialNumber = "0" + serialNumber;
-		
-	boolean ccheck = false;
-		if(!jsonData.at("/DSCTSSDung").isMissingNode()) {
-			for(JsonNode o: jsonData.at("/DSCTSSDung")) {
-				hItem = new LinkedHashMap<String, String>();
-				String checkserri =  commons.getTextJsonNode(o.at("/Seri"));
-				String isActive =  commons.getTextJsonNode(jsonData.at("/IsActive"));
-				if(checkserri.length() <32)
-				{
-					checkserri = "0" +checkserri;
+
+			HashMap<String, String> hItem = null;
+
+			if (serialNumber.length() % 2 == 1)
+				serialNumber = "0" + serialNumber;
+
+			boolean ccheck = false;
+			if (!jsonData.at("/DSCTSSDung").isMissingNode()) {
+				for (JsonNode o : jsonData.at("/DSCTSSDung")) {
+					hItem = new LinkedHashMap<String, String>();
+					String checkserri = commons.getTextJsonNode(o.at("/Seri"));
+					String isActive = commons.getTextJsonNode(jsonData.at("/IsActive"));
+					if (checkserri.length() < 32) {
+						checkserri = "0" + checkserri;
+					}
+					if (checkserri.equals(serialNumber)) {
+						ccheck = true;
+						break;
+					}
+					if (isActive.equals("false")) {
+						ccheck = false;
+						break;
+					}
 				}
-			if(checkserri.equals(serialNumber)) {
-				ccheck = true;
-				break;
-			}			
-			if(isActive.equals("false")){
-				ccheck = false;
-				break;
 			}
-		}
-	}
-	if(ccheck != true) {
-		dtoRes.setErrorCode(1);
-		dtoRes.setResponseData("Chứng thư số không hợp lệ (không tìm thấy CKS).");
-		return dtoRes;
-	}
+			if (ccheck != true) {
+				dtoRes.setErrorCode(1);
+				dtoRes.setResponseData("Chứng thư số không hợp lệ (không tìm thấy CKS).");
+				return dtoRes;
+			}
 		}
 		
 		else if(rspStatus.getErrorCode() == 300) {
