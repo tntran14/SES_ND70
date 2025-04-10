@@ -850,7 +850,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				.append("pipeline", 
 					Arrays.asList(
 						new Document("$match", new Document("InfoServerID", infoServerID))
-						
 					)
 				)
 				.append("as", "LogBulkEMail")

@@ -2999,10 +2999,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			
 			file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
-				String imgLogo = docTmp.get("LoGo", "");
+				String imgLogo = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "LoGo"), "");
 				
 				String kh = docTmp.get("KyHieu", "");
-				String ms = docTmp.get("MauSo", "");
+				String ms = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "MauSo"), "");
 
 				org.w3c.dom.Document doc = commons.fileToDocument(file);
 				
