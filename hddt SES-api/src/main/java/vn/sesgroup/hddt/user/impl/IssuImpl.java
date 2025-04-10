@@ -105,20 +105,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 
 		List<Document> pipeline = new ArrayList<Document>();
 		
-		Document docMatch = new Document("IsDelete",new Document("$ne", true));	
-		   //2. Lấy list khách hàng
-//		String userName = header.getUserName();	
-//		String [] split = userName.split("_");
-//		
-//		String UserFullName =  header.getUserName();
-//		if(split.length>1) {
-//			UserFullName = split[0];
-//		}
-//		
-//		docMatch.append("$or", Arrays.asList(		
-//				new Document("InfoCreated.CreateUserName", UserFullName),
-//				new Document("InfoCreated", null)				
-//				));
+		Document docMatch = new Document("IsDelete",new Document("$ne", true).append("InfoCreated.CreateUserID", header.getUserId()));	
 		
 		if(!"".equals(t))
 			docMatch.append("TaxCode", commons.regexEscapeForMongoQuery(t));
