@@ -56,6 +56,7 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 		Object objData = msg.getObjData();
 		Document docR = null;
 		Document docRDp = null;
+		Document docTmp1 = null;
 		FindOneAndUpdateOptions options = null;
 		FindOneAndUpdateOptions options2 = null;
 		JsonNode jsonData = null;
@@ -72,9 +73,9 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 		String sl = commons.getTextJsonNode(jsonData.at("/SOLUONG"));
 		String phoict = commons.getTextJsonNode(jsonData.at("/PhoiCT"));
 		String phoicttext = commons.getTextJsonNode(jsonData.at("/PhoiCTText"));
-		 int number = 0;
+		int SL_nhap = 0;
 		if(!sl.equals("")) {
-			  number = Integer.parseInt(sl);
+			SL_nhap = Integer.parseInt(sl);
 		}
 	   
 		String yearCreated = commons.getTextJsonNode(jsonData.at("/NamPhatHanh")).trim().replaceAll("\\s+", " ");
@@ -122,7 +123,7 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 					new Document("$ne", true));
 			pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match", docFind));
-			new Document("$project", new Document("_id", 1));
+			new Document("$project", new Document("_id", 1).append("TaxCode", 1));
 			
 			pipeline.add(new Document("$lookup", new Document("from", "Users").append("pipeline", Arrays.asList(
 					new Document("$match",
@@ -179,6 +180,60 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 				return rsp;
 			}
 		
+			
+			String taxCode = docTmp.get("TaxCode","");
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$lookup", new Document("from", "DMDepot")
+					.append("pipeline", Arrays.asList(new Document("$match", new Document("TaxCode", taxCode)),
+							new Document("$project",
+									new Document("_id", 1).append("SLHDon", 1).append("SLHDonDD", 1)
+											.append("SLHDonCL", 1).append("TaxCode", 1)),
+							new Document("$limit", 1)))
+					.append("as", "DMDepotInfos")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMDepotInfos").append("preserveNullAndEmptyArrays", true)));
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			docTmp1 = null;
+			try {
+				docTmp1 = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			
+			int SLKho = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDon"), 0);
+			int SLKhoCL = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDonCL"), 0);
+			int SLKhoDD = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDonDD"), 0);
+			
+			if (SL_nhap > SLKhoCL) {
+				responseStatus = new MspResponseStatus(9999, "Số lượng không đủ để phát hành.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			int SLKhoUpdateDD = SLKhoDD + SL_nhap;
+			int SLKhoUpdateCL = SLKhoCL - SL_nhap;
+
+			options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+			
+			
+			// update kho
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMDepot");
+			docR = collection.findOneAndUpdate(
+					new Document("TaxCode", taxCode), 
+					new Document("$set",
+							new Document("SLHDon", SLKho)
+							.append("SLHDonDD", SLKhoUpdateDD)
+							.append("SLHDonCL", SLKhoUpdateCL)),
+					options);
+
+			mongoClient.close();
+						
 			//TẠO FOLDER NEU CHUA CO
 			 File directory = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN");
 			    if (! directory.exists()){
@@ -188,12 +243,25 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 			
 			ObjectId id = new ObjectId();
 			/* LUU DU LIEU HD */
-			docUpsert = new Document("_id", id).append("IssuerId", header.getIssuerId()).append("SHDHT", 0).append("Mau", macqt  )
-					.append("KyHieu", macty).append("MauSo", khhd  ).append("Nam", yearCreated  ).append("ChungTu", "E" ).append("SoLuong", number )	
-					.append("TuSo", 1 ).append("DenSo", number ).append("ConLai", number ).append("FileName",
-							docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"), "")).append("LoGo", logo )	
-					.append("IsActive", true).append("IsDelete", false).append("InfoCreated",
-							new Document("CreateDate", LocalDateTime.now()).append("CreateUserID", header.getUserId())
+			docUpsert = new Document("_id", id)
+					.append("IssuerId", header.getIssuerId())
+					.append("SHDHT", 0)
+					.append("Mau", macqt)
+					.append("KyHieu", macty)
+					.append("MauSo", khhd)
+					.append("Nam", yearCreated)
+					.append("ChungTu", "E")
+					.append("SoLuong", SL_nhap)	
+					.append("TuSo", 1)
+					.append("DenSo", SL_nhap)
+					.append("ConLai", SL_nhap)
+					.append("FileName", docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"), ""))
+					.append("LoGo", logo)	
+					.append("IsActive", true)
+					.append("IsDelete", false)
+					.append("InfoCreated",
+							new Document("CreateDate", LocalDateTime.now())
+							.append("CreateUserID", header.getUserId())
 							.append("CreateUserName", header.getUserName())
 							.append("CreateUserFullName", header.getUserFullName()));
 			/* END - LUU DU LIEU HD */
@@ -208,22 +276,35 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 			return rsp;
 ////////////////////////////////////////////////////////////////////////////////////////
 		case Constants.MSG_ACTION_CODE.MODIFY:
+			ObjectId issuerId = null;
 		      try {
 		        objectId = new ObjectId(_id);
+		        issuerId = new ObjectId(header.getIssuerId());
 		      } catch (Exception ex) {
 		      }
 		      docFind = new Document("_id", objectId).append("IssuerId", header.getIssuerId());
 		      pipeline = new ArrayList<Document>();
 		      pipeline.add(new Document("$match", docFind));
-		      new Document("$project", new Document("_id", 1).append("LoGo", 1));
-		      
 		      
 		      pipeline.add(new Document("$lookup",new Document("from", "DMTemplates")
-		      .append("pipeline", Arrays.asList(new Document("$match", new Document("Name", phoicttext))))
-		      .append("as", "DMTemplates")));
-		      new Document("$project", new Document("_id", 1).append("FileName", 1));
+		    		  			.append("pipeline", Arrays.asList(
+		    		  					new Document("$match", 
+		    		  							new Document("Name", phoicttext)),
+		    		  					 new Document("$project", new Document("_id", 1).append("FileName", 1))
+		    		  					))
+		    		  			.append("as", "DMTemplates")));
 		      pipeline.add(new Document("$unwind",new Document("path", "$DMTemplates").append("preserveNullAndEmptyArrays", true)));
-		     
+		      
+		      
+		      pipeline.add(new Document("$lookup",new Document("from", "Issuer")
+  		  			.append("pipeline", Arrays.asList(
+  		  					new Document("$match", 
+  		  							new Document("_id", issuerId)),
+  		  							new Document("$project", new Document("_id", 1).append("TaxCode", 1))
+  		  						)
+  		  					)
+  		  			.append("as", "Issuer")));
+		      pipeline.add(new Document("$unwind",new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
 		      
 		  	 mongoClient = cfg.mongoClient();
 			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMSTNCN");
@@ -231,7 +312,6 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 			try {
 				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 			} catch (Exception e) {
-
 			}
 			mongoClient.close();
 			
@@ -252,16 +332,70 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 					logo = (String) docTmp.get("LoGo");
 				}
 
-				int soLuongDaSuDung = docTmp.get("SoLuong", Integer.class) - docTmp.get("ConLai", Integer.class);
-				if (number < soLuongDaSuDung) {
-					rsp.setResponseStatus(new MspResponseStatus(9999, "Không thể cập nhật Số Lượng nhỏ hơn số mẫu đã sử dụng: "+soLuongDaSuDung));
+				int SL_cur = docTmp.get("SoLuong", Integer.class);
+				int soLuongDaSuDung = SL_cur - docTmp.get("ConLai", Integer.class);
+				if (SL_nhap < soLuongDaSuDung) {
+					rsp.setResponseStatus(new MspResponseStatus(9999,
+							"Không thể cập nhật Số Lượng nhỏ hơn số mẫu đã sử dụng: " + soLuongDaSuDung));
 					return rsp;
 				}
-				
+
+				String taxCode1 = docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), "");
+				pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$lookup",
+						new Document("from", "DMDepot").append("pipeline",
+								Arrays.asList(new Document("$match", new Document("TaxCode", taxCode1)),
+										new Document("$project",
+												new Document("_id", 1).append("SLHDon", 1).append("SLHDonDD", 1)
+														.append("SLHDonCL", 1).append("TaxCode", 1)),
+										new Document("$limit", 1)))
+								.append("as", "DMDepotInfos")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$DMDepotInfos").append("preserveNullAndEmptyArrays", true)));
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+				docTmp1 = null;
+				try {
+					docTmp1 = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+				} catch (Exception e) {
+
+				}
+				mongoClient.close();
+
 				options = new FindOneAndUpdateOptions();
 				options.upsert(false);
 				options.maxTime(5000, TimeUnit.MILLISECONDS);
 				options.returnDocument(ReturnDocument.AFTER);
+
+				int SLKho1 = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDon"), 0);
+				int SLKhoCL1 = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDonCL"), 0);
+				int SLKhoDD1 = docTmp1.getEmbedded(Arrays.asList("DMDepotInfos", "SLHDonDD"), 0);
+				int SLKhoUpdateDD1 = 0;
+				int SLKhoUpdateCL1 = 0;
+
+				if (SL_nhap != SL_cur) {
+					if (SL_nhap < SL_cur) {
+						SLKhoUpdateDD1 = SLKhoDD1 - (SL_cur - SL_nhap);
+						SLKhoUpdateCL1 = SLKhoCL1 + (SL_cur - SL_nhap);
+					} else {
+						SLKhoUpdateDD1 = SLKhoDD1 + (SL_nhap - SL_cur);
+						SLKhoUpdateCL1 = SLKhoCL1 - (SL_nhap - SL_cur);
+						if (SLKhoUpdateCL1 < 0) {
+							responseStatus = new MspResponseStatus(9999, "Số lượng không đủ để phát hành.");
+							rsp.setResponseStatus(responseStatus);
+							return rsp;
+						}
+					}
+
+					Document docUpdate = new Document("$set", new Document("SLHDon", SLKho1)
+							.append("SLHDonDD", SLKhoUpdateDD1).append("SLHDonCL", SLKhoUpdateCL1));
+					// update kho
+					mongoClient = cfg.mongoClient();
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMDepot");
+					docR = collection.findOneAndUpdate(new Document("TaxCode", taxCode1), docUpdate, options);
+					mongoClient.close();
+				}
 
 				mongoClient = cfg.mongoClient();
 				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMSTNCN");
@@ -271,8 +405,8 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 										new Document("IssuerId", header.getIssuerId())
 												.append("FileName",
 														docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"),""))
-												.append("SoLuong", number).append("DenSo", number)
-												.append("ConLai", number - soLuongDaSuDung)
+												.append("SoLuong", SL_nhap).append("DenSo", SL_nhap)
+												.append("ConLai", SL_nhap - soLuongDaSuDung)
 												.append("Nam", yearCreated).append("KyHieu", macty).append("LoGo", logo)
 												.append("InfoUpdated", new Document("UpdatedDate", LocalDateTime.now())
 														.append("UpdatedUserID", header.getUserId())
@@ -280,7 +414,6 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 														.append("UpdatedUserFullName", header.getUserFullName()))),
 								options);
 				mongoClient.close();
-
 				responseStatus = new MspResponseStatus(0, "SUCCESS");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
