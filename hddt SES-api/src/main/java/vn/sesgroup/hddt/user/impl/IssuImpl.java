@@ -105,9 +105,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 
 		List<Document> pipeline = new ArrayList<Document>();
 		
-		Document docMatch = new Document("IsDelete",new Document("$ne", true))
-				.append("IsUserHDDT", true)
-				;	
+		Document docMatch = new Document("IsDelete",new Document("$ne", true));	
 		
 		if(!"".equals(t))
 			docMatch.append("TaxCode", commons.regexEscapeForMongoQuery(t));
