@@ -1507,7 +1507,7 @@
 			switch (key) {
 			case 'func':
 				if('XOABO' == eInvoiceStatus){
-					
+
 				}else{
 				if('CREATED' == eInvoiceStatus || 'NOSIGN' == signStatusCode){
 					text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
@@ -1530,6 +1530,9 @@
 					text += '<i title="Lịch sử lấy mã CQT" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="history" ></i>';
 				}
 					
+				if ('DELETED' == eInvoiceStatus ){
+					text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
+				}
 				}
 				break;
 			case 'StatusDesc':

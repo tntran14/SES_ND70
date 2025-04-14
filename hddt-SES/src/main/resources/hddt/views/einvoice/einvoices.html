@@ -2777,7 +2777,7 @@
 					switch (key) {
 					case 'func':
 						if('XOABO' == eInvoiceStatus){
-							
+
 						}else{
 						if('CREATED' == eInvoiceStatus || 'NOSIGN' == signStatusCode){
 							text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
@@ -2792,7 +2792,8 @@
 							text += '<i title="Lấy kết quả từ CQT" class="mdi mdi-refresh-circle fs-25 text-info c-pointer" data-sub-action="refresh" ></i>';
 							//text += '<i title="Đổi mã thông điệp" class="mdi mdi-swap-horizontal-circle fs-25 text-red c-pointer" data-sub-action="change" ></i>';
 							text += '<i title="Lịch sử lấy mã CQT" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="history" ></i>';
-					}
+					    }
+						
 						if('' != MCCQT && 'SIDED' != signStatusCode){
 							text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
 							text += '<i title="In hóa đơn chuyển đổi" class="mdi mdi-file-pdf fs-25 text-info c-pointer" data-sub-action="print-convert" ></i>';
@@ -2803,6 +2804,9 @@
 							text = '<div style="background: #FFFF66; border-radius: 5px; color: black; text-align: center;">' + 
 						       'Hóa đơn bên ngoài' + 
 						       '</div>';
+						}
+						if('DELETED' == eInvoiceStatus){
+							text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
 						}
 						
 						}

@@ -1670,6 +1670,10 @@ function setTemplateForGridMAIN(key, data){
 			text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-email" ></i>';	
 			text += '<i title="Lịch sử lấy mã CQT" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="history" ></i>';
 		}		
+		
+		if('DELETED' == eInvoiceStatus){
+			text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
+		}
 		break;
 	case 'StatusDesc':
 		if('DELETED' == data['EInvoiceStatus']){
