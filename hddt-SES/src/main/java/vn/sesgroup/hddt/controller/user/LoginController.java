@@ -309,7 +309,8 @@ public class LoginController extends AbstractController{
             sbRights.append("tkdshdonBH|tkdshdonBH-export-excel-fast|tkdshdonBH-export-excel-detail|tkdshdonBH-export-excel-general|");
             sbRights.append("user_check|");
         	sbRights.append("qly-mauhd|qly-mauhd-cre|qly-mauhd-edit|qly-mauhd-del|qly-mauhd-detail|qly-mauhd-active|qly-mauhd-deactive|");  
-         	sbRights.append("cks|cks-cre|cks-edit|cks-del|cks-detail|");  
+        	sbRights.append("xuly-nghiepvu|");
+        	sbRights.append("cks|cks-cre|cks-edit|cks-del|cks-detail|");  
         	sbRights.append("qly-mauct|qly-mauct-cre|qly-mauct-edit|qly-mauct-del|qly-mauct-detail|qly-mauct-active|qly-mauct-deactive|");  
         	sbRights.append("quantitys|quantity-cre|quantity-edit|quantity-del|quantity-detail|quantity-active|quantity-deactive|");	
         	sbRights.append("config-email-server|config-email-mailjet|tra-cuu-mail|tra-cuu-mail-user|config-email-server-admin|config-param|");

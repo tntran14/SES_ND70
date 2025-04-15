@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Cập nhật mã CQT thủ công</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form name="f-xulynghiepvu" id="f-xulynghiepvu" method="post"
+					enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-l p-r">
+								<div class="col-12 b-a m-b-sm">
+									<div class="row m-b-16">
+										<div class="col-12 col-md-6">
+											<div class="c-f__wrapper">
+												<input id="mtdiep" name="mtdiep"
+													class="form-control form-control-sm c-f__textbox"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mã thông điệp<span class="text-danger"
+															style="font-size: 15px">(*)</span>
+														</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+										<div class="col-12 col-md-2">
+											<div class="m-b-16">
+												<button
+													class="btns btns-search_auto__ses hover-up__ses w-100p"
+													data-action="search" title="Tìm kiếm" type="button">
+													<i class="mdi mdi-file-find"></i><span
+														class="d-none d-md-inline">Tìm kiếm</span>
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-12">
+											<hr style="margin: 0 0 10px 0" />
+										</div>
+									</div>
+
+									<div class="row m-b-16">
+										<div class="col-12 col-md-6">
+											<div class="c-f__wrapper">
+												<input id="mcqt" name="mcqt"
+													class="form-control form-control-sm c-f__textbox"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mã CQT</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="row m-b-16">
+										<div
+											class="col-12 col-md-6 d-flex flex-column align-items-end">
+											<div class="c-f__wrapper w-100">
+												<input id="mtc" name="mtc"
+													class="form-control form-control-sm c-f__textbox"
+													type="text" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mã tham chiếu</label>
+													</legend>
+												</fieldset>
+											</div>
+
+											<div class="button-group mt-2">
+												<button type="button" data-action="accept"
+													class="btnadd btns btns-blue__ses" title="Chấp nhận">
+													<i class="mdi mdi-check-all"></i> <span class="d-md-inline">Chấp nhận</span>
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group row m-b-5 m-t-7">
+										<div class="col-12 has-min-height-grid">
+											<div id="grid" data-role="grid" class="k-grid k-widget"
+												style=""></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				
+
+			</div>
+		</div>
+<script type="text/javascript">
+	transactionMain = 'xuly-nghiepvu'
+	_gridMain = $('#f-xulynghiepvu').find('#grid')
+
+</script>
+<script type="text/javascript">
+	$(function () {
+		_gridMain.kendoGrid({
+			dataSource: new kendo.data.DataSource({
+				transport: {
+					read: {
+						type: 'POST',
+						url: ROOT_PATH + '/main/xuly-nghiepvu/search',
+						dataType: 'json',
+						data: function () { 
+							return getDataSearch(); 
+							},
+						beforeSend: function (req) {
+							initAjaxJsonGridRequest(req);
+						},
+					}
+				},
+				schema: {
+					data: "rows",
+					total: "total",
+					model: {
+						fields: {
+						}
+					}
+				},
+				pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+				serverPaging: true,
+				serverSorting: true,
+				serverFiltering: true,
+				change: function (e) {
+				},
+			}),
+			selectable: true, scrollable: true,
+			sortable: { mode: "single", allowUnsort: true },
+			sortable: true,
+			filterable: false, resizable: true,
+			serverSorting: false,
+			pageable: {
+				refresh: true,
+				pageSizes: true,
+				buttonCount: KENDOUI_BUTTONCOUNT,
+				messages: {
+					itemsPerPage: kendoGridMessages.itemsPerPage,
+					previous: kendoGridMessages.previous,
+					next: kendoGridMessages.next,
+					refresh: kendoGridMessages.refresh,
+					last: kendoGridMessages.last,
+					first: kendoGridMessages.first,
+					empty: kendoGridMessages.empty,
+					display: kendoGridMessages.display
+				},
+				pageSizes: KENDOUI_PAGESIZES,
+				numeric: true
+			},
+			dataBinding: function () {
+				record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+			},
+			columns: [
+				{
+					field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' }, template: "#= ++record #",
+				},
+				{
+					field: 'StatusDesc', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+
+				},
+				{
+					field: 'SignStatusDesc', width: '140px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đã ký</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+
+				{
+					field: 'MCCQT', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+					attributes: { 'class': 'table-cell text-left' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'MTDTChieu', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã tham chiếu</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'CQTMTLoi', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Lỗi từ CQT</a>',
+					attributes: { 'class': 'table-cell text-left' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'EInvoiceNumber', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày phát hành</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TaxCode', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+					attributes: { 'class': 'table-cell text-left' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'CompanyName', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
+					attributes: { 'class': 'table-cell text-left' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'MTDiep', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã thông điệp</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				
+				{
+					field: 'UserCreated', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
+					attributes: { 'class': 'table-cell text-left' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				}
+			],
+			dataBound: function (e) {
+			}
+		});
+
+
+		$("#f-xulynghiepvu").find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+
+			var objDataSend = {};
+			let mtdiep = $('#f-xulynghiepvu #mtdiep').val();
+			switch (dataAction) {
+				case 'search':
+					if (!mtdiep) {
+						alertDLSuccess('<span class="required">Vui lòng nhập Mã thông điệp.</span>', function () { });
+					    return;
+					}
+					_gridMain.data("kendoGrid").dataSource.page(1);
+					break;
+				case 'accept':
+					let mcqt = $('#f-xulynghiepvu #mcqt').val();
+					let mtc = $('#f-xulynghiepvu #mtc').val();
+					if (!mtdiep || mtdiep.trim() === '') {
+						alertDLSuccess('<span class="required">Vui lòng nhập Mã thông điệp.</span>', function () { });
+						return;
+					}
+
+					if (!mcqt || mcqt.trim() === '') {
+						alertDLSuccess('<span class="required">Vui lòng nhập Mã CQT.</span>', function () { });
+						return;
+					}
+
+					if (!mtc || mtc.trim() === '') {
+						alertDLSuccess('<span class="required">Vui lòng chọn nhập Mã tham chiếu.</span>', function () { });
+						return;
+					}
+					objDataSend['mtdiep'] = mtdiep;
+					objDataSend['mcqt'] = mcqt;
+					objDataSend['mtc'] = mtc;
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/check-data-update',
+						data: objDataSend,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							hideLoading();
+							if (res.errorCode == 0) {
+								var responseData = res.responseData;
+
+								var confirmText = responseData['CONFIRM'];
+								tokenTransaction = responseData['TOKEN'];
+
+								objDataSend['tokenTransaction'] = tokenTransaction;
+								alertConfirm(confirmText,
+									function (e) {
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/' + transactionMain + '/update-data',
+											data: objDataSend,
+											beforeSend: function (req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success: function (res) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+														alertDLSuccess("Cập nhật mã cqt thành công.", function () { });
+														location.reload();
+													} else {
+														alertDLSuccess(createObjectError(res).html(), function () { });
+													}
+												} else {
+													alertDLSuccess('unknown error!!!', function () { });
+													hideLoading();
+												}
+											},
+											error: function (xhr, ajaxOptions, thrownError) {
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+												hideLoading();
+											}
+										});
+									},
+									function (e) { }
+								);
+							} else {
+								alertDLSuccess(createObjectError(res).html(), function () { });
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+					break;
+				default:
+					break;
+			}
+		});
+
+	});
+
+	function getDataSearch() {
+		var dataPost = {};
+		dataPost['mtdiep'] = $('#f-xulynghiepvu #mtdiep').val() == null ? '' : $('#f-xulynghiepvu #mtdiep').val();
+		return dataPost;
+	}
+</script>
+</th:block>
+</body>
+</html>
