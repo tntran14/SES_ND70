@@ -577,52 +577,19 @@ $(document).ready(function () {
     });
 });
 </script>
+		<script type="text/javascript">
+			$(document).ready(
+					function() {
+						let currentValue = $('#yearCreated').val();
 
- <!-- <script type="text/javascript">
-		$('#f-mauhd-crud #phoi').one('click',function (event) {
-			event.preventDefault();
-			var map = $('#f-mauhd-crud').find('#khhd').val();
-			$.ajax({
-				type: "POST",
-				datatype: "json",
-				url: ROOT_PATH + '/common/get-phoi',
-				data: {"loaihd_ma": map},
-				beforeSend: function(req) {
-					initAjaxJsonArrayRequest(req);
-				},
-				success:function(res) {
-					if(res && $.isArray(res)) {
-						$.each(res, function(index, item) {
-							$('#f-mauhd-crud').find('#phoi').append(
-								$("<option></option>").text(item['Name']).val(item['Images'])
-							);
-						});
-						
-					}
-				
-				},
-				error:function (xhr, ajaxOptions, thrownError){
-		        }
-			});
-		});
+						if (!currentValue || currentValue.trim() === '') {
+							let currentYear = new Date().getFullYear().toString().slice(2);
+							$('#yearCreated').val(currentYear);
+						}
+					});
+		</script>
 
-</script>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			 $('#phoi').one('click',function(){
-			  
-			    });
-			     setTimeout(function(){
-			        $('#phoi').trigger('click');
-			    }, 1000);
-			});
-		</script> -->
-	<script>
-		let currentYear = new Date().getFullYear().toString().slice(2)
-		  $('#yearCreated').val(currentYear);
-		</script>	
-        
-	<script type="text/javascript">
+		<script type="text/javascript">
 		$('#f-mauhd-crud #loaihd').change(function (event) {
 			event.preventDefault();/*event.stopPropagation();*/
 			var _val = $(this).val();
