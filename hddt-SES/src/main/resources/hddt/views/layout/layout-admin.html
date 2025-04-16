@@ -360,6 +360,7 @@
 						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-account-multiple-outline"></i><span class="hide-menu">Quản lý khách hàng </span></a>
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|issu|'): false}"><a th:href="@{/main/issu/init}">Danh sách khách hàng</a></li>
+<!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tthdon|'): false}"><a th:href="@{/main/tthdon/init}">Quản lý trạng thái hóa đơn</a></li> -->
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|role_api|'): false}"><a th:href="@{/main/role_api/init}">Set Role API</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|session_key|'): false}"><a th:href="@{/main/session_key/init}">Set API Key khách hàng</a></li>
 							</ul>
@@ -379,7 +380,7 @@
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qly-mauhd|'): false}"><a th:href="@{/main/qly-mauhd/init}">Danh sách phôi hóa đơn</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-phoihd|'): false}"><a th:href="@{/main/ql-phoihd/init}">Quản lý phôi hóa đơn</a></li>
-								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Quản lý mẫu số hóa đơn KH</a></li>
+<!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Quản lý mẫu số hóa đơn KH</a></li> -->
 								
 							</ul>
 						</li>
@@ -388,7 +389,7 @@
 						<li><a class="has-arrow" aria-expanded="false"><i
 								class="mdi mdi-content-paste"></i><span class="hide-menu">Xử lý nghiệp vụ </span></a>
 							<ul aria-expanded="false" class="collapse">
-							<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tthdon|'): false}"><a th:href="@{/main/tthdon/init}">Quản lý trạng thái hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tthdon|'): false}"><a th:href="@{/main/tthdon/init}">Quản lý trạng thái hóa đơn</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|xuly-nghiepvu|'): false}"><a th:href="@{/main/xuly-nghiepvu/init}">Cập nhật mã CQT thủ công</a></li>
 							</ul>
 						</li>
@@ -407,6 +408,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd_admin|'): false}"><a th:href="@{/main/mauhd_admin/init}">Cập nhật mẫu số theo các năm</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd_update_admin|'): false}"><a th:href="@{/main/mauhd_update_admin/init}">Quản lý danh sách lệch SHĐ</a></li>	
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|sl-access-users|'): false}"><a th:href="@{/main/sl-access-users/init}">Số lượng khách hàng truy cập</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Thống kê SL HĐ còn lại theo mẫu số</a></li>
 							</ul>
 						</li>
 						<li class="nav-small-cap">PARAM</li>
