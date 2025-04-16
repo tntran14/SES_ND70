@@ -1171,6 +1171,30 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 					.append("as", "DMMauSoKyHieu")
 				)
 			);
+			
+			pipeline.add(
+					new Document("$lookup", 
+						new Document("from", "DMMSTNCN")
+						.append("pipeline", 
+							Arrays.asList(
+								new Document("$match", 
+									new Document("IssuerId",_id)
+									.append("IsDelete", new Document("$ne", true))
+									.append("$expr", 
+											new Document("$and", 
+													Arrays.asList(		
+													new Document("$gte",
+															Arrays.asList(new Document("$toInt", "$Nam"), lastYear)
+																)					
+															)	
+													)
+											)
+										)
+							)
+						)
+						.append("as", "DMMSTNCN")
+					)
+				);
 
 			MongoClient mongoClient = cfg.mongoClient();
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");

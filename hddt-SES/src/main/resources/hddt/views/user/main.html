@@ -427,8 +427,85 @@
                     </div>				 
 			 </div>
            	<!--END FOREACH PXK DAI LY-->
-     
-            </div>
+
+					<!--FOREACH MSTNCN-->
+					<div th:if="${MauSoTNCN != null and MauSoTNCN.size() > 0}"
+						class="col-12 rm-padding__mobile">
+						<div>
+							<div class="s-invoice__wrapper m-b-24">
+								<div class="s-invoice__heading">Mẫu số Chứng từ TNCN</div>
+								<div class="row chart-group__main">
+
+									<!--FOREACH CHO MOI HOA DON-->
+									<div class="col-12 col-sm-6 col-md-6"
+										th:each="tncn: ${MauSoTNCN}">
+										<div class="s-invoice__item m-b-16">
+											<div class="chart-group px-2">
+												<div class="chart-group__header">
+													<i class="mdi mdi-folder"></i>
+													<div
+														class="chart-group__title m-l-4 m-r-4 font-weight-bold">
+														[[${tncn.MSTNCN}]]</div>
+
+												</div>
+												<div class="chart-group-bars m-t-4">
+													<div class="chart-line chart-line__thin">
+														<div class="chart-progress-bar progress-bar"
+															role="progressbar" th:id="'percent-' + ${tncn.MSTNCN}"
+															style="background-color: var(--progress-color);"></div>
+														<script>
+															var percent = '[[${tncn.PERCENT_CL}]]'
+																	+ '%';
+															var element = document
+																	.getElementById("percent-"
+																			+ '[[${tncn.MSTNCN}]]');
+															element.style.width = percent;
+														</script>
+													</div>
+												</div>
+												<div class="chart-group__content">
+													<div class="chart-group__list row">
+														<div class="col-12 col-sm-12 col-md-4 chart-group__items">
+															<div
+																class="chart-group__wrapper d-flex align-items-center">
+																<div class="chart-group__heading">Đã dùng:</div>
+																<div class="chart-group__number">
+																	[[${tncn.DD}]] <span class="chart-group__percent">([[${tncn.PERCENT_DD}]]
+																		%)</span>
+																</div>
+															</div>
+														</div>
+														<div class="col-12 col-sm-12 col-md-4 chart-group__items">
+															<div
+																class="chart-group__wrapper d-flex align-items-center">
+																<div class="chart-group__heading">Còn lại:</div>
+																<div class="chart-group__number">
+																	[[${tncn.CL}]] <span class="chart-group__percent">([[${tncn.PERCENT_CL}]]
+																		%)</span>
+																</div>
+															</div>
+														</div>
+														<div class="col-12 col-sm-12 col-md-4 chart-group__items">
+															<div
+																class="chart-group__wrapper d-flex align-items-center">
+																<div class="chart-group__heading">Tổng cộng:</div>
+																<div class="chart-group__number">[[${tncn.SL}]]</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!--END FOREACH CHO MOI CHUNG TU-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--END FOREACH MSTNCN-->
+					
+				</div>
           </div>
         </div>
 	
