@@ -90,7 +90,7 @@ $(function(){
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
-			{field: 'StatusCQTDesc', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái CQT</a>',
+			{field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày lập</a>',
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
@@ -105,6 +105,11 @@ $(function(){
 			{field: 'CoQuanThue', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Cơ quan thuế</a>',
 				attributes: {'class': 'table-cell text-left'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{
+				field: 'StatusCQTDesc', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái CQT</a>',
+				attributes: { 'class': 'table-cell text-center' }, sortable: false,
+				headerAttributes: { 'class': 'table-header-cell text-center' },
 			},
 			
     	],

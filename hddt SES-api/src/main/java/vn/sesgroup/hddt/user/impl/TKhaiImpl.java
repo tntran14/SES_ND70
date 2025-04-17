@@ -1269,7 +1269,7 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 		
 		Document fillter = new Document("_id", 1).append("MST", 1).append("TenNnt", 1)
 				.append("MTDiep", 1).append("MSo", 1).append("Status", 1).append("ChiCucThueInfo", 1).append("StatusCQT", 1)
-				.append("LDo", 1).append("Ten", 1);
+				.append("LDo", 1).append("Ten", 1).append("NLap", 1);
 		
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));

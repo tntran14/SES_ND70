@@ -100,7 +100,10 @@ public class TKhaiController extends AbstractController{
 				hItem.put("StatusDesc", Constants.MAP_TKHAI_STATUS.get(commons.getTextJsonNode(row.at("/Status"))));
 				hItem.put("StatusCQT", commons.getTextJsonNode(row.at("/StatusCQT")));
 				hItem.put("StatusCQTDesc", Constants.MAP_TKHAI_STATUS_CQT.get(commons.getTextJsonNode(row.at("/StatusCQT"))));
-				
+				hItem.put("NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(row.at("/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				hItem.put("MTa", commons.getTextJsonNode(row.at("/LDo/MTa")));
 				grid.getRows().add(hItem);
 			}

@@ -310,9 +310,11 @@ public class TKhaiCRUDController extends AbstractController{
 			tinhThanh = commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/code"));
 			req.setAttribute("TThanhCode", tinhThanh);
 			req.setAttribute("TThanhName", commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/name")));
+			
 			cqtQLy = commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/code"));
 			req.setAttribute("CQThueCode", cqtQLy);
 			req.setAttribute("CQThueName", commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/name")));
+			
 			req.setAttribute("NLHe", commons.getTextJsonNode(jsonData.at("/NLHe")));
 			req.setAttribute("DCLHe", commons.getTextJsonNode(jsonData.at("/DCLHe")));
 			req.setAttribute("DCTDTu", commons.getTextJsonNode(jsonData.at("/DCTDTu")));
@@ -349,6 +351,24 @@ public class TKhaiCRUDController extends AbstractController{
 				}
 			}
 			req.setAttribute("DSCTSSDung", Json.serializer().toString(prds));
+			
+			if (!action.equals("COPY")) return;
+			msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.INQUIRY);
+			root = new JSONRoot(msg);
+			String id = cup.getLoginRes().getIssuerInfo().get_id();
+			rsp = restAPI.callAPINormal("/main/profile/" + id, cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				tinhThanh = commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/code"));
+				req.setAttribute("TThanhCode", tinhThanh);
+				req.setAttribute("TThanhName", commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/name")));
+
+				req.setAttribute("CQThueCode", commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/code")));
+				req.setAttribute("CQThueName", commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/name")));
+
+			}
+			
 		}else {
 			errorDesc = rspStatus.getErrorDesc();
 		}
