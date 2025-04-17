@@ -139,7 +139,7 @@ public class MauHDCRUDController extends AbstractController{
 				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
 					for(JsonNode o: jsonData.at("/param02")) {
-						hItem.put(commons.getTextJsonNode(o.get("Images")), commons.getTextJsonNode(o.get("Name")));
+						hItem.put(commons.getTextJsonNode(o.get("Code")), commons.getTextJsonNode(o.get("Name")));
 					}
 					req.setAttribute("map_phoi", hItem);
 				}
@@ -250,11 +250,12 @@ public class MauHDCRUDController extends AbstractController{
 			
 			
 			String nam = Character.toString(id) + Character.toString(id1);
-			req.setAttribute("LoaiHD", commons.getTextJsonNode(jsonData.at("/KHMSHDon")));
+			loaihd = commons.getTextJsonNode(jsonData.at("/KHMSHDon"));
+			req.setAttribute("LoaiHD", loaihd);
 			req.setAttribute("KH",kh);
 		
 			req.setAttribute("PhoiHD",commons.getTextJsonNode(jsonData.at("/Templates/Name")));
-			req.setAttribute("PhoiHDCode",commons.getTextJsonNode(jsonData.at("/Templates/Images")));
+			req.setAttribute("PhoiHDCode",commons.getTextJsonNode(jsonData.at("/Templates/Code")));
 			req.setAttribute("MaCTY",macty);
 			req.setAttribute("Nam",nam);
 			req.setAttribute("Logo", commons.getTextJsonNode(jsonData.at("/Templates/ImgLogo")));

@@ -58,23 +58,16 @@
 									<div class="c-f__wrapper">
 										<input class="form-control form-control-sm c-f__textbox"
 											th:value="${PhoiHD}" th:readonly="true" th:if="${!_isedit_}"
-											type="text" autocomplete="off" /> 
-<!-- 										<select -->
-<!-- 											class="form-control form-control-sm c-f__textbox" id="phoi" -->
-<!-- 											name="phoi" th:if="${_isedit_}"> -->
-<!-- 											<option value=""></option> -->
-<!-- 											<th:block th:if="${map_phoi != null}"> -->
-<!-- 												<option th:each="entry : ${map_phoi.entrySet()}" -->
-<!-- 													th:value="${entry.key}" th:utext="${entry.value}" -->
-<!-- 													th:selected="${PhoiHDCode == entry.key}"></option> -->
-<!-- 											</th:block> -->
-<!-- 										</select> -->
-
-										<input class="form-control form-control-sm c-f__textbox"
-											id="phoiInput" name="phoi" type="text" autocomplete="off"
-											placeholder="Nhập mã hóa đơn..." th:value="${PhoiHD}"
-											th:readonly="false" th:if="${_isedit_}"/>
-										<ul id="suggestions" class="autocomplete-list"></ul>
+											type="text" autocomplete="off" /> <select
+											class="form-control form-control-sm c-f__textbox" id="phoi"
+											name="phoi" th:if="${_isedit_}">
+											<option value=""></option>
+											<th:block th:if="${map_phoi != null}">
+												<option th:each="entry : ${map_phoi.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${PhoiHDCode == entry.key}"></option>
+											</th:block>
+										</select>
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend">
 												<label>Phôi hóa đơn</label>
