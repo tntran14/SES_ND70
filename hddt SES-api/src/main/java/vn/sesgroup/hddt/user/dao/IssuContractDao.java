@@ -11,4 +11,5 @@ public interface IssuContractDao {
 	public MsgRsp updatedb(JSONRoot jsonRoot)throws Exception;
 	public MsgRsp listcks(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp listnguoimua(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp countContract(JSONRoot jsonRoot) throws Exception;
 }

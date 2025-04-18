@@ -113,4 +113,14 @@ public class IssuContractController {
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
 	}
+
+	@RequestMapping(value = "/count-contract", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> countContract(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.countContract(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
 }

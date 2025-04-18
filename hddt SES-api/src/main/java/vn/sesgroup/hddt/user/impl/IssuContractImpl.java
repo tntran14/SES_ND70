@@ -1,8 +1,11 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -1614,6 +1617,42 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 		HashMap<String, Object> mapDataR = new HashMap<String, Object>();
 		mapDataR.put("rows", rowsReturn);
 		rsp.setObjData(mapDataR);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp countContract(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		Object objData = msg.getObjData();
+
+		String fromDate = "";
+		String toDate = "";
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+			fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
+			toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+		}	
+		
+		MsgRsp rsp = new MsgRsp(header);
+		MspResponseStatus responseStatus = null;
+		LocalDate from = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+				? null
+				: commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+		LocalDate to = "".equals(toDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+				? null
+				: commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+		Document filter = new Document()
+			    .append("InfoCreated.CreateDate", new Document("$gte", from).append("$lte", to))
+			    .append("IsActive", true)
+			    .append("IsDelete", false);
+		long count = mongoTemplate.getCollection("Contract").countDocuments(filter);
+		HashMap<String, Object> mapData = new HashMap<String, Object>();
+		mapData.put("total", count);
+		rsp.setObjData(mapData);
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
 		return rsp;
 	}
 

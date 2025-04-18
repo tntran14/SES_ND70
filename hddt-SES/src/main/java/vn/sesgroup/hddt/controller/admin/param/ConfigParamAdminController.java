@@ -43,6 +43,8 @@ public class ConfigParamAdminController extends AbstractController{
 
 	private String MS_EXPIRES;
 	private String CKS_EXPIRES;
+	private String NUMBER_CONTRACT;
+	private String NUMBER_CUSTOMER;
 	
 	@RequestMapping(value = "/init", method = {RequestMethod.POST, RequestMethod.GET})
 	public String init(Locale locale, Principal principal, HttpServletRequest req
@@ -86,9 +88,13 @@ public class ConfigParamAdminController extends AbstractController{
 			
 			req.setAttribute("MS_EXPIRES", commons.getTextJsonNode(jsonData.at("/MS_EXPIRES")));
 			req.setAttribute("CKS_EXPIRES", commons.getTextJsonNode(jsonData.at("/CKS_EXPIRES")));
+			req.setAttribute("NUMBER_CONTRACT", commons.getTextJsonNode(jsonData.at("/NUMBER_CONTRACT")));
+			req.setAttribute("NUMBER_CUSTOMER", commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER")));
 		}else {
 			req.setAttribute("MS_EXPIRES", "30");
 			req.setAttribute("CKS_EXPIRES", "3");
+			req.setAttribute("NUMBER_CONTRACT", "30");
+			req.setAttribute("NUMBER_CUSTOMER", "30");
 		}
 	}
 
@@ -100,6 +106,9 @@ public class ConfigParamAdminController extends AbstractController{
 		
 		MS_EXPIRES = commons.getParameterFromRequest(req, "ms-expires");
 		CKS_EXPIRES = commons.getParameterFromRequest(req, "cks-expires");
+		NUMBER_CONTRACT = commons.getParameterFromRequest(req, "number-contract");
+		NUMBER_CUSTOMER = commons.getParameterFromRequest(req, "number-customer");
+	
 		if("".equals(MS_EXPIRES)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Vui lòng nhập tham số mẫu số hết hạn.");
@@ -107,6 +116,14 @@ public class ConfigParamAdminController extends AbstractController{
 		if("".equals(CKS_EXPIRES)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Vui lòng nhập tham số chữ ký số hết hạn.");
+		}
+		if("".equals(NUMBER_CONTRACT)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng nhập tham số ngày đếm số lượng hợp đồng.");
+		}
+		if("".equals(NUMBER_CUSTOMER)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng nhập tham số ngày đếm số lượng khách hàng.");
 		}
 		return dto;
 	}
@@ -177,6 +194,9 @@ public class ConfigParamAdminController extends AbstractController{
 		HashMap<String, Object> hData = new HashMap<>();
 		hData.put("MS_EXPIRES", MS_EXPIRES);
 		hData.put("CKS_EXPIRES", CKS_EXPIRES);
+		hData.put("NUMBER_CONTRACT", NUMBER_CONTRACT);
+		hData.put("NUMBER_CUSTOMER", NUMBER_CUSTOMER);
+		
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/param-admin/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);

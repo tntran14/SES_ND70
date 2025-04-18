@@ -49,7 +49,9 @@ public class ConfigParamAdminImpl extends AbstractDAO implements ConfigParamAdmi
 		
 		String MS_EXPIRES = commons.getTextJsonNode(jsonData.at("/MS_EXPIRES"));
 		String CKS_EXPIRES = commons.getTextJsonNode(jsonData.at("/CKS_EXPIRES"));
-	
+		String NUMBER_CONTRACT = commons.getTextJsonNode(jsonData.at("/NUMBER_CONTRACT"));
+		String NUMBER_CUSTOMER = commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER"));
+		
 	
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -79,7 +81,9 @@ public class ConfigParamAdminImpl extends AbstractDAO implements ConfigParamAdmi
 		if(docTmp == null) {		//THEM MOI
 			docUpsert = new Document("IssuerId", header.getIssuerId())
 				.append("MS_EXPIRES", MS_EXPIRES)
-				.append("CKS_EXPIRES",CKS_EXPIRES)		
+				.append("CKS_EXPIRES",CKS_EXPIRES)
+				.append("NUMBER_CONTRACT", NUMBER_CONTRACT)
+				.append("NUMBER_CUSTOMER", NUMBER_CUSTOMER)
 				.append("IsDelete", false)			
 				.append("InfoCreated", 
 					new Document("CreateDate", LocalDateTime.now())
@@ -101,6 +105,8 @@ public class ConfigParamAdminImpl extends AbstractDAO implements ConfigParamAdmi
 			
 			docUpsert = new Document("MS_EXPIRES", MS_EXPIRES)
 				.append("CKS_EXPIRES", CKS_EXPIRES)		
+				.append("NUMBER_CONTRACT", NUMBER_CONTRACT)
+				.append("NUMBER_CUSTOMER", NUMBER_CUSTOMER)
 				.append("IsDelete", false)		
 				.append("InfoUpdated", 
 					new Document("UpdatedDate", LocalDateTime.now())

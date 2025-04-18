@@ -89,6 +89,10 @@ public class MainController extends AbstractController {
 			
 			String MS_EXPIRES = "30";
 			String CKS_EXPIRES = "3";
+			String NUMBER_OF_DAY_CONTRACT = "30";
+			String NUMBER_OF_DAY_CUSTOMER = "30";
+			int cus_days = 30;
+			int contract_days = 30;
 			rsp = restAPI.callAPINormal("/param-admin/detail", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 			rspStatus = rsp.getResponseStatus();
 			rows = null;
@@ -96,6 +100,10 @@ public class MainController extends AbstractController {
 				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());			
 				MS_EXPIRES = commons.getTextJsonNode(jsonData.at("/MS_EXPIRES"));	
 				CKS_EXPIRES = commons.getTextJsonNode(jsonData.at("/CKS_EXPIRES"));
+				NUMBER_OF_DAY_CONTRACT = commons.getTextJsonNode(jsonData.at("/NUMBER_CONTRACT"));
+				NUMBER_OF_DAY_CUSTOMER = commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER"));
+				cus_days = Integer.parseInt(commons.getTextJsonNode(jsonData.at("/NUMBER_CONTRACT")));
+				contract_days = Integer.parseInt(commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER")));
 			}
 			int CKS_EXPIRES_ = Integer.parseInt(CKS_EXPIRES);
 			
@@ -123,8 +131,8 @@ public class MainController extends AbstractController {
 			}
 			
 			
-			/* GET LIST CKS GAN HET HAN */
 			
+			/* GET LIST CKS GAN HET HAN */
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
 			hInput = new HashMap<>();
@@ -147,7 +155,60 @@ public class MainController extends AbstractController {
 			}else {
 				request.setAttribute("CKS_EXPIRES", "0");	
 			}
-						
+			
+			// Get sl contract in a days
+			dtoRes = new BaseDTO();
+			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
+			now = LocalDate.now();
+			hInput = new HashMap<>();
+			hInput.put("FromDate", commons.convertLocalDateTimeToString(now.minusDays(contract_days),
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			hInput.put("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			msg.setObjData(hInput);
+			root = new JSONRoot(msg);
+			
+			rsp = restAPI.callAPINormal("/issu-contract/count-contract", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				if (jsonData.has("total")) {
+					String total = jsonData.get("total").asText();
+					request.setAttribute("NUMBER_OF_CONTRACT", total);
+				} else {
+					request.setAttribute("NUMBER_OF_CONTRACT", "0");
+				}
+			} else {
+				request.setAttribute("NUMBER_OF_CONTRACT", "0");
+			}
+
+			
+			// Get sl customer in a days
+			dtoRes = new BaseDTO();
+			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
+			now = LocalDate.now();
+			hInput = new HashMap<>();
+			hInput.put("FromDate", commons.convertLocalDateTimeToString(now.minusDays(cus_days),
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			hInput.put("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			msg.setObjData(hInput);
+			root = new JSONRoot(msg);
+			
+			rsp = restAPI.callAPINormal("/issu/count-customer", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				if (jsonData.has("total")) {
+					String total = jsonData.get("total").asText();
+					request.setAttribute("NUMBER_OF_CUSTOMER", total);
+				} else {
+					request.setAttribute("NUMBER_OF_CUSTOMER", "0");
+				}
+			} else {
+				request.setAttribute("NUMBER_OF_CUSTOMER", "0");
+			}
+		
+			request.setAttribute("NUMBER_OF_DAY_CUSTOMER", NUMBER_OF_DAY_CUSTOMER);
+			request.setAttribute("NUMBER_OF_DAY_CONTRACT", NUMBER_OF_DAY_CONTRACT);
 			request.setAttribute("transaction", transaction);
 			request.setAttribute("method", method);
 			request.setAttribute("UserFullPathRight", cup.getAllRights());

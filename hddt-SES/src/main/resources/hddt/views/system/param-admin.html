@@ -21,38 +21,70 @@
 								<div class="row p-l p-r m-t-20">
 									<div
 										class="col-sm-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8 b-a m-b-sm background-frame-brown p-t-sm">
-										<!-- box-header -->				
-										
-									<div class="row m-b-14">
+										<!-- box-header -->
+
+										<div class="row m-b-14">
 											<div class="col-md-6">
-												<label>Tham số mẫu số hết hạn <span class="text-danger"> (%)</span>
+												<label>Tham số mẫu số hết hạn <span
+													class="text-danger"> (%)</span>
 												</label>
 											</div>
 											<div class="col-md-3">
 												<th:block th:if="${MS_EXPIRES != null}">
 													<input type="number" min="1" max="100"
-														class="form-control form-control-sm has-value" id="ms-expires"
-														name="ms-expires" th:value="${MS_EXPIRES}" />
+														class="form-control form-control-sm has-value"
+														id="ms-expires" name="ms-expires" th:value="${MS_EXPIRES}" />
 												</th:block>
-										
-
 											</div>
-										</div> 
+										</div>
 
 										<div class="row m-b-14">
 											<div class="col-md-6">
-												<label>Tham số chữ ký số hết hạn <span class="text-danger"> (Tháng)</span>
+												<label>Tham số chữ ký số hết hạn <span
+													class="text-danger"> (Tháng)</span>
 												</label>
 											</div>
 											<div class="col-md-3">
 												<th:block th:if="${CKS_EXPIRES != null}">
 													<input type="number" min="1" max="12"
-														class="form-control form-control-sm has-value" id="cks-expires"
-														name="cks-expires" th:value="${CKS_EXPIRES}" />
+														class="form-control form-control-sm has-value"
+														id="cks-expires" name="cks-expires"
+														th:value="${CKS_EXPIRES}" />
 												</th:block>
-												
 											</div>
-										</div>																	
+										</div>
+
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Tham số ngày đếm số lượng hợp đồng <span
+													class="text-danger"> (Ngày)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${NUMBER_CONTRACT != null}">
+													<input type="number" min="1" max="12"
+														class="form-control form-control-sm has-value"
+														id="number-contract" name="number-contract"
+														th:value="${NUMBER_CONTRACT}" />
+												</th:block>
+											</div>
+										</div>
+
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Tham số ngày đếm số lượng khách hàng <span
+													class="text-danger"> (Ngày)</span>
+												</label>
+											</div>
+											<div class="col-md-3">
+												<th:block th:if="${NUMBER_CUSTOMER != null}">
+													<input type="number" min="1" max="12"
+														class="form-control form-control-sm has-value"
+														id="number-customer" name="number-customer"
+														th:value="${NUMBER_CUSTOMER}" />
+												</th:block>
+											</div>
+										</div>
 
 										<div class="b b-b m-b-16"></div>
 										<div class="input-group-sm p-b-sm p-r">
@@ -157,6 +189,8 @@
 							var dataPost = {};			
 							dataPost['ms-expires'] = $('#f-config-param').find('#ms-expires').val();
 							dataPost['cks-expires'] = $('#f-config-param').find('#cks-expires').val();
+							dataPost['number-customer'] = $('#f-config-param').find('#number-customer').val();
+							dataPost['number-contract'] = $('#f-config-param').find('#number-contract').val();
 							return dataPost;
 						}
 					</script>

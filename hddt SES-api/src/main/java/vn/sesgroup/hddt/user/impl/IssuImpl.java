@@ -1,10 +1,12 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +47,8 @@ import vn.sesgroup.hddt.utility.MailUtils;
 @Transactional
 public class IssuImpl extends AbstractDAO implements IssuDao{
 	private static final Logger log = LogManager.getLogger(IssuImpl.class);
-//	@Autowired MongoTemplate mongoTemplate;
+	@Autowired
+	MongoTemplate mongoTemplate;
 	private MailUtils mailUtils = new MailUtils();
 	@Autowired TCTNService tctnService;
 	@Autowired ConfigConnectMongo cfg;
@@ -1211,6 +1215,41 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
+
+	@Override
+	public MsgRsp countCustomer(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		Object objData = msg.getObjData();
+
+		String fromDate = "";
+		String toDate = "";
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+			fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
+			toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+		}	
+		
+		MsgRsp rsp = new MsgRsp(header);
+		MspResponseStatus responseStatus = null;
+		LocalDate from = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+				? null
+				: commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+		LocalDate to = "".equals(toDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+				? null
+				: commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+		Document filter = new Document()
+			    .append("InfoCreated.CreateDate", new Document("$gte", from).append("$lte", to))
+				.append("IsActive", true).append("IsDelete", false);
+		long count = mongoTemplate.getCollection("Issuer").countDocuments(filter);
+		HashMap<String, Object> mapData = new HashMap<String, Object>();
+		mapData.put("total", count);
+		rsp.setObjData(mapData);
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
 		
 
 }

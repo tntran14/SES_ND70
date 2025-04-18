@@ -8,5 +8,5 @@ public interface IssuDao {
 	public MsgRsp crud(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp param(JSONRoot jsonRoot, String _id);
 	public MsgRsp mskh(JSONRoot jsonRoot, String _id)throws Exception;
-
+	public MsgRsp countCustomer(JSONRoot jsonRoot) throws Exception;
 }

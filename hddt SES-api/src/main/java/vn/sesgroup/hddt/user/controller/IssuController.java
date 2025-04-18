@@ -78,4 +78,14 @@ public class IssuController {
 				.body(rsp);
 	}
 	
+	@RequestMapping(value = "/count-customer", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> countCustomer(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.countCustomer(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
+	
 }

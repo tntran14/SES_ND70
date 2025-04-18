@@ -6,42 +6,76 @@
 	<th:block layout:fragment="contentadmin">
 	<div class="container-fluid">
 		  <div class="row m-t-32 justify-content-center">
-            <div class="col-lg-3 col-md-6">
-              <a th:href="@{'/main/mauso-expires/init'}">
-				  <div class="panels panel-green">
-                <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-3 fa-5x">
-                      <i class="mdi mdi-content-paste"></i>
-                    </div>
-                    <div class="col-9 text-right">
-                      <div class="huge">[[${SOLUONG_EXPIRES}]]</div>
-                      <div class="huge-text">Mẫu số sắp hết hạn</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-			  </a>
-            </div>
-            <div class="col-lg-3 col-md-6">
-           <a th:href="@{'/main/ca_invoice/init'}">
-			      <div class="panels panel-red">
-                <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-3 fa-5x">
-                      <i class="mdi mdi-pencil"></i>
-                    </div>
-                    <div class="col-9 text-right">
-                      <div class="huge">[[${CKS_EXPIRES}]]</div>
-                      <div class="huge-text">Chữ ký số hết hạn</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-		   </a>
-            </div>
-         
-          </div>
+				<div class="col-lg-3 col-md-6">
+					<a th:href="@{'/main/mauso-expires/init'}">
+						<div class="panels panel-green">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-3 fa-5x">
+										<i class="mdi mdi-content-paste"></i>
+									</div>
+									<div class="col-9 text-right">
+										<div class="huge">[[${SOLUONG_EXPIRES}]]</div>
+										<div class="huge-text">Mẫu số sắp hết hạn</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<a th:href="@{'/main/ca_invoice/init'}">
+						<div class="panels panel-green">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-3 fa-5x">
+										<i class="mdi mdi-pencil"></i>
+									</div>
+									<div class="col-9 text-right">
+										<div class="huge">[[${CKS_EXPIRES}]]</div>
+										<div class="huge-text">Chữ ký số hết hạn</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<a th:href="@{'/main/ca_invoice/init'}">
+						<div class="panels panel-green">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-3 fa-5x">
+										<i class="mdi mdi-book-plus"></i>
+									</div>
+									<div class="col-9 text-right">
+										<div class="huge">[[${NUMBER_OF_CONTRACT}]]</div>
+										<div class="huge-text">Số lượng hợp đồng tạo trong [[${NUMBER_OF_DAY_CONTRACT}]] ngày</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<a th:href="@{'/main/ca_invoice/init'}">
+						<div class="panels panel-green">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-3 fa-5x">
+										<i class="mdi mdi-account-plus"></i>
+									</div>
+									<div class="col-9 text-right">
+										<div class="huge">[[${NUMBER_OF_CUSTOMER}]]</div>
+										<div class="huge-text">Số lượng khách hàng tạo trong [[${NUMBER_OF_DAY_CUSTOMER}]] ngày:</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+
+			</div>
 	</div>
 	</th:block>
 </body>
