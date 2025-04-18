@@ -215,250 +215,186 @@
 							</div>
 
 							<div class="form-group row m-t-16">
-                          <div
-                            class="offset-0 col-12 offset-md-3 col-sm-12 text-danger small font-italic m-b-5"
-                          >
-                            Vui lòng chọn tập tin có dung lượng nhỏ hơn 200 KB
-                          </div>
-                          <label class="col-12 col-sm-3 form-control-label"
-                            >Logo doanh nghiệp
-                          </label>
-                          <div class="col-12 col-sm-9">
-                            <div class="form-file m-b-14">
-                              <input
-                             
-                                type="file"
-                               name="logoFile" id="logoFile"
-                                accept="image/*"
-                                class="b-upload__input"
-                              />
-                              <button class="btn-sm btn-outline b-upload__file">
-                                Chọn tập tin ...
-                              </button>
-                            </div>
-                            <div class="row">
-                              <div class="col-10 col-sm-10 col-md-10">
-  
-                             <input type="text" class="form-control form-control-sm "    th:value="${Logo}" id="logoFileName" readonly="readonly" >
-							<input type="hidden" class="form-control form-control-sm " id="logoFileNameSystem" name="logoFileNameSystem" readonly="readonly" >   
-                              </div>
-                              <div
-                                class="col-2 col-sm-2 col-md-2 none-padding-left"
-                              >
-                                <button
-                                  type="button"
-                                  name="btDeleteImage"
-                                     data-action="delete"	
-                                  data-target="logoFile"
-                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
-                                  title="Delete"
-                                >
-                                  <i class="mdi mdi-close-box"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row" style="display: none">
-                            <div class="col-12">
-                              <div class="progress progress-striped active">
-                                <div
-                                  style="width: 0%"
-                                  class="progress-bar primary"
-                                >
-                                  0%
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="form-group row">
-                          <label class="col-12 col-sm-3 form-control-label"
-                            >Hình nền hóa đơn
-                          </label>
-                          <div class="col-12 col-sm-9">
-                            <div class="form-file m-b-14">
-                              <input
-                                type="file"
-                                name="backgroundFile"
-                                id="backgroundFile"
-                                accept="image/*"
-                                class="b-upload__input"
-                              />
-                              <button class="btn-sm btn-outline b-upload__file">
-                                Chọn tập tin ...
-                              </button>
-                            </div>
-                            <div class="row">
-                              <div class="col-10 col-sm-10 col-md-10">
-                                <input
-                                  type="text"
-                                     th:value="${Bg}"
-                                  class="rm-default form-control form-control-sm"
-                                  id="backgroundFileName"
-                                  readonly="readonly"
-                                />
-                                <input
-                                  type="hidden"
-                                  class="form-control form-control-sm"
-                                  id="backgroundFileNameSystem"
-                                  name="backgroundFileNameSystem"
-                                  readonly="readonly"
-                                />
-                              </div>
-                              <div
-                                class="col-2 col-sm-2 col-md-2 none-padding-left"
-                              >
-                                <button
-                                  type="button"
-                                  name="btDeleteImage"
-                                  data-action="delete"	
-                                  data-target="backgroundFile"
-                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
-                                  title="Delete"
-                                >
-                                  <i class="mdi mdi-close-box"></i>
-                                </button>
-                              </div>
-                            </div>
-                            <div class="row" style="display: none">
-                              <div class="col-12">
-                                <div class="progress progress-striped active">
-                                  <div
-                                    style="width: 25%"
-                                    class="progress-bar primary"
-                                  >
-                                    25%
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                            <div class="form-group row m-t-16">
-       
-                          <label class="col-12 col-sm-3 form-control-label"
-                            >QR doanh nghiệp
-                          </label>
-                          <div class="col-12 col-sm-9">
-                            <div class="form-file m-b-14">
-                              <input
-                             
-                                type="file"
-                               name="qaFile" id="qaFile"
-                                accept="image/*"
-                                class="b-upload__input"
-                              />
-                              <button class="btn-sm btn-outline b-upload__file">
-                                Chọn tập tin ...
-                              </button>
-                            </div>
-                            <div class="row">
-                              <div class="col-10 col-sm-10 col-md-10">
-  
-                             <input type="text" class="form-control form-control-sm "    th:value="${QA}" id="qaFileName" readonly="readonly" >
-							<input type="hidden" class="form-control form-control-sm " id="qaFileNameSystem" name="qaFileNameSystem" readonly="readonly" >   
-                              </div>
-                              <div
-                                class="col-2 col-sm-2 col-md-2 none-padding-left"
-                              >
-                                <button
-                                  type="button"
-                                  name="btDeleteImage"
-                                     data-action="delete"	
-                                  data-target="qaFile"
-                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
-                                  title="Delete"
-                                >
-                                  <i class="mdi mdi-close-box"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row" style="display: none">
-                            <div class="col-12">
-                              <div class="progress progress-striped active">
-                                <div
-                                  style="width: 0%"
-                                  class="progress-bar primary"
-                                >
-                                  0%
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                          <div class="form-group row m-t-16">
-       
-                          <label class="col-12 col-sm-3 form-control-label"
-                            >Viền hóa đơn
-                          </label>
-                          <div class="col-12 col-sm-9">
-                            <div class="form-file m-b-14">
-                              <input
-                             
-                                type="file"
-                               name="vienFile" id="vienFile"
-                                accept="image/*"
-                                class="b-upload__input"
-                              />
-                              <button class="btn-sm btn-outline b-upload__file">
-                                Chọn tập tin ...
-                              </button>
-                            </div>
-                            <div class="row">
-                              <div class="col-10 col-sm-10 col-md-10">
-  
-                             <input type="text" class="form-control form-control-sm "    th:value="${Vien}" id="vienFileName" readonly="readonly" >
-							<input type="hidden" class="form-control form-control-sm " id="vienFileNameSystem" name="vienFileNameSystem" readonly="readonly" >   
-                              </div>
-                              <div
-                                class="col-2 col-sm-2 col-md-2 none-padding-left"
-                              >
-                                <button
-                                  type="button"
-                                  name="btDeleteImage"
-                                     data-action="delete"	
-                                  data-target="vienFile"
-                                  class="btns btn-cta__delete-file m-t-0 m-b-0"
-                                  title="Delete"
-                                >
-                                  <i class="mdi mdi-close-box"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row" style="display: none">
-                            <div class="col-12">
-                              <div class="progress progress-striped active">
-                                <div
-                                  style="width: 0%"
-                                  class="progress-bar primary"
-                                >
-                                  0%
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        
-                        
-                        <div class="row">
-                          <div class="col-12">
-                            <hr style="margin: 12px 0 0 0" />
-                          </div>
-                        </div>
+								<div
+									class="offset-0 col-12 offset-md-3 col-sm-12 text-danger small font-italic m-b-5">
+									Vui lòng chọn tập tin có dung lượng nhỏ hơn 200 KB</div>
+								<label class="col-12 col-sm-3 form-control-label">Logo
+									doanh nghiệp </label>
+								<div class="col-12 col-sm-9">
+									<div class="form-file m-b-14">
+										<input type="file" name="logoFile" id="logoFile"
+											accept="image/*" class="b-upload__input" />
+										<button class="btn-sm btn-outline b-upload__file">
+											Chọn tập tin ...</button>
+									</div>
+									<div class="row">
+										<div class="col-9 col-sm-9 col-md-9">
 
-                        <div class="row justify-content-between">
+											<input type="text" class="form-control form-control-sm "
+												th:value="${Logo}" id="logoFileName" readonly="readonly">
+											<input type="hidden" class="form-control form-control-sm "
+												id="logoFileNameSystem" name="logoFileNameSystem"
+												readonly="readonly">
+										</div>
+										<div class="col-2 col-sm-2 col-md-2 none-padding-left">
+											<button type="button" name="btDownloadImage"
+												data-action="download" data-target="logoFile"
+												class="btns btns-search_auto__ses m-t-0 m-b-0" title="Download"
+												th:disabled="${Logo == null or #strings.isEmpty(Logo)}"
+												>
+												Download
+											</button>
+										</div>
+										<div class="col-1 col-sm-1 col-md-1 none-padding-left">
+											<button type="button" name="btDeleteImage"
+												data-action="delete" data-target="logoFile"
+												class="btns btn-cta__delete-file m-t-0 m-b-0" title="Delete">
+												<i class="mdi mdi-close-box"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="row" style="display: none">
+									<div class="col-12">
+										<div class="progress progress-striped active">
+											<div style="width: 0%" class="progress-bar primary">
+												0%</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-12 col-sm-3 form-control-label">Hình
+									nền hóa đơn </label>
+								<div class="col-12 col-sm-9">
+									<div class="form-file m-b-14">
+										<input type="file" name="backgroundFile" id="backgroundFile"
+											accept="image/*" class="b-upload__input" />
+										<button class="btn-sm btn-outline b-upload__file">
+											Chọn tập tin ...</button>
+									</div>
+									<div class="row">
+										<div class="col-9 col-sm-9 col-md-9">
+											<input type="text" th:value="${Bg}"
+												class="rm-default form-control form-control-sm"
+												id="backgroundFileName" readonly="readonly" />
+											<input type="hidden" class="form-control form-control-sm"
+												id="backgroundFileNameSystem"
+												name="backgroundFileNameSystem" readonly="readonly" />
+										</div>
+										<div class="col-2 col-sm-2 col-md-2 none-padding-left">
+											<button type="button" name="btDownloadImage"
+												data-action="download" data-target="backgroundFile"
+												class="btns btns-search_auto__ses m-t-0 m-b-0" title="Download"
+												th:disabled="${Bg == null or #strings.isEmpty(Bg)}"
+												>
+												Download
+											</button>
+										</div>
+										<div class="col-1 col-sm-1 col-md-1 none-padding-left">
+											<button type="button" name="btDeleteImage"
+												data-action="delete" data-target="backgroundFile"
+												class="btns btn-cta__delete-file m-t-0 m-b-0" title="Delete">
+												<i class="mdi mdi-close-box"></i>
+											</button>
+										</div>
+									</div>
+									<div class="row" style="display: none">
+										<div class="col-12">
+											<div class="progress progress-striped active">
+												<div style="width: 25%" class="progress-bar primary">
+													25%</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="form-group row m-t-16">
+								<label class="col-12 col-sm-3 form-control-label">QR
+									doanh nghiệp </label>
+								<div class="col-12 col-sm-9">
+									<div class="form-file m-b-14">
+										<input type="file" name="qaFile" id="qaFile" accept="image/*"
+											class="b-upload__input" />
+										<button class="btn-sm btn-outline b-upload__file">
+											Chọn tập tin ...</button>
+									</div>
+									<div class="row">
+										<div class="col-10 col-sm-10 col-md-10">
+
+											<input type="text" class="form-control form-control-sm "
+												th:value="${QA}" id="qaFileName" readonly="readonly">
+											<input type="hidden" class="form-control form-control-sm "
+												id="qaFileNameSystem" name="qaFileNameSystem"
+												readonly="readonly">
+										</div>
+										<div class="col-2 col-sm-2 col-md-2 none-padding-left">
+											<button type="button" name="btDeleteImage"
+												data-action="delete" data-target="qaFile"
+												class="btns btn-cta__delete-file m-t-0 m-b-0" title="Delete">
+												<i class="mdi mdi-close-box"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="row" style="display: none">
+									<div class="col-12">
+										<div class="progress progress-striped active">
+											<div style="width: 0%" class="progress-bar primary">
+												0%</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row m-t-16">
+								<label class="col-12 col-sm-3 form-control-label">Viền
+									hóa đơn </label>
+								<div class="col-12 col-sm-9">
+									<div class="form-file m-b-14">
+										<input type="file" name="vienFile" id="vienFile"
+											accept="image/*" class="b-upload__input" />
+										<button class="btn-sm btn-outline b-upload__file">
+											Chọn tập tin ...</button>
+									</div>
+									<div class="row">
+										<div class="col-10 col-sm-10 col-md-10">
+
+											<input type="text" class="form-control form-control-sm "
+												th:value="${Vien}" id="vienFileName" readonly="readonly">
+											<input type="hidden" class="form-control form-control-sm "
+												id="vienFileNameSystem" name="vienFileNameSystem"
+												readonly="readonly">
+										</div>
+										<div class="col-2 col-sm-2 col-md-2 none-padding-left">
+											<button type="button" name="btDeleteImage"
+												data-action="delete" data-target="vienFile"
+												class="btns btn-cta__delete-file m-t-0 m-b-0" title="Delete">
+												<i class="mdi mdi-close-box"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="row" style="display: none">
+									<div class="col-12">
+										<div class="progress progress-striped active">
+											<div style="width: 0%" class="progress-bar primary">
+												0%</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<hr style="margin: 12px 0 0 0" />
+								</div>
+							</div>
+
+							<div class="row justify-content-between">
                           <div class="col-6 m-t-12">
                           <button type="button" id="btBack" title="Quay lại"
 									data-action="back"	class="btn btn-sm btn-primary btn-ses">
@@ -476,110 +412,51 @@
                 </div>
                 <input type="hidden" name="_id" th:value="${_id}" >
               </form>
-              <script type="text/javascript">
-		transactionMain = '[[${transaction}]]';
-		
-		var rowsTMP = [];
-		var vIsEdit = '[[${_isedit_}]]';
-		_gridSub01 = $('#f-mauhd-crud').find('#grid');
-		var mapPhoi = {};
+              
+		<script type="text/javascript">
+			transactionMain = '[[${transaction}]]';
+
+			var rowsTMP = [];
+			var vIsEdit = '[[${_isedit_}]]';
+			_gridSub01 = $('#f-mauhd-crud').find('#grid');
 		</script>
-		
-	 <script>
-$(document).ready(function(){
-	
-$("#kh").on("change",function(){
-   var GetValue=$("#kh").val();
-   $("#khttt").val(GetValue);
-});
 
-});
-</script>	
- <script>
-$(document).ready(function(){
-	
-$("#loaihd").on("change",function(){
-   var GetValue=$("#loaihd").val();
-   $("#khhd").val(GetValue);
-});
+		<script>
+			$(document).ready(function() {
 
-});
-</script>
+				$("#kh").on("change", function() {
+					var GetValue = $("#kh").val();
+					$("#khttt").val(GetValue);
+				});
 
-<script type="text/javascript">
-$(document).ready(function () {
-    mapPhoi = {}; 
-    var $input = $("#phoiInput");
-    var $suggestions = $("#suggestions");
+			});
+		</script>
+		<script>
+			$(document).ready(function() {
 
-    setTimeout(function () {
-        var map = $('#f-mauhd-crud').find('#khhd').val();
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: ROOT_PATH + "/common/get-phoi",
-            data: { "loaihd_ma": map },
-            beforeSend: function (req) {
-                initAjaxJsonArrayRequest(req);
-            },
-            success: function (res) {
-                if (res && $.isArray(res)) {
-                    mapPhoi = {}; 
-                    $.each(res, function (index, item) {
-                    	 var key = item["Images"] ? item["Images"] : index;
-                        mapPhoi[key] = item["Name"];
-                    });
-                   
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.error("Lỗi khi gọi API:", thrownError);
-            }
-        });
-    }, 1000);
+				$("#loaihd").on("change", function() {
+					var GetValue = $("#loaihd").val();
+					$("#khhd").val(GetValue);
+				});
 
-    $input.on("click input", function () {
-        var query = $(this).val().toLowerCase();
-        $suggestions.empty();
+			});
+		</script>
 
-        Object.keys(mapPhoi).forEach(function (key) {
-            var value = mapPhoi[key];
-            if (!query || value.toLowerCase().includes(query)) { 
-                // Nếu query rỗng hoặc tìm thấy kết quả khớp
-                $suggestions.append(`<li data-value="${key}">${value}</li>`);
-            }
-        });
-
-        if ($suggestions.children().length > 0) {
-            $suggestions.show();
-        } else {
-            $suggestions.hide();
-        }
-    });
-
-    $suggestions.on("click", "li", function () {
-        var value = $(this).text();
-        $input.val(value);
-        $suggestions.hide();
-    });
-
-    $(document).on("click", function (event) {
-        if (!$(event.target).closest("#phoiInput, #suggestions").length) {
-            $suggestions.hide();
-        }
-    });
-});
-</script>
 		<script type="text/javascript">
 			$(document).ready(
 					function() {
 						let currentValue = $('#yearCreated').val();
 
 						if (!currentValue || currentValue.trim() === '') {
-							let currentYear = new Date().getFullYear().toString().slice(2);
+							let currentYear = new Date().getFullYear()
+									.toString().slice(2);
 							$('#yearCreated').val(currentYear);
 						}
 					});
+			if (vIsEdit) {
+				if ($('#f-mauhd-crud').find('#phoi').length > 0)
+					initComboSearchLocal('#f-mauhd-crud', '#phoi');
+			}
 		</script>
 
 		<script type="text/javascript">
@@ -588,7 +465,7 @@ $(document).ready(function () {
 			var _val = $(this).val();
 			
 			$('#f-mauhd-crud').find('#phoi').empty();
-// 			$('#f-mauhd-crud').find('#phoi').append($("<option></option>").text('').val(''));
+			$('#f-mauhd-crud').find('#phoi').append($("<option></option>").text('').val(''));
 			
 			if('' == _val || _val == undefined) return;
 			
@@ -601,22 +478,24 @@ $(document).ready(function () {
 				beforeSend: function(req) {
 					initAjaxJsonArrayRequest(req);
 				},
-				 success: function (res) {
-		                if (res && $.isArray(res)) {
-		                    mapPhoi = {}; 
-		                    $.each(res, function (index, item) {
-		                    	 var key = item["Images"] ? item["Images"] : index;
-		                        mapPhoi[key] = item["Name"];
-		                    });
-		                }
-		            },
-		            error: function (xhr, ajaxOptions, thrownError) {
-		                console.error("Lỗi khi gọi API:", thrownError);
-		            }
+				success:function(res) {
+					if(res && $.isArray(res)) {
+						$.each(res, function(index, item) {
+							$('#f-mauhd-crud').find('#phoi').append(
+								$("<option></option>").text(item['Name']).val(item['Code'])
+							);
+						});
+						
+					}
+				
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+
 			});
 		});
 
-</script>
+		</script>
 
 
 
@@ -796,37 +675,80 @@ $(document).ready(function () {
 		});
 	
 	});
-	
-		
-		
-	});
-	
-	
-   function getDataToSave(){
-            		var dataPost = {};
-            		dataPost['_id'] = $('#f-mauhd-crud').find('input[name="_id"]').val();
-            		dataPost['loaihd'] = $('#f-mauhd-crud').find('#loaihd').val();
-//             		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoi').val();
-//             		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoi').find('option:selected').text();
-            		dataPost['phoi'] = $('#f-mauhd-crud').find('#phoiInput').val();
-            		dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoiInput').val();
-            		dataPost['khhd'] = $('#f-mauhd-crud').find('#khhd').val();
-            		dataPost['macqt'] = $('#f-mauhd-crud').find('#macqt').val();
-            		dataPost['yearCreated'] = $('#f-mauhd-crud').find('#yearCreated').val();
-            		dataPost['kh'] = $('#f-mauhd-crud').find('#kh').val();
-            		dataPost['macty'] = $('#f-mauhd-crud').find('#macty').val();
-            		dataPost['r1p'] = $('#f-mauhd-crud').find('#r1p').val();
-            		dataPost['rnp'] = $('#f-mauhd-crud').find('#rnp'). val();
-            			dataPost['CharsInRow'] = $('#f-mauhd-crud').find('#CharsInRow').val();
-            		dataPost['logoFileNameSystem'] = $('#f-mauhd-crud').find('#logoFileNameSystem').val();
-            		dataPost['backgroundFileNameSystem'] = $('#f-mauhd-crud').find('#backgroundFileNameSystem').val();
-            		dataPost['qaFileNameSystem'] = $('#f-mauhd-crud').find('#qaFileNameSystem').val();
-            		dataPost['vienFileNameSystem'] = $('#f-mauhd-crud').find('#vienFileNameSystem').val();
-            		
-            		return dataPost;	
-            	}
 
+		$("#f-mauhd-crud").find('button[name="btDownloadImage"]').click(
+					function(event) {
+						event.preventDefault();
+						event.stopPropagation();
 
+						let taxCode = '[[${TAXCODE}]]';
+						let typeImage = $(this).attr('data-target');
+						let logoValue
+						if (typeImage == "logoFile") {
+							 logoValue = $('#logoFileName').val();
+						}
+						if (typeImage == "backgroundFile") {
+							 logoValue = $('#backgroundFileName').val();
+						}
+						
+						 const downloadUrl = `/main/${transactionMain}/download-image?fileName=${encodeURIComponent(logoValue)}&taxCode=${encodeURIComponent(taxCode)}`;
+
+						 fetch(downloadUrl, {
+						        method: 'GET'
+						    })
+						    .then(response => {
+						        if (!response.ok) {
+						        	alertDLSuccess('Tải ảnh thất bại.', function(){});
+						            throw new Error("Tải ảnh thất bại: " + response.status);
+						        }
+						        return response.blob();
+						    })
+						    .then(blob => {
+						        const blobUrl = window.URL.createObjectURL(blob);
+						        const a = document.createElement('a');
+						        a.href = blobUrl;
+						        a.download = logoValue;
+						        document.body.appendChild(a);
+						        a.click();
+						        document.body.removeChild(a);
+						        window.URL.revokeObjectURL(blobUrl); 
+						    })
+						    .catch(error => {
+						    	alertDLSuccess('Không thể tải ảnh: ' + error.message + '.', function(){});
+						    });
+					});
+
+		});
+
+		function getDataToSave() {
+			var dataPost = {};
+			dataPost['_id'] = $('#f-mauhd-crud').find('input[name="_id"]')
+					.val();
+			dataPost['loaihd'] = $('#f-mauhd-crud').find('#loaihd').val();
+			dataPost['phoi'] = $('#f-mauhd-crud').find('#phoi').val();
+			dataPost['phoi-text'] = $('#f-mauhd-crud').find('#phoi').find(
+					'option:selected').text();
+			dataPost['khhd'] = $('#f-mauhd-crud').find('#khhd').val();
+			dataPost['macqt'] = $('#f-mauhd-crud').find('#macqt').val();
+			dataPost['yearCreated'] = $('#f-mauhd-crud').find('#yearCreated')
+					.val();
+			dataPost['kh'] = $('#f-mauhd-crud').find('#kh').val();
+			dataPost['macty'] = $('#f-mauhd-crud').find('#macty').val();
+			dataPost['r1p'] = $('#f-mauhd-crud').find('#r1p').val();
+			dataPost['rnp'] = $('#f-mauhd-crud').find('#rnp').val();
+			dataPost['CharsInRow'] = $('#f-mauhd-crud').find('#CharsInRow')
+					.val();
+			dataPost['logoFileNameSystem'] = $('#f-mauhd-crud').find(
+					'#logoFileNameSystem').val();
+			dataPost['backgroundFileNameSystem'] = $('#f-mauhd-crud').find(
+					'#backgroundFileNameSystem').val();
+			dataPost['qaFileNameSystem'] = $('#f-mauhd-crud').find(
+					'#qaFileNameSystem').val();
+			dataPost['vienFileNameSystem'] = $('#f-mauhd-crud').find(
+					'#vienFileNameSystem').val();
+
+			return dataPost;
+		}
 	</script>
 	
 		

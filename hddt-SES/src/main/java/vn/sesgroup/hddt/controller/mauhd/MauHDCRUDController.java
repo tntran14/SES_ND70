@@ -1,7 +1,14 @@
 package vn.sesgroup.hddt.controller.mauhd;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,14 +19,21 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +59,6 @@ import vn.sesgroup.hddt.controller.AbstractController;
 import vn.sesgroup.hddt.dto.BaseDTO;
 import vn.sesgroup.hddt.dto.CurrentUserProfile;
 import vn.sesgroup.hddt.dto.FileInfo;
-import vn.sesgroup.hddt.dto.LoginRes;
 import vn.sesgroup.hddt.resources.RestAPIUtility;
 import vn.sesgroup.hddt.utils.Constants;
 import vn.sesgroup.hddt.utils.Json;
@@ -632,10 +645,58 @@ public class MauHDCRUDController extends AbstractController{
 		}
 		return false;
 	}
-	
-	
-	
-	
-	
-	
+
+	@RequestMapping(value = "/download-image", method = RequestMethod.GET)
+	public void downloadImage(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String fileName = req.getParameter("fileName");
+		String taxCode = req.getParameter("taxCode");
+		Path imagePath = Paths.get("C:\\hddt-ses\\server\\template")
+				.resolve("images")
+				.resolve(taxCode)
+				.resolve(fileName)
+				.normalize();
+		PrintWriter writer = null;
+
+		File file = imagePath.toFile();
+		if (!file.exists() || !file.isFile()) {
+			resp.setContentType("text/html; charset=utf-8");
+			resp.setCharacterEncoding("UTF-8");
+			resp.setHeader("success", "yes");
+			writer = resp.getWriter();
+			writer.write("Không tìm thấy ảnh.");
+			writer.flush();
+			writer.close();
+		}
+
+		String contentType = Files.probeContentType(imagePath);
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		byte[] fileBytes = Files.readAllBytes(imagePath);
+		InputStream inputStream = new ByteArrayInputStream(fileBytes);
+		resp.setHeader("Content-Type", contentType);
+		resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		resp.setHeader("Pragma", "no-cache");
+		resp.setHeader("Expires", "0");
+
+		int bufferSize = 1024;
+		final byte[] buffer = new byte[bufferSize];
+		int bytesRead = 0;
+		OutputStream out = null;
+		try {
+			out = resp.getOutputStream();
+			long totalWritten = 0;
+			while ((bytesRead = inputStream.read(buffer)) > 0) {
+				out.write(buffer, 0, bytesRead);
+				totalWritten += bytesRead;
+				if (totalWritten >= buffer.length) {
+					out.flush();
+				}
+			}
+		} finally {
+			tryToCloseStream(out);
+			tryToCloseStream(inputStream);
+		}
+	}
 }
