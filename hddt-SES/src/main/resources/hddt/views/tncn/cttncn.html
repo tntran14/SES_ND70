@@ -662,7 +662,14 @@
 												if (res) {
 													if (res.errorCode == 0) {
 														serialNumber = res.responseData;
-														cb(serialNumber)
+														var check = serialNumber['check'];
+														
+														if(check==="300"){
+															alertDLSuccess('Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.', function(){});
+												
+														}else{
+															cb(serialNumber)
+														}
 													
 													} else {
 														alertDLSuccess(
@@ -810,103 +817,111 @@
 														hideLoading();
 														if(res) {
 															if(res.errorCode == 0) {
+																
 																serialNumber = res.responseData;
-																//LAY NOI DUNG FILE XML
-																jQuery.ajax({
-																	url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
-															        cache:false,
-															        xhr:function(){// Seems like the only way to get access to the xhr object
-															            var xhr = new XMLHttpRequest();
-															            xhr.responseType= 'blob'
-															            return xhr;
-															        },
-															        success:function(data, textStatus, xhr) {
-//															        	hideLoading();
-																    	if(xhr.status == 200){
-																    		var blob = new Blob([data], { type: 'octet/stream' });
-																    		serialNumber = serialNumber['Seri'];
-																    			datetimeString = serialNumber['DateTime'];
-																    		var postEnc = new FormData();
-																    			postEnc.append('DateTime', datetimeString);
-																    		postEnc.append('SerialNumber', serialNumber);
-																    		postEnc.append('xmlFile', blob);
-																    		
-																    		var xhrSign = new XMLHttpRequest();
-																    		xhrSign.onreadystatechange = function(e) {
-																    			if(4 == this.readyState) {
-																    				if(this.status == 200){	
-																    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
-																    					blob = new Blob( [this.response], { type : "octet/stream" } );
-																    					showLoading();
-																    					
-																    					formData = new FormData();
-																						formData.append("XMLFileSigned", blob);
-																						formData.append('certificate', base64Cert.replace(/\+/g, "@"));
-																    					
-																						xhrSign = new XMLHttpRequest();
-																						xhrSign.upload.addEventListener('progress', function(e) {
-																							
-																						});
-																						if(xhrSign.upload) {
-																							
-																						};
-																						xhrSign.onreadystatechange = function(e) {
-																							if(4 == this.readyState && this.status == 200) {
-																								var res = xhrSign.response;
-																								if(res){
-																									if(res.errorCode == 0) { 
-																										hideLoading();
-																									     _gridMain.data("kendoGrid").dataSource.read();
-																											
+																var check = responseData['check'];
+																
+																if(check==="300"){
+																	alertDLSuccess('Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.', function(){});
 														
+																}else{
+																	//LAY NOI DUNG FILE XML
+																	jQuery.ajax({
+																		url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+																        cache:false,
+																        xhr:function(){// Seems like the only way to get access to the xhr object
+																            var xhr = new XMLHttpRequest();
+																            xhr.responseType= 'blob'
+																            return xhr;
+																        },
+																        success:function(data, textStatus, xhr) {
+//																        	hideLoading();
+																	    	if(xhr.status == 200){
+																	    		var blob = new Blob([data], { type: 'octet/stream' });
+																	    		serialNumber = serialNumber['Seri'];
+																	    			datetimeString = serialNumber['DateTime'];
+																	    		var postEnc = new FormData();
+																	    			postEnc.append('DateTime', datetimeString);
+																	    		postEnc.append('SerialNumber', serialNumber);
+																	    		postEnc.append('xmlFile', blob);
+																	    		
+																	    		var xhrSign = new XMLHttpRequest();
+																	    		xhrSign.onreadystatechange = function(e) {
+																	    			if(4 == this.readyState) {
+																	    				if(this.status == 200){	
+																	    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
+																	    					blob = new Blob( [this.response], { type : "octet/stream" } );
+																	    					showLoading();
+																	    					
+																	    					formData = new FormData();
+																							formData.append("XMLFileSigned", blob);
+																							formData.append('certificate', base64Cert.replace(/\+/g, "@"));
+																	    					
+																							xhrSign = new XMLHttpRequest();
+																							xhrSign.upload.addEventListener('progress', function(e) {
+																								
+																							});
+																							if(xhrSign.upload) {
+																								
+																							};
+																							xhrSign.onreadystatechange = function(e) {
+																								if(4 == this.readyState && this.status == 200) {
+																									var res = xhrSign.response;
+																									if(res){
+																										if(res.errorCode == 0) { 
+																											hideLoading();
+																										     _gridMain.data("kendoGrid").dataSource.read();
+																												
+															
+																										}else{
+																					            			alertDLSuccess(createObjectError(res).html(), function(){});
+																					            			hideLoading();
+																					            			$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
+																					            		}
 																									}else{
-																				            			alertDLSuccess(createObjectError(res).html(), function(){});
-																				            			hideLoading();
-																				            			$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
-																				            		}
-																								}else{
-																									alertDLSuccess('unknown error!!!', function(){});
-																									hideLoading();
-																				            	}
+																										alertDLSuccess('unknown error!!!', function(){});
+																										hideLoading();
+																					            	}
+																								}
 																							}
-																						}
-																						xhrSign.onerror = function() {
+																							xhrSign.onerror = function() {
+																								
+																							}
+																							xhrSign.ontimeout = function() {
+																								
+																							}
 																							
-																						}
-																						xhrSign.ontimeout = function() {
+																							var urlPost = ROOT_PATH + '/main/cttncn-sign/signFile';
+																							xhrSign.open("POST", urlPost, true);
+																							xhrSign.responseType = 'json';
+																							xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+																							xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
 																							
+																							xhrSign.setRequestHeader("Cache-Control", "no-cache");
+																							xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+																							xhrSign.send(formData);
+																	    				}else{
+																							hideLoading();
+																							alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function(){});
 																						}
-																						
-																						var urlPost = ROOT_PATH + '/main/cttncn-sign/signFile';
-																						xhrSign.open("POST", urlPost, true);
-																						xhrSign.responseType = 'json';
-																						xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
-																						xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
-																						
-																						xhrSign.setRequestHeader("Cache-Control", "no-cache");
-																						xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-																						xhrSign.send(formData);
-																    				}else{
-																						hideLoading();
-																						alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function(){});
-																					}
-																    			}
-																    		}
-																    		
-																    		xhrSign.open('POST', urlPluginSign + signXML, true);
-																			xhrSign.timeout = 5 * 60 * 1000;
-																			xhrSign.responseType = 'blob';	//or arraybuffer
-																			xhrSign.send(postEnc);
-																    	}else{
-																    		hideLoading();
-																    		alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function(){});
-																		}
-																    
-															        },
-															        error:function(){
-															            
-															        }
-																});
+																	    			}
+																	    		}
+																	    		
+																	    		xhrSign.open('POST', urlPluginSign + signXML, true);
+																				xhrSign.timeout = 5 * 60 * 1000;
+																				xhrSign.responseType = 'blob';	//or arraybuffer
+																				xhrSign.send(postEnc);
+																	    	}else{
+																	    		hideLoading();
+																	    		alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function(){});
+																			}
+																	    
+																        },
+																        error:function(){
+																            
+																        }
+																	});
+																}
 															}else{
 																alertDLSuccess(createObjectError(res).html(), function(){});
 															}

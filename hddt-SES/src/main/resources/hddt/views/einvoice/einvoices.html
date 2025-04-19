@@ -1169,8 +1169,14 @@
 												if (res) {
 													if (res.errorCode == 0) {
 														serialNumber = res.responseData;
-														cb(serialNumber)
-													
+														var check = serialNumber['check'];
+														
+														if(check==="300"){
+															alertDLSuccess('<span class="text-error">Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.<span>',
+																	function myFunction() {});
+														} else {
+															cb(serialNumber)
+														}
 													} else {
 														alertDLSuccess(
 																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
@@ -1597,7 +1603,7 @@
 																	if(check==="300"){
 																	
 																		alertDLSuccess(
-																				'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																				'<span class="text-error">Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.<span>',
 																				function myFunction() {
 																					  timeout = setTimeout(ckserro, 0);
 																					}
