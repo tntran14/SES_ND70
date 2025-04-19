@@ -5612,8 +5612,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 		int SoHDon = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
 
-//		String fileNameXML = _id + "_" + MCCQT + ".xml";
-		String fileNameXML = _id + "_pending.xml";
+		String fileNameXML = _id + "_preparingSendCQT.xml";
 		String fileNamePDF = _id + ".pdf";
 		if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 			fileNamePDF = _id + "-deleted.pdf";
@@ -5627,10 +5626,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			fileName = _id + ".xml";
 			if ("SIGNED".equals(signStatusCode) && !"".equals(MCCQT)) {
-				fileName = _id + "_pending.xml";
+				fileName = _id + "_signed.xml";
+				fileNameXML = _id + "_signed.xml";
 			} else {
-				fileName = _id + ".xml";
-
+				fileName = _id + "_preparingSendCQT.xml";
 			}
 			file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
