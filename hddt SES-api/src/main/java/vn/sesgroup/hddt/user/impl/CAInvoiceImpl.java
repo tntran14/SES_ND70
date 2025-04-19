@@ -94,11 +94,7 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
         pipeline.add(new Document("$match", docMatch));
         pipeline.add(new Document("$match", new Document("TenNnt", new Document("$ne", null).append("$ne", ""))));
         //3. sort CA nhỏ -> Lớn
-    	pipeline.add(
-				  new Document("$sort", 
-				    new Document("DSCTSSDung.DNgay", -1) 
-				  )  
-				);
+    	pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", 1)));
     	pipeline.add(new Document("$group", new Document("_id", "$MST")
     		    .append("document", new Document("$first", "$$ROOT"))));
     	pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
@@ -134,6 +130,7 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
     		        ))
     		        .append("as", "DMTKhaiInfo")
     		));
+    	
         pipeline.addAll(createFacetForSearchNotSort(page));
         cursor = mongoTemplate.getCollection("DMCTSo").aggregate(pipeline).allowDiskUse(true);
         iter = cursor.iterator();
@@ -347,7 +344,7 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 
             pipeline.add(new Document("$match", docMatch));
             pipeline.add(new Document("$match", new Document("TenNnt", new Document("$ne", null).append("$ne", ""))));
-			pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", -1)));
+			pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", 1)));
 			pipeline.add(new Document("$group",
 					new Document("_id", "$MST").append("document", new Document("$first", "$$ROOT"))));
 			pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
