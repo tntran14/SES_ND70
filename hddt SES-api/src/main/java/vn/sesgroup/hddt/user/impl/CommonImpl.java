@@ -5260,6 +5260,13 @@ try {
 
 			HashMap<String, String> hR = new HashMap<String, String>();
 
+			String supURL =getUrl(taxCode);
+			if (supURL.equals("")) {
+				responseStatus = new MspResponseStatus(999, " can't find url.");
+				rsp.setResponseStatus(responseStatus);
+				rsp.setObjData(hR);
+				return rsp;
+			}
 			String url = "https://masothue.com/" + getUrl(taxCode);
 			try {
 				org.jsoup.nodes.Document doc = Jsoup.connect(url).userAgent(
@@ -5304,7 +5311,8 @@ try {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail.");
+				System.out.println("ERROR WHEN GET MST "+e);
+				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail. "+supURL);
 				rsp.setResponseStatus(responseStatus);
 				rsp.setObjData(hR);
 				return rsp;

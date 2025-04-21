@@ -3199,6 +3199,7 @@ public class CommonController extends AbstractController{
 						dtoRes.setErrorCode(0);
 						dtoRes.setResponseData(hR);
 					}else {
+						dtoRes.setErrorDesc(rspStatus.getErrorDesc());
 						dtoRes.setErrorCode(999);
 					}
 
