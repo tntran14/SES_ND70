@@ -87,18 +87,27 @@ public class ThuHoiHDonCRUDController extends AbstractController{
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		if(rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-			
-			
+			String mauSoHdon = commons.getTextJsonNode(jsonData.at("/KHMSHDon"))
+					+ commons.getTextJsonNode(jsonData.at("/KHHDon"));
+			String tenMau = commons.getTextJsonNode(jsonData.at("/Templates/Name"));
+			String maMau = commons.getTextJsonNode(jsonData.at("/Templates/Code"));
+			String fileName = commons.getTextJsonNode(jsonData.at("/Templates/FileName"));
+
+			String chungTu = commons.getTextJsonNode(jsonData.at("/ChungTu"));
+			if (!chungTu.equals("")) {
+				mauSoHdon = commons.getTextJsonNode(jsonData.at("/KyHieu")) + "/"
+						+ commons.getTextJsonNode(jsonData.at("/MauSo")) + "/" + chungTu;
+				tenMau = commons.getTextJsonNode(jsonData.at("/Mau"));
+				maMau = commons.getTextJsonNode(jsonData.at("/MauSo"));
+				fileName = commons.getTextJsonNode(jsonData.at("/FileName"));
+			}
 			req.setAttribute("TSHDon", commons.getTextJsonNode(jsonData.at("/SoLuong")));
 			req.setAttribute("SHDDD", commons.getTextJsonNode(jsonData.at("/SHDHT")));
 			req.setAttribute("SHDCL", commons.getTextJsonNode(jsonData.at("/ConLai")));
-			req.setAttribute("MauSoHdon",
-				commons.getTextJsonNode(jsonData.at("/KHMSHDon"))
-				+ commons.getTextJsonNode(jsonData.at("/KHHDon"))
-			);
-			req.setAttribute("TenMau", commons.getTextJsonNode(jsonData.at("/Templates/Name")));
-			req.setAttribute("MaMau", commons.getTextJsonNode(jsonData.at("/Templates/Code")));
-			req.setAttribute("FileName", commons.getTextJsonNode(jsonData.at("/Templates/FileName")));
+			req.setAttribute("MauSoHdon", mauSoHdon);
+			req.setAttribute("TenMau", tenMau);
+			req.setAttribute("MaMau", maMau);
+			req.setAttribute("FileName", fileName);
 		
 			
 		}else {
