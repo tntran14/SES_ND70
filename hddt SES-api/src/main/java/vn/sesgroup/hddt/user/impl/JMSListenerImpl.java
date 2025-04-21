@@ -1080,8 +1080,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				try {
 					Document docInsert = null;
 					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName)
-							.getCollection("LogEmailUser");
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
 					docInsert = new Document("IssuerId", toEmail.get("IssuerId",""))
 							.append("Title", title.toString())
 							.append("Email", emailReceives)

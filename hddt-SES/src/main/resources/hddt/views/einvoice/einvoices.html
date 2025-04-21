@@ -2800,7 +2800,7 @@
 							text += '<i title="Lịch sử lấy mã CQT" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="history" ></i>';
 					    }
 						
-						if('' != MCCQT && 'SIGNED' != signStatusCode){
+						if('' != MCCQT && 'SIGNED' == signStatusCode){
 							text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
 							text += '<i title="In hóa đơn chuyển đổi" class="mdi mdi-file-pdf fs-25 text-info c-pointer" data-sub-action="print-convert" ></i>';
 							text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-email" ></i>';	

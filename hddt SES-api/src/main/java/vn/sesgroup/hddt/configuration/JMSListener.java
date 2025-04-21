@@ -26,6 +26,7 @@ public class JMSListener
         if (jmsMessage instanceof ActiveMQTextMessage) {
             final String infoServerID = ((ActiveMQTextMessage)jmsMessage).getText();
             String type = ((ActiveMQTextMessage)jmsMessage).getStringProperty("TYPE");
+            if (type == null) type = "";
             try {
             	
             	switch (type) {
@@ -33,7 +34,6 @@ public class JMSListener
 					System.out.println("Dang thuc hien gui ActiveMQ trên CTTNCN");
 					this.dao.sendMailWithQueueBulkMailOnCttncn(infoServerID);
 					break;
-
 				default:
 					System.out.println("Dang thuc hien gui ActiveMQ");
 					this.dao.sendMailWithQueueBulkMail(infoServerID);
