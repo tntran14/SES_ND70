@@ -5269,8 +5269,12 @@ try {
 			}
 			String url = "https://masothue.com/" + getUrl(taxCode);
 			try {
-				org.jsoup.nodes.Document doc = Jsoup.connect(url).userAgent(
-						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+				org.jsoup.nodes.Document doc = Jsoup.connect(url)
+						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+						.referrer("https://www.google.com/")
+						.header("Accept-Language", "en-US,en;q=0.9")
+						.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+						.header("Connection", "keep-alive")
 						.timeout(10 * 1000).get();
 
 				Element element1 = doc.select("table.table-taxinfo thead tr").get(0);
