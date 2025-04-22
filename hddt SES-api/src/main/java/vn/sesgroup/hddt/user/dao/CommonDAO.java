@@ -61,5 +61,6 @@ public interface CommonDAO {
 	public FileInfo print04_mtt(JSONRoot jsonRoot)throws Exception;
 	
 	public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp scratchingTaxCodeV2(JSONRoot jsonRoot) throws Exception;
 	
 }

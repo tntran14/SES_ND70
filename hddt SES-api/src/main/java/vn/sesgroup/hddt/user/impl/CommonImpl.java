@@ -5328,4 +5328,61 @@ try {
 			return rsp;
 
 		}
+
+		@Override
+		public MsgRsp scratchingTaxCodeV2(JSONRoot jsonRoot) throws Exception {
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			Object objData = msg.getObjData();
+
+			MsgRsp rsp = new MsgRsp(header);
+			MspResponseStatus responseStatus = null;
+
+			JsonNode jsonData = null;
+			String taxCode = "";
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+				taxCode = commons.getTextJsonNode(jsonData.at("/MST")).trim().replaceAll("\\s+", " ");
+			}
+
+			HashMap<String, String> hR = new HashMap<String, String>();
+			String url = "https://hsctvn.com/search?key="+taxCode+"&opt=0&p=0&d=0";
+			try {
+				String address = "";
+				String compayName = "";
+				org.jsoup.nodes.Document doc = Jsoup.connect(url)
+						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+						.referrer("https://www.google.com/")
+						.header("Accept-Language", "en-US,en;q=0.9")
+						.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+						.header("Connection", "keep-alive")
+						.timeout(10 * 1000).get();
+
+	            Elements elements = doc.select("ul.hsdn li h3 a");
+	            if (elements.size() != 0) {
+	            	compayName= elements.get(0).text();
+	            }
+	            elements = doc.select("ul.hsdn li div");
+	            if (elements.size() != 0) {
+	                address = elements.get(0).text().replace("Địa chỉ:", "").split("Mã số thuế:")[0].trim();
+	            }
+	            
+	            hR.put("ten_cong_ty", compayName);
+	            hR.put("dia_chi", address);
+	            
+	            
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("ERROR WHEN GET MST "+e);
+				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail.");
+				rsp.setResponseStatus(responseStatus);
+				rsp.setObjData(hR);
+				return rsp;
+			}
+
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+			rsp.setObjData(hR);
+			return rsp;
+		}
 }
