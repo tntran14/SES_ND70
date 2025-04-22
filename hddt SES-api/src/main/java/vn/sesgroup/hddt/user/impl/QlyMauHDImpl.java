@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,8 +77,11 @@ public class QlyMauHDImpl extends AbstractDAO implements QlyMauHDtDao{
 		List<Document> pipeline = new ArrayList<Document>();
 			
 		Document docMatch = new Document("IsDelete",new Document("$ne", true));
-		if(!"".equals(nso))
-			docMatch.append("Name", commons.regexEscapeForMongoQuery(nso));
+		if (!"".equals(nso)) {
+			String patternText = ".*" + commons.regexEscapeForMongoQuery(nso) + ".*";
+			Pattern regex = Pattern.compile(patternText, Pattern.CASE_INSENSITIVE);
+			docMatch.append("Name", new Document("$regex", regex));
+		}
 		if(!"".equals(loaihd_ma))
 			docMatch.append("loaihd_ma", commons.regexEscapeForMongoQuery(loaihd_ma));
 		if(!"".equals(acti))
