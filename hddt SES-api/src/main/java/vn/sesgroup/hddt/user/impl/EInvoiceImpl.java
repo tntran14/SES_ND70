@@ -4376,36 +4376,76 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String MLoi1 = "";
 		String MTLoi1 = "";
 		String CQT_MLTDiep1 = "";
-		for (int i = 1; i <= 20; i++) {
-
-			if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
-				break;
-			nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
+		Node nodeTemp = null;
+		NodeList tDiepNodes = (NodeList) xPath.evaluate("DuLieu/TDiep", nodeKetQuaTraCuu, XPathConstants.NODESET);
+		for (int i = 0; i < tDiepNodes.getLength(); i++) {
+			nodeTemp = (Node) tDiepNodes.item(i);
 			checkMLTDiep = commons
-					.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
-			if (checkMLTDiep.equals("202")) {
+					.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTemp, XPathConstants.NODE));
+			if (xPath.evaluate("DLieu/*/MCCQT", nodeTemp, XPathConstants.NODE) != null && checkMLTDiep.equals("202")) {
+				nodeTDiep = nodeTemp;
 				break;
 			}
-			if (checkMLTDiep.equals("204")) {
-				check_ = true;
-				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
-						nodeTDiep, XPathConstants.NODE));
-				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi",
-						nodeTDiep, XPathConstants.NODE));
-				CQT_MLTDiep1 = checkMLTDiep;
-				break;
-			}
-			if (checkMLTDiep.equals("-1")) {
-				check_ = true;
-				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MLoi",
-						nodeTDiep, XPathConstants.NODE));
-				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa",
-						nodeTDiep, XPathConstants.NODE));
-				CQT_MLTDiep1 = checkMLTDiep;
-				break;
-			}
-
 		}
+
+		if (nodeTDiep == null) {
+			for (int i = 0; i < tDiepNodes.getLength(); i++) {
+				nodeTDiep = (Node) tDiepNodes.item(i);
+				checkMLTDiep = commons.getTextFromNodeXML(
+						(Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+				if (checkMLTDiep.equals("202")) {
+					break;
+				}
+				if (checkMLTDiep.equals("204")) {
+					check_ = true;
+					MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
+							nodeTDiep, XPathConstants.NODE));
+					MTLoi1 = commons.getTextFromNodeXML((Element) xPath
+							.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+					CQT_MLTDiep1 = checkMLTDiep;
+					break;
+				}
+				if (checkMLTDiep.equals("-1")) {
+					check_ = true;
+					MLoi1 = commons
+							.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MLoi", nodeTDiep, XPathConstants.NODE));
+					MTLoi1 = commons
+							.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa", nodeTDiep, XPathConstants.NODE));
+					CQT_MLTDiep1 = checkMLTDiep;
+					break;
+				}
+			}
+		}
+//		for (int i = 1; i <= 20; i++) {
+//
+//			if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
+//				break;
+//			nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
+//			checkMLTDiep = commons
+//					.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+//			if (checkMLTDiep.equals("202")) {
+//				break;
+//			}
+//			if (checkMLTDiep.equals("204")) {
+//				check_ = true;
+//				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
+//						nodeTDiep, XPathConstants.NODE));
+//				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi",
+//						nodeTDiep, XPathConstants.NODE));
+//				CQT_MLTDiep1 = checkMLTDiep;
+//				break;
+//			}
+//			if (checkMLTDiep.equals("-1")) {
+//				check_ = true;
+//				MLoi1 = commons
+//						.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MLoi", nodeTDiep, XPathConstants.NODE));
+//				MTLoi1 = commons
+//						.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa", nodeTDiep, XPathConstants.NODE));
+//				CQT_MLTDiep1 = checkMLTDiep;
+//				break;
+//			}
+//
+//		}
 
 		if (nodeTDiep == null) {
 			responseStatus = new MspResponseStatus(9999, "Chưa có kết quả trả về.");
@@ -9629,27 +9669,69 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			String MLoi1 = "";
 			String MTLoi1 = "";
 			String CQT_MLTDiep1 = "";
-			for (int i = 1; i <= 20; i++) {
-
-				if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
-					break;
-				nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
+			
+			Node nodeTemp = null;
+			NodeList tDiepNodes = (NodeList) xPath.evaluate("DuLieu/TDiep", nodeKetQuaTraCuu, XPathConstants.NODESET);
+			for (int i = 0; i < tDiepNodes.getLength(); i++) {
+				nodeTemp = (Node) tDiepNodes.item(i);
 				checkMLTDiep = commons.getTextFromNodeXML(
-						(Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
-				if (checkMLTDiep.equals("202"))
+						(Element) xPath.evaluate("TTChung/MLTDiep", nodeTemp, XPathConstants.NODE));
+				if (xPath.evaluate("DLieu/*/MCCQT", nodeTemp, XPathConstants.NODE) != null
+						&& checkMLTDiep.equals("202")) {
+					nodeTDiep = nodeTemp;
 					break;
-				if (checkMLTDiep.equals("204")) {
-					check_ = true;
-					MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
-							nodeTDiep, XPathConstants.NODE));
-					MTLoi1 = commons.getTextFromNodeXML((Element) xPath
-							.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
-
-					CQT_MLTDiep1 = checkMLTDiep;
-
 				}
-
 			}
+			if (nodeTDiep == null) {
+				for (int i = 0; i < tDiepNodes.getLength(); i++) {
+					nodeTDiep = (Node) tDiepNodes.item(i);
+					checkMLTDiep = commons.getTextFromNodeXML(
+							(Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+					if (checkMLTDiep.equals("202"))
+						break;
+					if (checkMLTDiep.equals("204")) {
+						check_ = true;
+						MLoi1 = commons.getTextFromNodeXML((Element) xPath
+								.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+						MTLoi1 = commons.getTextFromNodeXML((Element) xPath
+								.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+
+						CQT_MLTDiep1 = checkMLTDiep;
+						break;
+					}
+					if (checkMLTDiep.equals("-1")) {
+						check_ = true;
+						MLoi1 = commons.getTextFromNodeXML(
+								(Element) xPath.evaluate("DLieu/MLoi", nodeTDiep, XPathConstants.NODE));
+						MTLoi1 = commons.getTextFromNodeXML(
+								(Element) xPath.evaluate("DLieu/MTa", nodeTDiep, XPathConstants.NODE));
+						CQT_MLTDiep1 = checkMLTDiep;
+						break;
+					}
+				}
+			}
+			
+//			for (int i = 1; i <= 20; i++) {
+//
+//				if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
+//					break;
+//				nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
+//				checkMLTDiep = commons.getTextFromNodeXML(
+//						(Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+//				if (checkMLTDiep.equals("202"))
+//					break;
+//				if (checkMLTDiep.equals("204")) {
+//					check_ = true;
+//					MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
+//							nodeTDiep, XPathConstants.NODE));
+//					MTLoi1 = commons.getTextFromNodeXML((Element) xPath
+//							.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+//
+//					CQT_MLTDiep1 = checkMLTDiep;
+//
+//				}
+//
+//			}
 
 			if (nodeTDiep == null) {
 				continue;
