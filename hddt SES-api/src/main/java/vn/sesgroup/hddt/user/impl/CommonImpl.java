@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -48,8 +49,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Node;
 
 import com.api.message.JSONRoot;
@@ -67,6 +75,7 @@ import com.mongodb.client.MongoCollection;
 
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
+import vn.sesgroup.hddt.resources.APIParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.CommonDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
@@ -87,30 +96,8 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 	JPUtils jpUtils;
 	@Autowired
 	TCTNService tctnService;
-	/*
-	 * db.getCollection('ApiLicenseKey').aggregate([ {$limit: 1}, {$project: {_id:
-	 * 1}},
-	 * 
-	 * ]);
-	 * 
-	 * db.getCollection('ApiLicenseKey').aggregate([ {$limit: 1}, {$project: {_id:
-	 * 1}}, {$lookup: { from: 'DMTinhThanh', pipeline: [ {$match: {IsDelete: {$ne:
-	 * true}}}, {$project: {_id: 0}}, {$sort: {code: 1}} ], as: 'KeyDMTinhThanh' }
-	 * }, {$lookup: { from: 'DMChiCucThue', pipeline: [ {$match: {IsDelete: {$ne:
-	 * true},tinhthanh_ma: '101'}}, {$project: {_id: 0}}, {$sort: {code: 1}} ], as:
-	 * 'KeyDMChiCucThue' } }, {$lookup: { from: 'DMPaymentType', pipeline: [
-	 * {$match: {IsDelete: {$ne: true}}}, {$sort: {order: 1}}, {$project: {_id: 0,
-	 * code: 1, name: 1}} ], as: 'DMPaymentType' } }, {$lookup: { from:
-	 * 'DMMauSoKyHieu', pipeline: [ {$match: {NamPhatHanh: 2021,IsDelete: {$ne:
-	 * true}, 'IssuerId' : '61b851ebb0228bba71fca2ec'}}, {$sort: {_id: 1}},
-	 * {$project: {_id: {$toString: '$_id'}, KHMSHDon: 1, KHHDon: 1}} ], as:
-	 * 'DMMauSoKyHieu' } }, {$lookup: { from: 'DMCurrencies', let: {}, pipeline: [
-	 * {$match: {IsDelete: {$ne: true}}}, {$project: {_id: 0}}, {$sort: {order: 1}}
-	 * ], as: 'DMCurrencies' } }, {$lookup: { from: 'DMStock', pipeline: [ {$match:
-	 * {IsDelete: {$ne: true}, IssuerId: '61b851ebb0228bba71fca2ec'}}, {$addFields:
-	 * {Order: {$ifNull: ['$Order', 999]}}}, {$project: {_id: 0}}, {$sort: {Order:
-	 * 1, Code: 1}} ], as: 'DMStock' } } ])
-	 */
+	
+	@Autowired RestTemplate restTemplate;
 
 	@Override
 	public MsgRsp getFullParams(JSONRoot jsonRoot) throws Exception {
@@ -5208,39 +5195,6 @@ try {
 			rsp.setObjData(mapDataR);
 			return rsp;
 		}
-		
-		private String convertURL(String url) {
-			Pattern pattern = Pattern.compile("/ma-so-thue/(.+)-mst-([\\d-]+)\\.html");
-			Matcher matcher = pattern.matcher(url);
-
-			if (matcher.find()) {
-				String companyName = matcher.group(1);
-				String mst = matcher.group(2);
-
-				return mst + "-" + companyName;
-			}
-			return "Invalid URL format";
-		}
-
-		private String getUrl(String taxCode) {
-			String url = "https://thuvienphapluat.vn/ma-so-thue/tra-cuu-ma-so-thue-doanh-nghiep?timtheo=ma-so-thue&tukhoa="
-					+ taxCode
-					+ "&ngaycaptu=&ngaycapden=&ngaydongmsttu=&ngaydongmstden=&vondieuletu=&vondieuleden=&loaihinh=0&nganhnghe=0&tinhthanhpho=0&quanhuyen=0&phuongxa=0";
-			try {
-				org.jsoup.nodes.Document doc = Jsoup.connect(url).userAgent(
-						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
-						.timeout(10 * 1000).get();
-
-				Elements elements = doc.select("table tr.item_mst td").get(1).select("a[href]");
-				Element element = elements.first();
-				if (element != null) {
-					return convertURL(element.attr("href"));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return "";
-		}
 
 		@Override
 		public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception {
@@ -5259,74 +5213,45 @@ try {
 			}
 
 			HashMap<String, String> hR = new HashMap<String, String>();
+			try {
+				String url = "/api/tax-code/scratching/{code}";
+				HttpHeaders headers = new HttpHeaders();
+				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+				headers.setContentType(MediaType.APPLICATION_JSON);
+//				headers.add(APIParams.API_LICENSE_KEY_NAME, APIParams.HTTP_LICENSEKEY);
+//				headers.add(Constants.TOKEN_HEADER, tokenAuth);
+				HttpEntity<Void> requestBody = new HttpEntity<>(headers);
+				ResponseEntity<Map> result = restTemplate.exchange(APIParams.PY_SERVER + url, HttpMethod.GET,
+						requestBody, Map.class, taxCode);
+				if (result.getStatusCode() == HttpStatus.OK) {
+					Map<String, Object> map = result.getBody();
+					hR.put("ten_cong_ty", map.get("company_name").toString());
+					hR.put("dia_chi", map.get("address").toString());
+					responseStatus = new MspResponseStatus(0, "SUCCESS");
+					rsp.setResponseStatus(responseStatus);
+					rsp.setObjData(hR);
+					return rsp;
+				}
+				if (result.getStatusCode() == HttpStatus.BAD_REQUEST) {
+					Map<String, Object> map = result.getBody();
+					responseStatus = new MspResponseStatus(999, map.get("error").toString());
+					rsp.setResponseStatus(responseStatus);
+					rsp.setObjData(hR);
+					return rsp;
+				}
 
-			String supURL =getUrl(taxCode);
-			if (supURL.equals("")) {
-				responseStatus = new MspResponseStatus(999, " can't find url.");
+				responseStatus = new MspResponseStatus(999, "Scratching information on Server from tax code fail.");
 				rsp.setResponseStatus(responseStatus);
 				rsp.setObjData(hR);
 				return rsp;
-			}
-			String url = "https://masothue.com/" + getUrl(taxCode);
-			try {
-				org.jsoup.nodes.Document doc = Jsoup.connect(url)
-						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
-						.referrer("https://www.google.com/")
-						.header("Accept-Language", "en-US,en;q=0.9")
-						.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-						.header("Connection", "keep-alive")
-						.timeout(10 * 1000).get();
-
-				Element element1 = doc.select("table.table-taxinfo thead tr").get(0);
-				String companyName = element1.text();
-				hR.put("ten_cong_ty", companyName);
-
-				Elements elements = doc.select("table.table-taxinfo tbody tr");
-				int size = elements.size();
-				if (size >= 3) {
-					elements.remove(size - 1);
-					elements.remove(size - 2);
-					elements.remove(size - 3);
-				}
-
-				Elements eTmps = null;
-				String title = "";
-				String val = "";
-				Element t = null;
-				Element v = null;
-				for (Element element : elements) {
-					eTmps = element.select("td");
-					t = eTmps.get(0);
-					v = eTmps.get(1);
-					if (v == null || t == null) {
-						break;
-					}
-					title = t.text().trim();
-					val = v.text().trim();
-					switch (title) {
-					case "Địa chỉ":
-						hR.put("dia_chi", val);
-						break;
-					default:
-						break;
-					}
-				}
-				System.out.println();
-
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("ERROR WHEN GET MST "+e);
-				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail. "+supURL);
+				System.out.println("ERROR WHEN GET MST " + e);
+				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail.");
 				rsp.setResponseStatus(responseStatus);
 				rsp.setObjData(hR);
 				return rsp;
 			}
-
-			responseStatus = new MspResponseStatus(0, "SUCCESS");
-			rsp.setResponseStatus(responseStatus);
-			rsp.setObjData(hR);
-			return rsp;
-
 		}
 
 		@Override

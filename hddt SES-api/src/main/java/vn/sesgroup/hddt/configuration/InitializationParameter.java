@@ -16,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.context.ServletContextAware;
 
+import vn.sesgroup.hddt.resources.APIParams;
 import vn.sesgroup.hddt.resources.JmsParams;
 import vn.sesgroup.hddt.utility.SystemParams;
 
@@ -59,6 +60,8 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 		JmsParams.BROKER_USERNAME = env.getProperty("jms.activemq.borker.username", "");
 		JmsParams.BROKER_PASSWORD = env.getProperty("jms.activemq.borker.password", "");	    
 		JmsParams.QUEUE_BULK_MAIL = env.getProperty("jms.activemq.borker.queue.bulk.mail", "QueueBulkMail");
+		
+		APIParams.PY_SERVER = env.getProperty("api.hddt.uri.python.server", "");
 		
 		try {
 			StringBuilder sb = new StringBuilder();
