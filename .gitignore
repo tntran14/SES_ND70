@@ -1,2 +1,2 @@
 .metadata/
-*.properties
+**/src/main/resources/*.properties
