@@ -592,7 +592,7 @@
 		<script type="text/javascript">
 		transactionMain = '[[${transaction}]]';
 		var rowsTMP = [];
-		var vIsEdit = [[${_isedit_}]];
+		var vIsEdit = '[[${_isedit_}]]' === 'true';
 		_gridSub01 = $('#f-agent-crud').find('#grid');
 		var AlertMessage = null;
 		</script>
@@ -686,7 +686,7 @@
 //					, template: '<i class="mdi mdi-close-box fs-25 text-black"></i>'
 					, template: '#= window.setTemplateForGrid("func", data) #'
 				},
-				{field: 'ProductName', title: '', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên sản phẩm , hàng hóa</a>',
+				{field: 'ProductName', title: '', width: '350px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên sản phẩm , hàng hóa</a>',
 					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("ProductName", data) #'
 				},
@@ -728,7 +728,7 @@
 			dataBound: function(e) {
 				initInputNumber('#f-agent-crud #grid .input-grid-number');
 				
-				autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('input[name="ProductName"]'), function(e){
+				autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('textarea[name="ProductName"]'), function(e){
 					var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + rowSelect + ')');
 					$tr.find('input[name="ProductCode"]').val(e.Code);
 					$tr.find('input[name="Unit"]').val(e.Unit);
@@ -775,8 +775,8 @@
 						calcAmountInGrid($(this));
 				});
 				
-				_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-feature, select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change');
-				_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-feature, select[name="Feature"], input[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change', function(e){
+				_gridSub01.find('tbody[role="rowgroup"]').undelegate('.input-grid-number, .input-grid-feature, select[name="Feature"], textarea[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change');
+				_gridSub01.find('tbody[role="rowgroup"]').delegate('.input-grid-number, .input-grid-feature, select[name="Feature"], textarea[name="ProductName"], input[name="ProductCode"], input[name="Unit"]', 'change', function(e){
 					//những sự kiện này thay đổi thì thực hiện 2 hàm ở dưới
 					calcAmountInGrid($(this));
 					calcTotalAmount();
@@ -794,6 +794,28 @@
 				});
 				/*END - ACTION IN GRID*/
 				
+				_gridSub01.find('textarea[name="ProductName"]').each(function () {
+					this.setAttribute('style',
+						'height:' + (this.scrollHeight) + 'px;' +
+						'overflow:hidden;' +
+						'resize:none;' +
+						'padding-top:5px;' +
+						'padding-bottom:5px;'
+					);
+					if (vIsEdit) {
+						this.setAttribute('style', 'border:1px solid #ccc;');
+
+					} else {
+						this.setAttribute('readonly', '');
+					}
+
+					this.style.height = (this.scrollHeight) + 'px';
+
+					$(this).on('input', function () {
+						this.style.height = 'auto';
+						this.style.height = (this.scrollHeight) + 'px';
+					});
+				});
 			}
 	        
 		});
@@ -1253,9 +1275,20 @@ case 'kh_search':
 	});
 
 	function setTemplateForGrid(key, data){
-		if(!vIsEdit) return data[key] == null? '': data[key];
-		
 		var text = '';
+		if(!vIsEdit) {
+			if (key == 'ProductName') {
+				text = '<div class="form-row m-l-1 m-r-1">';
+				text = '<textarea name="' + key + '" class="input-grid k-input form-control form-control-sm auto-expand" rows="1" style="overflow:hidden;resize:none;">' 
+		           + (null == data[key]? '': data[key]) 
+		           + '</textarea>';
+		           text += '</div>';
+				return text;
+			} else {
+				return data[key] == null? '': data[key];
+			}
+		}
+		
 		if('func' == key){
 			text = '<div>';
 			text += '<i class="mdi mdi-close-box fs-25 text-black" data-sub-action="delete"></i>';
@@ -1293,6 +1326,11 @@ case 'kh_search':
 			text += '	<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right" style="border: none;" >';
 			text += '</div>';
 			break;
+		case 'ProductName':
+			text = '<textarea name="' + key + '" class="input-grid k-input form-control form-control-sm auto-expand" rows="1" style="overflow:hidden;resize:none;">' 
+		           + (null == data[key]? '': data[key]) 
+		           + '</textarea>';
+		    break;
 		default:
 			text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm" >';
 			break;
@@ -1385,7 +1423,7 @@ case 'kh_search':
 			var rowData = objDataJson[indexRow];
 			
 			rowData['STT'] = $tr.find('input[name="STT"]').val();
-			rowData['ProductName'] = $tr.find('input[name="ProductName"]').val();
+			rowData['ProductName'] = $tr.find('textarea[name="ProductName"]').val();
 			rowData['ProductCode'] = $tr.find('input[name="ProductCode"]').val();
 			rowData['Unit'] = $tr.find('input[name="Unit"]').val();
 			rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
@@ -1406,7 +1444,7 @@ case 'kh_search':
 		_gridSub01.find('table[role="grid"]').find('tbody[role="rowgroup"]').find('tr').each(function(i, v) {
 			$tr = $(this);
 			if($tr.find('input[type="checkbox"][name="chkSTT"]').prop('checked')
-				&& $tr.find('input[type="text"][name="ProductName"]').val() != ''
+				&& $tr.find('textarea[type="text"][name="ProductName"]').val() != ''
 			){
 				$tr.find('input[type="text"][name="STT"]').val(++stt);
 			
@@ -1473,7 +1511,7 @@ case 'kh_search':
 				var rowData = objDataJson[indexRow];
 				
 				rowData['STT'] = $tr.find('input[name="STT"]').val();
-				rowData['ProductName'] = $tr.find('input[name="ProductName"]').val();
+				rowData['ProductName'] = $tr.find('textarea[name="ProductName"]').val();
 				rowData['ProductCode'] = $tr.find('input[name="ProductCode"]').val();
 				rowData['Unit'] = $tr.find('input[name="Unit"]').val();
 				rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
