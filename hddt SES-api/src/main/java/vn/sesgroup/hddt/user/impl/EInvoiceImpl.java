@@ -8176,6 +8176,20 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		}
 		// Ten nguoi mua
 		Cell TenNguoiMua = cells.get(2);
+		if (TenNguoiMua != null && (TenNguoiMua.getCellType() == CellType.FORMULA)) {
+			switch (TenNguoiMua.getCachedFormulaResultType()) {
+			case STRING:
+				eInvoiceExcelForm.setTenNguoiMua(TenNguoiMua.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setTenNguoiMua((NumberToTextConverter.toText(TenNguoiMua.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
 		if (TenNguoiMua != null) {
 			switch (TenNguoiMua.getCellType()) {
 			case STRING:
