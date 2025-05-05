@@ -931,7 +931,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					"");
 			String KHHDon = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT", "EInvoiceDetail", "TTChung", "KHHDon"), "");
 
-//			int shd = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT", "EInvoiceDetail", "TTChung", "SHDon"), 0);
+			int shd = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT", "EInvoiceDetail", "TTChung", "SHDon"), 0);
 
 			secureKey = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT", "SecureKey"), "");
 
@@ -1202,20 +1202,11 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 							listDSHHDVu.add(hItem);
 						}
-
-						
-						
-						
-						
-						
-
 					}
 
 				}
 			}
-			
-			
-			
+				
 			if (!loaiHoaDon.equals("2")) {
 			elementSubContent.appendChild(elementTmp);
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
@@ -1288,37 +1279,94 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				elementContent.appendChild(elementSubContent);
 			}
 			
-			
-
 			isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
 			if (!isSdaveFile) {
 				throw new Exception("Lưu dữ liệu không thành công.");
 			}
 			/* END - TAO XML HOA DON */
-
+			
+			// Update _pending.xml when EInvoiceStatus: PENDING, NOSIGN and had MCCQT
+			int shdOld = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT", "EInvoiceDetail", "TTChung", "SHDon"), 0);
+			String mccqtOld = docTmp.getEmbedded(Arrays.asList("EInvoiceMTT",  "MCCQT"), String.class);
+			
+			if (docTmp.getEmbedded(Arrays.asList("EInvoiceMTT",  "SignStatusCode"), String.class).equals("NOSIGN") &&
+					docTmp.getEmbedded(Arrays.asList("EInvoiceMTT",  "EInvoiceStatus"), String.class).equals("PENDING") &&
+					mccqtOld != null &&
+					shdOld > 0) {
+				File newXMLFile = new File(pathDir, fileNameXML);
+				org.w3c.dom.Document newDoc = commons.fileToDocument(newXMLFile);
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				Node nodeDLHDon = (Node) xPath.evaluate("/HDon/DLHDon[@Id='data']", newDoc, XPathConstants.NODE);
+				
+				Node nodeTTChung =  (Node) xPath.evaluate("TTChung", nodeDLHDon, XPathConstants.NODE);
+				Element elementSub = (Element) xPath.evaluate("SHDon", nodeTTChung, XPathConstants.NODE);
+				if (null == elementSub) {
+					elementSub = newDoc.createElement("SHDon");
+					elementSub.setTextContent(String.valueOf(shdOld));
+					nodeTTChung.appendChild(elementSub);
+				} else {
+					elementSub.setTextContent(String.valueOf(shdOld));
+				}
+				
+				Node nodeMaCQT = (Node) xPath.evaluate("/HDon", newDoc, XPathConstants.NODE);
+				Element elementSub_cqt = (Element) xPath.evaluate("MCCQT", nodeMaCQT, XPathConstants.NODE);
+				if (null == elementSub_cqt) {
+					elementSub_cqt = newDoc.createElement("MCCQT");
+					elementSub_cqt.setTextContent(String.valueOf(mccqtOld));
+					nodeMaCQT.appendChild(elementSub_cqt);
+				} else {
+					elementSub_cqt.setTextContent(String.valueOf(mccqtOld));
+				}
+				
+				// Save new file _pending.xml
+				String publishFileName = _id + "_pending.xml";
+				File newPublishFile = new File(pathDir, publishFileName);
+				FileUtils.writeByteArrayToFile(newPublishFile, commons.docW3cToByte(newDoc));
+			}
+			
 			/* LUU DU LIEU HD */
-			docUpsert = new Document("TTChung", new Document("THDon", loaiHoaDonText).append("LoaiHD", loaiHoaDon)
-					.append("MauSoHD", mauSoHdon).append("KHMSHDon", KHMSHDon).append("KHHDon", KHHDon)
-					.append("NLap", commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
-					.append("DVTTe", loaiTienTt).append("TGia", tyGia).append("HTTToanCode", hinhThucThanhToan)
-					.append("HTTToan", hinhThucThanhToanText).append("TTHDLQuan", docTTHDLQuan))
-					.append("NDHDon", new Document("NBan", new Document("Ten", docTmp.get("Name", ""))
-							.append("MST", docTmp.get("TaxCode", "")).append("DChi", docTmp.get("Address", ""))
-							.append("SDThoai", docTmp.get("Phone", "")).append("DCTDTu", docTmp.get("Email", ""))
-							.append("STKNHang", docTmp.getEmbedded(Arrays.asList("BankAccount", "AccountNumber"), ""))
-							.append("TNHang", docTmp.getEmbedded(Arrays.asList("BankAccount", "BankName"), ""))
-							.append("Fax", docTmp.get("Fax", "")).append("Website", docTmp.get("Website", "")))
-							.append("NMua",
-									new Document("Ten", khTenDonVi).append("MST", khMst).append("DChi", khDiaChi)
-//									.append("MKHang", khMKHang)
-											.append("CCCDan", khCCCDan).append("SDThoai", khSoDT)
-											.append("DCTDTu", khEmail).append("HVTNMHang", khHoTenNguoiMua)
-											.append("STKNHang", khSoTk).append("TNHang", khTkTaiNganHang)))
-					.append("DSHHDVu", listDSHHDVu)
-					.append("TToan", new Document("TgTCThue", commons.ToNumber(tongTienTruocThue))
-							.append("TgTThue", commons.ToNumber(tongTienThueGtgt))
-							.append("TgTTTBSo", commons.ToNumber(tongTienDaCoThue))
-							.append("TgTQDoi", commons.ToNumber(tongTienQuyDoi)).append("TgTTTBChu", tienBangChu));
+			Document ttChungDoc = new Document("THDon", loaiHoaDonText)
+				    .append("LoaiHD", loaiHoaDon)
+				    .append("MauSoHD", mauSoHdon)
+				    .append("KHMSHDon", KHMSHDon)
+				    .append("KHHDon", KHHDon)
+				    .append("NLap", commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+				    .append("DVTTe", loaiTienTt)
+				    .append("TGia", tyGia)
+				    .append("HTTToanCode", hinhThucThanhToan)
+				    .append("HTTToan", hinhThucThanhToanText)
+				    .append("TTHDLQuan", docTTHDLQuan);
+
+				if (shd > 0) ttChungDoc.append("SHDon", shd);
+			docUpsert = 
+					new Document("TTChung", ttChungDoc)
+						.append("NDHDon", 
+								new Document("NBan", 
+										new Document("Ten", docTmp.get("Name", ""))
+										.append("MST", docTmp.get("TaxCode", ""))
+										.append("DChi", docTmp.get("Address", ""))
+										.append("SDThoai", docTmp.get("Phone", ""))
+										.append("DCTDTu", docTmp.get("Email", ""))
+										.append("STKNHang", docTmp.getEmbedded(Arrays.asList("BankAccount", "AccountNumber"), ""))
+										.append("TNHang", docTmp.getEmbedded(Arrays.asList("BankAccount", "BankName"), ""))
+										.append("Fax", docTmp.get("Fax", ""))
+										.append("Website", docTmp.get("Website", "")))
+								.append("NMua",
+										new Document("Ten", khTenDonVi)
+										.append("MST", khMst)
+										.append("DChi", khDiaChi)
+	//									.append("MKHang", khMKHang)
+										.append("CCCDan", khCCCDan)
+										.append("SDThoai", khSoDT)
+										.append("DCTDTu", khEmail)
+										.append("HVTNMHang", khHoTenNguoiMua)
+										.append("STKNHang", khSoTk)
+										.append("TNHang", khTkTaiNganHang)))
+						.append("DSHHDVu", listDSHHDVu)
+						.append("TToan", new Document("TgTCThue", commons.ToNumber(tongTienTruocThue))
+						.append("TgTThue", commons.ToNumber(tongTienThueGtgt))
+						.append("TgTTTBSo", commons.ToNumber(tongTienDaCoThue))
+						.append("TgTQDoi", commons.ToNumber(tongTienQuyDoi)).append("TgTTTBChu", tienBangChu));
 			/* END - LUU DU LIEU HD */
 
 			options = new FindOneAndUpdateOptions();
