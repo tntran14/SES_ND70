@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,8 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -75,7 +71,6 @@ import com.mongodb.client.MongoCollection;
 
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
-import vn.sesgroup.hddt.resources.APIParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.CommonDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
@@ -5214,36 +5209,32 @@ try {
 
 			HashMap<String, String> hR = new HashMap<String, String>();
 			try {
-				String url = "/api/tax-code/scratching/{code}";
+				String url = "https://dauvao-api.vinvoice.vn/api/public/doanhnghiep/tracuu/{code}";
 				HttpHeaders headers = new HttpHeaders();
 				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
 				headers.setContentType(MediaType.APPLICATION_JSON);
-//				headers.add(APIParams.API_LICENSE_KEY_NAME, APIParams.HTTP_LICENSEKEY);
-//				headers.add(Constants.TOKEN_HEADER, tokenAuth);
 				HttpEntity<Void> requestBody = new HttpEntity<>(headers);
-				ResponseEntity<Map> result = restTemplate.exchange(APIParams.PY_SERVER + url, HttpMethod.GET,
-						requestBody, Map.class, taxCode);
+				ResponseEntity<Map> result = restTemplate.exchange(url, HttpMethod.GET, requestBody, Map.class,
+						taxCode);
+
+				Map<String, Object> bodyMap = result.getBody();
 				if (result.getStatusCode() == HttpStatus.OK) {
-					Map<String, Object> map = result.getBody();
-					hR.put("ten_cong_ty", map.get("company_name").toString());
-					hR.put("dia_chi", map.get("address").toString());
+					if (bodyMap.get("data") != null && bodyMap.get("data") instanceof Map) {
+						Map<String, Object> data = (Map<String, Object>) bodyMap.get("data");
+						hR.put("ten_cong_ty", data.get("Name").toString());
+						hR.put("dia_chi", data.get("Address").toString());
+					}
 					responseStatus = new MspResponseStatus(0, "SUCCESS");
 					rsp.setResponseStatus(responseStatus);
 					rsp.setObjData(hR);
 					return rsp;
 				}
-				if (result.getStatusCode() == HttpStatus.BAD_REQUEST) {
-					Map<String, Object> map = result.getBody();
-					responseStatus = new MspResponseStatus(999, map.get("error").toString());
-					rsp.setResponseStatus(responseStatus);
-					rsp.setObjData(hR);
-					return rsp;
-				}
 
-				responseStatus = new MspResponseStatus(999, "Scratching information on Server from tax code fail.");
+				responseStatus = new MspResponseStatus(999, bodyMap.get("message").toString());
 				rsp.setResponseStatus(responseStatus);
 				rsp.setObjData(hR);
 				return rsp;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("ERROR WHEN GET MST " + e);

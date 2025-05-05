@@ -492,7 +492,7 @@ public class CommonsController {
 				MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
 				produces = { MediaType.APPLICATION_JSON_VALUE })
 		public ResponseEntity<?> detailTaxCode(@RequestBody JSONRoot jsonRoot) throws Exception {
-			MsgRsp rsp = dao.scratchingTaxCodeV2(jsonRoot);
+			MsgRsp rsp = dao.scratchingTaxCode(jsonRoot);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
