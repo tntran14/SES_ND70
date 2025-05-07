@@ -53,6 +53,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Node;
 
@@ -66,8 +67,10 @@ import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
@@ -5190,7 +5193,86 @@ try {
 			rsp.setObjData(mapDataR);
 			return rsp;
 		}
+		
+		private boolean compareTaxCodeInfo(Map<String, Object> doc1, Document doc2) {
+			if (!doc1.get("Name").toString().equals(doc2.get("CompanyName").toString())) return false;
+			if (!doc1.get("Address").toString().equals(doc2.get("Address").toString())) return false;
+			if (!doc1.get("Phone").toString().equals(doc2.get("Phone").toString())) return false;
+			if (!doc1.get("Email").toString().equals(doc2.get("Email").toString())) return false;
+			if (!doc1.get("TaxAuthority").toString().equals(doc2.get("TaxAuthority").toString())) return false;
+			if (!doc1.get("TinhTrang").toString().equals(doc2.get("Status").toString())) return false;
+			return true;
+		}
+		
+		private void saveTaxCodeInfo(MsgHeader header, Map<String, Object> bodyMap, String taxCode, int statusCode) {
+			Document insertDoc = new Document();
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoDatabase mongoDatabase = mongoClient.getDatabase(cfg.dbName);
+				Map<String, Object> data = null;
+				if (bodyMap.get("data") != null && bodyMap.get("data") instanceof Map) {
+					data = (Map<String, Object>) bodyMap.get("data");
+				}
+				
+				insertDoc.append("IssuerId", header.getUserId())
+						.append("TaxCode", taxCode)
+						.append("CompanyName", data !=null ? data.get("Name").toString() : "")
+						.append("Address", data !=null ? data.get("Address").toString() : "")
+						.append("Phone", data !=null ? data.get("Phone").toString() : "")
+						.append("Email", data !=null ? data.get("Email").toString() : "")
+						.append("TaxAuthority", data !=null ? data.get("TaxAuthority").toString() : "")
+						.append("Status", data !=null ? data.get("TinhTrang").toString() : "")
+						.append("IsDelete", false)
+						.append("InfoCreated",
+								new Document("CreateDate", LocalDateTime.now())
+										.append("CreateUserID", header.getUserId())
+										.append("CreateUserName", header.getUserName())
+										.append("CreateUserFullName", header.getUserFullName()));
+				
+				if (Boolean.TRUE.equals(bodyMap.get("success"))) {
+					Document filter = new Document("TaxCode", taxCode).append("IsDelete", false);
 
+					MongoCollection<Document> collection = mongoDatabase.getCollection("TaxCodeInfomations");
+					Document doc = collection.find(filter).first();
+					if (doc == null) {
+						collection.insertOne(insertDoc);
+					}
+					if (!compareTaxCodeInfo(data, doc)) {
+						Document updateFields = new Document("IsDelete", true)
+								.append("InfoUpdated",
+											new Document("UpdateDate", LocalDateTime.now())
+												.append("CreateUserID", header.getUserId())
+												.append("CreateUserName", header.getUserName())
+												.append("CreateUserFullName", header.getUserFullName()));
+						
+						Document update = new Document("$set", updateFields);
+						collection.updateOne(filter, update);
+						collection.insertOne(insertDoc);
+					}
+				}
+				
+				insertDoc
+				.append("TaxCode", taxCode)
+				.append("IssuerTaxCode", header.getUserName())
+				.append("IssuerName", header.getUserFullName())
+				.append("SearchDate", LocalDateTime.now())
+				.append("reponse", 
+						new Document("code", statusCode)
+							.append("success", bodyMap.get("success"))
+							.append("error",bodyMap.get("error") != null ? bodyMap.get("error").toString() : null)
+							.append("message", bodyMap.get("message") != null ? bodyMap.get("message").toString():null))
+				.append("InfoCreated",
+								new Document("CreateDate", LocalDateTime.now())
+									.append("CreateUserID", header.getUserId())
+									.append("CreateUserName", header.getUserName())
+									.append("CreateUserFullName", header.getUserFullName()));
+
+				MongoCollection<Document> collection = mongoDatabase.getCollection("TaxCodeSearchStatistics");
+				collection.insertOne(insertDoc);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		@Override
 		public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception {
 			Msg msg = jsonRoot.getMsg();
@@ -5218,6 +5300,8 @@ try {
 						taxCode);
 
 				Map<String, Object> bodyMap = result.getBody();
+				saveTaxCodeInfo(header, bodyMap, taxCode, result.getStatusCodeValue());
+				
 				if (result.getStatusCode() == HttpStatus.OK) {
 					if (bodyMap.get("data") != null && bodyMap.get("data") instanceof Map) {
 						Map<String, Object> data = (Map<String, Object>) bodyMap.get("data");
@@ -5235,14 +5319,26 @@ try {
 				rsp.setObjData(hR);
 				return rsp;
 
-			} catch (Exception e) {
+			} catch (HttpClientErrorException e) {
+			    String responseBody = e.getResponseBodyAsString();
+			    int statusCode = e.getRawStatusCode();
+			    ObjectMapper mapper = new ObjectMapper();
+			    Map<String, Object> errorMap = mapper.readValue(responseBody, Map.class);
+				saveTaxCodeInfo(header, errorMap, taxCode, statusCode);
+
+			    responseStatus = new MspResponseStatus(statusCode, errorMap.get("message").toString());
+			    rsp.setResponseStatus(responseStatus);
+			    rsp.setObjData(hR);
+			    return rsp;
+
+			}  catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("ERROR WHEN GET MST " + e);
 				responseStatus = new MspResponseStatus(999, "Scratching information from tax code fail.");
 				rsp.setResponseStatus(responseStatus);
 				rsp.setObjData(hR);
 				return rsp;
-			}
+			} 
 		}
 
 		@Override
