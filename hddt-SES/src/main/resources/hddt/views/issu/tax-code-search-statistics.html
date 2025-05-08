@@ -73,26 +73,26 @@
 									<hr style="margin: 0 0 10px 0"></hr>
 								</div>
 							</div>
-							<div class="col-12">
-								<div class="row mT-0">
-									<div class="col-12 col-sm-6 p-l-0"></div>
+<!-- 							<div class="col-12"> -->
+<!-- 								<div class="row mT-0"> -->
+<!-- 									<div class="col-12 col-sm-6 p-l-0"></div> -->
 
-									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
-										<div class="button-group text-right">
+<!-- 									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0"> -->
+<!-- 										<div class="button-group text-right"> -->
 
-											<button type="button" title="Xuất danh sách excel"
-												data-action="ca_invoice-export"
-												class="btns btns-export__ses hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|ca_invoice-export|')}">
-												<i class="mdi mdi-microsoft-excel"> </i><span
-													class="d-none d-md-inline"> Xuất danh sách excel</span>
-											</button>
+<!-- 											<button type="button" title="Xuất danh sách excel" -->
+<!-- 												data-action="ca_invoice-export" -->
+<!-- 												class="btns btns-export__ses hover-up__ses" -->
+<!-- 												th:if="${#strings.contains(UserFullPathRight,'|ca_invoice-export|')}"> -->
+<!-- 												<i class="mdi mdi-microsoft-excel"> </i><span -->
+<!-- 													class="d-none d-md-inline"> Xuất danh sách excel</span> -->
+<!-- 											</button> -->
 
 
-										</div>
-									</div>
-								</div>
-							</div>
+<!-- 										</div> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
 
 							<div class="form-group row m-b-5 m-t-7">
 								<div class="col-12 has-min-height-grid">
@@ -252,7 +252,7 @@
 												encoded : false,
 												headerTemplate : '<a class="k-link" href="javascript:void(0);">MST tìm</a>',
 												attributes : {
-													'class' : 'table-cell text-center'
+													'class' : 'table-cell text-left'
 												},
 												sortable : false,
 												headerAttributes : {
@@ -280,7 +280,7 @@
 												encoded : false,
 												headerTemplate : '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
 												attributes : {
-													'class' : 'table-cell text-center'
+													'class' : 'table-cell text-left'
 												},
 												sortable : false,
 												headerAttributes : {
@@ -308,7 +308,7 @@
 												encoded : false,
 												headerTemplate : '<a class="k-link" href="javascript:void(0);">Điện thoại</a>',
 												attributes : {
-													'class' : 'table-cell text-left'
+													'class' : 'table-cell text-center'
 												},
 												sortable : false,
 												headerAttributes : {
@@ -334,7 +334,7 @@
 															type : "POST",
 															datatype : "json",
 															url : ROOT_PATH
-																	+ '/main/ca_invoice/check-data-export',
+																	+ '/main/tax-code-search-statistics/check-data-export',
 															data : objData,
 															beforeSend : function(
 																	req) {
@@ -351,7 +351,7 @@
 																	window
 																			.open(
 																					ROOT_PATH
-																							+ '/main/ca_invoice/export-excel/'
+																							+ '/main/tax-code-search-statistics/export-excel/'
 																							+ tokenTransaction,
 																					'_blank');
 																} else {

@@ -7,9 +7,11 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,7 +88,8 @@ public class TaxCodeSearchStatisticsController extends AbstractController {
 		}
 
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public BaseDTO execSearch(Locale locale, HttpServletRequest req, HttpSession session) throws Exception {
@@ -123,12 +126,25 @@ public class TaxCodeSearchStatisticsController extends AbstractController {
 			MsgPage page = rsp.getMsgPage();
 			grid.setTotal(page.getTotalRows());
 
-			List<HashMap<String, Object>> dataList = null;
+			List<HashMap<String, Object>> dataList = new ArrayList<HashMap<String,Object>>();
 			Object objData = rsp.getObjData();
 			if (objData != null && objData instanceof List) {
 				dataList = (List<HashMap<String, Object>>) rsp.getObjData();
 			}
-
+			HashMap<String, String> hItem = null;
+			for (HashMap<String, Object> data : dataList) {
+				hItem = new HashMap<String, String>();
+				hItem.put("_id", Objects.toString(data.get("_id"), ""));
+				hItem.put("IssuerName", Objects.toString(data.get("IssuerName"), ""));
+				hItem.put("IssuerTaxCode", Objects.toString(data.get("IssuerTaxCode"), ""));
+				hItem.put("SearchDate", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(Long.parseLong(Objects.toString(data.get("SearchDate"), ""))), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+				hItem.put("TaxCodeSearched", Objects.toString(data.get("TaxCodeSearched"), ""));
+				hItem.put("CompanyNameSearched", Objects.toString(data.get("CompanyNameSearched"), ""));
+				hItem.put("Address", Objects.toString(data.get("Address"), ""));
+				hItem.put("Email", Objects.toString(data.get("Email"), ""));
+				hItem.put("Phone", Objects.toString(data.get("Phone"), ""));				
+				grid.getRows().add(hItem);
+			}
 		} else {
 			grid = new JsonGridDTO();
 			grid.setErrorCode(rspStatus.getErrorCode());
@@ -153,11 +169,23 @@ public class TaxCodeSearchStatisticsController extends AbstractController {
 
 		token = commons.csRandomAlphaNumbericString(30);
 		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
-
 		HashMap<String, Object> hData = new HashMap<>();
+		String toDate = commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "");
+		String fromDate = commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "");
+
+		if (commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "").trim().length() == 0) {
+			dto.setErrorCode(999);
+			dto.setErrorDesc("Vui lòng nhập ngày kết thúc tìm kiếm.");
+			return dto;
+		}
+
+		if (commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "").trim().length() == 0) {
+			dto.setErrorCode(999);
+			dto.setErrorDesc("Vui lòng nhập ngày bắt đầu tìm kiếm.");
+			return dto;
+		}
+		
 		hData = new HashMap<>();
-		hData.put("TaxCode", mst);
-		hData.put("Name", name);
 		hData.put("ToDate", toDate);
 		hData.put("FromDate", fromDate);
 
@@ -208,11 +236,11 @@ public class TaxCodeSearchStatisticsController extends AbstractController {
 
 			JSONRoot root = new JSONRoot(msg);
 
-			String url = "/ca_invoice/export-excel";
+			String url = "/tax-code-search-statistics/export-excel";
 			vn.sesgroup.hddt.dto.FileInfo fileInfo = restAPI.callAPIGetFileInfo(url, cup.getLoginRes().getToken(),
 					HttpMethod.POST, root);
 			if (null != fileInfo) {
-				String fileNameOut = "DANH-SACH-CA-INVOCIE.xlsx";
+				String fileNameOut = "Thống-kê-số-lượng-tìm-kiếm-mst.xlsx";
 
 				String type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 				resp.setHeader("Content-Disposition",
@@ -222,12 +250,11 @@ public class TaxCodeSearchStatisticsController extends AbstractController {
 				InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
 				resp.setHeader("Content-Type", type);
 
-				resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-				resp.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-				resp.setHeader("Expires", "0"); // Proxies.
+				resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				resp.setHeader("Pragma", "no-cache");
+				resp.setHeader("Expires", "0"); 
 
 				int bufferSize = 1024;
-//				String mimetype = "application/pdf";
 				resp.setContentType(type);
 				final byte[] buffer = new byte[bufferSize];
 				int bytesRead = 0;
