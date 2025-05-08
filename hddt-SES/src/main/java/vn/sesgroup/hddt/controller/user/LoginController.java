@@ -364,6 +364,8 @@ public class LoginController extends AbstractController{
         	sbRights.append("mauhd_update_admin|mauhd_update_admin-edit|mauhd_update_admin-check|mauhd_update_admin-export|");
 		
          	sbRights.append("mauso-expires|mauso-expires-export|mauso-expires-active|mauso-expires-deactive|");
+         	
+         	sbRights.append("tax-code-search-statistics|tax-code-search-statistics-export|");
         	
            	sbRights.append("khxhd|khxhd-export|");
            	

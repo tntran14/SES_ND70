@@ -967,7 +967,7 @@ case 'kh-history':
 	break;	
 case 'kh_searchol':
 	var dataMST = {};			
-	var _taxcode = $('#f-agent-crud').find('#kh-mst').val();				
+	var _taxcode = $('#f-agent-crud').find('#kh-mst').val().trim();				
 	if('' == _taxcode || undefined == _taxcode) return;
 		$('#f-agent-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
 		$('#f-agent-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');

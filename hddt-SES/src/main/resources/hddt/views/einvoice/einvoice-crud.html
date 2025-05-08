@@ -1092,7 +1092,7 @@
 				break;
 			case 'kh_searchol':
 				var dataMST = {};			
-				var _taxcode = $('#f-einvoice-crud').find('#kh-mst').val();				
+				var _taxcode = $('#f-einvoice-crud').find('#kh-mst').val().trim();				
 				if('' == _taxcode || undefined == _taxcode) return;
 				$('#f-einvoice-crud').find('#kh-makhachhang,#kh-ho-ten-nguoi-mua,#kh-ten-don-vi').val('');
 				$('#f-einvoice-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');				

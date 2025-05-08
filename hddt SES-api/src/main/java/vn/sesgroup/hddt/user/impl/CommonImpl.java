@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -5195,12 +5196,13 @@ try {
 		}
 		
 		private boolean compareTaxCodeInfo(Map<String, Object> doc1, Document doc2) {
-			if (!doc1.get("Name").toString().equals(doc2.get("CompanyName").toString())) return false;
-			if (!doc1.get("Address").toString().equals(doc2.get("Address").toString())) return false;
-			if (!doc1.get("Phone").toString().equals(doc2.get("Phone").toString())) return false;
-			if (!doc1.get("Email").toString().equals(doc2.get("Email").toString())) return false;
-			if (!doc1.get("TaxAuthority").toString().equals(doc2.get("TaxAuthority").toString())) return false;
-			if (!doc1.get("TinhTrang").toString().equals(doc2.get("Status").toString())) return false;
+			if (!Objects.equals(doc1.get("Name"), doc2.get("CompanyName"))) return false;
+			if (!Objects.equals(doc1.get("Address"), doc2.get("Address"))) return false;
+			if (!Objects.equals(doc1.get("Phone"), doc2.get("Phone"))) return false;
+			if (!Objects.equals(doc1.get("Email"), doc2.get("Email"))) return false;
+			if (!Objects.equals(doc1.get("TaxAuthority"), doc2.get("TaxAuthority"))) return false;
+			if (!Objects.equals(doc1.get("TinhTrang"), doc2.get("Status"))) return false;
+			System.out.println();
 			return true;
 		}
 		
@@ -5215,12 +5217,12 @@ try {
 				
 				insertDoc.append("IssuerId", header.getUserId())
 						.append("TaxCode", taxCode)
-						.append("CompanyName", data !=null ? data.get("Name").toString() : "")
-						.append("Address", data !=null ? data.get("Address").toString() : "")
-						.append("Phone", data !=null ? data.get("Phone").toString() : "")
-						.append("Email", data !=null ? data.get("Email").toString() : "")
-						.append("TaxAuthority", data !=null ? data.get("TaxAuthority").toString() : "")
-						.append("Status", data !=null ? data.get("TinhTrang").toString() : "")
+						.append("CompanyName", data !=null ? data.get("Name") : null)
+						.append("Address", data !=null ? data.get("Address"): null)
+						.append("Phone", data !=null && data.get("Phone") != null ? data.get("Phone") : null)
+						.append("Email", data !=null && data.get("Email") != null ? data.get("Email") : null)
+						.append("TaxAuthority", data !=null ? data.get("TaxAuthority") : null)
+						.append("Status", data !=null ? data.get("TinhTrang") : null)
 						.append("IsDelete", false)
 						.append("InfoCreated",
 								new Document("CreateDate", LocalDateTime.now())
@@ -5235,15 +5237,13 @@ try {
 					Document doc = collection.find(filter).first();
 					if (doc == null) {
 						collection.insertOne(insertDoc);
-					}
-					if (!compareTaxCodeInfo(data, doc)) {
-						Document updateFields = new Document("IsDelete", true)
-								.append("InfoUpdated",
-											new Document("UpdateDate", LocalDateTime.now())
-												.append("CreateUserID", header.getUserId())
-												.append("CreateUserName", header.getUserName())
-												.append("CreateUserFullName", header.getUserFullName()));
-						
+					} else if (!compareTaxCodeInfo(data, doc)) {
+						Document updateFields = new Document("IsDelete", true).append("InfoUpdated",
+								new Document("UpdateDate", LocalDateTime.now())
+										.append("CreateUserID", header.getUserId())
+										.append("CreateUserName", header.getUserName())
+										.append("CreateUserFullName", header.getUserFullName()));
+
 						Document update = new Document("$set", updateFields);
 						collection.updateOne(filter, update);
 						collection.insertOne(insertDoc);

@@ -972,7 +972,7 @@ $(function(){
 			break;		
 		case 'kh_searchol':
 			var dataMST = {};			
-			var _taxcode = $('#f-export-crud').find('#kh-mst').val();				
+			var _taxcode = $('#f-export-crud').find('#kh-mst').val().trim();				
 			if('' == _taxcode || undefined == _taxcode) return;
 			$('#f-export-crud').find('#kh-makhachhang,#kh-ho-ten-ng-xuat,#kh-ten-don-vi').val('');
 			$('#f-export-crud').find('#kh-dia-chi,#kh-email,#kh-emailcc,#kh-so-dt,#kh-so-tk,#kh-tk-tai-ngan-hang').val('');

@@ -866,7 +866,7 @@
 				break;
 			case 'kh_searchol':
 				var dataMST = {};				
-				dataMST['mst'] = $('#f-einvoice_mtt-crud').find('#kh-mst').val();	
+				dataMST['mst'] = $('#f-einvoice_mtt-crud').find('#kh-mst').val().trim();	
 		       // objDataSend =$('#f-einvoice_mtt-crud').find('#kh-mst').val();
 		        $.ajax({
 		          type: "POST",
