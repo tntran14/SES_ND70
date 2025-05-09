@@ -109,7 +109,7 @@ public class ChungTuController extends AbstractController{
 					hItem.put("Department", commons.getTextJsonNode(row.at("/Department")));
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/TaxCode")));
 					hItem.put("Name", commons.getTextJsonNode(row.at("/Name")));
-					hItem.put("DateSave", commons.getTextJsonNode(row.at("/DateSave")));
+					hItem.put("DateSave", commons.getTextJsonNode(row.at("/TNCNTime")));
 					
 					hItem.put("DateLap", 
 							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/DateTime").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)

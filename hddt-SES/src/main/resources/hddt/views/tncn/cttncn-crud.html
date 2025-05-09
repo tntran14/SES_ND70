@@ -246,24 +246,49 @@
 									</div>
 
 									<div class="row m-b-15">
-									<div class="col-6 ">
+										<div class="col-6 ">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${TuNgay}" th:readonly="${!_isedit_}"  autocomplete="off"/>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="from-date" name="from-date"
+													th:value="${TuNgay}" th:readonly="${!_isedit_}"
+													autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+													<legend class="c-f__legend">
+														<label>Từ ngày </label>
+													</legend>
 												</fieldset>
 											</div>
 										</div>
-									<div class="col-6 ">
+										<div class="col-6 ">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${DenNgay}" th:readonly="${!_isedit_}"  autocomplete="off"/>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="to-date" name="to-date"
+													th:value="${DenNgay}" th:readonly="${!_isedit_}"
+													autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Đến ngày </label></legend>
+													<legend class="c-f__legend">
+														<label>Đến ngày </label>
+													</legend>
 												</fieldset>
 											</div>
 										</div>
-							</div>
-						</div>
+									</div>
+									<div class="row m-b-15">
+										<div class="col-12 ">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="minus-months" name="minus-months"
+													th:value="${TruThang}" th:readonly="${!_isedit_}"
+													autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Trừ các tháng (cách nhau bởi dấu ,) </label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
 						<div class="col-md-6">
 				
 								<div class="row m-b-15">
@@ -587,6 +612,7 @@ function getPopupDataToSave(){
 	dataPost['kibc'] = $('#f-cus-crud').find('#kibc').val();
 	dataPost['from-date'] = $('#f-cus-crud').find('#from-date').val();
 	dataPost['to-date'] = $('#f-cus-crud').find('#to-date').val();
+	dataPost['minus-months'] = $('#f-cus-crud').find('#minus-months').val();
 	dataPost['ktn'] = $('#f-cus-crud').find('#ktn').val();
 	dataPost['tdtn'] = $('#f-cus-crud').find('#tdtn').val();
 	dataPost['kbh'] = $('#f-cus-crud').find('#kbh').val();

@@ -10,17 +10,23 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -39,6 +45,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.digester3.annotations.FromAnnotationsRuleModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -197,6 +204,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				hItem.put("Name", doc.get("Name"));
 				hItem.put("Address", doc.get("Address"));
 				hItem.put("InfoCreated", doc.get("InfoCreated"));
+				hItem.put("TNCNTime",extractFormTime(doc));
 				rowsReturn.add(hItem);
 			}
 		}
@@ -208,6 +216,72 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		mapDataR.put("rows", rowsReturn);
 		rsp.setObjData(mapDataR);
 		return rsp;
+	}
+	
+	private String extractFormTime(Document doc) {
+		StringBuilder time = new StringBuilder();
+		try {
+			String truThang = Objects.toString(doc.get("TruThang"), "");
+			String date = Objects.toString(doc.get("TuNgay"), "");
+			int from = 0, to = 0;
+			
+			if (!date.trim().isEmpty()) {
+                from = extractMonth(date);
+            }
+
+            date = Objects.toString(doc.get("DenNgay"), "");
+            if (!date.trim().isEmpty()) {
+                to = extractMonth(date);
+            }
+
+			if (from > 0 && to > 0) {
+				if (truThang.trim().isEmpty()) {
+					time.append(from).append("-").append(to).append("/")
+							.append(Objects.toString(doc.get("KyBaoCao"), ""));
+				} else {
+					String[] truThangArray = truThang.trim().split(",");
+					HashSet<Integer> excludedMonths = new HashSet<>();
+					for (String month : truThangArray) {
+						excludedMonths.add(Integer.parseInt(month.trim()));
+					}
+					for (int i = from; i <= to; i++) {
+						if (!excludedMonths.contains(i)) {
+							time.append(i).append(",");
+						}
+					}
+					if (time.length() > 0 && time.charAt(time.length() - 1) == ',') {
+						time.deleteCharAt(time.length() - 1);
+						time.append("/").append(Objects.toString(doc.get("KyBaoCao"), ""));
+					}
+				}
+			} else if (!truThang.trim().isEmpty()) {
+				String[] truThangArray = truThang.trim().split(",");
+				HashSet<Integer> excludedMonths = new HashSet<>();
+				for (String month : truThangArray) {
+					excludedMonths.add(Integer.parseInt(month.trim()));
+				}
+				for (int i = 1; i <= 12; i++) {
+					if (!excludedMonths.contains(i)) {
+						time.append(i).append(",");
+					}
+				}
+				if (time.length() > 0 && time.charAt(time.length() - 1) == ',') {
+					time.deleteCharAt(time.length() - 1);
+					time.append("/").append(Objects.toString(doc.get("KyBaoCao"), ""));
+				}
+			} else {
+				time.append(Objects.toString(doc.get("KyBaoCao"), ""));
+			}
+		} catch (Exception e) {
+			System.out.println();
+		}
+		return time.toString();
+	}
+	
+	private int extractMonth(String date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate localDate = LocalDate.parse(date, formatter);
+		return localDate.getMonthValue();
 	}
 
 	@Override
@@ -238,6 +312,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		String kibc = commons.getTextJsonNode(jsonData.at("/KyBaoCao")).trim().replaceAll("\\s+", " ");
 		String tungay = commons.getTextJsonNode(jsonData.at("/TuNgay")).trim().replaceAll("\\s+", " ");
 		String denngay = commons.getTextJsonNode(jsonData.at("/DenNgay")).trim().replaceAll("\\s+", " ");
+		String truthang = commons.getTextJsonNode(jsonData.at("/TruThang")).trim().replaceAll("\\s+", " ");
 		String ktn = commons.getTextJsonNode(jsonData.at("/KhoanThuNhap")).trim().replaceAll("\\s+", " ");
 		String tdtn = commons.getTextJsonNode(jsonData.at("/DateThuNhap")).trim().replaceAll("\\s+", " ");
 		String kbh = commons.getTextJsonNode(jsonData.at("/KhoanBaoHiem")).trim().replaceAll("\\s+", " ");
@@ -363,10 +438,25 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			/// CHECK TU NGAY DEN NGAY
 
 			String thangnv = "";
-
+			String[] truThangArray = truthang.trim().split(",");
+			HashSet<Integer> excludedMonths = new HashSet<>();
+			for (String month : truThangArray) {
+				if(!month.trim().isEmpty()) {
+					excludedMonths.add(Integer.parseInt(month));					
+				}
+			}
+			
 			if (tungay.equals("") && denngay.equals("")) {
-				thangnv = "1,2,3,4,5,6,7,8,9,10,11,12";
-				ngayluu = kibc;
+				if (!truthang.trim().isEmpty()) {
+					for (int i = 1; i <= 12; i++) {
+					    if (!excludedMonths.contains(i)) {
+					    	thangnv += i + ",";
+					    }
+					}		
+				} else {
+					thangnv = "1,2,3,4,5,6,7,8,9,10,11,12";
+				}
+				ngayluu = kibc;	
 			} else {
 				ngayt = tungay.toString();
 				ngayd = denngay.toString();
@@ -381,7 +471,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				thang1 = words1[1];
 				number1 = Integer.parseInt(thang1);
 
-//				ngayluu = number + "-" + number1 + "/" + kibc;
 				ngayluu = number + "-" + number1 + "/" + nam1;
 
 				words = tungay.split("/");
@@ -395,14 +484,13 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				int denthang = Integer.parseInt(thang);
 
 				for (int i = tuthang; i <= denthang; i++) {
-					if (i == denthang) {
-						thangnv += i;
-					} else {
-						thangnv += i + ",";
-					}
-
+				    if (!excludedMonths.contains(i)) {
+				        thangnv += i + ",";
+				    }
 				}
-
+			}
+			if (thangnv.endsWith(",")) {
+			    thangnv = thangnv.substring(0, thangnv.length() - 1);
 			}
 
 			// END CHECK TU NGAY DEN NGAY
@@ -520,6 +608,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					.append("KyBaoCao", kibc)
 					.append("TuNgay", tungay)
 					.append("DenNgay", denngay)
+					.append("TruThang", truthang)
 					.append("DateSave", ngayluu)
 					.append("Dir", dir)
 					.append("FileNameXML", fileNameXML)
@@ -611,10 +700,25 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			// int shd = docTmp.getInteger("SHDon");
 
 			String thangnv1 = "";
-
+			String[] truThangArray1 = truthang.trim().split(",");
+			HashSet<Integer> excludedMonths1 = new HashSet<>();
+			for (String month : truThangArray1) {
+				if (!month.trim().isEmpty()) {
+					excludedMonths1.add(Integer.parseInt(month));
+				}
+			}
+			
 			if (tungay.equals("") && denngay.equals("")) {
-				thangnv = "1,2,3,4,5,6,7,8,9,10,11,12";
-				ngayluu = kibc;
+				if (!truthang.trim().isEmpty()) {
+					for (int i = 1; i <= 12; i++) {
+					    if (!excludedMonths1.contains(i)) {
+					    	thangnv1 += i + ",";
+					    }
+					}		
+				} else {
+					thangnv = "1,2,3,4,5,6,7,8,9,10,11,12";
+				}
+				ngayluu = kibc;	
 			} else {
 				ngayt = tungay.toString();
 				ngayd = denngay.toString();
@@ -643,16 +747,17 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				int denthang1 = Integer.parseInt(thang);
 
 				thangnv1 = "";
-
+				
 				for (int i = tuthang1; i <= denthang1; i++) {
-					if (i == denthang1) {
-						thangnv1 += i;
-					} else {
-						thangnv1 += i + ",";
-					}
-
+				    if (!excludedMonths1.contains(i)) {
+				    	thangnv1 += i + ",";
+				    }
 				}
 			}
+			if (thangnv1.endsWith(",")) {
+				thangnv1 = thangnv1.substring(0, thangnv1.length() - 1);
+			}
+			
 			/* TAO FILE XML */
 			objectIdTK = objectId;
 			path = Paths.get(SystemParams.DIR_E_INVOICE_CTTNCN,
@@ -769,6 +874,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 							.append("KyBaoCao", kibc)
 							.append("TuNgay", tungay)
 							.append("DenNgay", denngay)
+							.append("TruThang", truthang)
 							.append("TuNgay", tungay)
 							.append("DenNgay", denngay)
 							.append("DateSave", ngayluu)

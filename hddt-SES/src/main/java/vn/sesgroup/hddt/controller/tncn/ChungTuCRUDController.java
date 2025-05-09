@@ -93,6 +93,7 @@ public class ChungTuCRUDController extends AbstractController{
 	private String kibc;
 	private String tungay;
 	private String denngay;
+	private String minusMonths;
 	
 	private String ktn;
 	private String tdtn;
@@ -240,6 +241,7 @@ public class ChungTuCRUDController extends AbstractController{
 			req.setAttribute("Address", commons.getTextJsonNode(jsonData.at("/Address")));
 			req.setAttribute("TuNgay", commons.getTextJsonNode(jsonData.at("/TuNgay")));
 			req.setAttribute("DenNgay", commons.getTextJsonNode(jsonData.at("/DenNgay")));
+			req.setAttribute("TruThang", commons.getTextJsonNode(jsonData.at("/TruThang")));
 			req.setAttribute("KyBaoCao", commons.getTextJsonNode(jsonData.at("/KyBaoCao")));
 			
 			
@@ -284,6 +286,7 @@ public class ChungTuCRUDController extends AbstractController{
 		kibc = commons.getParameterFromRequest(req, "kibc").trim().replaceAll("\\s+", " ");
 		tungay= commons.getParameterFromRequest(req, "from-date").trim().replaceAll("\\s+", " ");
 		denngay = commons.getParameterFromRequest(req, "to-date").trim().replaceAll("\\s+", " ");
+		minusMonths = commons.getParameterFromRequest(req, "minus-months").trim().replaceAll("\\s+", " ");
 		ktn = commons.getParameterFromRequest(req, "ktn").trim().replaceAll("\\s+", " ");
 		tdtn = commons.getParameterFromRequest(req, "tdtn").trim().replaceAll("\\s+", " ");
 		kbh = commons.getParameterFromRequest(req, "kbh").trim().replaceAll("\\s+", " ");
@@ -480,7 +483,7 @@ public class ChungTuCRUDController extends AbstractController{
 			hData.put("KyBaoCao", kibc);
 			hData.put("TuNgay", tungay);
 			hData.put("DenNgay", denngay);
-			
+			hData.put("TruThang", minusMonths);
 			
 			hData.put("KhoanThuNhap", ktn);
 			hData.put("KhoanTuThienNhanDaoKhuyenHoc", kdtnndkh);

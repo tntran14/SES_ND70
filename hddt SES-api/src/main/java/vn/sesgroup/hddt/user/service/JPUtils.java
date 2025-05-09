@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -3646,41 +3648,53 @@ else {
 		      
 				int check = words.length;
 			  
+				int tuthang = 0, denthang = 0;
 				if (check > 1) {
 					String nam = words[1];
 					reportParams.put("CNTraTNhapYear", nam);
-
 					String TuNgay = docTmp.getEmbedded(Arrays.asList("TuNgay"), "");
 					String DenNgay = docTmp.getEmbedded(Arrays.asList("DenNgay"), "");
 					String thang = "";
 					words = TuNgay.split("/");
 					nam = words[2];
 					thang = words[1];
-					int tuthang = Integer.parseInt(thang);
+					tuthang = Integer.parseInt(thang);
 					words = DenNgay.split("/");
 					nam = words[2];
 					thang = words[1];
-					int denthang = Integer.parseInt(thang);
+					denthang = Integer.parseInt(thang);
 
-					for (int i = tuthang; i <= denthang; i++) {
-						if (i == denthang) {
-							thangnv += i;
-						} else {
-							thangnv += i + ",";
-						}
-
-					}
-					reportParams.put("CNTraTNhapMonth", thangnv);
 					reportParams.put("CNTraTNhapFrom", String.valueOf(tuthang));
 					reportParams.put("CNTraTNhapTo", String.valueOf(denthang));
 				} else {
 					String nam = words[0];
 					reportParams.put("CNTraTNhapYear", nam);
-					reportParams.put("CNTraTNhapMonth", "1,2,3,4,5,6,7,8,9,10,11,12");
 					reportParams.put("CNTraTNhapFrom", "1");
 					reportParams.put("CNTraTNhapTo", "12");
 				}
-		      
+				
+				String truthang = Objects.toString(docTmp.get("TruThang"), "");
+				String[] truThangArray = truthang.trim().split(",");
+				HashSet<Integer> excludedMonths = new HashSet<>();
+				for (String month : truThangArray) {
+					if(!month.trim().isEmpty()) {
+						excludedMonths.add(Integer.parseInt(month));					
+					}
+				}
+				if (tuthang == 0 && denthang ==0) {
+					tuthang = 1;
+					denthang = 12;
+				}
+				
+				for (int i = tuthang; i <= denthang; i++) {
+					if (!excludedMonths.contains(i)) {
+				        thangnv += i + ",";
+				    }
+				}
+				if (thangnv.endsWith(",")) {
+				    thangnv = thangnv.substring(0, thangnv.length() - 1);
+				}
+				reportParams.put("CNTraTNhapMonth", thangnv);
 		      
 		      
 		      
