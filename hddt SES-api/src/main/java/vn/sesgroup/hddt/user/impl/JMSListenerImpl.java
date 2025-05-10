@@ -279,6 +279,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			
 			
 			String fileNameXML = _id + "_" + MCCQT + ".xml";
+			String fileNameXMLSigned = _id + "_signed.xml"; 
 			String fileNamePDF = _id + ".pdf";
 			if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 				fileNamePDF = _id + "-deleted.pdf";
@@ -377,7 +378,12 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				listFiles.add(file.toString());
 				listNames.add(mauHD + "-" + soHD + ".pdf");
 			}
-
+			file = new File(dir, fileNameXMLSigned);
+			if (file.exists() && file.isFile()) {
+				listFiles.add(file.toString());
+				listNames.add(mauHD + "-" + soHD + "-signed.xml");
+			}
+			
 			/* THUC HIEN GUI MAIL */
 			boolean boo = false;
 				
@@ -394,8 +400,10 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			//List<String> arrayName = o.get("EmailListName", List.class);
 			String name1 = listNames.get(0);
 	        String name2 = listNames.get(1);
+	        String name3 = listNames.get(2);
 	        String fileData = "";
 	        String fileData1 = "";
+	        String fileData2 = "";
 	       // List<String> arrayFiles = o.get("EmailListFile", List.class);
 	    	   if(null != listFiles) {
 	        		File file1 = null;
@@ -403,13 +411,14 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	        		for(String fileName1: listFiles){
 	        			file1 = new File(fileName1);
 	        			if(file1.exists() && file1.isFile()) {   				
-	        				java.nio.file.Path pdfPath = java.nio.file.Paths.get(fileName1);
-	        				    byte[] filecontent = java.nio.file.Files.readAllBytes(pdfPath);
-	        				    if(fileData.equals("")) {
-	        				    	  fileData = com.mailjet.client.Base64.encode(filecontent);
-	        				    }else {
-	        				    	  fileData1 = com.mailjet.client.Base64.encode(filecontent);
-	        				    }   				  
+	        				java.nio.file.Path path = java.nio.file.Paths.get(fileName1);
+	        				    byte[] filecontent = java.nio.file.Files.readAllBytes(path);
+	        				    if (i == 0)
+									fileData = com.mailjet.client.Base64.encode(filecontent); // XML 1
+								if (i == 1)
+									fileData1 = com.mailjet.client.Base64.encode(filecontent); // PDF
+								if (i == 2)
+									fileData2 = com.mailjet.client.Base64.encode(filecontent); // XML 2 				  
 	        				    i++;
 	        			}
 	        		}		
@@ -440,7 +449,11 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 		                                       .put("Base64Content", fileData))   
 		                        .put(new JSONObject().put("ContentType", "application/pdf")
 		                                       .put("Filename", name2)
-		                                       .put("Base64Content", fileData1)))
+		                                       .put("Base64Content", fileData1))
+		                        .put(new JSONObject().put("ContentType", "application/xml")
+										.put("Filename", name3)
+										.put("Base64Content", fileData2))
+		                        )
 		                ));
 		             response = client.post(request);
 		             // GHI LOG KET QUA GUI MAIL
@@ -670,6 +683,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				File file = null;
 
 				String fileNameXML = _id + "_" + MCCQT + ".xml";
+				String fileNameXMLSigned = _id + "_signed.xml"; 
 				String fileNamePDF = _id + ".pdf";
 				if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 					fileNamePDF = _id + "-deleted.pdf";
@@ -736,7 +750,11 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 					listFiles.add(file.toString());
 					listNames.add(mauHD + "-" + soHD + ".pdf");
 				}
-
+				file = new File(dir, fileNameXMLSigned);
+				if (file.exists() && file.isFile()) {
+					listFiles.add(file.toString());
+					listNames.add(mauHD + "-" + soHD + "-signed.xml");
+				}
 				/* THUC HIEN GUI MAIL */
 				boolean boo = false;
 				
