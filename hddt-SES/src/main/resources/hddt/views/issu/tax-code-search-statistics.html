@@ -16,7 +16,7 @@
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<form id="f-ca-invoice" name="f-ca-invoice" method="post"
+				<form id="f-mst-statistics" name="f-ca-invoice" method="post"
 					enctype="multipart/form-data">
 					<div class="card">
 						<div class="card-body">
@@ -73,26 +73,26 @@
 									<hr style="margin: 0 0 10px 0"></hr>
 								</div>
 							</div>
-<!-- 							<div class="col-12"> -->
-<!-- 								<div class="row mT-0"> -->
-<!-- 									<div class="col-12 col-sm-6 p-l-0"></div> -->
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-6 p-l-0"></div>
 
-<!-- 									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0"> -->
-<!-- 										<div class="button-group text-right"> -->
+									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
 
-<!-- 											<button type="button" title="Xuất danh sách excel" -->
-<!-- 												data-action="ca_invoice-export" -->
-<!-- 												class="btns btns-export__ses hover-up__ses" -->
-<!-- 												th:if="${#strings.contains(UserFullPathRight,'|ca_invoice-export|')}"> -->
-<!-- 												<i class="mdi mdi-microsoft-excel"> </i><span -->
-<!-- 													class="d-none d-md-inline"> Xuất danh sách excel</span> -->
-<!-- 											</button> -->
+											<button type="button" title="Xuất danh sách excel"
+												data-action="ca_invoice-export"
+												class="btns btns-export__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|ca_invoice-export|')}">
+												<i class="mdi mdi-microsoft-excel"> </i><span
+													class="d-none d-md-inline"> Xuất danh sách excel</span>
+											</button>
 
 
-<!-- 										</div> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
+										</div>
+									</div>
+								</div>
+							</div>
 
 							<div class="form-group row m-b-5 m-t-7">
 								<div class="col-12 has-min-height-grid">
@@ -105,13 +105,13 @@
 				</form>
 
 				<script type="text/javascript">
-					_gridMain = $('#f-ca-invoice').find('#grid');
+					_gridMain = $('#f-mst-statistics').find('#grid');
 				</script>
 
 				<script type="text/javascript">
 					$(function() {
-						dateInputFormat($('#f-ca-invoice').find('#to-date'));
-						dateInputFormat($('#f-ca-invoice').find('#from-date'));
+						dateInputFormat($('#f-mst-statistics').find('#to-date'));
+						dateInputFormat($('#f-mst-statistics').find('#from-date'));
 						_gridMain
 								.kendoGrid({
 									dataSource : new kendo.data.DataSource(
@@ -319,7 +319,7 @@
 									dataBound : function(e) {}
 								});
 
-						$("#f-ca-invoice")
+						$("#f-mst-statistics")
 								.find('button[data-action]')
 								.click(
 										function(event) {
@@ -392,15 +392,8 @@
 
 					function getDataSearch() {
 						var dataPost = {};
-						dataPost['mst'] = $('#f-ca-invoice #mst').val() == null ? ''
-								: $('#f-ca-invoice #mst').val();
-						dataPost['name'] = $('#f-ca-invoice #name').val() == null ? ''
-								: $('#f-ca-invoice #name').val();
-						dataPost['to-date'] = $('#f-ca-invoice #to-date').val() == null ? ''
-								: $('#f-ca-invoice #to-date').val();
-						dataPost['from-date'] = $('#f-ca-invoice #from-date')
-								.val() == null ? '' : $(
-								'#f-ca-invoice #from-date').val();
+						dataPost['to-date'] = $('#f-mst-statistics #to-date').val() == null ? '': $('#f-mst-statistics #to-date').val();
+						dataPost['from-date'] = $('#f-mst-statistics #from-date').val() == null ? '' : $('#f-mst-statistics #from-date').val();
 						return dataPost;
 					}
 				</script>
