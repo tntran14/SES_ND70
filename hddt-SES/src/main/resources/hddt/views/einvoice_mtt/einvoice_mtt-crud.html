@@ -427,6 +427,10 @@
 		var check_loai_hoa_don;
 		var anc = '[[${HTTToanCode}]]';
 		var abc = '[[${HTTToan}]]';
+		var ParamTaxInvoice = '[[${ParamTaxInvoiceSelect}]]';
+		var select_TaxInvoice = ParamTaxInvoice.replace("{", "{\"").replace("}", "\"}").replaceAll(":", "\" : \"").replaceAll(",", "\" , \"");
+		var TaxInvoice = JSON.parse(select_TaxInvoice);
+		var defaultTaxAdmin = '[[${DefaultTaxAdmin}]]';
 		</script>
 		
 		<script type="text/javascript" th:if="${_action_ == 'CREATE' && false}"></script>
@@ -958,11 +962,11 @@
 			break;
 		case 'VATRate':
 			_valTmp = null == data[key]? '': data[key];
-			if('' == _valTmp) _valTmp = '10';
-			var objVAT1 = {'0': ' ','1': '0%', '5': '5%', '7': '10%x70%', '8': '8%', '10': '10%', '-1': 'KCT', '-2': 'KKKNT'};
+			if('' == _valTmp) _valTmp = defaultTaxAdmin;
+		//	var objVAT1 = {'0': ' ','1': '0%', '5': '5%', '7': '10%x70%', '8': '8%', '10': '10%', '-1': 'KCT', '-2': 'KKKNT'};
 	
-			text += '<select class="input-grid form-control form-control-sm input-grid-vatrate"  name="' + key + '" style="height: 100%;" ' + (('2' == feature)? ' disabled="disabled" ': '') + '>';	/*|| '4' == feature*/
-			$.each(objVAT1, function(k, v){
+			text += '<select class="input-grid form-control form-control-sm input-grid-vatrate"  name="' + key + '" style="height: 100%;"';	/*|| '4' == feature*/
+			$.each(TaxInvoice, function(k, v){
 				text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + '>' + v + '</option>';
 			});
 			text += '</select>';

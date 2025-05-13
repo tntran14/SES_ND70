@@ -151,23 +151,24 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 			msgParam.setParam("DMMauSoKyHieuForCreate");
 			msgParams.getParams().add(msgParam);
 			
-			
-		
 			msgParam = new MsgParam();
 			msgParam.setId("param03");
 			msgParam.setParam("DMCurrencies");
 			msgParams.getParams().add(msgParam);
-			
 			
 			msgParam = new MsgParam();
 			msgParam.setId("param04");
 			msgParam.setParam("UserConFig");
 			msgParams.getParams().add(msgParam);
 			
-			
 			msgParam = new MsgParam();
 			msgParam.setId("param05");
 			msgParam.setParam("DMPaymentType");
+			msgParams.getParams().add(msgParam);
+			
+			msgParam = new MsgParam();
+			msgParam.setId("param06");
+			msgParam.setParam("TaxInvoice");
 			msgParams.getParams().add(msgParam);
 			/*END: DANH SACH THAM SO*/
 			msg.setObjData(msgParams);
@@ -210,17 +211,27 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 					}
 					req.setAttribute("map_currencies", hItem);
 				}
+				String TaxInvoice = "";
+				String defaultTaxAdmin = "";
+				String _taxInvoice = "";
 				
 				if(null != jsonData.at("/param04") && jsonData.at("/param04") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
 					for(JsonNode o: jsonData.at("/param04")) {
 //					hItem.put(commons.getTextJsonNode(o.get("VND")), commons.getTextJsonNode(o.get("USD")));	
-					req.setAttribute("userconfig_vnd", commons.getTextJsonNode(o.get("VND")));
+						req.setAttribute("userconfig_vnd", commons.getTextJsonNode(o.get("VND")));
 						req.setAttribute("userconfig_usd", commons.getTextJsonNode(o.get("USD")));
+						String check_Tax = commons.getTextJsonNode(o.get("TaxInvoice"));
+						if(check_Tax.equals("")) {
+							req.setAttribute("DefaultTaxAdmin", _taxInvoice);
+						}else {
+							req.setAttribute("DefaultTaxAdmin", check_Tax);
+						}
 					}
 				}else {
 					req.setAttribute("userconfig_vnd", "2");
 					req.setAttribute("userconfig_usd", "2");
+					req.setAttribute("DefaultTaxAdmin", _taxInvoice);
 				}
 				
 				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
@@ -230,6 +241,41 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 					}
 					req.setAttribute("map_loai_hd", hItem);
 				}
+				
+				if(null != jsonData.at("/param06")) {
+					ArrayList<HashMap<String, String>> rows = new ArrayList<HashMap<String,String>>();
+					ArrayList<HashMap<String, String>> rows1 = new ArrayList<HashMap<String,String>>();
+					LinkedHashMap<String, String> hItem1 = null;
+					for(JsonNode o: jsonData.at("/param06")) {						
+						hItem = new LinkedHashMap<String, String>();
+					//	hItem.put("_id", commons.getTextJsonNode(o.at("/_id")));
+						hItem.put("Name", commons.getTextJsonNode(o.at("/Name")));
+						hItem.put("Code", commons.getTextJsonNode(o.at("/Code")));
+						
+						defaultTaxAdmin =  commons.getTextJsonNode(o.at("/DefaultAdmin"));
+						if(defaultTaxAdmin.equals("true")) {
+							_taxInvoice = commons.getTextJsonNode(o.at("/Code"));
+						}
+						
+						rows.add(hItem);
+						
+						hItem1 = new LinkedHashMap<String, String>();
+						hItem1.put(commons.getTextJsonNode(o.at("/Code")), commons.getTextJsonNode(o.at("/Name")));
+						rows1.add(hItem1);
+						
+						if(TaxInvoice.equals("")) {
+							
+							TaxInvoice = "{" + "0" + ":" +" " + "," ;
+							TaxInvoice += commons.getTextJsonNode(o.at("/Code")) + ":" + commons.getTextJsonNode(o.at("/Name")).toString();
+						}else {
+							TaxInvoice += "," + commons.getTextJsonNode(o.at("/Code")) + ":" + commons.getTextJsonNode(o.at("/Name")).toString();
+						}						
+					}
+					req.setAttribute("ParamWareHouse", rows);
+					TaxInvoice = TaxInvoice + "}";
+					req.setAttribute("ParamTaxInvoiceSelect", TaxInvoice);			
+				}
+				
 			}
 			
 		}catch(Exception e) {}
