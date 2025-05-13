@@ -124,7 +124,7 @@ public class MailjetSender {
 			} else {
 				name1 = names.get(0);
 				name2 = names.get(1);
-				name3 = names.get(2);
+				name3 = names.size() == 3 ? names.get(2): "";
 				if (null != files) {
 					File file = null;
 					int i = 0;
@@ -143,6 +143,25 @@ public class MailjetSender {
 						}
 					}
 				}
+				
+				JSONArray attachments = new JSONArray();
+
+				attachments.put(new JSONObject()
+				        .put("ContentType", "application/xml")
+				        .put("Filename", name1)
+				        .put("Base64Content", fileData));
+
+				attachments.put(new JSONObject()
+				        .put("ContentType", "application/pdf")
+				        .put("Filename", name2)
+				        .put("Base64Content", fileData1));
+
+				if (!name3.equals("") && !fileData2.equals("")) {
+				    attachments.put(new JSONObject()
+				            .put("ContentType", "application/xml")
+				            .put("Filename", name3)
+				            .put("Base64Content", fileData2));
+				}
 
 				for (int i = 0; i < listMail.size(); i++) {
 					client = new MailjetClient(mailConfig.getEmailAddress(), mailConfig.getEmailPassword(),
@@ -160,16 +179,7 @@ public class MailjetSender {
 													.put(Emailv31.Message.SUBJECT, title)
 													.put(Emailv31.Message.HTMLPART,
 															content)
-													.put(Emailv31.Message.ATTACHMENTS, new JSONArray()
-															.put(new JSONObject().put("ContentType", "application/xml")
-																	.put("Filename", name1)
-																	.put("Base64Content", fileData))
-															.put(new JSONObject().put("ContentType", "application/pdf")
-																	.put("Filename", name2)
-																	.put("Base64Content", fileData1))
-															.put(new JSONObject().put("ContentType", "application/xml")
-																	.put("Filename", name3)
-																	.put("Base64Content", fileData2)))));
+													.put(Emailv31.Message.ATTACHMENTS, attachments)));
 					response = client.post(request);
 					System.out.println(response.getStatus());
 					System.out.println(response.getData());
