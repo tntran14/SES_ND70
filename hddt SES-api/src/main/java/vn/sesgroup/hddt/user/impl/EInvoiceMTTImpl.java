@@ -3140,6 +3140,12 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			return rsp;
 		}
 
+		if ("|204|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
+			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
 		if (!LTBao.equals("2")) {
 			MLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LHDMTTien/DSLDo/LDo/MLoi",
 					nodeTDiep, XPathConstants.NODE));
@@ -3182,11 +3188,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 		}
 
-		if ("|204|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
-			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
+		
 
 		String MCCQT = docTmp.get("MCCQT", "").replaceAll("-", "_");
 
