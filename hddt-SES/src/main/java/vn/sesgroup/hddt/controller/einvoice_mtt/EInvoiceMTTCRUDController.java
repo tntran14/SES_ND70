@@ -186,6 +186,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 					for(JsonNode o: jsonData.at("/param05")) {
 						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
 					}
+					req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/param05").get(0).get("code")));
 					req.setAttribute("map_paymenttype", hItem);
 				}
 				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
@@ -196,9 +197,13 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 						String s=String.valueOf(words);  
 						if("M".equals(s)) {
 							hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));	
-						}						
+						}	
+					
 				}
+//					req.setAttribute("MauSoHD", commons.getTextJsonNode(jsonData.at("/param02").get(0).get("_id")));
 					req.setAttribute("map_mausokyhieu", hItem);
+					
+//					req.setAttribute("MauSoHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MauSoHD")));
 				}
 				if(null != jsonData.at("/param03") && jsonData.at("/param03") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
@@ -352,6 +357,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		default:
 			break;
 		}
+		if("|einvoice_mtt-cre|einvoice_mtt-copy|einvoice_mtt-edit|".indexOf(transaction) != -1)
+			LoadParameter(cup, locale, req, action);
 		
 		if("|einvoice_mtt-edit|einvoice_mtt-copy|einvoice_mtt-detail|einvoice_mtt-sign|".indexOf(transaction) != -1
 				|| "init-dc-tt".equals(method))
@@ -365,8 +372,6 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
 		
-		if("|einvoice_mtt-cre|einvoice_mtt-copy|einvoice_mtt-edit|".indexOf(transaction) != -1)
-			LoadParameter(cup, locale, req, action);
 		req.setAttribute("Param", Param);
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);

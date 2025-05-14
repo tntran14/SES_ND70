@@ -324,6 +324,7 @@ public class TKhaiCRUDController extends AbstractController{
 			}
 			
 			req.setAttribute("optHTHDon", commons.getTextJsonNode(jsonData.at("/HTHDon")));
+			
 			req.setAttribute("optPThuc", commons.getTextJsonNode(jsonData.at("/PThuc")));
 			req.setAttribute("LHDSDung_HDGTGT", "1".equals(commons.getTextJsonNode(jsonData.at("/LHDSDung/HDGTGT"))));
 			req.setAttribute("CMMTT", "1".equals(commons.getTextJsonNode(jsonData.at("/CMMTTien"))));
@@ -391,7 +392,10 @@ public class TKhaiCRUDController extends AbstractController{
 		dcCTDTu = commons.getParameterFromRequest(req, "DCTDTu").trim().replaceAll("\\s+", " ");
 		dtLHe = commons.getParameterFromRequest(req, "DTLHe").trim().replaceAll("\\s+", " ");
 		nLap = commons.getParameterFromRequest(req, "NLap").replaceAll("\\s", "");
-		htHDon = commons.getParameterFromRequest(req, "HTHDon").replaceAll("\\s", "");
+		String hthDon_KCM = commons.getParameterFromRequest(req, "HTHDon_KCM").replaceAll("\\s", "");
+		htHDon = !hthDon_KCM.equals("") ? hthDon_KCM: "";
+		String hthDon_CM = commons.getParameterFromRequest(req, "HTHDon_CM").replaceAll("\\s", "");
+		htHDon = !hthDon_CM.equals("") ? hthDon_CM: htHDon;
 		pthuc = commons.getParameterFromRequest(req, "PThuc").replaceAll("\\s", "");
 		lhdSDung_HDGTGT = commons.getParameterFromRequest(req, "LHDSDung_HDGTGT").replaceAll("\\s", "");
 		CMMTT = commons.getParameterFromRequest(req, "CMMTT").replaceAll("\\s", "");
@@ -405,6 +409,10 @@ public class TKhaiCRUDController extends AbstractController{
 		
 		switch (transaction) {
 		case "tkhai-cre":		
+			if(!hthDon_KCM.equals("") && !hthDon_CM.equals("")) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Không được chọn đồng thời 2 hình thức hóa đơn.");
+			}
 			if("".equals(tenNnt)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập tên người nộp thuế.");
@@ -465,7 +473,7 @@ public class TKhaiCRUDController extends AbstractController{
 				dto.getErrorMessages().add("Vui lòng kiểm tra lại hình thức đăng ký.");
 			}
 			
-			if("".equals(htHDon) || "|CMa|KCMa|".indexOf("|" + htHDon + "|") == -1) {
+			if("".equals(htHDon) && !"on".equals(CMMTT)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng kiểm tra lại hình thức hóa đơn.");
 			}
@@ -547,7 +555,7 @@ public class TKhaiCRUDController extends AbstractController{
 				dto.getErrorMessages().add("Vui lòng kiểm tra lại hình thức đăng ký.");
 			}
 			
-			if("".equals(htHDon) || "|CMa|KCMa|".indexOf("|" + htHDon + "|") == -1) {
+			if("".equals(htHDon) && !"on".equals(CMMTT)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng kiểm tra lại hình thức hóa đơn.");
 			}
