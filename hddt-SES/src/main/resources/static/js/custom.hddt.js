@@ -843,7 +843,7 @@ function autoCompleteProducts(objId, callback){
 		source: function( request, response ) {
 //			console.log("Data-id: "+$('.search_txt:focus').parent().attr('data-id'));
 //			console.log("Data-id: " + $('input:focus').closest('tr').index());
-			rowSelect = $('textarea:focus').closest('tr').index();
+			rowSelect = $('input:focus').closest('tr').index();
 			$.ajax({
 				url: ROOT_PATH + '/main/common/auto-complete-products',
 				dataType: "json",
