@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
@@ -1990,7 +1991,8 @@ else {
 	                  hItem.put("TCTBao", "Giải trình");
 	               }
 
-	               hItem.put("LDo", this.commons.getTextFromNodeXML((Element)xPath.evaluate("LDo", nodeTmp, XPathConstants.NODE)));
+	               String normalizedLDo = Normalizer.normalize(this.commons.getTextFromNodeXML((Element)xPath.evaluate("LDo", nodeTmp, XPathConstants.NODE)), Normalizer.Form.NFC);
+	               hItem.put("LDo", normalizedLDo);
 	               arrayData.add(hItem);
 	               ++countPrd;
 	               if (startRowGroup >= numberRowInPage) {
