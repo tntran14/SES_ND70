@@ -325,6 +325,12 @@ public class Commons {
         return emailvalidator.isValid(email);
 	}
 	
+	public boolean containsSpecialCharacter(String text) {
+		// Cho phép: chữ cái, số, khoảng trắng và một vài dấu câu thông dụng (, . : - /)
+		return text.matches(".*[^\\p{L}\\p{Nd}\\s,.:;/()\\[\\]{}-].*");
+	}
+	
+	
 	public String getAttributeCertificate(String dn, String key) {
 		String[] parts = dn.split(",");
 		for (int i = 0; i < parts.length; i++) {
