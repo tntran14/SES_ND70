@@ -909,20 +909,21 @@ public class EInvoiceCRUDController extends AbstractController{
 		boolean check = true;
 		int count = 0;
 		JsonNode jsonNode = null;
-		while(count < jsonNodeTmp.size() && check) {
+		while (count < jsonNodeTmp.size() && check) {
 			jsonNode = jsonNodeTmp.get(count);
-			if("".equals(commons.getTextJsonNode(jsonNode.at("/Feature"))) 
-					|| "".equals(commons.getTextJsonNode(jsonNode.at("/ProductName"))) 
-//					|| commons.ToNumber(commons.getTextJsonNode(jsonNode.at("/Total"))) < 0
-//					|| (
-//							(!"4".equals(commons.getTextJsonNode(jsonNode.at("/Feature"))) && !"2".equals(commons.getTextJsonNode(jsonNode.at("/Feature"))))
-//							 && commons.ToNumber(commons.getTextJsonNode(jsonNode.at("/Total"))) <= 0 
-//						)
-					) {
+			if ("".equals(commons.getTextJsonNode(jsonNode.at("/Feature")))
+					|| "".equals(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
 				check = false;
 				break;
 			}
 			count++;
+			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu (, . : - /)");
+				return dto;
+			}
+
 		}
 		if(!check) {
 			dto.setErrorCode(999);
