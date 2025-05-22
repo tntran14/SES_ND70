@@ -52,6 +52,19 @@ public class TKhaiController {
 				.body(rsp);
 	}
 	
+	@RequestMapping(value = "/crudV1", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> crudV1(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.crudV1(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
 	@RequestMapping(value = "/list", method = RequestMethod.POST,
 			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
 			produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -71,6 +84,21 @@ public class TKhaiController {
 	public ResponseEntity<?> detail(@RequestBody JSONRoot jsonRoot
 			, @PathVariable(name = "_id", required = false) String _id) throws Exception{
 		MsgRsp rsp = dao.detail(jsonRoot, _id);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/detailV1/{_id}", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> detailV1(@RequestBody JSONRoot jsonRoot
+			, @PathVariable(name = "_id", required = false) String _id) throws Exception{
+		MsgRsp rsp = dao.detailV1(jsonRoot, _id);
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
@@ -132,11 +160,47 @@ public class TKhaiController {
 				.body(dao.signSingle(is, jsonRoot, _id));
 	}
 	
+	@RequestMapping(value = "/sign-singleV1", method = RequestMethod.POST, consumes = {
+			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> agentSignFileV1(HttpServletRequest req,
+			MultipartHttpServletRequest multipartHttpServletRequest,
+			@RequestParam(name = "Base64JsonRoot", defaultValue = "") String _Base64JsonRoot,
+			@RequestParam(name = "_id", defaultValue = "") String _id) throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+
+		JSONRoot jsonRoot = null;
+		try {
+			jsonRoot = Json.serializer().fromJson(commons.decodeBase64ToString(_Base64JsonRoot),
+					new TypeReference<JSONRoot>() {
+					});
+		} catch (Exception e) {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		InputStream is = multipartHttpServletRequest.getFile("XMLFileSigned").getInputStream();
+
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(dao.signSingleV1(is, jsonRoot, _id));
+	}
+	
 	@RequestMapping(value = "/refresh-status-cqt", method = RequestMethod.POST,
 			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
 			produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> refreshStatusCQT(@RequestBody JSONRoot jsonRoot) throws Exception{
 		MsgRsp rsp = dao.refreshStatusCQT(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	@RequestMapping(value = "/refresh-status-cqtV1", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> refreshStatusCQTV1(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.refreshStatusCQTV1(jsonRoot);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
 		return ResponseEntity.ok()

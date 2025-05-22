@@ -139,6 +139,7 @@ public class Constants {
 	}
 	
 	public static final class TDiep_TTChung_TCTN_VISNAM{
+		public static final String PBanV1 = "2.1.0";
 		public static final String PBan1 = "2.0.1";
 		public static final String PBan = "2.0.0";
 		public static final String MNGui = "MÃ NƠI GỬI: MST BEN GIẢI PHÁP";

@@ -281,7 +281,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("export|export-history|export-change|export-send-emailauto|export-cre|export-edit|export-del|export-detail|export-sign|export-copy|export-send-cqt|export-send-mail|export-import|export_check_mst|export_save_nmua|export-cre-dc-tt|export-xml|export-print-pdfAll|export-del|export-deleteAll|export-pdfAll|export-pdfCD|");       	
         	sbRights.append("issu|issu-cre|issu-edit|issu-del|issu-detail|issu-contract|issu-send-cqt|issu-send-mail|issu-reset-pass|issu-update-kh|");
         	sbRights.append("issu-contract|issu-contract-cre|issu-contract-db|issu-contract-del|issu-contract-detail|issu-contract-edit|issu-contract-approve|issu-contract-active|issu-contract-deactive|");
-        	sbRights.append("tkhai|tkhai-cre|tkhai-edit|tkhai-del|tkhai-detail|tkhai-sign|tkhai-copy|");
+        	sbRights.append("tkhai|tkhai-cre|tkhai-edit|tkhai-del|tkhai-detail|tkhai-sign|tkhai-copy|tkhaiV1|tkhai-creV1|tkhai-editV1|tkhai-delV1|tkhai-detailV1|tkhai-signV1|tkhai-copyV1|");
         	sbRights.append("mstncn|mstncn-cre|mstncn-edit|mstncn-del|mstncn-detail|mstncn-sign|");
         	sbRights.append("cttncn|cttncn-cre|cttncn-edit|cttncn-del|cttncn-detail|cttncn-sign|cttncn-import|cttncn-signAll|cttncn-xoabo|cttncn-xml|cttncn-send-mail|cttncn-pdfAll|");
         	sbRights.append("hdsduser|hdsduser-detail|");

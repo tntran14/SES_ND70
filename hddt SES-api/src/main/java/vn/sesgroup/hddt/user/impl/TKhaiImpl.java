@@ -1759,5 +1759,1526 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 		return rsp;
 	}
 
+	@Transactional(rollbackFor = {Exception.class})
+	@Override
+	public MsgRsp crudV1(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+		
+		JsonNode jsonData = null;
+		if(objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		}else{
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		
+		String actionCode = header.getActionCode();
+		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+		String tenNnt = commons.getTextJsonNode(jsonData.at("/TenNnt")).trim().replaceAll("\\s+", " ");
+		String mauSo = commons.getTextJsonNode(jsonData.at("/MauSo")).replaceAll("\\s", "");
+		String ten = commons.getTextJsonNode(jsonData.at("/Ten")).trim().replaceAll("\\s+", " ");
+		String hThuc = commons.getTextJsonNode(jsonData.at("/HThuc")).trim().replaceAll("\\s+", " ");
+		String mst = commons.getTextJsonNode(jsonData.at("/Mst")).replaceAll("\\s", "");
+		String tinhThanh = commons.getTextJsonNode(jsonData.at("/TinhThanh")).replaceAll("\\s", "");
+		String cqtQLy = commons.getTextJsonNode(jsonData.at("/CqtQLy")).replaceAll("\\s", "");
+		String nlHe = commons.getTextJsonNode(jsonData.at("/NLHe")).trim().replaceAll("\\s+", " ");
+		String dcLHe = commons.getTextJsonNode(jsonData.at("/DCLHe")).trim().replaceAll("\\s+", " ");
+		String dcCTDTu = commons.getTextJsonNode(jsonData.at("/DCCTDTu")).trim().replaceAll("\\s+", " ");
+		String dtLHe = commons.getTextJsonNode(jsonData.at("/DTLHe")).trim().replaceAll("\\s+", " ");
+		String nLap = commons.getTextJsonNode(jsonData.at("/NLap")).trim().replaceAll("\\s+", " ");
+		
+		String tnddpLuat = commons.getTextJsonNode(jsonData.at("/TNDDPLuat")).trim().replaceAll("\\s+", " ");
+		String dtddpLuat = commons.getTextJsonNode(jsonData.at("/DTDDPLuat")).trim().replaceAll("\\s+", " ");
+		String cccDan = commons.getTextJsonNode(jsonData.at("/CCCDan")).trim().replaceAll("\\s+", " ");
+		String shChieu = commons.getTextJsonNode(jsonData.at("/SHChieu")).trim().replaceAll("\\s+", " ");
+		String nsddpLuat = commons.getTextJsonNode(jsonData.at("/NSDDPLuat")).trim().replaceAll("\\s+", " ");
+		String gTinh = commons.getTextJsonNode(jsonData.at("/GTinh")).trim().replaceAll("\\s+", " ");
+		
+		String htHDon = commons.getTextJsonNode(jsonData.at("/HTHDon")).trim().replaceAll("\\s+", " ");
+		String pthuc = commons.getTextJsonNode(jsonData.at("/PThuc")).trim().replaceAll("\\s+", " ");
+		String CMMTT = commons.getTextJsonNode(jsonData.at("/CMMTT")).trim().replaceAll("\\s+", " ");
+		String lhdSDung_HDGTGT = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDGTGT")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDBHang = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDBHang")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDBTSCong = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDBTSCong")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDBHDTQGia = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDBHDTQGia")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDKhac = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDKhac")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_CTu = commons.getTextJsonNode(jsonData.at("/LHDSDung_CTu")).trim().replaceAll("\\s+", " ");
+		
+		String lhdsDung_HDGTGTTHBLai = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDGTGTTHBLai")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDBHTHBLai = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDBHTHBLai")).trim().replaceAll("\\s+", " ");
+		String lhdsDung_HDTMai = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDTMai")).trim().replaceAll("\\s+", " ");
+		
+		List<Object> rowDSCTSSDung = new ArrayList<Object>();
+		
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		
+		List<Document> pipeline = null;
+		Document docFind = null;
+		Document docTmp = null;
+		Document docUpsert = null;
+		String taxCode = "";
+		String fileNameXML = "";
+		String pathDir = "";
+		Path path = null;
+		File file = null;
+		
+		ObjectId objectId = null;
+		ObjectId objectIdUser = null;
+		ObjectId objectIdTK = null;
+		HashMap<String, Object> hO = null;
+		
+		FindOneAndUpdateOptions options = null;
+
+		DocumentBuilderFactory dbf = null;
+		DocumentBuilder db = null;
+		org.w3c.dom.Document doc = null;
+		Element root = null;
+		
+		Element elementContent = null;
+		
+		Element elementSubTmp = null;
+		
+		Element elementSubContent = null;
+		Element elementTmp = null;
+		boolean isSdaveFile = false;
+		switch (actionCode) {
+		case Constants.MSG_ACTION_CODE.CREATED:
+			objectId = null;
+			objectIdUser = null;
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+			}catch(Exception e) {}
+			try {
+				objectIdUser = new ObjectId(header.getUserId());
+			}catch(Exception e) {}
+			
+			// Kiem tra da co chu ky so chua
+			pipeline = new ArrayList<Document>();
+			Date currentDate = new Date(); 
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("IsDelete",new Document("$ne", true))
+					.append("DSCTSSDung.DNgay", new Document("$gte", currentDate));  
+					;
+			pipeline.add(new Document("$match", docFind));
+			
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMCTSo");
+			docTmp = null;
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Quý khách vui lòng vào menu Hệ Thống/Chứng thư số để thêm chữ ký số vào hệ thống trước khi Đăng ký tờ khai 01.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
+			/*KIEM TRA THONG TIN KHACH HANG - USER - TINH THANH - CO QUAN THUE CO TON TAI KHONG*/
+			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", new Document("$ne", true));
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "Users")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", 
+								new Document("IssuerId", header.getIssuerId()).append("_id", objectIdUser)
+								.append("IsActive", true).append("IsDelete", new Document("$ne", true))
+							),
+							new Document("$project", new Document("_id", 1).append("UserName", 1).append("FullName", 1)),
+							new Document("$limit", 1)
+						)
+					)
+					.append("as", "UserInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$UserInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMTinhThanh")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(tinhThanh))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMTinhThanhInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMTinhThanhInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMChiCucThue")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(cqtQLy))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMChiCucThueInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
+				
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			docTmp = null;
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			if(docTmp.get("UserInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			if(docTmp.get("DMTinhThanhInfo") == null || docTmp.get("DMChiCucThueInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Vui lòng kiểm tra lại tỉnh/thành phố và cơ quan thuế.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			taxCode = docTmp.getString("TaxCode");
+			
+			/*TAO FILE XML*/
+			objectIdTK = new ObjectId();
+			path = Paths.get(SystemParams.DIR_E_INVOICE_TKHAI, taxCode);
+			pathDir = path.toString();
+			file = path.toFile();
+			if(!file.exists()) file.mkdirs();
+			
+			/*TAO FILE XML*/
+			fileNameXML = objectIdTK.toString() + ".xml";
+			
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+			
+			root = doc.createElement("TKhai");
+			doc.appendChild(root);
+			
+			elementTmp = null;
+			elementSubTmp = null;
+			elementContent = doc.createElement("DLTKhai");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+			
+			/*THONG TIN CHUNG TO KHAI*/
+			elementSubContent = doc.createElement("TTChung");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "PBan",  SystemParams.VERSION_XML_TOKHAI));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSo", mauSo));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "Ten", ten));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HThuc", hThuc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNNT", tenNnt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MST", mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CQTQLy", docTmp.getEmbedded(Arrays.asList("DMChiCucThueInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MCQTQLy", cqtQLy));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNDDPLuat", tnddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTDDPLuat", dtddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDan", cccDan));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SHChieu", shChieu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NSDDPLuat", commons.convertLocalDateTimeStringToString(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "GTinh", gTinh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCLHe", dcLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCTDTu", dcCTDTu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLHe", nlHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTLHe", dtLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDanh", docTmp.getEmbedded(Arrays.asList("DMTinhThanhInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementContent.appendChild(elementSubContent);
+			
+			/*NOI DUNG CHI TIET TO KHAI*/
+			elementSubContent = doc.createElement("NDTKhai");
+			/*HINH THUC HOA DON AP DUNG*/
+			elementTmp = doc.createElement("HTHDon");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMa", "CMa".equals(htHDon)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMTMTTien", "on".equals(CMMTT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "KCMa", "KCMa".equals(htHDon)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*HINH THUC GUI DU LIEU HDDT - FIX GIA TRI*/
+			elementTmp = doc.createElement("HTGDLHDDT");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTDBKKhan", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTKTDNUBND", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CQXLTSCong", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLTTDCQT", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLQTCTN", "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*PHUONG THUC CHUYEN DU LIEU*/
+			elementTmp = doc.createElement("PThuc");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDDu", "CDDu".equals(pthuc)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CBTHop", "CBTHop".equals(pthuc)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*LOAI HD SU DUNG*/
+			elementTmp = doc.createElement("LHDSDung");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CTu", "on".equals(lhdsDung_CTu)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*DANH SACH CHUNG THU SO*/
+			elementTmp = doc.createElement("DSCTSSDung");
+			if(!jsonData.at("/DSCTSSDung").isMissingNode()) {
+				for(JsonNode o: jsonData.at("/DSCTSSDung")) {
+					String tn = commons.getTextJsonNode(o.at("/TNgay"));
+					String[] words2 = tn.split(" ");
+					String[] words = words2[1].split(":");
+					String h =  words[0];
+					if(h.length() < 2)
+					{
+						h = "0"+h;
+					}
+					String m =  words[1];
+					if(m.length() < 2)
+					{
+						m = "0"+m;
+					}
+					 String s = words[2];
+					 if(s.length() < 2)
+						{
+							s = "0"+s;
+						}
+					 tn = words2[0]+" "+h+":"+m+":"+s;
+					String dn = commons.getTextJsonNode(o.at("/DNgay"));
+					String[] words21 = dn.split(" ");
+					String[] words1 = words21[1].split(":");
+					String h1 =  words1[0];
+					if(h1.length() < 2)
+					{
+						h1 = "0"+h1;
+					}
+					String m1 =  words1[1];
+					if(m1.length() < 2)
+					{
+						m1 = "0"+m1;
+					}
+					 String s1 = words1[2];
+					 if(s1.length() < 2)
+						{
+							s1 = "0"+s1;
+						}
+					 dn = words21[0]+" "+h1+":"+m1+":"+s1;
+					
+					 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					 LocalDateTime dateTime = LocalDateTime.parse(tn, formatter);
+					 DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					 LocalDateTime dateTime1 = LocalDateTime.parse(dn, formatter1);
+					elementSubTmp = doc.createElement("CTS");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTChuc", commons.getTextJsonNode(o.at("/TTChuc"))));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "Seri", commons.getTextJsonNode(o.at("/Seri"))));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "DNgay", commons.convertLocalDateTimeToString(dateTime1, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+				
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "HThuc", commons.getTextJsonNode(o.at("/HThuc"))));
+					elementTmp.appendChild(elementSubTmp);
+					/*
+					 * <TNgay>2021-11-04T00:00:00</TNgay> <DNgay>2022-11-04T23:59:00</DNgay>
+					 */
+					
+					
+					/*
+					 * "TNgay" : ISODate("2021-11-04T00:00:00.000Z"), "DNgay" :
+					 * ISODate("2022-11-04T23:59:00.000Z"),
+					 */
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("TTChuc", commons.getTextJsonNode(o.at("/TTChuc")));
+					hO.put("Seri", commons.getTextJsonNode(o.at("/Seri")));
+					hO.put("TNgay", dateTime);
+					hO.put("DNgay",dateTime1);
+					hO.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
+					rowDSCTSSDung.add(hO);
+					
+				}
+			}
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC CUNG CAP DICH VU*/
+			elementTmp = doc.createElement("TTTCGP");
+			elementSubTmp = doc.createElement("TCGP");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC TRUYEN NHAN*/
+			elementTmp = doc.createElement("TTTCTN");
+			elementSubTmp = doc.createElement("TCTN");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			
+			elementContent.appendChild(elementSubContent);
+			/*END - TAO FILE XML*/
+			 isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			if(!isSdaveFile) {
+				throw new Exception("Lưu dữ liệu không thành công.");
+			}
+			
+			String MTDiep = SystemParams.MSTTCGP + commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+			/*LUU DU LIEU*/
+			docUpsert = new Document("_id", objectIdTK)
+				.append("IssuerId", header.getIssuerId())
+				.append("MTDiep", MTDiep)
+				.append("TenNnt", tenNnt)
+				.append("MSo", mauSo)
+				.append("Ten", ten)
+				.append("HThuc", hThuc)
+				.append("MST", mst)
+				.append("TinhThanhInfo", docTmp.get("DMTinhThanhInfo"))
+				.append("ChiCucThueInfo", docTmp.get("DMChiCucThueInfo"))
+				.append("NLHe", nlHe)
+				.append("DCLHe", dcLHe)
+				.append("DCTDTu", dcCTDTu)
+				.append("DTLHe", dtLHe)
+				.append("NLap", commons.convertStringToLocalDate(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))		
+				.append("TNDDPLuat", tnddpLuat)
+				.append("DTDDPLuat", dtddpLuat)
+				.append("CCCDan", cccDan)
+				.append("SHChieu", shChieu)
+				.append("NSDDPLuat", commons.convertStringToLocalDate(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+				.append("GTinh", gTinh)
+				.append("HTHDon", htHDon)
+				.append("PThuc", pthuc)		
+				.append("CMMTTien",  "on".equals(CMMTT)? "1": "0")		
+				.append("LHDSDung", 
+					new Document("HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0")
+						.append("HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0")
+						.append("HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0")
+						.append("HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0")
+						.append("HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0")
+						.append("HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0")
+						.append("HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0")
+						.append("HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0")
+						.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
+				)
+				.append("DSCTSSDung", rowDSCTSSDung)
+				.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
+				.append("IsDelete", false)
+				.append("Dir", pathDir)
+				.append("FileNameXML", fileNameXML)
+				.append("InfoCreated", 
+					new Document("CreateDate", LocalDateTime.now())
+					.append("CreateUserID", header.getUserId())
+					.append("CreateUserName", header.getUserName())
+					.append("CreateUserFullName", header.getUserFullName())
+				);
+			/*END - LUU DU LIEU*/
+		
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			collection.insertOne(docUpsert);
+			mongoClient.close();
+			
+			
+			DateTimeFormatter format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			LocalDateTime time_dem = LocalDateTime.now();
+			String time = time_dem.format(format_time);
+			String name_company = removeAccent(header.getUserFullName());
+			System.out.println(time + name_company + " Vua tao to khai");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);			
+			return rsp;
+		case Constants.MSG_ACTION_CODE.COPY:
+			objectId = null;
+			objectIdUser = null;
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+			}catch(Exception e) {}
+			try {
+				objectIdUser = new ObjectId(header.getUserId());
+			}catch(Exception e) {}
+			
+			/*KIEM TRA THONG TIN KHACH HANG - USER - TINH THANH - CO QUAN THUE CO TON TAI KHONG*/
+			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", new Document("$ne", true));
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "Users")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", 
+								new Document("IssuerId", header.getIssuerId()).append("_id", objectIdUser)
+								.append("IsActive", true).append("IsDelete", new Document("$ne", true))
+							),
+							new Document("$project", new Document("_id", 1).append("UserName", 1).append("FullName", 1)),
+							new Document("$limit", 1)
+						)
+					)
+					.append("as", "UserInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$UserInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMTinhThanh")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(tinhThanh))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMTinhThanhInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMTinhThanhInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMChiCucThue")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(cqtQLy))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMChiCucThueInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
+				
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			docTmp = null;
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			if(docTmp.get("UserInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			if(docTmp.get("DMTinhThanhInfo") == null || docTmp.get("DMChiCucThueInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Vui lòng kiểm tra lại tỉnh/thành phố và cơ quan thuế.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			taxCode = docTmp.getString("TaxCode");
+			
+			/*TAO FILE XML*/
+			objectIdTK = new ObjectId();
+			path = Paths.get(SystemParams.DIR_E_INVOICE_TKHAI, taxCode);
+			pathDir = path.toString();
+			file = path.toFile();
+			if(!file.exists()) file.mkdirs();
+			
+			/*TAO FILE XML*/
+			fileNameXML = objectIdTK.toString() + ".xml";
+
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+			
+			root = doc.createElement("TKhai");
+			doc.appendChild(root);
+			
+			 elementTmp = null;
+			 elementSubTmp = null;
+			 elementContent = doc.createElement("DLTKhai");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+			
+			/*THONG TIN CHUNG TO KHAI*/
+			elementSubContent = doc.createElement("TTChung");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "PBan",  SystemParams.VERSION_XML_TOKHAI));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSo", mauSo));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "Ten", ten));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HThuc", hThuc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNNT", tenNnt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MST", mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CQTQLy", docTmp.getEmbedded(Arrays.asList("DMChiCucThueInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MCQTQLy", cqtQLy));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNDDPLuat", tnddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTDDPLuat", dtddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDan", cccDan));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SHChieu", shChieu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NSDDPLuat", commons.convertLocalDateTimeStringToString(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "GTinh", gTinh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCLHe", dcLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCTDTu", dcCTDTu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLHe", nlHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTLHe", dtLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDanh", docTmp.getEmbedded(Arrays.asList("DMTinhThanhInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementContent.appendChild(elementSubContent);
+			
+			/*NOI DUNG CHI TIET TO KHAI*/
+			elementSubContent = doc.createElement("NDTKhai");
+			/*HINH THUC HOA DON AP DUNG*/
+			elementTmp = doc.createElement("HTHDon");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMa", "CMa".equals(htHDon)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMTMTTien", "on".equals(CMMTT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "KCMa", "KCMa".equals(htHDon)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*HINH THUC GUI DU LIEU HDDT - FIX GIA TRI*/
+			elementTmp = doc.createElement("HTGDLHDDT");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTDBKKhan", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTKTDNUBND", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CQXLTSCong", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLTTDCQT", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLQTCTN", "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*PHUONG THUC CHUYEN DU LIEU*/
+			elementTmp = doc.createElement("PThuc");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDDu", "CDDu".equals(pthuc)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CBTHop", "CBTHop".equals(pthuc)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*LOAI HD SU DUNG*/
+			elementTmp = doc.createElement("LHDSDung");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CTu", "on".equals(lhdsDung_CTu)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*DANH SACH CHUNG THU SO*/
+			elementTmp = doc.createElement("DSCTSSDung");
+			if(!jsonData.at("/DSCTSSDung").isMissingNode()) {
+				for(JsonNode o: jsonData.at("/DSCTSSDung")) {
+					String tn = commons.getTextJsonNode(o.at("/TNgay"));
+					String[] words2 = tn.split(" ");
+					String[] words = words2[1].split(":");
+					String h =  words[0];
+					if(h.length() < 2)
+					{
+						h = "0"+h;
+					}
+					String m =  words[1];
+					if(m.length() < 2)
+					{
+						m = "0"+m;
+					}
+					 String s = words[2];
+					 if(s.length() < 2)
+						{
+							s = "0"+s;
+						}
+					 tn = words2[0]+" "+h+":"+m+":"+s;
+					String dn = commons.getTextJsonNode(o.at("/DNgay"));
+					String[] words21 = dn.split(" ");
+					String[] words1 = words21[1].split(":");
+					String h1 =  words1[0];
+					if(h1.length() < 2)
+					{
+						h1 = "0"+h1;
+					}
+					String m1 =  words1[1];
+					if(m1.length() < 2)
+					{
+						m1 = "0"+m1;
+					}
+					 String s1 = words1[2];
+					 if(s1.length() < 2)
+						{
+							s1 = "0"+s1;
+						}
+					 dn = words21[0]+" "+h1+":"+m1+":"+s1;
+					
+					 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					 LocalDateTime dateTime = LocalDateTime.parse(tn, formatter);
+					 DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					 LocalDateTime dateTime1 = LocalDateTime.parse(dn, formatter1);
+					elementSubTmp = doc.createElement("CTS");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTChuc", commons.getTextJsonNode(o.at("/TTChuc"))));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "Seri", commons.getTextJsonNode(o.at("/Seri"))));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "DNgay", commons.convertLocalDateTimeToString(dateTime1, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+				
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "HThuc", commons.getTextJsonNode(o.at("/HThuc"))));
+					elementTmp.appendChild(elementSubTmp);
+					/*
+					 * <TNgay>2021-11-04T00:00:00</TNgay> <DNgay>2022-11-04T23:59:00</DNgay>
+					 */
+					
+					
+					/*
+					 * "TNgay" : ISODate("2021-11-04T00:00:00.000Z"), "DNgay" :
+					 * ISODate("2022-11-04T23:59:00.000Z"),
+					 */
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("TTChuc", commons.getTextJsonNode(o.at("/TTChuc")));
+					hO.put("Seri", commons.getTextJsonNode(o.at("/Seri")));
+					hO.put("TNgay", dateTime);
+					hO.put("DNgay",dateTime1);
+					hO.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
+					rowDSCTSSDung.add(hO);
+					
+				}
+			}
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC CUNG CAP DICH VU*/
+			elementTmp = doc.createElement("TTTCGP");
+			elementSubTmp = doc.createElement("TCGP");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC TRUYEN NHAN*/
+			elementTmp = doc.createElement("TTTCTN");
+			elementSubTmp = doc.createElement("TCTN");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			elementContent.appendChild(elementSubContent);
+			/*END - TAO FILE XML*/
+			 isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			if(!isSdaveFile) {
+				throw new Exception("Lưu dữ liệu không thành công.");
+			}
+			
+			MTDiep = SystemParams.MSTTCGP + commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+			/*LUU DU LIEU*/
+			docUpsert = new Document("_id", objectIdTK)
+				.append("IssuerId", header.getIssuerId())
+				.append("MTDiep", MTDiep)
+				.append("TenNnt", tenNnt)
+				.append("MSo", mauSo)
+				.append("Ten", ten)
+				.append("HThuc", hThuc)
+				.append("MST", mst)
+				.append("TinhThanhInfo", docTmp.get("DMTinhThanhInfo"))
+				.append("ChiCucThueInfo", docTmp.get("DMChiCucThueInfo"))
+				.append("NLHe", nlHe)
+				.append("DCLHe", dcLHe)
+				.append("DCTDTu", dcCTDTu)
+				.append("DTLHe", dtLHe)
+				.append("NLap", commons.convertStringToLocalDate(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))	
+				.append("TNDDPLuat", tnddpLuat)
+				.append("DTDDPLuat", dtddpLuat)
+				.append("CCCDan", cccDan)
+				.append("SHChieu", shChieu)
+				.append("NSDDPLuat", commons.convertStringToLocalDate(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+				.append("GTinh", gTinh)
+				.append("HTHDon", htHDon)
+				.append("PThuc", pthuc)		
+				.append("CMMTTien",  "on".equals(CMMTT)? "1": "0")		
+				
+				.append("LHDSDung", 
+					new Document("HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0")
+						.append("HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0")
+						.append("HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0")
+						.append("HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0")
+						.append("HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0")
+						.append("HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0")
+						.append("HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0")
+						.append("HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0")
+						.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
+				)
+				.append("DSCTSSDung", rowDSCTSSDung)
+				.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
+				.append("IsDelete", false)
+				.append("Dir", pathDir)
+				.append("FileNameXML", fileNameXML)
+				.append("InfoCreated", 
+					new Document("CreateDate", LocalDateTime.now())
+					.append("CreateUserID", header.getUserId())
+					.append("CreateUserName", header.getUserName())
+					.append("CreateUserFullName", header.getUserFullName())
+				);
+			/*END - LUU DU LIEU*/
+		
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			collection.insertOne(docUpsert);
+			mongoClient.close();
+			
+			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			time_dem  = LocalDateTime.now();
+			time = time_dem.format(format_time);
+			name_company = removeAccent(header.getUserFullName());
+			System.out.println(time +name_company+" Vua copy to khai");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);				
+			return rsp;
+		case Constants.MSG_ACTION_CODE.MODIFY:
+			objectId = null;
+			objectIdUser = null;
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+			}catch(Exception e) {}
+			try {
+				objectIdUser = new ObjectId(header.getUserId());
+			}catch(Exception e) {}
+			try {
+				objectIdTK = new ObjectId(_id);
+			}catch(Exception e) {}
+			
+			/*KIEM TRA THONG TIN KHACH HANG - USER - TINH THANH - CO QUAN THUE CO TON TAI KHONG*/
+			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", new Document("$ne", true));
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "Users")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", 
+								new Document("IssuerId", header.getIssuerId()).append("_id", objectIdUser)
+								.append("IsActive", true).append("IsDelete", new Document("$ne", true))
+							),
+							new Document("$project", new Document("_id", 1).append("UserName", 1).append("FullName", 1)),
+							new Document("$limit", 1)
+						)
+					)
+					.append("as", "UserInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$UserInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMTinhThanh")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(tinhThanh))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMTinhThanhInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMTinhThanhInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMChiCucThue")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", new Document("IsDelete", new Document("$ne", true)).append("code", commons.regexEscapeForMongoQuery(cqtQLy))),
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))
+						)
+					)
+					.append("as", "DMChiCucThueInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
+				
+			docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+					.append("Status", Constants.INVOICE_STATUS.CREATED)		
+					.append("_id", objectIdTK);
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "DMTKhai")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", docFind)
+						)
+					)
+					.append("as", "DMTKhai")
+				)
+			);
+			
+			pipeline.add(new Document("$unwind", new Document("path", "$DMTKhai").append("preserveNullAndEmptyArrays", true)));
+			
+
+		
+			
+			 mongoClient = cfg.mongoClient();
+			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+			
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			if(docTmp.get("UserInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			if(docTmp.get("DMTinhThanhInfo") == null || docTmp.get("DMChiCucThueInfo") == null) {
+				responseStatus = new MspResponseStatus(9999, "Vui lòng kiểm tra lại tỉnh/thành phố và cơ quan thuế.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			if(docTmp.get("DMTKhai") == null) {
+				responseStatus = new MspResponseStatus(9999, "Vui lòng kiểm tra lại thông tin tờ khai 01.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
+
+		
+			taxCode = docTmp.getString("TaxCode");
+			
+			/*TAO FILE XML*/
+			path = Paths.get(SystemParams.DIR_E_INVOICE_TKHAI, taxCode);
+			pathDir = docTmp.getEmbedded(Arrays.asList("DMTKhai", "Dir"), "");
+			fileNameXML =docTmp.getEmbedded(Arrays.asList("DMTKhai", "FileNameXML"), "");
+			file = new File(pathDir);
+			if(!file.exists()) file.mkdirs();
+			/*TAO FILE XML*/
+			
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+			
+			root = doc.createElement("TKhai");
+			doc.appendChild(root);
+
+			elementTmp = null;
+			elementSubTmp = null;
+			elementContent = doc.createElement("DLTKhai");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+			
+			/*THONG TIN CHUNG TO KHAI*/
+			elementSubContent = doc.createElement("TTChung");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "PBan",  SystemParams.VERSION_XML_TOKHAI));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSo", mauSo));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "Ten", ten));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HThuc", hThuc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNNT", tenNnt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MST", mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CQTQLy", docTmp.getEmbedded(Arrays.asList("DMChiCucThueInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MCQTQLy", cqtQLy));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNDDPLuat", tnddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTDDPLuat", dtddpLuat));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CCCDan", cccDan));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SHChieu", shChieu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NSDDPLuat", commons.convertLocalDateTimeStringToString(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "GTinh", gTinh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCLHe", dcLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DCTDTu", dcCTDTu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLHe", nlHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DTLHe", dtLHe));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDanh", docTmp.getEmbedded(Arrays.asList("DMTinhThanhInfo", "name"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+			elementContent.appendChild(elementSubContent);
+			
+			/*NOI DUNG CHI TIET TO KHAI*/
+			elementSubContent = doc.createElement("NDTKhai");
+			/*HINH THUC HOA DON AP DUNG*/
+			elementTmp = doc.createElement("HTHDon");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMa", "CMa".equals(htHDon)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CMTMTTien", "on".equals(CMMTT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "KCMa", "KCMa".equals(htHDon)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*HINH THUC GUI DU LIEU HDDT - FIX GIA TRI*/
+			elementTmp = doc.createElement("HTGDLHDDT");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTDBKKhan", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "NNTKTDNUBND", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CQXLTSCong", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLTTDCQT", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDLQTCTN", "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*PHUONG THUC CHUYEN DU LIEU*/
+			elementTmp = doc.createElement("PThuc");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CDDu", "CDDu".equals(pthuc)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CBTHop", "CBTHop".equals(pthuc)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*LOAI HD SU DUNG*/
+			elementTmp = doc.createElement("LHDSDung");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CTu", "on".equals(lhdsDung_CTu)? "1": "0"));
+			elementSubContent.appendChild(elementTmp);
+			/*DANH SACH CHUNG THU SO*/
+			elementTmp = doc.createElement("DSCTSSDung");
+			if (!jsonData.at("/DSCTSSDung").isMissingNode()) {
+				for (JsonNode o : jsonData.at("/DSCTSSDung")) {
+					String tn = commons.getTextJsonNode(o.at("/TNgay"));
+					String[] words2 = tn.split(" ");
+					String[] words = words2[1].split(":");
+					String h = words[0];
+					if (h.length() < 2) {
+						h = "0" + h;
+					}
+					String m = words[1];
+					if (m.length() < 2) {
+						m = "0" + m;
+					}
+					String s = words[2];
+					if (s.length() < 2) {
+						s = "0" + s;
+					}
+					tn = words2[0] + " " + h + ":" + m + ":" + s;
+					String dn = commons.getTextJsonNode(o.at("/DNgay"));
+					String[] words21 = dn.split(" ");
+					String[] words1 = words21[1].split(":");
+					String h1 = words1[0];
+					if (h1.length() < 2) {
+						h1 = "0" + h1;
+					}
+					String m1 = words1[1];
+					if (m1.length() < 2) {
+						m1 = "0" + m1;
+					}
+					String s1 = words1[2];
+					if (s1.length() < 2) {
+						s1 = "0" + s1;
+					}
+					dn = words21[0] + " " + h1 + ":" + m1 + ":" + s1;
+
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					LocalDateTime dateTime = LocalDateTime.parse(tn, formatter);
+					DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					LocalDateTime dateTime1 = LocalDateTime.parse(dn, formatter1);
+					elementSubTmp = doc.createElement("CTS");
+					elementSubTmp.appendChild(
+							commons.createElementWithValue(doc, "TTChuc", commons.getTextJsonNode(o.at("/TTChuc"))));
+					elementSubTmp.appendChild(
+							commons.createElementWithValue(doc, "Seri", commons.getTextJsonNode(o.at("/Seri"))));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons
+							.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "DNgay", commons
+							.convertLocalDateTimeToString(dateTime1, Constants.FORMAT_DATE.FORMAT_DATETIME_EINVOICE)));
+
+					elementSubTmp.appendChild(
+							commons.createElementWithValue(doc, "HThuc", commons.getTextJsonNode(o.at("/HThuc"))));
+					elementTmp.appendChild(elementSubTmp);
+
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("TTChuc", commons.getTextJsonNode(o.at("/TTChuc")));
+					hO.put("Seri", commons.getTextJsonNode(o.at("/Seri")));
+					hO.put("TNgay", dateTime);
+					hO.put("DNgay", dateTime1);
+					hO.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
+					rowDSCTSSDung.add(hO);
+
+				}
+			}
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC CUNG CAP DICH VU*/
+			elementTmp = doc.createElement("TTTCGP");
+			elementSubTmp = doc.createElement("TCGP");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			/*TO CHUC TRUYEN NHAN*/
+			elementTmp = doc.createElement("TTTCTN");
+			elementSubTmp = doc.createElement("TCTN");
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
+			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+			elementTmp.appendChild(elementSubTmp);
+			elementSubContent.appendChild(elementTmp);
+			
+			elementContent.appendChild(elementSubContent);
+			/*END - TAO FILE XML*/
+			isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			if(!isSdaveFile) {
+				throw new Exception("Lưu dữ liệu không thành công.");
+			}
+			
+			MTDiep = SystemParams.MSTTCGP + commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+			
+			/*LUU DU LIEU*/
+			docUpsert = new Document("_id", objectIdTK)
+					.append("IssuerId", header.getIssuerId())
+					.append("MTDiep", MTDiep)
+					.append("TenNnt", tenNnt)
+					.append("MSo", mauSo)
+					.append("Ten", ten)
+					.append("HThuc", hThuc)
+					.append("MST", mst)
+					.append("TinhThanhInfo", docTmp.get("DMTinhThanhInfo"))
+					.append("ChiCucThueInfo", docTmp.get("DMChiCucThueInfo"))
+					.append("NLHe", nlHe)
+					.append("DCLHe", dcLHe)
+					.append("DCTDTu", dcCTDTu)
+					.append("DTLHe", dtLHe)
+					.append("NLap", commons.convertStringToLocalDate(nLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))	
+					.append("TNDDPLuat", tnddpLuat)
+					.append("DTDDPLuat", dtddpLuat)
+					.append("CCCDan", cccDan)
+					.append("SHChieu", shChieu)
+					.append("NSDDPLuat", commons.convertStringToLocalDate(nsddpLuat, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+					.append("GTinh", gTinh)
+					.append("HTHDon", htHDon)
+					.append("PThuc", pthuc)		
+					.append("CMMTTien",  "on".equals(CMMTT)? "1": "0")		
+					
+					.append("LHDSDung", 
+						new Document("HDGTGT", "on".equals(lhdSDung_HDGTGT)? "1": "0")
+							.append("HDGTGTTHBLai", "on".equals(lhdsDung_HDGTGTTHBLai)? "1": "0")
+							.append("HDBHang", "on".equals(lhdsDung_HDBHang)? "1": "0")
+							.append("HDBHTHBLai", "on".equals(lhdsDung_HDBHTHBLai)? "1": "0")
+							.append("HDTMai", "on".equals(lhdsDung_HDTMai)? "1": "0")
+							.append("HDBTSCong", "on".equals(lhdsDung_HDBTSCong)? "1": "0")
+							.append("HDBHDTQGia", "on".equals(lhdsDung_HDBHDTQGia)? "1": "0")
+							.append("HDKhac", "on".equals(lhdsDung_HDKhac)? "1": "0")
+							.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
+					)
+					.append("DSCTSSDung", rowDSCTSSDung)
+					.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
+					.append("IsDelete", false)
+					.append("Dir", pathDir)
+					.append("FileNameXML", fileNameXML)
+					.append("InfoUpdated", 
+							new Document("UpdatedDate", LocalDateTime.now())
+							.append("UpdatedUserID", header.getUserId())
+							.append("UpdatedUserName", header.getUserName())
+							.append("UpdatedUserFullName", header.getUserFullName())
+					);
+			
+			/*END - LUU DU LIEU*/
+			
+			options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+			
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			collection.findOneAndUpdate(docFind, new Document("$set", docUpsert), options);
+			mongoClient.close();
+			
+			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");			
+			time_dem  = LocalDateTime.now();			
+			time = time_dem.format(format_time);
+			name_company = removeAccent(header.getUserFullName());
+			System.out.println(time +name_company+" Vua thay doi to khai");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);				
+			return rsp;	
+			
+		case Constants.MSG_ACTION_CODE.DELETE:
+			objectId = null;
+			try {
+				objectId = new ObjectId(_id);
+			}catch(Exception e) {}
+			
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("_id", objectId).append("IsDelete", new Document("$ne", true))
+					.append("Status", "CREATED");
+
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			docTmp = null;
+			try {
+				docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			mongoClient.close();
+
+			if(null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin tờ khai.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+
+			options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+		
+			mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			collection.findOneAndUpdate(docFind,
+					new Document("$set", new Document("IsDelete", true).append("InfoDeleted",
+							new Document("DeletedDate", LocalDateTime.now()).append("DeletedUserID", header.getUserId())
+									.append("DeletedUserName", header.getUserName())
+									.append("DeletedUserFullName", header.getUserFullName()))),
+					options);
+			mongoClient.close();
+
+			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");			
+			time_dem  = LocalDateTime.now();			
+			time = time_dem.format(format_time);
+			
+			name_company = removeAccent(header.getUserFullName());
+			System.out.println(time+name_company+" Vua xoa to khai");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);				
+			return rsp;
+		default:
+			responseStatus = new MspResponseStatus(9998, Constants.MAP_ERROR.get(9998));
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+	}
+
+	@Override
+	public MsgRsp detailV1(JSONRoot jsonRoot, String _id) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		
+		ObjectId objectId = null;
+		try {
+			objectId = new ObjectId(_id);
+		}catch(Exception e) {}
+		
+		Document docFind = new Document("IssuerId", header.getIssuerId())
+				.append("IsDelete", new Document("$ne", true)).append("_id", objectId);
+		
+		Document docTmp = null;
 	
+		
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+
+		try {
+			docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+		mongoClient.close();
+		
+		
+		if(null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, Constants.MAP_ERROR.get(9999));
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		rsp.setObjData(docTmp);
+		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp signSingleV1(InputStream is, JSONRoot jsonRoot, String _id) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		
+		/*DOC NOI DUNG XML DA KY*/
+		org.w3c.dom.Document xmlDoc = commons.inputStreamToDocument(is, true);
+		
+		ObjectId objectId = null;
+		try {
+			objectId = new ObjectId(_id);
+		}catch(Exception e) {}
+		
+		/*KIEM TRA XEM THONG TIN TKHAI CO TON TAI KHONG*/
+		Document docFind = new Document("IssuerId", header.getIssuerId())
+				.append("_id", objectId).append("IsDelete", new Document("$ne", true))
+				.append("Status", "CREATED");
+		
+		Document docTmp = null;
+	
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+
+		try {
+			docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+		mongoClient.close();
+		
+		
+		if(null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin tờ khai.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		/*LUU FILE VA CAP NHAT TRANG THAI*/
+		String dir = docTmp.get("Dir", "");
+		String fileName = _id + "_processing.xml";
+		boolean check = commons.docW3cToFile(xmlDoc, dir, fileName);
+		if(!check) {
+			responseStatus = new MspResponseStatus(9999, "Lưu tập tin đã ký không thành công.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		/*KET NOI VA DAY HD DEN CHUC TRUYEN NHAN*/
+		org.w3c.dom.Document rTCTN = null;
+		String MTDiep = docTmp.get("MTDiep", "");
+		String MST = docTmp.get("MST", "");
+		/*END - KET NOI VA DAY HD DEN CHUC TRUYEN NHAN*/
+		
+		rTCTN = tctnService.callTiepNhanThongDiep("100", MTDiep, MST, "1", commons.fileToDocument(new File(dir, fileName), true));
+		if(rTCTN == null) {
+			rTCTN = tctnService.callTiepNhanThongDiep("100", MTDiep, MST, "1", commons.fileToDocument(new File(dir, fileName), true));
+		}
+		
+		/*DO DU LIEU TRA VE - CAP NHAT LAI KET QUA*/
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node nodeDLHDon = (Node) xPath.evaluate("/TDiep", rTCTN, XPathConstants.NODE);
+		String codeTTTNhan = "3";
+		codeTTTNhan = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/TTTNhan", nodeDLHDon, XPathConstants.NODE));
+		
+//		if (codeTTTNhan.equals("1")) {
+//			responseStatus = new MspResponseStatus(9999, "Trạng thái tiếp nhận lỗi.");
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;
+//		}
+		switch (codeTTTNhan) {
+		case "1":
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy tenant dữ liệu.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		case "2":
+			responseStatus = new MspResponseStatus(9999, "Mã thông điệp đã tồn tại.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		case "3":
+			responseStatus = new MspResponseStatus(9999, "Thất bại, lỗi Exception.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		default:
+			break;
+		}
+
+		/*CAP NHAT LAI TRANG THAI DANG CHO XU LY*/
+		FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+		options.upsert(false);
+		options.maxTime(5000, TimeUnit.MILLISECONDS);
+		options.returnDocument(ReturnDocument.AFTER);
+
+		mongoClient = cfg.mongoClient();
+		collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+		collection.findOneAndUpdate(docFind,
+				new Document("$set", 
+						new Document("Status", "PROCESSING")
+						.append("InfoSigned", new Document("SignedDate", LocalDateTime.now())
+											.append("SignedUserID", header.getUserId())
+											.append("SignedUserName", header.getUserName())
+											.append("SignedUserFullName", header.getUserFullName()))),
+				options);
+		mongoClient.close();
+					
+		DateTimeFormatter format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		LocalDateTime time_dem  = LocalDateTime.now();
+		String time = time_dem.format(format_time);	
+			
+		String name_company = removeAccent(header.getUserFullName());
+		System.out.println(time +name_company+" Vua ky to khai");
+		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp refreshStatusCQTV1(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		
+		Object objData = msg.getObjData();
+		
+		JsonNode jsonData = null;
+		if(objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		}else{
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		
+		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+		
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		
+		ObjectId objectId = null;
+		try {
+			objectId = new ObjectId(_id);
+		}catch(Exception e) {}
+		
+		/*KIEM TRA XEM THONG TIN TKHAI CO TON TAI KHONG*/
+		Document docFind = new Document("IssuerId", header.getIssuerId())
+				.append("_id", objectId).append("IsDelete", new Document("$ne", true))
+				.append("Status", "PROCESSING");
+		
+		Document docTmp = null;
+	
+		
+		MongoClient mongoClient = cfg.mongoClient();
+		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+
+		try {
+			docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+		mongoClient.close();
+		
+		if(null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin tờ khai.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		String MTDiep = docTmp.get("MTDiep", "");
+		
+		org.w3c.dom.Document rTCTN = tctnService.callTraCuuThongDiep(MTDiep);
+		if(rTCTN == null) {
+			responseStatus = new MspResponseStatus(9999, "Kết nối với TCTN không thành công.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		/*DO DU LIEU TRA VE - CAP NHAT LAI KET QUA*/
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node nodeKetQuaTraCuu = (Node) xPath.evaluate("/KetQuaTraCuu", rTCTN, XPathConstants.NODE);
+		String MaKetQua = commons.getTextFromNodeXML((Element) xPath.evaluate("MaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
+		String MoTaKetQua = commons.getTextFromNodeXML((Element) xPath.evaluate("MoTaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
+		
+		if(!"0".equals(MaKetQua)) {
+			responseStatus = new MspResponseStatus(9999, MoTaKetQua);
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		Node nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[last()]", nodeKetQuaTraCuu, XPathConstants.NODE);
+		if(nodeTDiep == null) {
+			responseStatus = new MspResponseStatus(9999, "Không đọc được kết quả tra cứu.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		String CQT_MLTDiep = commons.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+		if("|102|103|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
+			responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		String dir = docTmp.get("Dir", "");
+		String fileName = _id + "_" + CQT_MLTDiep + ".xml";
+		boolean boo = false;
+		try {
+			boo = commons.docW3cToFile(rTCTN, dir, fileName);
+		}catch(Exception e) {}
+		if(!boo) {
+			responseStatus = new MspResponseStatus(9999, "Lưu tập tin trả về từ CQT không thành công.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		String MLoi = "";
+		String MTa = "";
+		Node nodeTmp = null;
+		/*CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT*/
+		FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+		options.upsert(false);
+		options.maxTime(5000, TimeUnit.MILLISECONDS);
+		options.returnDocument(ReturnDocument.AFTER);
+		
+		Document docUpdate = new Document("StatusCQT", CQT_MLTDiep);
+		if("103".equals(CQT_MLTDiep)) {
+			/*LAY DANH SACH LOI (NEU CO)*/
+			NodeList nodeListDSLDKCNhan = (NodeList) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKCNhan/LDo", nodeTDiep, XPathConstants.NODESET) ;
+			if(null == nodeListDSLDKCNhan || nodeListDSLDKCNhan.getLength() == 0) {
+				docUpdate.append("Status", "COMPLETE");	
+			}else {
+				List<Document> DSLDKCNhan = new ArrayList<Document>();
+				for(int i = 0; i < nodeListDSLDKCNhan.getLength(); i++) {
+					nodeTmp = nodeListDSLDKCNhan.item(i);
+					if("".equals(MLoi)) {
+						MLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("MLoi", nodeTmp, XPathConstants.NODE));
+						MTa = commons.getTextFromNodeXML((Element) xPath.evaluate("MTa", nodeTmp, XPathConstants.NODE));
+					}
+					DSLDKCNhan.add(
+						new Document("MLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("MLoi", nodeTmp, XPathConstants.NODE)))
+						.append("MTa", commons.getTextFromNodeXML((Element) xPath.evaluate("MTa", nodeTmp, XPathConstants.NODE)))
+					);
+				}
+				docUpdate.append("Status", Constants.INVOICE_STATUS.ERROR_CQT)
+				.append("LDo", 
+					new Document("MLoi", MLoi).append("MTa", MTa)
+				)
+				.append("DSLDKCNhan", DSLDKCNhan);
+			}
+			
+		}else {
+			MLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+			MTa = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa", nodeTDiep, XPathConstants.NODE));
+			
+			if("".equals(MLoi)) {
+				responseStatus = new MspResponseStatus(9999, "CQT chưa có thông báo kết quả trả về.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			docUpdate.append("Status", Constants.INVOICE_STATUS.ERROR_CQT)
+				.append("LDo", 
+					new Document("MLoi", MLoi).append("MTa", MTa)
+				);
+			
+		}
+	
+		 mongoClient = cfg.mongoClient();
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMTKhai");
+			collection.findOneAndUpdate(
+					docFind, 
+					new Document("$set", docUpdate), 
+					options
+				);			
+			mongoClient.close();
+			
+			
+		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}	
 }

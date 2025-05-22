@@ -27,7 +27,10 @@ public class SystemParams {
 	public static String VISNAM_URL_TRACUUTHONGDIEP = "";
 	
 	public static String MSTTCGP = "";				//MST DV CUNG CAP GIAI PHAP
+	public static String TTCGP = "CÔNG TY TNHH SES GROUP";	
+	
 	public static String MSTDVTN = "";				//MST DV TRUYEN NHAN
+	public static String TDVTN = "CÔNG TY CỔ PHẦN THƯƠNG MẠI VISNAM";
 	
 	public static String MaxViewPdf = "";	
 	
