@@ -631,12 +631,12 @@ public class EInvoiceCRUDController1 extends AbstractController{
 				check = false;
 				break;
 			}
-			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
-				dto.setErrorCode(999);
-				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
-						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu (, . : - /)");
-				return dto;
-			}
+//			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
+//				dto.setErrorCode(999);
+//				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+//						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu: , . : ; / ( ) [ ] { } -");
+//				return dto;
+//			}
 			count++;
 		}
 		if(!check) {
