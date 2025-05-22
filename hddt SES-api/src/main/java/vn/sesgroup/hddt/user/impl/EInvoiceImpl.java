@@ -387,7 +387,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				return rsp;
 			}
 			if (docTmp.get("DMMauSoKyHieu") == null) {
-				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin ký hiệu mẫu số.");
+				responseStatus = new MspResponseStatus(9999, "Hết số lượng hóa đơn.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
@@ -2054,7 +2054,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				return rsp;
 			}
 			if (docTmp.get("DMMauSoKyHieu") == null) {
-				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin ký hiệu mẫu số.");
+				responseStatus = new MspResponseStatus(9999, "Hết số lượng hóa đơn.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
