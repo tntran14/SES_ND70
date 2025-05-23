@@ -4797,7 +4797,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String ParamUSD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "ParamUSD"), "");
 				
 		String fileNameXML = _id + "_" + MCCQT + ".xml";
-		String fileNameXMLSigned = _id + "_signed.xml";
 		String fileNamePDF = _id + ".pdf";
 		if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 			fileNamePDF = _id + "-deleted.pdf";
@@ -4897,11 +4896,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		if (file.exists() && file.isFile()) {
 			listFiles.add(file.toString());
 			listNames.add(mauHD + "-" + soHD + ".pdf");
-		}
-		file = new File(dir, fileNameXMLSigned);
-		if (file.exists() && file.isFile()) {
-			listFiles.add(file.toString());
-			listNames.add(mauHD + "-" + soHD + "-signed.xml");
 		}
 
 		MailConfig mailConfig = new MailConfig(docTmp.get("ConfigEmail", Document.class));

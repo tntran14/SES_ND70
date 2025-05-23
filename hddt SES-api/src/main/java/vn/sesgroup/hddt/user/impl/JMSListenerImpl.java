@@ -279,7 +279,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			
 			
 			String fileNameXML = _id + "_" + MCCQT + ".xml";
-			String fileNameXMLSigned = _id + "_signed.xml"; 
 			String fileNamePDF = _id + ".pdf";
 			if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 				fileNamePDF = _id + "-deleted.pdf";
@@ -377,11 +376,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			if (file.exists() && file.isFile()) {
 				listFiles.add(file.toString());
 				listNames.add(mauHD + "-" + soHD + ".pdf");
-			}
-			file = new File(dir, fileNameXMLSigned);
-			if (file.exists() && file.isFile()) {
-				listFiles.add(file.toString());
-				listNames.add(mauHD + "-" + soHD + "-signed.xml");
 			}
 			
 			/* THUC HIEN GUI MAIL */
@@ -683,7 +677,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				File file = null;
 
 				String fileNameXML = _id + "_" + MCCQT + ".xml";
-				String fileNameXMLSigned = _id + "_signed.xml"; 
 				String fileNamePDF = _id + ".pdf";
 				if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
 					fileNamePDF = _id + "-deleted.pdf";
@@ -749,11 +742,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				if (file.exists() && file.isFile()) {
 					listFiles.add(file.toString());
 					listNames.add(mauHD + "-" + soHD + ".pdf");
-				}
-				file = new File(dir, fileNameXMLSigned);
-				if (file.exists() && file.isFile()) {
-					listFiles.add(file.toString());
-					listNames.add(mauHD + "-" + soHD + "-signed.xml");
 				}
 				/* THUC HIEN GUI MAIL */
 				boolean boo = false;
