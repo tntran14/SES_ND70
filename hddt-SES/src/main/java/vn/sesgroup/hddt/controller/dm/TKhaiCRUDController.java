@@ -343,10 +343,10 @@ public class TKhaiCRUDController extends AbstractController{
 					hItem.put("Seri", commons.getTextJsonNode(o.at("/Seri")));
 					hItem.put("TNgay", commons.convertLocalDateTimeToString(commons.convertLongToLocalDateTime(o.at("/TNgay").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
 					hItem.put("DNgay", commons.convertLocalDateTimeToString(commons.convertLongToLocalDateTime(o.at("/DNgay").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
-					if("EDIT".equals(action))
+//					if("EDIT".equals(action))
 						hItem.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
-					else
-						hItem.put("HThuc", Constants.MAP_TKHAI_HTHUC.get(commons.getTextJsonNode(o.at("/HThuc"))));
+//					else
+//						hItem.put("HThuc", Constants.MAP_TKHAI_HTHUC.get(commons.getTextJsonNode(o.at("/HThuc"))));
 					
 					prds.add(hItem);
 				}

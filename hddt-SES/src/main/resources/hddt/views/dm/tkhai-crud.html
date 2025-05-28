@@ -1038,10 +1038,11 @@ hideLoading();
 		text = '<div class="form-row m-l-1 m-r-1">';
 		switch (key) {	
 		case 'HThuc':
+			const hthucVal = null == data[key] ? '' : data[key];
 			text += '<select class="input-grid form-control form-control-sm input-grid-feature"  name="' + key + '" style="height: 100%;" >';
-			text += '<option value="1">Thêm mới</option>';
-			text += '<option value="2">Gia hạn</option>';
-			text += '<option value="3">Ngừng sử dụng</option>';
+			text += '<option value="1"' + (hthucVal == '1' ? ' selected' : '') + '>Thêm mới</option>';
+			text += '<option value="2"' + (hthucVal == '2' ? ' selected' : '') + '>Gia hạn</option>';
+			text += '<option value="3"' + (hthucVal == '3' ? ' selected' : '') + '>Ngừng sử dụng</option>';
 			text += '</select>';
 			break;
 		case 'TTChuc':
