@@ -650,7 +650,7 @@ public class MauHDCRUDController extends AbstractController{
 	public void downloadImage(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String fileName = req.getParameter("fileName");
 		String taxCode = req.getParameter("taxCode");
-		Path imagePath = Paths.get("C:\\hddt-ses\\server\\template")
+		Path imagePath = Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE)
 				.resolve("images")
 				.resolve(taxCode)
 				.resolve(fileName)

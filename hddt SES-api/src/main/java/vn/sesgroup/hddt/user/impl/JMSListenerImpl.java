@@ -394,10 +394,9 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			//List<String> arrayName = o.get("EmailListName", List.class);
 			String name1 = listNames.get(0);
 	        String name2 = listNames.get(1);
-	        String name3 = listNames.get(2);
 	        String fileData = "";
 	        String fileData1 = "";
-	        String fileData2 = "";
+
 	       // List<String> arrayFiles = o.get("EmailListFile", List.class);
 	    	   if(null != listFiles) {
 	        		File file1 = null;
@@ -410,9 +409,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	        				    if (i == 0)
 									fileData = com.mailjet.client.Base64.encode(filecontent); // XML 1
 								if (i == 1)
-									fileData1 = com.mailjet.client.Base64.encode(filecontent); // PDF
-								if (i == 2)
-									fileData2 = com.mailjet.client.Base64.encode(filecontent); // XML 2 				  
+									fileData1 = com.mailjet.client.Base64.encode(filecontent); // PDF		  
 	        				    i++;
 	        			}
 	        		}		
@@ -423,6 +420,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	    	   MailjetClient client;
 	    	   MailjetRequest request;
 	    	   MailjetResponse response;
+				
 	    	   for(String mail: arrayMail) {
 	    			String status = "";
 	    		//  if(commons.checkStringWithRegex(Constants.REGEX_CHECK.STRING_IS_EMAIL, mail)) {							
@@ -444,9 +442,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 		                        .put(new JSONObject().put("ContentType", "application/pdf")
 		                                       .put("Filename", name2)
 		                                       .put("Base64Content", fileData1))
-		                        .put(new JSONObject().put("ContentType", "application/xml")
-										.put("Filename", name3)
-										.put("Base64Content", fileData2))
 		                        )
 		                ));
 		             response = client.post(request);
