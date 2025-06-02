@@ -691,7 +691,7 @@
 							 logoValue = $('#backgroundFileName').val();
 						}
 						
-						 const downloadUrl = `/main/${transactionMain}/download-image?fileName=${encodeURIComponent(logoValue)}&taxCode=${encodeURIComponent(taxCode)}`;
+						 const downloadUrl = ROOT_PATH + `/main/${transactionMain}/download-image?fileName=${encodeURIComponent(logoValue)}&taxCode=${encodeURIComponent(taxCode)}`;
 
 						 fetch(downloadUrl, {
 						        method: 'GET'
