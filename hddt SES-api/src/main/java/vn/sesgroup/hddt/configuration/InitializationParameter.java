@@ -48,6 +48,7 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 		SystemParams.DIR_E_INVOICE_DATA = env.getProperty("dir.einvoice.data", "");
 		SystemParams.DIR_E_INVOICE_TKHAI = env.getProperty("dir.einvoice.tkhai", "");
 		SystemParams.DIR_E_INVOICE_HDSS = env.getProperty("dir.einvoice.hdss", "");
+		SystemParams.DIR_E_INVOICE_BBDCTT = env.getProperty("dir.einvoice.bbdctt", "");
 		SystemParams.DIR_E_INVOICE_TEMPLATE = env.getProperty("dir.einvoice.template", "");
 		SystemParams.DIR_TEMPORARY = env.getProperty("dir.temporary", "");
 		
