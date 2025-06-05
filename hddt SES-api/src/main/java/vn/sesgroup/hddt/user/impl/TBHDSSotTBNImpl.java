@@ -1340,7 +1340,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				    Date date = dateFormat.parse(Ngay);
 											
 					Document insertHD = new Document("IssuerId", header.getIssuerId())
-							.append("SignStatusCode", "SIDED")
+							.append("SignStatusCode", "SIGNED")
 							.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
 							.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 									.append("KHHDon", KHHDon)
@@ -1477,7 +1477,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 			    Date date = dateFormat.parse(Ngay);
 										
 				Document insertHD = new Document("IssuerId", header.getIssuerId())
-						.append("SignStatusCode", "SIDED")
+						.append("SignStatusCode", "SIGNED")
 						.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
 						.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 								.append("KHHDon", KHHDon)
