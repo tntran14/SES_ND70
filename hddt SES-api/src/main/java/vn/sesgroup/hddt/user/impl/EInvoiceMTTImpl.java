@@ -6002,6 +6002,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				}
 				EInvoiceMTTExcelForm eInvoiceExcelForm = extractInfoFromCellAuto(cells);
 				eInvoiceMTTExcelFormList.add(eInvoiceExcelForm);
+				System.out.println();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -6541,7 +6542,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 														.append("Fax", Fax)
 														.append("Website", Website))
 												.append("NMua", new Document("Ten", tempTenDonVi)
-																.append("MST", "")
+																.append("MST", tempMST)
 																.append("DChi", tempDChiKH)
 																.append("MKHang", "")
 																.append("SDThoai", tempSdtKH)
