@@ -504,24 +504,23 @@ public class TBHDSSotTBNCRUDController extends AbstractController{
 		boolean check = true;
 		int count = 0;
 		JsonNode jsonNode = null;
-		while(count < jsonNodeTmp.size() && check) {
+		while (count < jsonNodeTmp.size() && check) {
 			jsonNode = jsonNodeTmp.get(count);
-			/*if("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap")))
-				|| "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
-				|| "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll("\\s+", " "))
-			) {
-				//check = false;
-				break;*/	
-			
-			if ("|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
-				    || "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll("\\s+", " "))
-				) {
-				    check = false;
-				    break;
-				}
+			/*
+			 * if("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap"))) ||
+			 * "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) +
+			 * "|") == -1 ||
+			 * "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll(
+			 * "\\s+", " ")) ) { //check = false; break;
+			 */
 
+			if ("|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
+					|| "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll("\\s+", " "))) {
+				check = false;
+				break;
 			}
 			count++;
+		}
 		
 		if(!check) {
 			dto.setErrorCode(999);
