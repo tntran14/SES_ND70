@@ -5397,4 +5397,326 @@ try {
 			rsp.setObjData(hR);
 			return rsp;
 		}
+
+		@Override
+		public MsgRsp listEInvoicesSigned(JSONRoot jsonRoot) throws Exception {
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			MsgPage page = msg.getMsgPage();
+			Object objData = msg.getObjData();
+
+			String mauSoHdon = "";
+			String soHoaDon = "";
+			String fromDate = "";
+			String toDate = "";
+			String nbanMst = "";
+			String nbanTen = "";
+
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(objData);
+
+				mauSoHdon = commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
+				soHoaDon = commons.getTextJsonNode(jsonData.at("/SoHoaDon")).replaceAll("\\s", "");
+				fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
+				toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+				nbanMst = commons.getTextJsonNode(jsonData.at("/NbanMst")).trim().replaceAll("\\s+", " ");
+				nbanTen = commons.getTextJsonNode(jsonData.at("/NbanTen")).trim().replaceAll("\\s+", " ");
+			}
+
+			MsgRsp rsp = new MsgRsp(header);
+			MspResponseStatus responseStatus = null;
+
+			ObjectId objectId = null;
+			Document docTmp = null;
+			Document docTmp1 = null;
+			Document docTmp2 = null;
+			Document docTmp3 = null;
+			Document docTmp4 = null;
+			Iterable<Document> cursor = null;
+			Iterable<Document> cursor1 = null;
+			Iterable<Document> cursor2 = null;
+			Iterable<Document> cursor3 = null;
+			Iterable<Document> cursor4 = null;
+			Iterator<Document> iter = null;
+			Iterator<Document> iter1 = null;	
+			Iterator<Document> iter2 = null;
+			Iterator<Document> iter3 = null;
+			Iterator<Document> iter4 = null;
+			List<Document> pipeline = new ArrayList<Document>();
+
+			LocalDate dateFrom = null;
+			LocalDate dateTo = null;
+			Document docMatchDate = null;
+
+			dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+					? null
+					: commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+			dateTo = "".equals(toDate) || !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ? null
+					: commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+			if (null != dateTo)
+				dateTo = dateTo.plus(1, ChronoUnit.DAYS);
+			if (null != dateFrom || null != dateTo) {
+				docMatchDate = new Document();
+				if (null != dateFrom)
+					docMatchDate.append("$gte", dateFrom);
+				if (null != dateTo)
+					docMatchDate.append("$lt", dateTo);
+			}
+
+			Document docMatch = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+					.append("SignStatusCode", "SIGNED")
+					.append("EInvoiceStatus",
+							new Document("$in",
+									Arrays.asList(Constants.INVOICE_STATUS.COMPLETE, Constants.INVOICE_STATUS.ADJUSTED)))
+
+					.append("MCCQT", new Document("$exists", true).append("$ne", null));
+			if (!"".equals(mauSoHdon))
+				docMatch.append("EInvoiceDetail.TTChung.MauSoHD", commons.regexEscapeForMongoQuery(mauSoHdon));
+			if (!"".equals(soHoaDon))
+				docMatch.append("EInvoiceDetail.TTChung.SHDon", commons.stringToInteger(soHoaDon));
+			if (null != docMatchDate)
+				docMatch.append("EInvoiceDetail.TTChung.NLap", docMatchDate);
+			if (!"".equals(nbanMst))
+				docMatch.append("EInvoiceDetail.NDHDon.NMua.MST",
+						new Document("$regex", commons.regexEscapeForMongoQuery(nbanMst)).append("$options", "i"));
+			if (!"".equals(nbanTen)) {
+				docMatch.append("$or",
+						Arrays.asList(
+								new Document("EInvoiceDetail.NDHDon.NMua.Ten",
+										new Document("$regex", commons.regexEscapeForMongoQuery(nbanTen)).append("$options",
+												"i")),
+								new Document("EInvoiceDetail.NDHDon.NMua.HVTNMHang",
+										new Document("$regex", commons.regexEscapeForMongoQuery(nbanTen)).append("$options",
+												"i"))));
+			}
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docMatch));
+
+			pipeline.add(new Document("$sort",
+					new Document("EInvoiceDetail.TTChung.MauSoHD", -1).append("SHDon", -1).append("_id", -1)));
+			pipeline.addAll(createFacetForSearchNotSort(page));
+
+			cursor = mongoTemplate.getCollection("EInvoice").aggregate(pipeline).allowDiskUse(true);
+			cursor1 = mongoTemplate.getCollection("EInvoicePXK").aggregate(pipeline).allowDiskUse(true);
+			cursor2 = mongoTemplate.getCollection("EInvoiceBH").aggregate(pipeline).allowDiskUse(true);
+			cursor3 = mongoTemplate.getCollection("EInvoicePXKDL").aggregate(pipeline).allowDiskUse(true);
+			cursor4 = mongoTemplate.getCollection("EInvoiceMTT").aggregate(pipeline).allowDiskUse(true);
+			iter = cursor.iterator();
+			iter1 = cursor1.iterator();
+			iter2 = cursor2.iterator();
+			iter3 = cursor3.iterator();
+			iter4 = cursor4.iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+			if (iter1.hasNext()) {
+				docTmp1 = iter1.next();
+			}
+			if (iter2.hasNext()) {
+				docTmp2 = iter2.next();
+			}
+			if (iter3.hasNext()) {
+				docTmp3 = iter3.next();
+			}
+			if (iter4.hasNext()) {
+				docTmp4 = iter4.next();
+			}
+			rsp = new MsgRsp(header);
+			responseStatus = null;
+			ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
+			HashMap<String, Object> hItem = null;
+			if (null != docTmp) {
+				page.setTotalRows(docTmp.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows = null;
+				if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
+					rows = docTmp.getList("data", Document.class);
+				}
+				if (null != rows) {
+					for (Document doc : rows) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
+						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
+						hItem.put("MCCQT", doc.get("MCCQT"));
+						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			if (null != docTmp1) {
+				page.setTotalRows(docTmp1.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows1 = null;
+				if (docTmp1.get("data") != null && docTmp1.get("data") instanceof List) {
+					rows1 = docTmp1.getList("data", Document.class);
+				}
+
+				if (null != rows1) {
+					for (Document doc : rows1) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
+						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
+						hItem.put("MCCQT", doc.get("MCCQT"));
+						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			if (null != docTmp2) {
+				page.setTotalRows(docTmp2.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows1 = null;
+				if (docTmp2.get("data") != null && docTmp2.get("data") instanceof List) {
+					rows1 = docTmp2.getList("data", Document.class);
+				}
+
+				if (null != rows1) {
+					for (Document doc : rows1) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
+						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
+						hItem.put("MCCQT", doc.get("MCCQT"));
+						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			if (null != docTmp3) {
+				page.setTotalRows(docTmp3.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows1 = null;
+				if (docTmp3.get("data") != null && docTmp3.get("data") instanceof List) {
+					rows1 = docTmp3.getList("data", Document.class);
+				}
+
+				if (null != rows1) {
+					for (Document doc : rows1) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
+						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
+						hItem.put("MCCQT", doc.get("MCCQT"));
+						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			if (null != docTmp4) {
+				page.setTotalRows(docTmp4.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows1 = null;
+				if (docTmp4.get("data") != null && docTmp4.get("data") instanceof List) {
+					rows1 = docTmp4.getList("data", Document.class);
+				}
+
+				if (null != rows1) {
+					for (Document doc : rows1) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
+						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
+						hItem.put("MCCQT", doc.get("MCCQT"));
+
+						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+
+			HashMap<String, Object> mapDataR = new HashMap<String, Object>();
+			mapDataR.put("rows", rowsReturn);
+			rsp.setObjData(mapDataR);
+			return rsp;
+		}
+
+		@Override
+		public FileInfo printbb(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			Object objData = msg.getObjData();
+			
+			if (objData == null) {
+				return new FileInfo();
+			}
+			
+			JsonNode jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+			String _id = this.commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+			
+			ObjectId objectId = null;
+			ObjectId objectIdIssu = null;
+			try {
+				objectId = new ObjectId(_id);
+				objectIdIssu = new ObjectId(header.getIssuerId());
+			} catch (Exception var29) {
+			}
+
+			List<Document> pipeline = new ArrayList<>();
+			pipeline.add(new Document("$match",
+					(new Document("_id", objectId)).append("IsDelete", new Document("$ne", true))));
+			pipeline.add(
+					new Document("$lookup",
+							(new Document("from", "Issuer"))
+									.append("pipeline",
+											Arrays.asList(
+													new Document("$match",
+															(new Document("_id", objectIdIssu)).append("IsDelete",
+																	new Document("$ne", true)))))
+									.append("as", "Issuer")));
+			pipeline.add(new Document("$unwind",
+					(new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
+			Document docTmp = null;
+			Iterable<Document> cursor = this.mongoTemplate.getCollection("EInvoiceBBDCTT").aggregate(pipeline)
+					.allowDiskUse(true);
+			Iterator<Document> iter = cursor.iterator();
+			if (iter.hasNext()) {
+				docTmp = (Document) iter.next();
+			}
+			if (docTmp == null) {
+				return fileInfo;
+			}
+			
+			String signStatusCode = docTmp.get("SignStatusCode", "");
+			String status = docTmp.get("Status", "");
+			String mtdiep = docTmp.get("MTDiep", "");
+			String loai = docTmp.get("Loai", "");
+			String fileName = _id + ".xml";
+			String dir = docTmp.get("Dir", "");
+			if ("SIGNED".equals(signStatusCode)) {
+				fileName = _id + "_signed.xml";
+				if ("COMPLETE".equals(status)) {
+					fileName = _id + "_" + mtdiep + "_signed.xml";
+				}
+			}
+			
+			File file = new File(dir, fileName);
+			if (file.exists() && file.isFile()) {
+				org.w3c.dom.Document doc = this.commons.fileToDocument(file);
+				String fileNameJP = "BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml";
+				
+				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+				ByteArrayOutputStream baosPDF = this.jpUtils.printbb(fileJP, doc, "1".equals(loai));
+				fileInfo.setFileName("printbb.pdf");
+				fileInfo.setContentFile(baosPDF.toByteArray());
+				return fileInfo;
+			} else {
+				return new FileInfo();
+			}
+		}
 }

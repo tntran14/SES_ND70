@@ -466,6 +466,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tbhdssot|'): false}" ><a th:href="@{/main/tbhdssot/init}">Thông báo HĐ sai sót</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tbhdssot_mtt|'): false}" ><a th:href="@{/main/tbhdssot_mtt/init}">Thông báo HĐ sai sót từ MTT</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tbhdssot_tbn|'): false}" ><a th:href="@{/main/tbhdssot_tbn/init}">Thông báo HĐ sai sót từ bên ngoài</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|lbbdctt|'): false}" ><a th:href="@{/main/lbbdctt/init}">Lập biên bản điều chỉnh/thay thế</a></li>
 							</ul>
 						</li>
 						<li class="nav-small-cap">REPORT</li>

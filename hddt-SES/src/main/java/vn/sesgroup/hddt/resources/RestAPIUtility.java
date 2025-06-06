@@ -355,6 +355,86 @@ public class RestAPIUtility {
 		}
 
 	}
+	
+	public MsgRsp callAPIPNotAuth(String url, HttpMethod httpMethod, JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = null;
+		MspResponseStatus responseStatus = null;
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.add(APIParams.API_LICENSE_KEY_NAME, APIParams.HTTP_LICENSEKEY);
 
+			HttpEntity<JSONRoot> requestBody = new HttpEntity<>(jsonRoot, headers);
+			ResponseEntity<MsgRsp> result = restTemplate.exchange(APIParams.HTTP_URI + url, httpMethod, requestBody,
+					MsgRsp.class);
+			if (result.getStatusCode() == HttpStatus.OK) {
+				rsp = result.getBody();
+			}
+		} catch (HttpClientErrorException e) {
+			if (e.getRawStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+				responseStatus = new MspResponseStatus(e.getRawStatusCode(),
+						"Yêu cầu chưa được áp dụng vì nó thiếu thông tin xác thực hợp lệ cho tài nguyên đích.");
+				rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+				rsp.setResponseStatus(responseStatus);
+			} else if (e.getRawStatusCode() == HttpStatus.NOT_FOUND.value()) {
+				responseStatus = new MspResponseStatus(e.getRawStatusCode(), "Không tìm thấy hàm xử lý dữ liệu.");
+				rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+				rsp.setResponseStatus(responseStatus);
+			} else if (e.getRawStatusCode() == HttpStatus.FORBIDDEN.value()) {
+				responseStatus = new MspResponseStatus(e.getRawStatusCode(),
+						"API License key không hợp lệ. Vui lòng liên hệ Admin để biết thêm chi tiết.");
+				rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+				rsp.setResponseStatus(responseStatus);
+			} else {
+				responseStatus = new MspResponseStatus(e.getRawStatusCode(), "Lỗi kết nối API...");
+				rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+				rsp.setResponseStatus(responseStatus);
+			}
+		} catch (Exception e) {
+			responseStatus = new MspResponseStatus(999, "Lỗi ngoại lệ...");
+			rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+			rsp.setResponseStatus(responseStatus);
+		}
 
+		if (null == rsp) {
+			responseStatus = new MspResponseStatus(999, "Không tìm thấy nội dung dữ liệu trả về");
+			rsp = new MsgRsp(jsonRoot.getMsg().getMsgHeader());
+			rsp.setResponseStatus(responseStatus);
+		}
+
+		return rsp;
+	}
+
+	public FileInfo callAPIGetFileInfoNotAuth(String url, HttpMethod httpMethod, JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = null;
+		try {
+			RequestCallback requestCallback = request -> {
+				request.getHeaders().add(APIParams.API_LICENSE_KEY_NAME, APIParams.HTTP_LICENSEKEY);
+				request.getHeaders().add("Content-Type", "application/json");
+				request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+				request.getBody().write(Json.serializer().toString(jsonRoot).getBytes());
+			};
+			
+			ResponseExtractor<FileInfo> responseExtractor = rsp -> {
+				return SerializationUtils.deserialize(rsp.getBody());
+			};
+			
+			fileInfo = restTemplate.execute(URI.create(APIParams.HTTP_URI + url), httpMethod, requestCallback, responseExtractor);
+			return fileInfo;
+		}catch (HttpClientErrorException e) {
+			log.error(">>>>> An exception occurred!", e);
+			if (e.getRawStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+				return null;
+			} else if (e.getRawStatusCode() == HttpStatus.NOT_FOUND.value()) {
+				return null;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.error(">>>>> An exception occurred!", e);
+			return null;
+		}
+
+	}
 }

@@ -315,6 +315,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("quantitys|quantity-cre|quantity-edit|quantity-del|quantity-detail|quantity-active|quantity-deactive|");	
         	sbRights.append("config-email-server|config-email-mailjet|tra-cuu-mail|tra-cuu-mail-user|config-email-server-admin|config-param|");
         	sbRights.append("tbhdssot|tbhdssot-history|tbhdssot-cre|tbhdssot-detail|tbhdssot-edit|tbhdssot-del|tbhdssot-sign|");
+        	sbRights.append("lbbdctt|lbbdctt-cre|lbbdctt-detail|lbbdctt-edit|lbbdctt-del|lbbdctt-sign|lbbdctt-sendMail|");
         	sbRights.append("tbhdssot-send-cqt|tbhdssot-del|tbhdssot-send-mail|");
   
         	sbRights.append("introduce|");

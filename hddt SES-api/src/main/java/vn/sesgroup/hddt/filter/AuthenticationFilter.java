@@ -42,6 +42,7 @@ public class AuthenticationFilter extends OncePerRequestFilter{
 			add("/support/**");
 			add("/ContractExpies/**");
 			add("/logEmail/**");
+			add("/lbbdctt-client/**");
 		}
 	};
 	

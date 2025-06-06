@@ -55,6 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 						,"/support", "/support/**"
 						, "/ContractExpies", "/ContractExpies/**" 
 						,"/logEmail", "/logEmail/**"
+						,"/lbbdctt-client","/lbbdctt-client/**"
 					).permitAll()
 					.antMatchers("/**").authenticated()
 			.and()

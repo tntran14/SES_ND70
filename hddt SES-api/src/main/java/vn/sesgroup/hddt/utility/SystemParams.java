@@ -17,6 +17,7 @@ public class SystemParams {
 	public static String DIR_E_INVOICE_TKHAI = "";
 	public static String DIR_E_INVOICE_TNCN = "C:/hddt-ses/server/tncn";
 	public static String DIR_E_INVOICE_HDSS = "";
+	public static String DIR_E_INVOICE_BBDCTT = "";
 	public static String DIR_E_INVOICE_TEMPLATE = "";
 	public static  String DIR_E_INVOICE_IMG = "";
 	public static String DIR_TEMPORARY = "";

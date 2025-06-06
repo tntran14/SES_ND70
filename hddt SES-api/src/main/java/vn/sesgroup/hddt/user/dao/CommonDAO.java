@@ -15,6 +15,7 @@ public interface CommonDAO {
 	public MsgRsp listSearchCustomerUpdate(JSONRoot jsonRoot) throws Exception;
 	
 	public MsgRsp listEInvoiceSigned(JSONRoot jsonRoot) throws Exception;
+	public MsgRsp listEInvoicesSigned(JSONRoot jsonRoot) throws Exception;
 	FileInfo printExport(JSONRoot jsonRoot) throws Exception;
 	public FileInfo viewpdf(JSONRoot jsonRoot)throws Exception;
 	
@@ -62,5 +63,6 @@ public interface CommonDAO {
 	
 	public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp scratchingTaxCodeV2(JSONRoot jsonRoot) throws Exception;
+	public FileInfo printbb(JSONRoot jsonRoot)throws Exception;
 	
 }

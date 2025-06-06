@@ -234,6 +234,7 @@ public class AppConfiguration implements WebMvcConfigurer {
 				,"/support", "/support/**"
 				, "/ContractExpies", "/ContractExpies/**" 
 				,"/logEmail","/logEmail/**"
+				,"/lbbdctt-client","/lbbdctt-client/**"
 			);
 		registry.addInterceptor(allowAccessFunctionInterceptor).excludePathPatterns(pathChecks);
 		registry.addInterceptor(checkRightsInterceptor).excludePathPatterns(pathChecks);

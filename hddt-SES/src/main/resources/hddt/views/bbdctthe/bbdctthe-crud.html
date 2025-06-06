@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="row page-titles">
+	<div class="col-12 align-self-center p-l-0 centerX">
+		<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase" th:text="${_header_}"></h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
+		<form id="f-lbbdctt-crud" name="f-lbbdctt-crud" method="post" enctype="multipart/form-data">
+			<div class="card">
+				<div class="card-body" th:if="${messageError != null}">
+					<div class="row text-danger m-b-10 fw-500 col-12">
+						<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center"
+							th:utext="${messageError}"></div>
+						<div class="col-12 p-0">
+							<hr class="m-t-5 m-b-5">
+						</div>
+					</div>
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+
+						</div>
+					</div>
+				</div>
+
+				<div class="card-body" th:if="${messageError == null}">
+					<div class="form-group row m-b-6">
+						<div class="col-12 col-sm-6 col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12 ">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
+										Thông tin người bán
+									</span>
+								</div>
+							</div>
+							<div class="custom-field m-b-0">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_mst" name="nb_mst"
+										type="text" autocomplete="off" th:value="${NB_MSThue}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Mã số thuế<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_dvbh" name="nb_dvbh"
+										type="text" autocomplete="off" th:value="${NB_DVBHang}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Đơn vị bán hàng<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_dc" name="nb_dc"
+										type="text" autocomplete="off" th:value="${NB_DChi}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Địa chỉ<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_dd" name="nb_dd"
+										type="text" autocomplete="off" th:value="${NB_DDien}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Đại diện<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_cv" name="nb_cv"
+										type="text" autocomplete="off" th:value="${NB_CVu}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Chức vụ<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="email_receive"
+										name="email_receive" type="text" autocomplete="off"
+										th:value="${Email_Receive}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Email nhận<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6">
+							<div class="row m-b-16">
+								<div class="col-12 ">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
+										Thông tin người mua
+									</span>
+								</div>
+							</div>
+							<div class="custom-field m-b-0">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_mst" name="nm_mst"
+										type="text" autocomplete="off" th:value="${NM_MSThue}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Mã số thuế<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_dvmh" name="nm_dvmh"
+										type="text" autocomplete="off" th:value="${NM_DVMHang}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Đơn vị mua hàng<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_dc" name="nm_dc"
+										type="text" autocomplete="off" th:value="${NM_DChi}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Địa chỉ<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_dd" name="nm_dd"
+										type="text" autocomplete="off" th:value="${NM_DDien}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Đại diện<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_cv" name="nm_cv"
+										type="text" autocomplete="off" th:value="${NM_CVu}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Chức vụ<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="email_send"
+										name="email_send" type="text" autocomplete="off" th:value="${Email_Send}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Email gửi<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+
+						</div>
+						<div class="col-12 col-sm-12 col-md-6">
+							<div class="row m-b-16">
+								<div class="col-12 ">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
+										Thông tin điều chỉnh/thay thế </span>
+								</div>
+							</div>
+							<div class="row m-t-16">
+								<div class="col-6 custom-field">
+									<div class="c-f__wrapper">
+										<select class="form-control form-control-sm c-f__textbox"
+											id="loaibb" name="loaibb" th:disabled="${!_isedit_}">
+											<option value=""></option>
+											<th:block th:if="${map_loaibb != null}">
+												<option th:each="entry : ${map_loaibb.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${loai_bb == entry.key}"></option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Loại biên bản<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6 custom-field">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											id="sbban" name="sbban" type="text" autocomplete="off"
+											th:value="${SBBan}" th:disabled="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số biên bản<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="ndsai" name="ndsai"
+										type="text" autocomplete="off" th:value="${NDSai}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Nội dung sai<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nddung" name="nddung"
+										type="text" autocomplete="off" th:value="${NDDung}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Nội dung đúng<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="ndtnhat" name="ndtnhat"
+										type="text" autocomplete="off" th:value="${NDTNhat}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Hai bên thống nhất<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 16px 0" />
+						</div>
+					</div>
+					<div class="row mT-0 mB-5">
+						<div class="col-9 col-sm-6 p-t-8">
+							<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa đơn đã sai sót</span>
+						</div>
+						<div class="col-3 col-sm-6 text-right">
+							<button type="button" data-action="add-inv" class="btn-sm btn-primary btn-ses"
+								title="Thêm hóa đơn" th:if="${_isedit_}"><i class="mdi mdi-plus fs-15"></i></button>
+						</div>
+					</div>
+
+					<div class="col-12 p-0 has-min-height-grid-prd">
+						<div id="grid_inv"></div>
+					</div>
+					<div class="row mT-0 mB-5">
+						<div class="col-9 col-sm-6 p-t-8">
+							<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa đơn điều chỉnh/thay thế hóa đơn sai sót</span>
+						</div>
+						<div class="col-3 col-sm-6 text-right">
+							<button type="button" data-action="add-inv1" class="btn-sm btn-primary btn-ses"
+								title="Thêm hóa đơn" th:if="${_isedit_}"><i class="mdi mdi-plus fs-15"></i></button>
+						</div>
+					</div>
+
+					<div class="col-12 p-0 has-min-height-grid-prd">
+						<div id="grid_inv1"></div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+					
+					<div class="form-group row m-b-6">
+						<div class="col-6">
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span></button>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" data-action="accept" class="btnadd btns btns-blue__ses"
+								title="Chấp nhận" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}">
+								<i class="mdi mdi-check-all"></i>
+								<span class="d-none d-md-inline">Chấp nhận</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="_id" th:value="${_id}">
+		</form>
+
+	</div>
+</div>
+<script type="text/javascript">
+	var vIsEdit = '[[${_isedit_}]]' == 'true';
+	transactionMain = '[[${transaction}]]';
+	var rowsTMP = [];
+	var rowsTMP1 = [];
+	_gridSub01 = $('#f-lbbdctt-crud').find('#grid_inv');
+	_gridSub = $('#f-lbbdctt-crud').find('#grid_inv1');
+</script>
+<script type="text/javascript" th:if="${_action_ == 'DETAIL' || _action_ =='EDIT' || _action_ =='COPY'}">
+	var strJson = '[[${DSHDon}]]';
+	rowsTMP = [];
+	try {
+		rowsTMP = decodeBase64UTF8ToObj(strJson);
+	} catch (err) { }
+	strJson = '[[${DSHDon1}]]';
+	rowsTMP1 = [];
+	try {
+		rowsTMP1 = decodeBase64UTF8ToObj(strJson);
+	} catch (err) { }
+</script>
+<!-- 	<script th:src="@{/static/function/einvoice/tbhdssot-crud.js(v=1.0) }"></script> -->
+<script type="text/javascript">
+	$(function () {
+		_gridSub01.kendoGrid({
+			dataSource: {
+				data: rowsTMP,
+				pageSize: 999999,
+				serverPaging: false,
+				serverSorting: false,
+				serverFiltering: false
+			},
+			selectable: true, scrollable: true,
+			sortable: false,
+			filterable: false, resizable: true,
+			serverSorting: false,
+			pageable: {
+				refresh: false,
+				pageSizes: false,
+				numeric: false,
+				previousNext: false
+			},
+			dataBinding: function () {
+				record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+			},
+			columns: [
+				{
+					field: 'STT', title: 'STT', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+					attributes: { 'class': 'table-cell', style: 'text-align: center;' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell', style: 'text-align: center;', }
+					, template: '#: ++record #',
+				},
+				{
+					field: 'func', title: '', width: '30px', encoded: false, hidden: !vIsEdit
+					, headerTemplate: '&nbsp;'
+					, attributes: { 'class': 'table-cell', style: 'text-align: center;' }, sortable: false
+					, headerAttributes: { 'class': 'table-header-cell', style: 'text-align: center;', }
+					, template: '<i class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="remove" ></i>'
+				},
+				{
+					field: 'MSHDon', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'SHDon', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'Ngay', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'MCQTCap', title: '', width: '270px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TNMHang', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTCThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiền thuế</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTTTBSo', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+			],
+			dataBound: function (e) {
+				_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').undelegate('i[data-sub-action]', 'click');
+				_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').delegate('i[data-sub-action]', 'click', function (e) {
+					event.preventDefault();/*event.stopPropagation();*/
+
+					var $obj = $(this);
+					var $tr = $obj.closest('tr');
+					var subAction = $obj.attr('data-sub-action');
+
+					var indexRow = $tr.index();
+					switch (subAction) {
+						case 'remove':
+							alertConfirm('Bạn có muốn xóa dòng ' + (indexRow + 1) + ' không?',
+								function (e) {
+									var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+									if (indexRow < objDataJson.length && indexRow > -1) {
+										objDataJson.splice(indexRow, 1);
+										_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+									}
+								},
+								function (e) { }
+							)
+							break;
+
+						default:
+							break;
+					}
+				});
+			}
+		});
+		
+		_gridSub.kendoGrid({
+			dataSource: {
+				data: rowsTMP1,
+				pageSize: 999999,
+				serverPaging: false,
+				serverSorting: false,
+				serverFiltering: false
+			},
+			selectable: true, scrollable: true,
+			sortable: false,
+			filterable: false, resizable: true,
+			serverSorting: false,
+			pageable: {
+				refresh: false,
+				pageSizes: false,
+				numeric: false,
+				previousNext: false
+			},
+			dataBinding: function () {
+				record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+			},
+			columns: [
+				{
+					field: 'STT', title: 'STT', width: '50px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+					attributes: { 'class': 'table-cell', style: 'text-align: center;' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell', style: 'text-align: center;', }
+					, template: '#: ++record #',
+				},
+				{
+					field: 'func', title: '', width: '30px', encoded: false, hidden: !vIsEdit
+					, headerTemplate: '&nbsp;'
+					, attributes: { 'class': 'table-cell', style: 'text-align: center;' }, sortable: false
+					, headerAttributes: { 'class': 'table-header-cell', style: 'text-align: center;', }
+					, template: '<i class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="remove" ></i>'
+				},
+				{
+					field: 'MSHDon_N', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'SHDon_N', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'Ngay_N', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'MCQTCap_N', title: '', width: '270px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TNMHang_N', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTCThue_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTThue_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiền thuế</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+				{
+					field: 'TgTTTBSo_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
+					attributes: { 'class': 'table-cell text-center' }, sortable: false,
+					headerAttributes: { 'class': 'table-header-cell text-center' },
+				},
+			],
+			dataBound: function (e) {
+				_gridSub.find('tbody[role="rowgroup"]').find('tr[data-uid]').undelegate('i[data-sub-action]', 'click');
+				_gridSub.find('tbody[role="rowgroup"]').find('tr[data-uid]').delegate('i[data-sub-action]', 'click', function (e) {
+					event.preventDefault();/*event.stopPropagation();*/
+
+					var $obj = $(this);
+					var $tr = $obj.closest('tr');
+					var subAction = $obj.attr('data-sub-action');
+
+					var indexRow = $tr.index();
+					switch (subAction) {
+						case 'remove':
+							alertConfirm('Bạn có muốn xóa dòng ' + (indexRow + 1) + ' không?',
+								function (e) {
+									var objDataJson = _gridSub.data("kendoGrid").dataSource.data();
+									if (indexRow < objDataJson.length && indexRow > -1) {
+										objDataJson.splice(indexRow, 1);
+										_gridSub.data("kendoGrid").dataSource.data(objDataJson);
+									}
+								},
+								function (e) { }
+							)
+							break;
+
+						default:
+							break;
+					}
+				});
+			}
+		});
+
+		$('#f-lbbdctt-crud').find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+
+			var $obj = $(this);
+			var objDataSend = null;
+
+			switch (dataAction) {
+				case 'accept':
+					objDataSend = getDataToSave();
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+						data: objDataSend,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							hideLoading();
+							if (res.errorCode == 0) {
+								var responseData = res.responseData;
+
+								var confirmText = responseData['CONFIRM'];
+								tokenTransaction = responseData['TOKEN'];
+
+								objDataSend['tokenTransaction'] = tokenTransaction;
+								alertConfirm(confirmText,
+									function (e) {
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+											data: objDataSend,
+											beforeSend: function (req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success: function (res) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+														$('#f-lbbdctt-crud').find('button[data-action="back"]').trigger('click');
+													} else {
+														alertDLSuccess(createObjectError(res).html(), function () { });
+													}
+												} else {
+													alertDLSuccess('unknown error!!!', function () { });
+													hideLoading();
+												}
+											},
+											error: function (xhr, ajaxOptions, thrownError) {
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+												hideLoading();
+											}
+										});
+									},
+									function (e) { }
+								)
+							} else {
+								alertDLSuccess(createObjectError(res).html(), function () { });
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							$obj.prop('disabled', false);
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+					break;
+				case 'add-inv':
+					objDataSend = {};
+					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-list-invoices-signed', objDataSend, false, function (e) {
+						if ($.type(e) == 'array') {
+							var objDataJson = [];
+							var item = null;
+							$.each(e, function (index, value) {
+								item = {};
+								item['_id'] = value['_id'];
+								item['MSHDon'] = value['MauSoHD'];
+								item['SHDon'] = value['EInvoiceNumber'];
+								item['Ngay'] = value['NLap'];
+								item['MCQTCap'] = value['MCCQT'];
+								item['HVTNMHang'] = value['HVTNMHang'];
+								item['TgTCThue'] = value['TgTCThue'];
+								item['TgTThue'] = value['TgTThue'];
+								item['TgTTTBSo'] = value['TgTTTBSo'];
+								objDataJson.push(item);
+							});
+							_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+						}
+					});
+					break;
+				case 'add-inv1':
+					objDataSend = {};
+					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-list-invoices-signed', objDataSend, false, function (e) {
+						if ($.type(e) == 'array') {
+							var objDataJson = [];
+							var item = null;
+							$.each(e, function (index, value) {
+								item = {};
+								item['_id'] = value['_id'];
+								item['MSHDon_N'] = value['MauSoHD'];
+								item['SHDon_N'] = value['EInvoiceNumber'];
+								item['Ngay_N'] = value['NLap'];
+								item['MCQTCap_N'] = value['MCCQT'];
+								item['HVTNMHang_N'] = value['HVTNMHang'];
+								item['TgTCThue_N'] = value['TgTCThue'];
+								item['TgTThue_N'] = value['TgTThue'];
+								item['TgTTTBSo_N'] = value['TgTTTBSo'];
+								objDataJson.push(item);
+							});
+							_gridSub.data("kendoGrid").dataSource.data(objDataJson);
+						}
+					});
+					break;
+				case 'sign':
+					objDataSend = {};
+					objDataSend['_id'] = $('#f-lbbdctt-crud').find('input[name="_id"]').val();
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/tbhdssot-sign/check-data-sign',
+						data: objDataSend,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							if (res) {
+								if (res.errorCode == 0) {
+									var responseData = res.responseData;
+									tokenTransaction = responseData['TOKEN'];
+									objDataSend['tokenTransaction'] = tokenTransaction;
+
+									getCert(function (e) {
+										if (null == e) {
+											alertDLSuccess('Lấy chữ ký số không thành công.', function () { });
+											hideLoading();
+											return;
+										}
+										serialNumber = '';
+										//KIEM TRA THONG TIN CERT
+										$.ajax({
+											type: "POST",
+											datatype: "json",
+											url: ROOT_PATH + '/main/common/check-cert',
+											data: { 'cert': base64Cert.replace(/\+/g, "@") },
+											beforeSend: function (req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success: function (res) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+														serialNumber = res.responseData;
+
+														//LAY NOI DUNG FILE XML
+														jQuery.ajax({
+															url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+															cache: false,
+															xhr: function () {// Seems like the only way to get access to the xhr object
+																var xhr = new XMLHttpRequest();
+																xhr.responseType = 'blob'
+																return xhr;
+															},
+															success: function (data, textStatus, xhr) {
+																if (xhr.status == 200) {
+																	var blob = new Blob([data], { type: 'octet/stream' });
+																	var postEnc = new FormData();
+																	postEnc.append('SerialNumber', serialNumber);
+																	postEnc.append('xmlFile', blob);
+
+																	var xhrSign = new XMLHttpRequest();
+																	xhrSign.onreadystatechange = function (e) {
+																		if (4 == this.readyState) {
+																			if (this.status == 200) {
+																				/*NOI DUNG XML DA KY - SEND TO SERVER*/
+																				blob = new Blob([this.response], { type: "octet/stream" });
+																				showLoading();
+
+																				formData = new FormData();
+																				formData.append("XMLFileSigned", blob);
+																				formData.append('certificate', base64Cert.replace(/\+/g, "@"));
+																				formData.append('_id', $('#f-lbbdctt-crud').find('input[name="_id"]').val());
+
+																				xhrSign = new XMLHttpRequest();
+																				xhrSign.upload.addEventListener('progress', function (e) {
+
+																				});
+																				if (xhrSign.upload) {
+
+																				};
+																				xhrSign.onreadystatechange = function (e) {
+																					if (4 == this.readyState && this.status == 200) {
+																						var res = xhrSign.response;
+																						if (res) {
+																							if (res.errorCode == 0) {
+																								hideLoading();
+																								$('#f-lbbdctt-crud').find('button[data-action="back"]').trigger('click');
+																							} else {
+																								alertDLSuccess(createObjectError(res).html(), function () { });
+																								hideLoading();
+																							}
+																						} else {
+																							alertDLSuccess('unknown error!!!', function () { });
+																							hideLoading();
+																						}
+																					}
+																				}
+																				xhrSign.onerror = function () {
+
+																				}
+																				xhrSign.ontimeout = function () {
+
+																				}
+
+																				var urlPost = ROOT_PATH + '/main/tbhdssot-sign/signFile';
+																				xhrSign.open("POST", urlPost, true);
+																				xhrSign.responseType = 'json';
+																				xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+																				xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+
+																				xhrSign.setRequestHeader("Cache-Control", "no-cache");
+																				xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+																				xhrSign.send(formData);
+																			} else {
+																				hideLoading();
+																				alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function () { });
+																			}
+																		}
+																	}
+																	xhrSign.open('POST', urlPluginSign + signDLTK, true);
+																	xhrSign.timeout = 5 * 60 * 1000;
+																	xhrSign.responseType = 'blob';	//or arraybuffer
+																	xhrSign.send(postEnc);
+																} else {
+																	hideLoading();
+																	alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function () { });
+																}
+															},
+															error: function () {
+
+															}
+														});
+													} else {
+														alertDLSuccess(createObjectError(res).html(), function () { });
+													}
+												} else {
+													alertDLSuccess('unknown error!!!', function () { });
+													hideLoading();
+												}
+											},
+											error: function (xhr, ajaxOptions, thrownError) {
+												alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+												hideLoading();
+											}
+										});
+
+									});
+								} else {
+									hideLoading();
+									alertDLSuccess(createObjectError(res).html(), function () { });
+								}
+							} else {
+								alertDLSuccess('unknown error!!!', function () { });
+								hideLoading();
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+					break;
+				case 'back':
+					$('#divMainContent').show();
+					$('#divSubContent').hide(function () { $(this).empty(); });
+					try {
+						if ($('#f-lbbdctt').find('#grid').length > 0)
+							$('#f-lbbdctt').find('#grid').data("kendoGrid").dataSource.read();
+					} catch (err) { }
+					break;
+
+				default:
+					break;
+			}
+		});
+
+	});
+
+
+	function getDataToSave() {
+		var dataPost = {};
+
+		dataPost['_id'] = $('#f-lbbdctt-crud').find('input[name="_id"]').val();
+		dataPost['nb_mst'] = $('#f-lbbdctt-crud').find('#nb_mst').val();
+		dataPost['nb_dvbh'] = $('#f-lbbdctt-crud').find('#nb_dvbh').val();
+		dataPost['nb_dc'] = $('#f-lbbdctt-crud').find('#nb_dc').val();
+		dataPost['nb_dd'] = $('#f-lbbdctt-crud').find('#nb_dd').val();
+		dataPost['nb_cv'] = $('#f-lbbdctt-crud').find('#nb_cv').val();
+		dataPost['email_receive'] = $('#f-lbbdctt-crud').find('#email_receive').val();
+
+		dataPost['nm_mst'] = $('#f-lbbdctt-crud').find('#nm_mst').val();
+		dataPost['nm_dvmh'] = $('#f-lbbdctt-crud').find('#nm_dvmh').val();
+		dataPost['nm_dc'] = $('#f-lbbdctt-crud').find('#nm_dc').val();
+		dataPost['nm_dd'] = $('#f-lbbdctt-crud').find('#nm_dd').val();
+		dataPost['nm_cv'] = $('#f-lbbdctt-crud').find('#nm_cv').val();
+		dataPost['email_send'] = $('#f-lbbdctt-crud').find('#email_send').val();
+
+		dataPost['loaibb'] = $('#f-lbbdctt-crud').find('#loaibb').val();
+		dataPost['sbban'] = $('#f-lbbdctt-crud').find('#sbban').val();
+		dataPost['ndsai'] = $('#f-lbbdctt-crud').find('#ndsai').val();
+		dataPost['nddung'] = $('#f-lbbdctt-crud').find('#nddung').val();
+		dataPost['ndtnhat'] = $('#f-lbbdctt-crud').find('#ndtnhat').val();
+
+		var arrRows = [];
+		var obj = null;
+		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+		jQuery.each(objDataJson, function (index, item) {
+			obj = {
+				'MCQTCap': item['MCQTCap'],
+				'SHDon': item['SHDon'],
+				'MSHDon': item['MSHDon']
+			};
+			arrRows.push(obj);
+		});
+		dataPost['ds-hd'] = encodeObjJsonBase64UTF8(arrRows);
+		arrRows = [];
+		obj = null;
+		objDataJson = _gridSub.data("kendoGrid").dataSource.data();
+		jQuery.each(objDataJson, function (index, item) {
+			obj = {
+				'MCQTCap': item['MCQTCap_N'],
+				'SHDon': item['SHDon_N'],
+				'MSHDon': item['MSHDon_N']
+			};
+			arrRows.push(obj);
+		});
+		dataPost['ds-hd-new'] = encodeObjJsonBase64UTF8(arrRows);
+		return dataPost;
+	}
+</script>
+</html>

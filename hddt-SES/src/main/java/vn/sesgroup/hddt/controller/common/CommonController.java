@@ -1076,6 +1076,78 @@ public class CommonController extends AbstractController{
 	        }
 	     
 		}	
+	
+		@RequestMapping(value = { "/common/printbb/{_id}"}, method = {RequestMethod.POST, RequestMethod.GET })
+		public void printbb(Locale locale, HttpServletRequest req, HttpServletResponse resp, 
+				HttpSession session, @PathVariable(value = "_id") String _id) throws Exception {
+			PrintWriter writer = null;
+			
+			_id = _id.replaceAll("\\s", "");
+			if ("".equals(_id) || null == _id) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Không tìm thấy thông tin biên bản điều chỉnh thay thế.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+			BaseDTO dto = new BaseDTO();
+
+			dto = new BaseDTO(req);
+			Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
+			HashMap<String, Object> hData = new HashMap<>();
+			hData.put("_id", _id);
+
+			msg.setObjData(hData);
+			JSONRoot root = new JSONRoot(msg);
+
+			FileInfo fileInfo = restAPI.callAPIGetFileInfo("/commons/printbb", cup.getLoginRes().getToken(),
+					HttpMethod.POST, root);
+			if (null == fileInfo || null == fileInfo.getContentFile()) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Xem biên bản điều chỉnh thay thế không thành công.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			String type = "application/pdf";
+			InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
+			resp.setHeader("Content-Type", type);
+
+			resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+			resp.setHeader("Pragma", "no-cache");
+			resp.setHeader("Expires", "0");
+
+			int bufferSize = 1024;
+			resp.setContentType(type);
+			final byte[] buffer = new byte[bufferSize];
+			int bytesRead = 0;
+			OutputStream out = null;
+			try {
+				out = resp.getOutputStream();
+				long totalWritten = 0;
+				while ((bytesRead = inputStream.read(buffer)) > 0) {
+					out.write(buffer, 0, bytesRead);
+					totalWritten += bytesRead;
+					if (totalWritten >= buffer.length) {
+						out.flush();
+					}
+				}
+			} finally {
+				tryToCloseStream(out);
+				tryToCloseStream(inputStream);
+			}
+
+		}
+
 	@RequestMapping(
 		value = {"/common/print-einvoice/{_id}", "/common/print-einvoice-convert/{_id}"}
 		, method = { RequestMethod.POST, RequestMethod.GET }
@@ -1829,6 +1901,22 @@ public class CommonController extends AbstractController{
 		return "common/search-dshddky";
 	}
 	
+	@RequestMapping(value = {
+			"/common/show-search-list-invoices-signed"
+	}, method = {RequestMethod.POST})
+	public String showSearchListInvicesSigned(Locale locale, HttpServletRequest req, HttpSession session) throws Exception{
+		req.setAttribute("_header_", "Danh sách hóa đơn đã ký");
+		
+		LocalDate now = LocalDate.now();
+		req.setAttribute("FromDate", commons.convertLocalDateTimeToString(now.with(ChronoField.DAY_OF_MONTH, 1), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		req.setAttribute("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+
+		LoadParameterFor_DSHDDKy(cup, locale, req, "DETAIL");
+		return "common/search-list-invoices-signed";
+	}
+	
 	private BaseDTO checkDataSearchEInvoiceSigned(Locale locale, HttpServletRequest req, HttpSession session) {
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);
@@ -1932,6 +2020,99 @@ public class CommonController extends AbstractController{
 					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 					hItem.put("UserCreated", commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName")));
 					
+					grid.getRows().add(hItem);
+				}
+			}
+		}else {
+			grid = new JsonGridDTO();
+			grid.setErrorCode(rspStatus.getErrorCode());
+			grid.setResponseData(rspStatus.getErrorDesc());
+		}
+		
+		}catch (Exception e) {
+			grid = new JsonGridDTO();
+			grid.setErrorCode(999);
+			grid.setResponseData("Không tìm thấy thông tin. Vui lòng thử lại!!!");
+		}
+		return grid;
+	}
+	
+	@RequestMapping(value = "/common/list-einvoicse-signed",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO listEInvoicesSigned(Locale locale, HttpServletRequest req, HttpSession session) throws Exception{
+		JsonGridDTO grid = new JsonGridDTO();
+		
+		try {
+		BaseDTO baseDTO = checkDataSearchEInvoiceSigned(locale, req, session);
+		if(0 != baseDTO.getErrorCode()) {
+			grid.setErrorCode(baseDTO.getErrorCode());
+			grid.setErrorMessages(baseDTO.getErrorMessages());
+			grid.setResponseData(Constants.MAP_ERROR.get(999));
+			return grid;
+		}
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();		
+		baseDTO = new BaseDTO(req);
+		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.SEARCH);
+		
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("MauSoHdon", mauSoHdon);
+		hData.put("SoHoaDon", soHoaDon);
+		hData.put("FromDate", fromDate);
+		hData.put("ToDate", toDate);
+		hData.put("NbanMst", nbanMst);
+		hData.put("NbanTen", nbanTen);
+				
+		msg.setObjData(hData);
+		
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/commons/list-einvoices-signed", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if(rspStatus.getErrorCode() == 0) {
+			MsgPage page = rsp.getMsgPage();
+			grid.setTotal(page.getTotalRows());
+			
+			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+			JsonNode rows = null;
+			HashMap<String, String> hItem = null;
+			if(!jsonData.at("/rows").isMissingNode()) {
+				rows = jsonData.at("/rows");
+				for(JsonNode row: rows) {
+					hItem = new HashMap<String, String>();
+					
+					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
+					
+					hItem.put("SignStatusCode", commons.getTextJsonNode(row.at("/SignStatusCode")));
+					hItem.put("SignStatusDesc", Constants.MAP_EINVOICE_SIGN_STATUS.get(commons.getTextJsonNode(row.at("/SignStatusCode"))));
+					
+					hItem.put("EInvoiceStatus", commons.getTextJsonNode(row.at("/EInvoiceStatus")));
+					hItem.put("MCCQT", commons.getTextJsonNode(row.at("/MCCQT")));
+					hItem.put("StatusDesc", Constants.MAP_EINVOICE_STATUS.get(commons.getTextJsonNode(row.at("/EInvoiceStatus"))));					
+					hItem.put("MauSoHD", 
+						commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHMSHDon")) + commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHHDon"))
+					);
+					hItem.put("EInvoiceNumber", 
+						"".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))? "":
+						commons.formatNumberBillInvoice(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))
+					);
+					hItem.put("NLap", 
+						commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+					);
+					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));
+					hItem.put("CompanyName", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
+					hItem.put("TgTTTBSo", 
+						row.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue())
+					);
+					hItem.put("TgTCThue", 
+						row.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue())
+					);
+					hItem.put("TgTThue", 
+						row.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
+					);
+					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));					
 					grid.getRows().add(hItem);
 				}
 			}

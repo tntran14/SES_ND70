@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 						,"/getAndHandleInvoiceVAT/handleVAT"
 						,"/mauso-expires/list"
 						,"/ca_invoice/list"
+						,"/lbbdctt-client/**"
 					).permitAll()
 					.anyRequest().authenticated()
 			.and()

@@ -129,6 +129,14 @@ public class Constants {
 		{put("DELETED", "Đã xóa bỏ");}
 	};
 	
+	public static final LinkedHashMap<String, String> MAP_BBDCTT_STATUS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("CREATED", "Mới tạo");}
+		{put("PENDING", "Đã ký");}
+		{put("PROCESSING", "Đã gửi mail");}
+		{put("COMPLETE", "Đã xác nhận");}
+	};
+	
 	public static final LinkedHashMap<String, String> MAP_TKHAI_STATUS = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("CREATED", "Mới tạo");}
@@ -157,6 +165,11 @@ public class Constants {
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("1", "Thông báo hủy/giải trình của NNT");}
 		{put("2", "Thông báo hủy/giải trình của NNT theo thông báo của CQT");}
+	
+	public static final LinkedHashMap<String, String> MAP_LOAIBB_LBBDCTT = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("1", "Thay thế");}
+		{put("2", "Điều chỉnh");}
 	};
 	
 //	public static final HashMap<String, String> MAP_PRD_VAT = new LinkedHashMap<String, String>(){
