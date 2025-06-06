@@ -4524,7 +4524,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
 		    
 		    
-			responseStatus = new MspResponseStatus(999,"Kết quả trả về không có MCCQT.");
+			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}  else {

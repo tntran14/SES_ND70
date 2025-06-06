@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -1340,7 +1341,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				    Date date = dateFormat.parse(Ngay);
 											
 					Document insertHD = new Document("IssuerId", header.getIssuerId())
-							.append("SignStatusCode", "SIGNED")
+							.append("SignStatusCode", "SIDED")
 							.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
 							.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 									.append("KHHDon", KHHDon)
@@ -1474,10 +1475,11 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				String KHHDon = doc.get("KHHDon", "");
 				String Ngay = doc.get("Ngay", "");
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			    Date date = dateFormat.parse(Ngay);
 										
 				Document insertHD = new Document("IssuerId", header.getIssuerId())
-						.append("SignStatusCode", "SIGNED")
+						.append("SignStatusCode", "SIDED")
 						.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
 						.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 								.append("KHHDon", KHHDon)
