@@ -50,6 +50,24 @@
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" id="mtdiep" name="mtdiep" value=""
+															autocomplete="off" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Mã thông điệp</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 								<div class="col-erp-5">
 									<div class="row m-b-16">
@@ -159,33 +177,41 @@
 										</div>
 									</div>									
 								</div>
-								<div class="col-erp-5 col-erp__cta">
-									 <div class="row">
-									      <div class="col-12 m-b-16">
-									         <button
-									            class="btns btns-search_auto__ses hover-up__ses w-100p"
-									            data-action="deletesearch"
-									            title="Xóa Tìm kiếm"
-									            type="button"
-									            >
-									         <i class="mdi mdi-delete"> </i
-									            ><span class="d-none d-md-inline"
-									            >Xóa tìm kiếm</span
-									            >
-									         </button>
-									      </div>
-									      <div class="col-12 m-b-16">
-									         <button
-									            class="btns btns-search_auto__ses hover-up__ses w-100p"
-									            data-action="search"
-									            title="Tìm kiếm"
-									            type="button"
-									            >
-									         <i class="mdi mdi-file-find"></i
-									            ><span class="d-none d-md-inline">Tìm kiếm</span>
-									         </button>
-									      </div>
-									   </div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12">
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<button
+															class="btns btns-search_auto__ses hover-up__ses w-100p"
+															data-action="search" title="Tìm kiếm" type="button">
+															<i class="mdi mdi-file-find"></i><span
+																class="d-none d-md-inline">Tìm kiếm</span>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<button
+															class="btns btns-search_auto__ses hover-up__ses w-100p"
+															data-action="deletesearch" title="Xóa Tìm kiếm"
+															type="button">
+															<i class="mdi mdi-delete"> </i><span
+																class="d-none d-md-inline">Xóa
+																tìm kiếm</span>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 							
@@ -2020,7 +2046,7 @@
 							_gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						case 'deletesearch':
-							$('#f-einvoice_mtt').find('#mau-so-hdon,#so-hoa-don,#status,#sign-status,#email-status,#send-cqt-status,#mcqt').val('');
+							$('#f-einvoice_mtt').find('#mau-so-hdon,#so-hoa-don,#status,#sign-status,#email-status,#send-cqt-status,#mcqt,#mtdiep').val('');
 							_gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						
@@ -2343,6 +2369,7 @@
 					
 					dataPost['mau-so-hdon'] = $('#f-einvoice_mtt #mau-so-hdon').val() == null? '': $('#f-einvoice_mtt #mau-so-hdon').val();
 					dataPost['so-hoa-don'] = $('#f-einvoice_mtt #so-hoa-don').val() == null? '': $('#f-einvoice_mtt #so-hoa-don').val();
+					dataPost['mtdiep'] = $('#f-einvoice_mtt #mtdiep').val() == null? '': $('#f-einvoice_mtt #mtdiep').val();
 					dataPost['from-date'] = $('#f-einvoice_mtt #from-date').val() == null? '': $('#f-einvoice_mtt #from-date').val();
 					dataPost['to-date'] = $('#f-einvoice_mtt #to-date').val() == null? '': $('#f-einvoice_mtt #to-date').val();
 					dataPost['status'] = $('#f-einvoice_mtt #status').val() == null? '': $('#f-einvoice_mtt #status').val();

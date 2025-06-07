@@ -2438,6 +2438,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 		String mauSoHdon = "";
 		String soHoaDon = "";
+		String mtdiep = "";
 		String fromDate = "";
 		String toDate = "";
 		String status = "";
@@ -2456,6 +2457,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			jsonData = Json.serializer().nodeFromObject(objData);
 			mauSoHdon = commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
 			soHoaDon = commons.getTextJsonNode(jsonData.at("/SoHoaDon")).replaceAll("\\s", "");
+			mtdiep = commons.getTextJsonNode(jsonData.at("/MTDiep")).replaceAll("\\s", "");
 			fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
 			toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
 			status = commons.getTextJsonNode(jsonData.at("/Status")).replaceAll("\\s", "");
@@ -2517,10 +2519,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		if (!"".equals(nmuaTen))
 			docMatch.append("EInvoiceDetail.NDHDon.NBan.Ten",
 					new Document("$regex", commons.regexEscapeForMongoQuery(nmuaTen)).append("$options", "i"));
-		
-
-		
-
+		if (!"".equals(mtdiep))
+			docMatch.append("MTDiep",
+					new Document("$regex", commons.regexEscapeForMongoQuery(mtdiep)).append("$options", "i"));
 		if (!"".equals(emailStatus)) {
 			if (emailStatus.equals("true")) {
 				docMatch.append("EmailStatus", true);

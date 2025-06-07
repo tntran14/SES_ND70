@@ -53,6 +53,7 @@ public class EInvoiceMTTController extends AbstractController{
 	private String _id;
 	private String mauSoHdon;
 	private String soHoaDon;
+	private String mtdiep;
 	private String fromDate;
 	private String toDate;
 	private String status;
@@ -136,6 +137,7 @@ public class EInvoiceMTTController extends AbstractController{
 		
 		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
 		soHoaDon = commons.getParameterFromRequest(req, "so-hoa-don").replaceAll("\\s", "");
+		mtdiep = commons.getParameterFromRequest(req, "mtdiep").replaceAll("\\s", "");
 		fromDate = commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "");
 		toDate = commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "");
 		status = commons.getParameterFromRequest(req, "status").replaceAll("\\s", "");
@@ -180,6 +182,7 @@ public class EInvoiceMTTController extends AbstractController{
 		HashMap<String, Object> hData = new HashMap<>();
 		hData.put("MauSoHdon", mauSoHdon);
 		hData.put("SoHoaDon", soHoaDon);
+		hData.put("MTDiep", mtdiep);
 		hData.put("FromDate", fromDate);
 		hData.put("ToDate", toDate);
 		hData.put("Status", status);
