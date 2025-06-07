@@ -280,6 +280,9 @@ else {
 			reportParams.put("NMuaMST", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeNMua, XPathConstants.NODE))
 			);
+			reportParams.put("NMuaMDVQHNSach", 
+					commons.getTextFromNodeXML((Element) xPath.evaluate("MDVQHNSach", nodeNMua, XPathConstants.NODE))
+				);
 			reportParams.put("NMuaDChi", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNMua, XPathConstants.NODE))
 			);

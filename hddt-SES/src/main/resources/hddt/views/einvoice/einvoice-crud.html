@@ -264,11 +264,21 @@
 								
 							</div>
 							<div class="row m-b-16">
-								<div class="col-12">
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
 									<div class="c-f__wrapper">
 										<input id="kh-makhachhang" name="kh-makhachhang" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaMKHang}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Mã khách hàng</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
+									<div class="c-f__wrapper">
+										<input id="ma-dvqhns" name="ma-dvqhns" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaDVQHNS}" autocomplete="off" th:readonly="${!_isedit_}" />
+										
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số ĐVQHNS</label></legend>
 										</fieldset>
 									</div>
 								</div>
@@ -1547,6 +1557,7 @@
 		dataPost['ngay-lap'] = $('#f-einvoice-crud').find('#ngay-lap').val();
 		dataPost['_id_tt_dc'] = $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').val();
 		dataPost['ma-hd'] = $('#f-einvoice-crud').find('#ma-hd').val();
+		dataPost['ma-dvqhns'] = $('#f-einvoice-crud').find('#ma-dvqhns').val();
 		
 		dataPost['kh-mst'] = $('#f-einvoice-crud').find('#kh-mst').val();
 		dataPost['kh-makhachhang'] = $('#f-einvoice-crud').find('#kh-makhachhang').val();

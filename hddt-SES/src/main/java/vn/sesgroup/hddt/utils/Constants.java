@@ -165,6 +165,7 @@ public class Constants {
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("1", "Thông báo hủy/giải trình của NNT");}
 		{put("2", "Thông báo hủy/giải trình của NNT theo thông báo của CQT");}
+	};
 	
 	public static final LinkedHashMap<String, String> MAP_LOAIBB_LBBDCTT = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;

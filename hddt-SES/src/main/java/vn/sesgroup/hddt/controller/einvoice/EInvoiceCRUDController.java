@@ -90,6 +90,7 @@ public class EInvoiceCRUDController extends AbstractController{
 	private String _id_tt_dc;
 	private String mauSoHdon;
 	private String maHoaDon;
+	private String madvqhns;
 	private String tenLoaiHd;
 	private String ngayLap;
 	private String hinhThucThanhToan;
@@ -119,28 +120,7 @@ public class EInvoiceCRUDController extends AbstractController{
 	private String checkProductExtension1;
 	private List<String> ids = null;
 	private String paramUSD;
-	
-//	@RequestMapping(value = "/checkSignListInvoice",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-//	@ResponseBody
-//	public BaseDTO checkSignListInvoice(Locale locale, HttpServletRequest req, HttpSession session) {
-//		BaseDTO dtoRes = new BaseDTO();
-//		
-//		try {
-//			String dataApprove = commons.getParameterFromRequest(req, "dataApprove");
-//			JsonNode jsonNode = null;
-//			try {
-//				jsonNode = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dataApprove));
-//			}catch(Exception e) {}
-//			
-//			if(null == jsonNode) {
-//				dtoRes.setErrorCode(1);
-//				dtoRes.setResponseData("<span class='text-error'>Vui lòng kiểm tra lại dữ liệu hóa đơn.</span>");
-//				return dtoRes;
-//			}
-//	
-//	}
 
-	
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
 		try {
 			BaseDTO baseDTO = new BaseDTO(req);
@@ -498,6 +478,7 @@ public class EInvoiceCRUDController extends AbstractController{
 				
 				
 				req.setAttribute("NMuaMST", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MST")));
+				req.setAttribute("MaDVQHNS", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MDVQHNSach")));
 				req.setAttribute("NMuaMKHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MKHang")));
 				req.setAttribute("NMuaHVTNMHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 				req.setAttribute("NMuaTen", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
@@ -718,6 +699,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		_id_tt_dc = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
 		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
 		maHoaDon = commons.getParameterFromRequest(req, "ma-hd").trim().replaceAll("\\s+", " ");
+		madvqhns = commons.getParameterFromRequest(req, "ma-dvqhns").trim().replaceAll("\\s+", " ");
 		tenLoaiHd = commons.getParameterFromRequest(req, "ten-loai-hd").trim().replaceAll("\\s+", " ");
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
 		hinhThucThanhToan = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan").replaceAll("\\s", "");
@@ -756,6 +738,10 @@ public class EInvoiceCRUDController extends AbstractController{
 		case "einvoice-cre":
 		case "einvoice-copy":
 		case "einvoice-edit":
+			if (!madvqhns.matches("\\d+")|| madvqhns.length() > 7) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không hớn lơn 7 ký tự.");
+			}
 			if("".equals(mauSoHdon)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn mẫu số hóa đơn.");
@@ -1045,6 +1031,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		default:
 		hData.put("_id", _id);
 		hData.put("MaHoaDon", maHoaDon);
+		hData.put("MaDVQHNS", madvqhns);
 		hData.put("_id_tt_dc", _id_tt_dc);
 		hData.put("MauSoHdon", mauSoHdon);
 		hData.put("TenLoaiHd", tenLoaiHd);
