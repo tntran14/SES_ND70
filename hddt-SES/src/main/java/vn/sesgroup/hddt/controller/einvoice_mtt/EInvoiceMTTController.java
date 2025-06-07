@@ -258,18 +258,18 @@ public class EInvoiceMTTController extends AbstractController{
 					
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));
 					hItem.put("CompanyName", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
-//					hItem.put("TgTTTBSo", 
-//						row.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode()? "":
-//						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue())
-//					);
-//					hItem.put("TgTCThue", 
-//						row.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode()? "":
-//						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue())
-//					);
-//					hItem.put("TgTThue", 
-//						row.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
-//						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
-//					);
+					hItem.put("TgTTTBSo", 
+						row.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue())
+					);
+					hItem.put("TgTCThue", 
+						row.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue())
+					);
+					hItem.put("TgTThue", 
+						row.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
+						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
+					);
 					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 					hItem.put("UserCreated", commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName")));
 					hItem.put("HDSS_TCTBao", commons.getTextJsonNode(row.at("/HDSS/TCTBao")));
