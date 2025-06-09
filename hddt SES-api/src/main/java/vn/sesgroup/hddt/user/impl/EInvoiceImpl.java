@@ -150,6 +150,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String hinhThucThanhToan = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToan")).replaceAll("\\s", "");
 		String hinhThucThanhToanText = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToanText")).trim()
 				.replaceAll("\\s+", " ");
+//		String maCuaHang = commons.getTextJsonNode(jsonData.at("/MaCuaHang")).trim().replaceAll("\\s+", " ");
+//		String tenCuaHang = commons.getTextJsonNode(jsonData.at("/TenCuaHang")).trim().replaceAll("\\s+", " ");
+		
 //		String chkXuatTheoLoaiTienTt = commons.getTextJsonNode(jsonData.at("/ChkXuatTheoLoaiTienTt")).replaceAll("\\s", "");
 		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "")
 				.replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
@@ -164,6 +167,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String khSoTk = commons.getTextJsonNode(jsonData.at("/KhSoTk")).trim().replaceAll("\\s+", " ");
 		String khTkTaiNganHang = commons.getTextJsonNode(jsonData.at("/KhTkTaiNganHang")).trim().replaceAll("\\s+",
 				" ");
+		String khSoCCCD = commons.getTextJsonNode(jsonData.at("/KhSoCCCD")).trim().replaceAll("\\s+", "");
+		String khSoHochieu = commons.getTextJsonNode(jsonData.at("/KhSoHoChieu")).trim().replaceAll("\\s+", "");
 		String tongTienTruocThue = commons.getTextJsonNode(jsonData.at("/TongTienTruocThue")).trim().replaceAll("\\s+",
 				" ");
 		String loaiTienTt = commons.getTextJsonNode(jsonData.at("/LoaiTienTt")).trim().replaceAll("\\s+", " ");
@@ -583,6 +588,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", madvqhns));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMKHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCD));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", khSoHochieu));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", khEmail));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", khHoTenNguoiMua));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", khSoTk));
@@ -902,7 +909,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									.append("NMua",
 											new Document("Ten", khTenDonVi).append("MST", khMst).append("MDVQHNSach", madvqhns)
 													.append("DChi", khDiaChi).append("MKHang", khMKHang)
-													.append("SDThoai", khSoDT).append("DCTDTu", khEmail)
+													.append("SDThoai", khSoDT)
+													.append("CCCDan", khSoCCCD)
+													.append("SHChieu", khSoHochieu)
+													.append("DCTDTu", khEmail)
 													.append("DCTDTuCC", khEmailCC).append("HVTNMHang", khHoTenNguoiMua)
 													.append("STKNHang", khSoTk).append("TNHang", khTkTaiNganHang)))
 							.append("DSHHDVu", listDSHHDVu).append("TToan",
@@ -1404,6 +1414,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMKHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCD));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", khSoHochieu));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", khEmail));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", khHoTenNguoiMua));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", khSoTk));
@@ -1695,6 +1707,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 										new Document("Ten", khTenDonVi).append("MST", khMst).append("MDVQHNSach", madvqhns)
 										.append("DChi", khDiaChi)
 												.append("MKHang", khMKHang).append("SDThoai", khSoDT)
+												.append("CCCDan", khSoCCCD)
+												.append("SHChieu", khSoHochieu)
 												.append("DCTDTu", khEmail).append("DCTDTuCC", khEmailCC)
 												.append("HVTNMHang", khHoTenNguoiMua).append("STKNHang", khSoTk)
 												.append("TNHang", khTkTaiNganHang)))
@@ -1728,6 +1742,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 										new Document("Ten", khTenDonVi).append("MST", khMst).append("MDVQHNSach", madvqhns)
 												.append("DChi", khDiaChi)
 												.append("MKHang", khMKHang).append("SDThoai", khSoDT)
+												.append("CCCDan", khSoCCCD)
+												.append("SHChieu", khSoHochieu)
 												.append("DCTDTu", khEmail).append("DCTDTuCC", khEmailCC)
 												.append("HVTNMHang", khHoTenNguoiMua).append("STKNHang", khSoTk)
 												.append("TNHang", khTkTaiNganHang)))
@@ -2244,6 +2260,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMKHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCD));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", khSoHochieu));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", khEmail));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", khHoTenNguoiMua));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", khSoTk));
@@ -2566,7 +2584,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									.append("NMua",
 											new Document("Ten", khTenDonVi).append("MST", khMst).append("MDVQHNSach", madvqhns)
 													.append("DChi", khDiaChi).append("MKHang", khMKHang)
-													.append("SDThoai", khSoDT).append("DCTDTu", khEmail)
+													.append("SDThoai", khSoDT)
+													.append("CCCDan", khSoCCCD)
+													.append("SHChieu", khSoHochieu)
+													.append("DCTDTu", khEmail)
 													.append("DCTDTuCC", khEmailCC).append("HVTNMHang", khHoTenNguoiMua)
 													.append("STKNHang", khSoTk).append("TNHang", khTkTaiNganHang)))
 							.append("DSHHDVu", listDSHHDVu)
@@ -7006,7 +7027,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				}
 
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 24);
+				int lastColumn = Math.max(row1.getLastCellNum(), 26);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -7047,6 +7068,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			String tempMDVQHNS = "";
 			String tempDChi = "";
 			String tempSDThoai = "";
+			String tempSCCCDan = "";
+			String tempSHChieu = "";
 			String tempDCTDTu = "";
 			String tempMAKH = "";
 			String tempSTKNHang = "";
@@ -7079,6 +7102,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						tempMDVQHNS = eInvoiceExcelFormList.get(i).getMaDVQHNS();
 						tempDChi = eInvoiceExcelFormList.get(i).getDiaChiKhachHang();
 						tempSDThoai = eInvoiceExcelFormList.get(i).getSDTKhachHang();
+						tempSCCCDan = eInvoiceExcelFormList.get(i).getSoCCCD();
+						tempSHChieu = eInvoiceExcelFormList.get(i).getSoHoChieu();
 						tempDCTDTu = eInvoiceExcelFormList.get(i).getMailKhachHang();
 						tempSTKNHang = eInvoiceExcelFormList.get(i).getSoTaiKhoan();
 						tempTNHang = eInvoiceExcelFormList.get(i).getTenNganHang();
@@ -7104,6 +7129,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				String MaDVQHNSForm = tempMDVQHNS;
 				String DChiNMForm = tempDChi;
 				String SDThoaiNMForm = tempSDThoai;
+				String SCCCDanNMForm = tempSCCCDan;
+				String SHChieuNMForm = tempSHChieu;
 				String DCTDTuNMForm = tempDCTDTu;
 				String MaKHNMForm = tempMAKH;
 				String STKNHangNMForm = tempSTKNHang;
@@ -7266,6 +7293,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						String MDVQHNSNM = MaDVQHNSForm;
 						String DChiNM = DChiNMForm;
 						String SDThoaiNM = SDThoaiNMForm;
+						String SCCCDanNM = SCCCDanNMForm;
+						String SHChieuNM = SHChieuNMForm;
 						String DCTDTuNM = DCTDTuNMForm;
 						String MaKHangNM = MaKHNMForm;
 						String STKNHangNM = STKNHangNMForm;
@@ -7415,6 +7444,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", MaKHangNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoaiNM));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", SCCCDanNMForm));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", SHChieuNMForm));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", DCTDTuNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", HVTNMHangNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", STKNHangNM));
@@ -7607,7 +7638,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 														.append("NMua", new Document("Ten", TenNM).append("MST", MSTNM)
 																.append("MDVQHNSach", MDVQHNSNM)
 																.append("DChi", DChiNM).append("MKHang", MaKHangNM)
-																.append("SDThoai", SDThoaiNM).append("DCTDTu", DCTDTuNM)
+																.append("SDThoai", SDThoaiNM)
+																.append("CCCDan", SCCCDanNM)
+																.append("SHChieu", SHChieuNM)
+																.append("DCTDTu", DCTDTuNM)
 																.append("HVTNMHang", HVTNMHangNM)
 																.append("STKNHang", STKNHangNM)
 																.append("TNHang", TNHangNM)))
@@ -7775,6 +7809,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							String MDVQHNSNM = MaDVQHNSForm;
 							String DChiNM = DChiNMForm;
 							String SDThoaiNM = SDThoaiNMForm;
+							String SCCCDanNM = SCCCDanNMForm;
+							String SHChieuNM = SHChieuNMForm;
 							String DCTDTuNM = DCTDTuNMForm;
 							String MaKHangNM = MaKHNMForm;
 							String STKNHangNM = STKNHangNMForm;
@@ -7918,6 +7954,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", MaKHangNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoaiNM));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", SCCCDanNMForm));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", SHChieuNMForm));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", DCTDTuNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", HVTNMHangNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "STKNHang", STKNHangNM));
@@ -8110,7 +8148,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 													.append("NMua", new Document("Ten", TenNM).append("MST", MSTNM)
 															.append("MDVQHNSach", MDVQHNSNM)
 															.append("DChi", DChiNM).append("MKHang", MaKHangNM)
-															.append("SDThoai", SDThoaiNM).append("DCTDTu", DCTDTuNM)
+															.append("SDThoai", SDThoaiNM)
+															.append("CCCDan", SCCCDanNM)
+															.append("SHChieu", SHChieuNM)
+															.append("DCTDTu", DCTDTuNM)
 															.append("HVTNMHang", HVTNMHangNM)
 															.append("STKNHang", STKNHangNM).append("TNHang", TNHangNM)))
 
@@ -8302,8 +8343,42 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				break;
 			}
 		}
+		// So CCCD
+		Cell SoCCCD = cells.get(8);
+		if (SoCCCD != null) {
+			switch (SoCCCD.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setSoCCCD(SoCCCD.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setSoCCCD((NumberToTextConverter.toText(SoCCCD.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		// So Ho chieu
+		Cell SoHoChieu= cells.get(9);
+		if (SoHoChieu != null) {
+			switch (SoHoChieu.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setSoHoChieu(SoHoChieu.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setSoHoChieu((NumberToTextConverter.toText(SoHoChieu.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
+		
 		// So tai khoan khach hang
-		Cell SoTaiKhoan = cells.get(8);
+		Cell SoTaiKhoan = cells.get(10);
 		if (SoTaiKhoan != null) {
 			switch (SoTaiKhoan.getCellType()) {
 			case STRING:
@@ -8319,7 +8394,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Ten ngan hang
-		Cell TenNganHang = cells.get(9);
+		Cell TenNganHang = cells.get(11);
 		if (TenNganHang != null) {
 			switch (TenNganHang.getCellType()) {
 			case STRING:
@@ -8336,7 +8411,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 		}
 		// hinh thuc thanh toan
-		Cell HinhThucThanhToan = cells.get(10);
+		Cell HinhThucThanhToan = cells.get(12);
 		if (HinhThucThanhToan != null) {
 			switch (HinhThucThanhToan.getCellType()) {
 			case STRING:
@@ -8353,7 +8428,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Loai tien
-		Cell LoaiTien = cells.get(11);
+		Cell LoaiTien = cells.get(13);
 		if (LoaiTien != null) {
 			switch (LoaiTien.getCellType()) {
 			case STRING:
@@ -8370,7 +8445,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 		}
 		// Ten hang hoa
-		Cell TenHangHoa = cells.get(12);
+		Cell TenHangHoa = cells.get(14);
 		if (TenHangHoa != null) {
 			switch (TenHangHoa.getCellType()) {
 			case STRING:
@@ -8386,7 +8461,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Ma hang hoa
-		Cell MaHangHoa = cells.get(13);
+		Cell MaHangHoa = cells.get(15);
 		if (MaHangHoa != null) {
 			switch (MaHangHoa.getCellType()) {
 			case STRING:
@@ -8402,7 +8477,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// So lo
-		Cell SLo = cells.get(14);
+		Cell SLo = cells.get(16);
 		if (SLo != null) {
 			switch (SLo.getCellType()) {
 			case STRING:
@@ -8418,7 +8493,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// han su dung
-		Cell HanSD = cells.get(15);
+		Cell HanSD = cells.get(17);
 		if (HanSD != null) {
 			switch (HanSD.getCellType()) {
 			case STRING:
@@ -8434,7 +8509,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Don vi tinh
-		Cell DonViTinh = cells.get(16);
+		Cell DonViTinh = cells.get(18);
 		if (DonViTinh != null) {
 			switch (DonViTinh.getCellType()) {
 			case STRING:
@@ -8450,7 +8525,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// so luong
-		Cell SoLuong = cells.get(17);
+		Cell SoLuong = cells.get(19);
 		if (SoLuong != null) {
 			switch (SoLuong.getCellType()) {
 			case STRING:
@@ -8466,7 +8541,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Don gia
-		Cell DonGia = cells.get(18);
+		Cell DonGia = cells.get(20);
 		if (DonGia != null) {
 			switch (DonGia.getCellType()) {
 			case STRING:
@@ -8482,7 +8557,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Thanh tien
-		Cell ThanhTien = cells.get(19);
+		Cell ThanhTien = cells.get(21);
 		if (ThanhTien != null && (ThanhTien.getCellType() == CellType.FORMULA)) {
 			switch (ThanhTien.getCachedFormulaResultType()) {
 			case STRING:
@@ -8512,7 +8587,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Thue suat
-		Cell ThueSuat = cells.get(20);
+		Cell ThueSuat = cells.get(22);
 		if (ThueSuat != null) {
 			switch (ThueSuat.getCellType()) {
 			case STRING:
@@ -8528,7 +8603,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			}
 		}
 		// Tien thue
-		Cell TienThue = cells.get(21);
+		Cell TienThue = cells.get(23);
 		if (TienThue != null && (TienThue.getCellType() == CellType.FORMULA)) {
 			switch (TienThue.getCachedFormulaResultType()) {
 			case STRING:
@@ -8559,7 +8634,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		}
 
 		// Tinh chat
-		Cell TinhChat = cells.get(22);
+		Cell TinhChat = cells.get(24);
 		if (TinhChat != null) {
 			switch (TinhChat.getCellType()) {
 			case STRING:
@@ -8576,7 +8651,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		}
 
 		// ty gia
-		Cell TyGia = cells.get(23);
+		Cell TyGia = cells.get(25);
 		if (TyGia != null) {
 			switch (TyGia.getCellType()) {
 			case STRING:

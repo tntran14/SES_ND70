@@ -90,7 +90,9 @@ public class EInvoiceCRUDController extends AbstractController{
 	private String _id_tt_dc;
 	private String mauSoHdon;
 	private String maHoaDon;
-	private String madvqhns;
+//	private String maCuaHang;
+//	private String tenCuaHang;
+	
 	private String tenLoaiHd;
 	private String ngayLap;
 	private String hinhThucThanhToan;
@@ -106,6 +108,10 @@ public class EInvoiceCRUDController extends AbstractController{
 	private String khSoDt;
 	private String khSoTk;
 	private String khTkTaiNganHang;
+	private String khSoCCCD;
+	private String khSoHoChieu;
+	private String madvqhns;
+	
 	private String tongTienTruocThue;
 	private String loaiTienTt;
 	private String tyGia;
@@ -483,6 +489,8 @@ public class EInvoiceCRUDController extends AbstractController{
 				req.setAttribute("NMuaHVTNMHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 				req.setAttribute("NMuaTen", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
 				req.setAttribute("NMuaDChi", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DChi")));
+				req.setAttribute("NMuaCCCDan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/CCCDan")));
+				req.setAttribute("NMuaSHChieu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SHChieu")));
 				req.setAttribute("NMuaDCTDTu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTu")));
 				req.setAttribute("NMuaDCTDTuCC", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTuCC")));
 				req.setAttribute("NMuaSDThoai", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SDThoai")));
@@ -704,6 +712,8 @@ public class EInvoiceCRUDController extends AbstractController{
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
 		hinhThucThanhToan = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan").replaceAll("\\s", "");
 		hinhThucThanhToanText = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan-text").trim().replaceAll("\\s+", " ");
+//		maCuaHang= commons.getParameterFromRequest(req, "ma-ch").replaceAll("\\s", " ");
+//		tenCuaHang = commons.getParameterFromRequest(req, "ten-ch").replaceAll("\\s", " ");
 //		chkXuatTheoLoaiTienTt = commons.getParameterFromRequest(req, "chk-xuat-theo-loai-tien-tt").replaceAll("\\s", "");
 		khMst = commons.getParameterFromRequest(req, "kh-mst").replaceAll("\\s+", "");
 		khMKHang = commons.getParameterFromRequest(req, "kh-makhachhang").trim().replaceAll("\\s+", " ");
@@ -715,6 +725,8 @@ public class EInvoiceCRUDController extends AbstractController{
 		khSoDt = commons.getParameterFromRequest(req, "kh-so-dt").trim().replaceAll("\\s+", " ");
 		khSoTk = commons.getParameterFromRequest(req, "kh-so-tk").trim().replaceAll("\\s+", " ");
 		khTkTaiNganHang = commons.getParameterFromRequest(req, "kh-tk-tai-ngan-hang").trim().replaceAll("\\s+", " ");
+		khSoCCCD = commons.getParameterFromRequest(req, "kh-cccd").replaceAll("\\s", "");
+		khSoHoChieu = commons.getParameterFromRequest(req, "kh-shchieu").replaceAll("\\s", "");
 		tongTienTruocThue = commons.getParameterFromRequest(req, "tong-tien-truoc-thue").replaceAll("\\s", "");
 		loaiTienTt = commons.getParameterFromRequest(req, "loai-tien-tt").replaceAll("\\s", "");
 //		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("\\s", "").replaceAll(",", "");
@@ -738,12 +750,11 @@ public class EInvoiceCRUDController extends AbstractController{
 		case "einvoice-cre":
 		case "einvoice-copy":
 		case "einvoice-edit":
-			if (madvqhns.length() > 0) {
-				if (madvqhns.length() > 7 || !madvqhns.matches("\\d+")) {
-					dto.setErrorCode(1);
-					dto.getErrorMessages().add(
-							"Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không lớn lơn 7 ký tự.");
-				}
+			if (madvqhns.length() > 0 && (madvqhns.length() > 7 || !madvqhns.matches("\\d+"))) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add(
+						"Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không lớn lơn 7 ký tự.");
+
 			}
 			if("".equals(mauSoHdon)) {
 				dto.setErrorCode(1);
@@ -1041,6 +1052,8 @@ public class EInvoiceCRUDController extends AbstractController{
 		hData.put("NgayLap", ngayLap);
 		hData.put("HinhThucThanhToan", hinhThucThanhToan);
 		hData.put("HinhThucThanhToanText", hinhThucThanhToanText);
+//		hData.put("MaCuaHang", maCuaHang);
+//		hData.put("TenCuaHang", tenCuaHang);
 		hData.put("KhMst", khMst);
 		hData.put("KhMKHang", khMKHang);
 		hData.put("KhHoTenNguoiMua", khHoTenNguoiMua);
@@ -1051,7 +1064,9 @@ public class EInvoiceCRUDController extends AbstractController{
 		hData.put("KhSoDt", khSoDt);
 		hData.put("KhSoTk", khSoTk);
 		hData.put("KhTkTaiNganHang", khTkTaiNganHang);
-		hData.put("TongTienTruocThue", tongTienTruocThue) ;
+		hData.put("KhSoCCCD", khSoCCCD);
+		hData.put("KhSoHoChieu", khSoHoChieu);
+		hData.put("TongTienTruocThue", tongTienTruocThue);
 		hData.put("LoaiTienTt", loaiTienTt);
 		hData.put("TyGia", "VND".equals(loaiTienTt)? "1": tyGia);
 		if(!"VND".equals(loaiTienTt)) {

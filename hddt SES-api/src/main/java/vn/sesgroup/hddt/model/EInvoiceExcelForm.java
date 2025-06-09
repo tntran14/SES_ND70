@@ -10,6 +10,8 @@ public class EInvoiceExcelForm {
 	private String DiaChiKhachHang;
 	private String MailKhachHang;
 	private String SDTKhachHang;
+	private String SoCCCD;
+	private String SoHoChieu;
 	private String SoTaiKhoan;
 	private String TenNganHang;
 	private String HinhThucThanhToan;
@@ -398,12 +400,29 @@ public class EInvoiceExcelForm {
 	public void setHanSD(String hanSD) {
 		HanSD = hanSD;
 	}
+	
+	public String getSoCCCD() {
+		return SoCCCD;
+	}
+
+	public void setSoCCCD(String soCCCD) {
+		SoCCCD = soCCCD;
+	}
+
+	public String getSoHoChieu() {
+		return SoHoChieu;
+	}
+
+	public void setSoHoChieu(String soHoChieu) {
+		SoHoChieu = soHoChieu;
+	}
 
 	@Override
 	public String toString() {
 		return "EInvoiceExcelForm [MaHD=" + MaHD + ", MaSoThue=" + MaSoThue + ", TenNguoiMua=" + TenNguoiMua
-				+ ", TenDonVi=" + TenDonVi + ", DiaChiKhachHang=" + DiaChiKhachHang + ", MailKhachHang=" + MailKhachHang
-				+ ", SDTKhachHang=" + SDTKhachHang + ", SoTaiKhoan=" + SoTaiKhoan + ", TenNganHang=" + TenNganHang
+				+ ", TenDonVi=" + TenDonVi + ", MaDVQHNS=" + MaDVQHNS + ", DiaChiKhachHang=" + DiaChiKhachHang
+				+ ", MailKhachHang=" + MailKhachHang + ", SDTKhachHang=" + SDTKhachHang + ", SoCCCD=" + SoCCCD
+				+ ", SoHoChieu=" + SoHoChieu + ", SoTaiKhoan=" + SoTaiKhoan + ", TenNganHang=" + TenNganHang
 				+ ", HinhThucThanhToan=" + HinhThucThanhToan + ", LoaiTien=" + LoaiTien + ", STT=" + STT
 				+ ", TenHangHoa=" + TenHangHoa + ", MaHangHoa=" + MaHangHoa + ", SLo=" + SLo + ", HanSD=" + HanSD
 				+ ", DonViTinh=" + DonViTinh + ", SoLuong=" + SoLuong + ", DonGia=" + DonGia + ", ThanhTien="

@@ -187,7 +187,27 @@
 										</fieldset>
 									</div>
 								</div>
+<!-- 								<div class="col-6"> -->
+<!-- 								<div class="c-f__wrapper"> -->
+<!-- 										<input id="ma-ch" name="ma-ch" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaCH}" autocomplete="off" th:readonly="${!_isedit_}" /> -->
+										
+<!-- 										<fieldset aria-hidden="true" class="c-f__set"> -->
+<!-- 											<legend class="c-f__legend"><label>Mã cửa hàng</label></legend> -->
+<!-- 										</fieldset> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
 							</div>
+<!-- 							<div class="row m-b-16"> -->
+<!-- 								<div class="col-12"> -->
+<!-- 								<div class="c-f__wrapper"> -->
+<!-- 										<input id="ten-ch" name="ten-ch" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${TenCH}" autocomplete="off" th:readonly="${!_isedit_}" /> -->
+										
+<!-- 										<fieldset aria-hidden="true" class="c-f__set"> -->
+<!-- 											<legend class="c-f__legend"><label>Tên cửa hàng</label></legend> -->
+<!-- 										</fieldset> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
 							<div class="row" th:if="false">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-12">
 									<label class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
@@ -289,6 +309,24 @@
 										<input id="kh-ho-ten-nguoi-mua" name="kh-ho-ten-nguoi-mua" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaHVTNMHang}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Họ và tên người mua hàng</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input id="kh-cccd" name="kh-cccd" class=" form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaCCCDan}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số CCCD</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input id="kh-shchieu" name="kh-shchieu" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaSHChieu}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số hộ chiếu</label></legend>
 										</fieldset>
 									</div>
 								</div>
@@ -1557,7 +1595,8 @@
 		dataPost['ngay-lap'] = $('#f-einvoice-crud').find('#ngay-lap').val();
 		dataPost['_id_tt_dc'] = $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').val();
 		dataPost['ma-hd'] = $('#f-einvoice-crud').find('#ma-hd').val();
-		dataPost['ma-dvqhns'] = $('#f-einvoice-crud').find('#ma-dvqhns').val();
+// 		dataPost['ma-ch'] = $('#f-einvoice-crud').find('#ma-ch').val();
+// 		dataPost['ten-ch'] = $('#f-einvoice-crud').find('#ten-ch').val();
 		
 		dataPost['kh-mst'] = $('#f-einvoice-crud').find('#kh-mst').val();
 		dataPost['kh-makhachhang'] = $('#f-einvoice-crud').find('#kh-makhachhang').val();
@@ -1569,6 +1608,9 @@
 		dataPost['kh-so-dt'] = $('#f-einvoice-crud').find('#kh-so-dt').val();
 		dataPost['kh-so-tk'] = $('#f-einvoice-crud').find('#kh-so-tk').val();
 		dataPost['kh-tk-tai-ngan-hang'] = $('#f-einvoice-crud').find('#kh-tk-tai-ngan-hang').val();
+		dataPost['kh-cccd'] = $('#f-einvoice-crud').find('#kh-cccd').val();
+		dataPost['kh-shchieu'] = $('#f-einvoice-crud').find('#kh-shchieu').val();
+		dataPost['ma-dvqhns'] = $('#f-einvoice-crud').find('#ma-dvqhns').val();
 		
 		dataPost['tong-tien-truoc-thue'] = $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val();
 		dataPost['loai-tien-tt'] = $('#f-einvoice-crud').find('#loai-tien-tt').val();
