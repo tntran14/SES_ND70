@@ -699,7 +699,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		_id_tt_dc = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
 		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
 		maHoaDon = commons.getParameterFromRequest(req, "ma-hd").trim().replaceAll("\\s+", " ");
-		madvqhns = commons.getParameterFromRequest(req, "ma-dvqhns").trim().replaceAll("\\s+", " ");
+		madvqhns = commons.getParameterFromRequest(req, "ma-dvqhns").trim().replaceAll("\\s+", "");
 		tenLoaiHd = commons.getParameterFromRequest(req, "ten-loai-hd").trim().replaceAll("\\s+", " ");
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
 		hinhThucThanhToan = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan").replaceAll("\\s", "");
@@ -738,9 +738,12 @@ public class EInvoiceCRUDController extends AbstractController{
 		case "einvoice-cre":
 		case "einvoice-copy":
 		case "einvoice-edit":
-			if (!madvqhns.matches("\\d+")|| madvqhns.length() > 7) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không hớn lơn 7 ký tự.");
+			if (madvqhns.length() > 0) {
+				if (madvqhns.length() > 7 || !madvqhns.matches("\\d+")) {
+					dto.setErrorCode(1);
+					dto.getErrorMessages().add(
+							"Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không lớn lơn 7 ký tự.");
+				}
 			}
 			if("".equals(mauSoHdon)) {
 				dto.setErrorCode(1);
