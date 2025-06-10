@@ -287,130 +287,106 @@
     	 <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
-        <header class="topbar" >	<!-- th:style = "'background: rgb(40 167 69);'" -->
-			<nav class="navbar top-navbar navbar-expand-md navbar-light">
+		<header class="topbar">
+			<!-- th:style = "'background: rgb(40 167 69);'" -->
+			<nav
+				class="navbar top-navbar navbar-expand-md navbar-light d-flex justify-content-between">
 				<!-- ============================================================== -->
 				<!-- toggle and nav items -->
 				<!-- ============================================================== -->
-				<ul class="navbar-nav mt-md-0 navbar-nav__menu">
-					<!-- This is  -->
-					<li class="nav-item">
-						<a class="nav-link nav-toggler text-muted waves-effect waves-dark" href="javascript:void(0)">
-						<i class="mdi mdi-chevron-double-right"></i></a>
-					</li>
+				<div class="nav-left d-flex align-items-center">
+					<ul class="navbar-nav mt-md-0 navbar-nav__menu">
+						<!-- This is  -->
+						<li class="nav-item"><a
+							class="nav-link nav-toggler text-muted waves-effect waves-dark"
+							href="javascript:void(0)"> <i
+								class="mdi mdi-chevron-double-right"></i></a></li>
+						<!-- ============================================================== -->
+					</ul>
+					<!-- ============================================================== -->
+					<!-- Logo -->
+					<!-- ============================================================== -->
+					<div class="navbar-header" style="width: auto; position: unset">
+						<a class="navbar-brand"
+							href="https://hoadon78.sesgroup.vn/hddt/main"> <!-- Logo text -->
+							<div>
+								<img th:src="*{'data:realCaptcha/jpg;base64,'+ LOGO }"
+									class="light-logo" />
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<div class="nav-center text-center">
+					<div class="support-nav">
+						<div class="d-flex align-items-center">
+							<div class="sp-email">
+								<span class="sp--email__icon"> <i
+									class="mdi mdi-email-outline"></i>
+								</span> <span class="sp--email__txt" th:text="${EMAIL}"></span>
+							</div>
+							<div class="sp-phone">
+								<span class="sp-phone__icon"><i class="mdi mdi-phone"></i>
+								</span> <span class="sp-phone__txt" th:text="${PHONE}"></span>
+							</div>
+						</div>
+					</div>
+				</div>
 				<!-- ============================================================== -->
-				</ul>
-				<!-- ============================================================== -->
-			    <!-- Logo -->
-          <!-- ============================================================== -->
-          <div class="navbar-header" style="width: auto; position: unset">
-            <a
-              class="navbar-brand"
-              href="https://hoadon78.sesgroup.vn/hddt/main"
-            >
-              <!-- Logo text -->
-              <div>
-              <img th:src="*{'data:realCaptcha/jpg;base64,'+ LOGO }" class="light-logo"/>
-              </div>
-            </a>
-          </div>
-          <div class="support-nav">
-            <div class="d-flex align-items-center">
-              <div class="sp-email">
-                <span class="sp--email__icon">
-                  <i class="mdi mdi-email-outline"></i>
-                </span>
-                <span class="sp--email__txt" th:text="${EMAIL}"></span>
-              </div>
-              <div class="sp-phone">
-                <span class="sp-phone__icon"
-                  ><i class="mdi mdi-phone"></i>
-                </span>
-                <span class="sp-phone__txt" th:text="${PHONE}"></span>
-              </div>
-            </div>
-          </div>
-          <!-- ============================================================== -->
-        
+
 				<!-- End Logo -->
 				<!-- ============================================================== -->
-			   <div class="navbar-collapse justify-content-end navbar-right">
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
-            <div
-              class="col-xs-4 info-company"
-              style="
-                float: left;
-               
-                padding-right: 15px;
-                padding-bottom: 0px;
-              "
-            >
-             <div
-                style="color: #425cfb; font-family: &#39;Times New Roman&#39;, Times, serif;font-weight: bold; font-size: 14px; "
-              >
-                MST:<span style="color: #ff2112"> [[${TAXCODE}]] </span>
-              </div>
-              <div
-                style="color: #425cfb; font-family: &#39;Times New Roman&#39;, Times, serif;font-weight: bold; font-size: 14px; "
-              >
-              [[${COMPANYNAME}]]
-              </div>
-            </div>
-            <ul class="navbar-nav my-lg-0">
-              <!-- ============================================================== -->
-              <!-- Profile -->
-              <!-- ============================================================== -->
-              <li class="nav-item dropdown">
-                <a
-                  class="dropdown-toggle text-muted text-center d-flex align-items-center user-profile__show"
-                  href="https://hoadon78.sesgroup.vn/hddt/main"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  style="line-height: 20px !important"
-                >
-                <img th:src="@{/static/images/user-icon-04.jpg}" alt="user" class="profile-pic mr-2">
-                </a>
-                <div class="dropdown-menu dropdown-menu-right scale-up">
-                  <ul class="dropdown-user">
-                    <li>
-                      <a
-                        href="/hddt/main/changeprofile/change"
-                        class="pT-3 pB-5"
-                        ><i class="ti-user"></i> Thay đổi thông tin người
-                        dùng</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="/hddt/main/viewprofile/view"
-                        class="pT-3 pB-5"
-                        ><i class="ti-user"></i> Xem thông tin người dùng</a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        href="/hddt/main/changepass/init"
-                        class="pT-5 pB-5"
-                        ><i class="ti-unlock"></i> Thay đổi mật khẩu</a
-                      >
-                    </li>
-                    <li role="separator" class="divider m-0"></li>
-                   	<li><a th:href="@{/logout}" class="pT-5 pB-5"><i class="mdi mdi-logout"></i> Logout</a></li>
-                  </ul>
-                </div>
-              </li>
-              <!-- ============================================================== -->
-            </ul>
-          </div>
-      
-			
+				<div class="nav-right d-flex align-items-center">
+					<div class="navbar-collapse justify-content-end navbar-right">
+						<!-- ============================================================== -->
+						<!-- ============================================================== -->
+						<!-- User profile and search -->
+						<!-- ============================================================== -->
+						<div class="col-xs-4 info-company"
+							style="float: left; padding-right: 15px; padding-bottom: 0px;">
+							<div
+								style="color: #425cfb; font-family: &amp; amp; #39; Times New Roman&amp;amp; #39; , Times , serif; font-weight: bold; font-size: 14px;">
+								MST:<span style="color: #ff2112"> [[${TAXCODE}]] </span>
+							</div>
+							<div
+								style="color: #425cfb; font-family: &amp; amp; #39; Times New Roman&amp;amp; #39; , Times , serif; font-weight: bold; font-size: 14px;">
+								[[${COMPANYNAME}]]</div>
+						</div>
+						<ul class="navbar-nav my-lg-0">
+							<!-- ============================================================== -->
+							<!-- Profile -->
+							<!-- ============================================================== -->
+							<li class="nav-item dropdown"><a
+								class="dropdown-toggle text-muted text-center d-flex align-items-center user-profile__show"
+								href="https://hoadon78.sesgroup.vn/hddt/main"
+								data-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="false" style="line-height: 20px !important">
+									<img th:src="@{/static/images/user-icon-04.jpg}" alt="user"
+									class="profile-pic mr-2">
+							</a>
+								<div class="dropdown-menu dropdown-menu-right scale-up">
+									<ul class="dropdown-user">
+										<li><a href="/hddt/main/changeprofile/change"
+											class="pT-3 pB-5"><i class="ti-user"></i> Thay đổi thông
+												tin người dùng</a></li>
+										<li><a href="/hddt/main/viewprofile/view"
+											class="pT-3 pB-5"><i class="ti-user"></i> Xem thông tin
+												người dùng</a></li>
+										<li><a href="/hddt/main/changepass/init"
+											class="pT-5 pB-5"><i class="ti-unlock"></i> Thay đổi mật
+												khẩu</a></li>
+										<li role="separator" class="divider m-0"></li>
+										<li><a th:href="@{/logout}" class="pT-5 pB-5"><i
+												class="mdi mdi-logout"></i> Logout</a></li>
+									</ul>
+								</div></li>
+							<!-- ============================================================== -->
+						</ul>
+					</div>
+				</div>
 			</nav>
-        </header>
-        <!-- ============================================================== -->
+		</header>
+		<!-- ============================================================== -->
         <!-- End Topbar header -->
         <!-- ============================================================== -->
         <!-- ============================================================== -->
