@@ -267,6 +267,7 @@ else {
 			);
 			reportParams.put("NMuaMDVQHNSach",
 					commons.getTextFromNodeXML((Element) xPath.evaluate("MDVQHNSach", nodeNMua, XPathConstants.NODE)));
+			
 			reportParams.put("NMuaDChi", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNMua, XPathConstants.NODE))
 			);
@@ -276,6 +277,12 @@ else {
 			reportParams.put("NMuaSDThoai", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeNMua, XPathConstants.NODE))
 			);
+			reportParams.put("NMuaCCCDan", 
+					commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNMua, XPathConstants.NODE))
+				);
+			reportParams.put("NMuaSHChieu", 
+					commons.getTextFromNodeXML((Element) xPath.evaluate("SHChieu", nodeNMua, XPathConstants.NODE))
+				);
 			reportParams.put("NMuaDCTDTu", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("DCTDTu", nodeNMua, XPathConstants.NODE))
 			);
