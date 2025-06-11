@@ -104,6 +104,12 @@ public class EInvoiceCRUDController1 extends AbstractController{
 	private String khSoDt;
 	private String khSoTk;
 	private String khTkTaiNganHang;
+	
+	private String khMaKhachHang;
+	private String khMaSoDVQHNSach;
+	private String khSoCCCDan;
+	private String khSoHoChieu;
+	
 	private String tongTienTruocThue;
 	private String loaiTienTt;
 	private String tyGia;
@@ -381,6 +387,11 @@ public class EInvoiceCRUDController1 extends AbstractController{
 			req.setAttribute("NMuaSTKNHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/STKNHang")));
 			req.setAttribute("NMuaTNHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/TNHang")));
 			
+			req.setAttribute("NMuaMKHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MKHang")));
+			req.setAttribute("MaDVQHNS", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MDVQHNSach")));
+			req.setAttribute("NMuaCCCDan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/CCCDan")));
+			req.setAttribute("NMuaSHChieu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SHChieu")));
+			
 			HashMap<String, String> hItem = null;
 			List<Object> prds = new ArrayList<Object>();
 			if(!jsonData.at("/EInvoiceDetail/DSHHDVu").isMissingNode()) {
@@ -475,6 +486,10 @@ public class EInvoiceCRUDController1 extends AbstractController{
 		khSoDt = commons.getParameterFromRequest(req, "kh-so-dt").trim().replaceAll("\\s+", " ");
 		khSoTk = commons.getParameterFromRequest(req, "kh-so-tk").trim().replaceAll("\\s+", " ");
 		khTkTaiNganHang = commons.getParameterFromRequest(req, "kh-tk-tai-ngan-hang").trim().replaceAll("\\s+", " ");
+		khMaKhachHang = commons.getParameterFromRequest(req, "kh-ma-khach-hang").trim().replaceAll("\\s+", " ");
+		khMaSoDVQHNSach = commons.getParameterFromRequest(req, "kh-ma-dvqhns").trim().replaceAll("\\s+", "");
+		khSoCCCDan = commons.getParameterFromRequest(req, "kh-cccd").trim().replaceAll("\\s+", "");
+		khSoHoChieu = commons.getParameterFromRequest(req, "kh-shchieu").trim().replaceAll("\\s+", "");
 		tongTienTruocThue = commons.getParameterFromRequest(req, "tong-tien-truoc-thue").replaceAll("\\s", "");
 		loaiTienTt = commons.getParameterFromRequest(req, "loai-tien-tt").replaceAll("\\s", "");
 		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("\\s", "");
@@ -507,10 +522,6 @@ public class EInvoiceCRUDController1 extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Ngày lập hóa đơn không đúng định dạng.");
 			}
-//			else if(commons.compareLocalDate(commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB), LocalDate.now()) > 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Ngày lập hóa đơn không được lớn hơn ngày hiện tại.");
-//			}
 			
 			if("".equals(loaiTienTt)) {
 				dto.setErrorCode(1);
@@ -520,19 +531,7 @@ public class EInvoiceCRUDController1 extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Địa chỉ email người mua không đúng.");
 			}
-			
-//			if(commons.ToNumber(tongTienTruocThue) <= 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Tổng tiền trước thuế phải lớn hơn 0.");
-//			}
-//			if(commons.ToNumber(tongTienThueGtgt) < 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Tổng tiền không được nhỏ hơn 0.");
-//			}
-//			if(commons.ToNumber(tongTienDaCoThue) <= 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Tổng tiền sau thuế phải lớn hơn 0.");
-//			}
+
 			if("".equals(tienBangChu)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Tiền bằng chữ không được rỗng.");
@@ -739,6 +738,10 @@ public class EInvoiceCRUDController1 extends AbstractController{
 		hData.put("KhSoDT", khSoDt);
 		hData.put("KhSoTk", khSoTk);
 		hData.put("KhTkTaiNganHang", khTkTaiNganHang);
+		hData.put("KhMaKhachHang", khMaKhachHang);
+		hData.put("KhMSDVQHNSach", khMaSoDVQHNSach);
+		hData.put("KhSoCCCD", khSoCCCDan);
+		hData.put("KhSoHoChieu", khSoHoChieu);
 		hData.put("TongTienTruocThue", tongTienTruocThue) ;
 		hData.put("LoaiTienTt", loaiTienTt);
 		hData.put("TyGia", tyGia);

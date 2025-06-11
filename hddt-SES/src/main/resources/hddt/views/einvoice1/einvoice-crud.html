@@ -319,7 +319,26 @@
 										</fieldset>
 									</div>
 								</div>
-
+							</div>
+							<div class="row m-b-16">
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
+									<div class="c-f__wrapper">
+										<input id="kh-makhachhang" name="kh-makhachhang" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaMKHang}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã khách hàng</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
+									<div class="c-f__wrapper">
+										<input id="ma-dvqhns" name="ma-dvqhns" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaDVQHNS}" autocomplete="off" th:readonly="${!_isedit_}" />
+										
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số ĐVQHNS</label></legend>
+										</fieldset>
+									</div>
+								</div>
 							</div>
 							<div class="row m-b-16">
 								<div class="col-12">
@@ -331,6 +350,34 @@
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend">
 												<label>Họ và tên người mua hàng</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row  m-b-16">
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
+									<div class="c-f__wrapper">
+										<input id="kh-cccd" name="kh-cccd"
+											class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaCCCDan}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số CCCD</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-6 custom-field">
+									<div class="c-f__wrapper">
+										<input id="kh-shchieu" name="kh-shchieu"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSHChieu}"
+											th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Số hộ chiếu</label>
 											</legend>
 										</fieldset>
 									</div>
@@ -1653,6 +1700,12 @@
 		dataPost['kh-so-dt'] = $('#f-einvoice-crud').find('#kh-so-dt').val();
 		dataPost['kh-so-tk'] = $('#f-einvoice-crud').find('#kh-so-tk').val();
 		dataPost['kh-tk-tai-ngan-hang'] = $('#f-einvoice-crud').find('#kh-tk-tai-ngan-hang').val();
+		
+		dataPost['kh-ma-khach-hang'] = $('#f-einvoice-crud').find('#kh-makhachhang').val();
+		dataPost['kh-cccd'] = $('#f-einvoice-crud').find('#kh-cccd').val();
+		dataPost['kh-shchieu'] = $('#f-einvoice-crud').find('#kh-shchieu').val();
+		dataPost['kh-ma-dvqhns'] = $('#f-einvoice-crud').find('#ma-dvqhns').val();
+		
 		
 		dataPost['tong-tien-truoc-thue'] = $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val();
 		dataPost['loai-tien-tt'] = $('#f-einvoice-crud').find('#loai-tien-tt').val();
