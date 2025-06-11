@@ -5468,7 +5468,7 @@ try {
 					.append("SignStatusCode", "SIGNED")
 					.append("EInvoiceStatus",
 							new Document("$in",
-									Arrays.asList(Constants.INVOICE_STATUS.COMPLETE, Constants.INVOICE_STATUS.ADJUSTED)))
+									Arrays.asList(Constants.INVOICE_STATUS.COMPLETE, Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)))
 
 					.append("MCCQT", new Document("$exists", true).append("$ne", null));
 			if (!"".equals(mauSoHdon))

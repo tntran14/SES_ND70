@@ -177,7 +177,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("HDSS.TCTBao", new Document("$ne", "1"))
 					.append("EInvoiceStatus",
 							new Document("$in",
-									Arrays.asList("COMPLETE", "ADJUSTED")))
+									Arrays.asList("COMPLETE", "ADJUSTED", "REPLACED")))
 					.append("MCCQT", old_mccqt)
 					.append("EInvoiceDetail.TTChung.SHDon", old_shdon)
 					.append("EInvoiceDetail.TTChung.KHHDon", old_khhdon);
@@ -220,7 +220,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("HDSS.TCTBao", new Document("$ne", "1"))
 					.append("EInvoiceStatus",
 							new Document("$in",
-									Arrays.asList("COMPLETE", "ADJUSTED")))
+									Arrays.asList("COMPLETE", "ADJUSTED", "REPLACED")))
 					.append("MCCQT", new_mccqt)
 					.append("EInvoiceDetail.TTChung.SHDon", new_shdon)
 					.append("EInvoiceDetail.TTChung.KHHDon", new_khhdon);
@@ -506,7 +506,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("HDSS.TCTBao", new Document("$ne", "1"))
 					.append("EInvoiceStatus",
 							new Document("$in",
-									Arrays.asList("COMPLETE", "ADJUSTED")))
+									Arrays.asList("COMPLETE", "ADJUSTED","REPLACED")))
 					.append("MCCQT", old_mccqt)
 					.append("EInvoiceDetail.TTChung.SHDon", old_shdon)
 					.append("EInvoiceDetail.TTChung.KHHDon", old_khhdon);
@@ -549,7 +549,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("HDSS.TCTBao", new Document("$ne", "1"))
 					.append("EInvoiceStatus",
 							new Document("$in",
-									Arrays.asList("COMPLETE", "ADJUSTED")))
+									Arrays.asList("COMPLETE", "ADJUSTED","REPLACED")))
 					.append("MCCQT", new_mccqt)
 					.append("EInvoiceDetail.TTChung.SHDon", new_shdon)
 					.append("EInvoiceDetail.TTChung.KHHDon", new_khhdon);
