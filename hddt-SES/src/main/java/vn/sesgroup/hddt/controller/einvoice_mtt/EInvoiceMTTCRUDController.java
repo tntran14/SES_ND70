@@ -107,6 +107,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 	private String khMst;
 	private String khMKHang;
 	private String khCCCDan;
+	private String khMaSoDVQHNS;
+	private String khSoHoChieu;
 	private String khHoTenNguoiMua;
 	private String khTenDonVi;
 	private String khDiaChi;
@@ -468,8 +470,9 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 			
 			
 			req.setAttribute("NMuaMST", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MST")));
-			req.setAttribute("NMuaMKHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MKHang")));
+			req.setAttribute("NMuaMSDVQHNS", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MDVQHNSach")));
 			req.setAttribute("NMuaCCCDan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/CCCDan")));
+			req.setAttribute("NMuaSHChieu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SHChieu")));
 			req.setAttribute("NMuaHVTNMHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 			req.setAttribute("NMuaTen", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
 			req.setAttribute("NMuaDChi", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DChi")));
@@ -590,9 +593,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 //		chkXuatTheoLoaiTienTt = commons.getParameterFromRequest(req, "chk-xuat-theo-loai-tien-tt").replaceAll("\\s", "");
 		khMst = commons.getParameterFromRequest(req, "kh-mst").replaceAll("\\s", "");
 		khMKHang = commons.getParameterFromRequest(req, "kh-makhachhang").trim().replaceAll("\\s+", " ");
-		
-		khCCCDan = commons.getParameterFromRequest(req, "kh-cancuoccongdan").trim().replaceAll("\\s+", " ");
-		
+		khCCCDan = commons.getParameterFromRequest(req, "kh-cancuoccongdan").trim().replaceAll("\\s+", "");
 		khHoTenNguoiMua = commons.getParameterFromRequest(req, "kh-ho-ten-nguoi-mua").trim().replaceAll("\\s+", " ");
 		khTenDonVi = commons.getParameterFromRequest(req, "kh-ten-don-vi").trim().replaceAll("\\s+", " ");
 		khDiaChi = commons.getParameterFromRequest(req, "kh-dia-chi").trim().replaceAll("\\s+", " ");
@@ -601,6 +602,9 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		khSoDt = commons.getParameterFromRequest(req, "kh-so-dt").trim().replaceAll("\\s+", " ");
 		khSoTk = commons.getParameterFromRequest(req, "kh-so-tk").trim().replaceAll("\\s+", " ");
 		khTkTaiNganHang = commons.getParameterFromRequest(req, "kh-tk-tai-ngan-hang").trim().replaceAll("\\s+", " ");
+		khSoHoChieu = commons.getParameterFromRequest(req, "kh-so-ho-chieu").trim().replaceAll("\\s+", "");
+		khMaSoDVQHNS = commons.getParameterFromRequest(req, "kh-msdvqhns").trim().replaceAll("\\s+", "");
+		
 		tongTienTruocThue = commons.getParameterFromRequest(req, "tong-tien-truoc-thue").replaceAll("\\s", "");
 		loaiTienTt = commons.getParameterFromRequest(req, "loai-tien-tt").replaceAll("\\s", "");
 //		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("\\s", "").replaceAll(",", "");
@@ -885,6 +889,9 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		hData.put("KhSoDt", khSoDt);
 		hData.put("KhSoTk", khSoTk);
 		hData.put("KhTkTaiNganHang", khTkTaiNganHang);
+		hData.put("KhMaSoDVQHNS", khMaSoDVQHNS);
+		hData.put("KhSoHoChieu", khSoHoChieu);
+		
 		hData.put("TongTienTruocThue", tongTienTruocThue) ;
 		hData.put("LoaiTienTt", loaiTienTt);
 		hData.put("TyGia", "VND".equals(loaiTienTt)? "1": tyGia);

@@ -4857,11 +4857,15 @@ else {
 				reportParams.put("NMuaMKHang", 
 					commons.getTextFromNodeXML((Element) xPath.evaluate("MKHang", nodeNMua, XPathConstants.NODE))
 				);
-				
+				reportParams.put("NMuaMDVQHNSach", 
+						commons.getTextFromNodeXML((Element) xPath.evaluate("MDVQHNSach", nodeNMua, XPathConstants.NODE))
+					);
 				reportParams.put("CCCD", 
 						commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNMua, XPathConstants.NODE))
 					);
-				
+				reportParams.put("NMuaSHChieu", 
+						commons.getTextFromNodeXML((Element) xPath.evaluate("SHChieu", nodeNMua, XPathConstants.NODE))
+					);
 				reportParams.put("NMuaSDThoai", 
 					commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeNMua, XPathConstants.NODE))
 				);

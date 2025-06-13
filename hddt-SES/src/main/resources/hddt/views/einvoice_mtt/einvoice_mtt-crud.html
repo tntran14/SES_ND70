@@ -239,7 +239,7 @@
 							</div>
 							
 								<div class="row m-b-16">
-								<div class="col-12">
+								<div class="col-8">
 									<div class="c-f__wrapper">
 										<input id="kh-ho-ten-nguoi-mua" name="kh-ho-ten-nguoi-mua" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaHVTNMHang}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
@@ -247,13 +247,29 @@
 										</fieldset>
 									</div>
 								</div>
+								<div class="col-4">
+									<div class="c-f__wrapper">
+										<input id="kh-msdvqhns" name="kh-msdvqhns" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaMSDVQHNS}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Mã số ĐVQHNS</label></legend>
+										</fieldset>
+									</div>
+								</div>
 							</div>
 							<div class="row m-b-16">
-								<div class="col-12">
+								<div class="col-6">
 									<div class="c-f__wrapper">
 										<input id="kh-cancuoccongdan" name="kh-cancuoccongdan" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaCCCDan}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Căn cước công dân</label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-6">
+									<div class="c-f__wrapper">
+										<input id="kh-sohochieu" name="kh-sohochieu" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaSHChieu}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Số hộ chiếu</label></legend>
 										</fieldset>
 									</div>
 								</div>
@@ -297,7 +313,16 @@
 									</div>
 								</div>
 							</div>
-							
+							<div class="row m-b-16">
+								<div class="col-12 custom-field pr-mobile__ses">
+									<div class="c-f__wrapper">
+										<input id="kh-emailcc" name="kh-emailcc" class=" form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaDCTDTuCC}" th:readonly="${!_isedit_}" />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Email CC (cách nhau bởi dấu ,)</label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
 							<div class="row m-b-16">
 								<div class="col-6 col-sm-6 col-md-6 custom-field pr-mobile__ses">
 									<div class="c-f__wrapper">
@@ -1347,17 +1372,17 @@
 		
 		dataPost['kh-mst'] = $('#f-einvoice_mtt-crud').find('#kh-mst').val();
 		dataPost['kh-makhachhang'] = $('#f-einvoice_mtt-crud').find('#kh-makhachhang').val();
-		
 		dataPost['kh-cancuoccongdan'] = $('#f-einvoice_mtt-crud').find('#kh-cancuoccongdan').val();
-		
 		dataPost['kh-ho-ten-nguoi-mua'] = $('#f-einvoice_mtt-crud').find('#kh-ho-ten-nguoi-mua').val();
 		dataPost['kh-ten-don-vi'] = $('#f-einvoice_mtt-crud').find('#kh-ten-don-vi').val();
 		dataPost['kh-dia-chi'] = $('#f-einvoice_mtt-crud').find('#kh-dia-chi').val();
 		dataPost['kh-email'] = $('#f-einvoice_mtt-crud').find('#kh-email').val();
-	
 		dataPost['kh-so-dt'] = $('#f-einvoice_mtt-crud').find('#kh-so-dt').val();
 		dataPost['kh-so-tk'] = $('#f-einvoice_mtt-crud').find('#kh-so-tk').val();
 		dataPost['kh-tk-tai-ngan-hang'] = $('#f-einvoice_mtt-crud').find('#kh-tk-tai-ngan-hang').val();
+		dataPost['kh-so-ho-chieu'] = $('#f-einvoice_mtt-crud').find('#kh-sohochieu').val();
+		dataPost['kh-msdvqhns'] = $('#f-einvoice_mtt-crud').find('#kh-msdvqhns').val();
+		dataPost['kh-emailcc'] = $('#f-einvoice_mtt-crud').find('#kh-emailcc').val();
 		
 		dataPost['tong-tien-truoc-thue'] = $('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val();
 		dataPost['loai-tien-tt'] = $('#f-einvoice_mtt-crud').find('#loai-tien-tt').val();

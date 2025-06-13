@@ -3,11 +3,14 @@ package vn.sesgroup.hddt.model;
 public class EInvoiceMTTExcelForm {
 	  private String maHD;
 	    private String maSoThue;
+	    private String maSoDVQHNS;
 	    private String tenNguoiMua;
 	    private String cccd;
+	    private String soHoChieu;
 	    private String tenDonVi;
 	    private String diaChiKhachHang;
 	    private String mailKhachHang;
+	    private String mailCC;
 	    private String sdtKhachHang;
 	    private String soTaiKhoan;
 	    private String tenNganHang;
@@ -43,6 +46,41 @@ public class EInvoiceMTTExcelForm {
 			this.tenDonVi = tenDonVi;
 			this.diaChiKhachHang = diaChiKhachHang;
 			this.mailKhachHang = mailKhachHang;
+			this.sdtKhachHang = sdtKhachHang;
+			this.soTaiKhoan = soTaiKhoan;
+			this.tenNganHang = tenNganHang;
+			this.loaiHoaDon = loaiHoaDon;
+			this.hinhThucThanhToan = hinhThucThanhToan;
+			this.loaiTien = loaiTien;
+			this.tenHangHoa = tenHangHoa;
+			this.maHangHoa = maHangHoa;
+			this.donViTinh = donViTinh;
+			this.soLuong = soLuong;
+			this.donGia = donGia;
+			this.thanhTien = thanhTien;
+			this.thueSuat = thueSuat;
+			this.tienThue = tienThue;
+			this.tinhChat = tinhChat;
+			this.tyGia = tyGia;
+			this.tongTien = tongTien;
+		}
+
+		public EInvoiceMTTExcelForm(String maHD, String maSoThue, String maSoDVQHNS, String tenNguoiMua, String cccd,
+				String soHoChieu, String tenDonVi, String diaChiKhachHang, String mailKhachHang, String mailCC,
+				String sdtKhachHang, String soTaiKhoan, String tenNganHang, String loaiHoaDon, String hinhThucThanhToan,
+				String loaiTien, String tenHangHoa, String maHangHoa, String donViTinh, Double soLuong, Double donGia,
+				Double thanhTien, Double thueSuat, Double tienThue, String tinhChat, String tyGia, Double tongTien) {
+			super();
+			this.maHD = maHD;
+			this.maSoThue = maSoThue;
+			this.maSoDVQHNS = maSoDVQHNS;
+			this.tenNguoiMua = tenNguoiMua;
+			this.cccd = cccd;
+			this.soHoChieu = soHoChieu;
+			this.tenDonVi = tenDonVi;
+			this.diaChiKhachHang = diaChiKhachHang;
+			this.mailKhachHang = mailKhachHang;
+			this.mailCC = mailCC;
 			this.sdtKhachHang = sdtKhachHang;
 			this.soTaiKhoan = soTaiKhoan;
 			this.tenNganHang = tenNganHang;
@@ -253,18 +291,42 @@ public class EInvoiceMTTExcelForm {
 		public void setTongTien(Double tongTien) {
 			this.tongTien = tongTien;
 		}
+		
+		public String getMaSoDVQHNS() {
+			return maSoDVQHNS;
+		}
 
+		public void setMaSoDVQHNS(String maSoDVQHNS) {
+			this.maSoDVQHNS = maSoDVQHNS;
+		}
+
+		public String getSoHoChieu() {
+			return soHoChieu;
+		}
+
+		public void setSoHoChieu(String soHoChieu) {
+			this.soHoChieu = soHoChieu;
+		}
+
+		public String getMailCC() {
+			return mailCC;
+		}
+
+		public void setMailCC(String mailCC) {
+			this.mailCC = mailCC;
+		}
 
 		@Override
 		public String toString() {
-			return "EInvoiceMTTExcelForm [maHD=" + maHD + ", maSoThue=" + maSoThue + ", tenNguoiMua=" + tenNguoiMua
-					+ ", cccd=" + cccd + ", tenDonVi=" + tenDonVi + ", diaChiKhachHang=" + diaChiKhachHang
-					+ ", mailKhachHang=" + mailKhachHang + ", sdtKhachHang=" + sdtKhachHang + ", soTaiKhoan="
-					+ soTaiKhoan + ", tenNganHang=" + tenNganHang + ", loaiHoaDon=" + loaiHoaDon
-					+ ", hinhThucThanhToan=" + hinhThucThanhToan + ", loaiTien=" + loaiTien + ", tenHangHoa="
-					+ tenHangHoa + ", maHangHoa=" + maHangHoa + ", donViTinh=" + donViTinh + ", soLuong=" + soLuong
-					+ ", donGia=" + donGia + ", thanhTien=" + thanhTien + ", thueSuat=" + thueSuat + ", tienThue="
-					+ tienThue + ", tinhChat=" + tinhChat + ", tyGia=" + tyGia + ", tongTien=" + tongTien + "]";
+			return "EInvoiceMTTExcelForm [maHD=" + maHD + ", maSoThue=" + maSoThue + ", maSoDVQHNS=" + maSoDVQHNS
+					+ ", tenNguoiMua=" + tenNguoiMua + ", cccd=" + cccd + ", soHoChieu=" + soHoChieu + ", tenDonVi="
+					+ tenDonVi + ", diaChiKhachHang=" + diaChiKhachHang + ", mailKhachHang=" + mailKhachHang
+					+ ", mailCC=" + mailCC + ", sdtKhachHang=" + sdtKhachHang + ", soTaiKhoan=" + soTaiKhoan
+					+ ", tenNganHang=" + tenNganHang + ", loaiHoaDon=" + loaiHoaDon + ", hinhThucThanhToan="
+					+ hinhThucThanhToan + ", loaiTien=" + loaiTien + ", tenHangHoa=" + tenHangHoa + ", maHangHoa="
+					+ maHangHoa + ", donViTinh=" + donViTinh + ", soLuong=" + soLuong + ", donGia=" + donGia
+					+ ", thanhTien=" + thanhTien + ", thueSuat=" + thueSuat + ", tienThue=" + tienThue + ", tinhChat="
+					+ tinhChat + ", tyGia=" + tyGia + ", tongTien=" + tongTien + "]";
 		}
 	    
 }
