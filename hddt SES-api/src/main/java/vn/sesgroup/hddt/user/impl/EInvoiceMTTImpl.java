@@ -211,6 +211,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		String taxCode = "";
 		HashMap<String, Double> mapVATAmount = null;
 		HashMap<String, Double> mapAmount = null;
+		double chietKhauTMTotal	= 0.0;
 		List<Object> listDSHHDVu = new ArrayList<Object>();
 		HashMap<String, Object> hItem = null;
 
@@ -479,6 +480,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -626,11 +628,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 							listDSHHDVu.add(hItem);
 						}
-
-					
-
 					}
-
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+					}
 				}
 			}
 			
@@ -675,7 +676,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1058,6 +1059,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -1207,7 +1209,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							listDSHHDVu.add(hItem);
 						}
 					}
-
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+					}
 				}
 			}
 				
@@ -1251,7 +1255,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1637,6 +1641,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -1784,8 +1789,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 							listDSHHDVu.add(hItem);
 						}
-
-					
+					}
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
 					}
 
 				}
@@ -1833,7 +1839,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -5881,6 +5887,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		int intTmp = 0;
 		HashMap<String, Double> mapVATAmount = null;
 		HashMap<String, Double> mapAmount = null;
+		double chietKhauTMTotal	= 0.0;
 		String tmp = "";
 		// END XML
 
@@ -6335,8 +6342,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 
 						for (Object o : listHHDVu) {
-							if (!"".equals(o.equals("/ProductName"))) {
-								JsonNode h = Json.serializer().nodeFromObject(o);
+							JsonNode h = Json.serializer().nodeFromObject(o);
+							if (!"".equals(commons.getTextJsonNode(h.at("/ProductName")).trim())) {
 								tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
 										.replaceAll(",", "");
 								switch (tmp) {
@@ -6452,6 +6459,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									elementTmp.appendChild(elementSubTmp);
 								}
 							}
+							if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+								chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+							}
 						}
 
 						if (!tempLoaiHoaDon.equals("2")) {
@@ -6496,7 +6506,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							elementSubTmp.appendChild(elementSubTmp01);
 
 							elementTmp.appendChild(elementSubTmp);
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 									commons.formatNumberReal(total).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
@@ -6515,7 +6525,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									commons.formatNumberReal(tongThanhTien).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
 									commons.formatNumberReal(tongTienThue).replaceAll(",", "")));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 									commons.formatNumberReal(total).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
@@ -6816,8 +6826,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 
 						for (Object o : listHHDVus) {
-							if (!"".equals(o.equals("/ProductName"))) {
-								JsonNode h = Json.serializer().nodeFromObject(o);
+							JsonNode h = Json.serializer().nodeFromObject(o);
+							if (!"".equals(commons.getTextJsonNode(h.at("/ProductName")).trim())) {
 								tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
 										.replaceAll(",", "");
 								switch (tmp) {
@@ -6933,6 +6943,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									elementTmp.appendChild(elementSubTmp);
 								}
 							}
+							if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+								chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+							}
 						}
 						if (!tempLoaiHoaDon.equals("2")) {
 							elementSubContent.appendChild(elementTmp);
@@ -6976,7 +6989,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							elementSubTmp.appendChild(elementSubTmp01);
 
 							elementTmp.appendChild(elementSubTmp);
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 									commons.formatNumberReal(tongTien).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));
@@ -6995,7 +7008,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									commons.formatNumberReal(thanhTien).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue",
 									commons.formatNumberReal(tienThue).replaceAll(",", "")));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 									commons.formatNumberReal(tongTien).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tongTienBangchu));

@@ -605,6 +605,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			String vat_ = "";
 			String VAT_ = "";
 			String check_feature = "";
+			double chietKhauTMTotal	= 0.0;
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -750,7 +751,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						listDSHHDVu.add(hItem);
 
 					}
-
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+					}
 				}
 			}
 			elementSubContent.appendChild(elementTmp);
@@ -838,7 +841,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1430,6 +1433,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			vat_ = "";
 			VAT_ = "";
 			check_feature = "";
+			chietKhauTMTotal = 0.0;
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -1575,7 +1579,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						listDSHHDVu.add(hItem);
 
 					}
-
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+					}
 				}
 			}
 			elementSubContent.appendChild(elementTmp);
@@ -1666,7 +1672,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -2277,6 +2283,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			vat_ = "";
 			VAT_ = "";
 			check_feature = "";
+			chietKhauTMTotal = 0.0;
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -2422,7 +2429,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						listDSHHDVu.add(hItem);
 
 					}
-
+					if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+						chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+					}
 				}
 			}
 			elementSubContent.appendChild(elementTmp);
@@ -2516,7 +2525,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 			elementTmp.appendChild(elementSubTmp);
 
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -7156,6 +7165,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						Double TongTienThue = 0.0;
 						Double TTDCThue = 0.0;
 						Double Total = 0.0;
+						Double TongTienChietKhauTM = 0.0;
 						for (int k = i; k <= end; k++) {
 							DSHHDVu dshhdVu = new DSHHDVu();
 							TT = stt + a;
@@ -7460,8 +7470,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						// Json.serializer().nodeFromObject(msg.getObjData());
 
 						for (Object o : listHHDVu) {
-							if (!"".equals(o.equals("/ProductName"))) {
-								JsonNode h = Json.serializer().nodeFromObject(o);
+							JsonNode h = Json.serializer().nodeFromObject(o);
+							if (!"".equals(commons.getTextJsonNode(h.at("/ProductName")).trim())) {
 								tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
 										.replaceAll(",", "");
 								switch (tmp) {
@@ -7560,6 +7570,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								elementTmp.appendChild(elementSubTmp);
 
 							}
+							if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+								TongTienChietKhauTM += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+							}
+							
 						}
 						elementSubContent.appendChild(elementTmp);
 
@@ -7603,7 +7617,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 						elementTmp.appendChild(elementSubTmp);
 
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(TongTienChietKhauTM)));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 								commons.formatNumberReal(TTDCThue).replaceAll(",", "")));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", TongTienBangchu));
@@ -7677,6 +7691,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						Double TongTienThue = 0.0;
 						Double TTDCThue = 0.0;
 						Double Total = 0.0;
+						Double TongTienChietKhauTM = 0.0;
 						if (dem == 1) {
 							int k = i;
 							DSHHDVu dshhdVu = new DSHHDVu();
@@ -7970,8 +7985,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							// Json.serializer().nodeFromObject(msg.getObjData());
 
 							for (Object o : listHHDVus) {
-								if (!"".equals(o.equals("/ProductName"))) {
-									JsonNode h = Json.serializer().nodeFromObject(o);
+								JsonNode h = Json.serializer().nodeFromObject(o);
+								if (!"".equals(commons.getTextJsonNode(h.at("/ProductName")).trim())) {
 									tmp = commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATRate")))
 											.replaceAll(",", "");
 									switch (tmp) {
@@ -8069,6 +8084,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									elementTmp.appendChild(elementSubTmp);
 
 								}
+								if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									TongTienChietKhauTM += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+								}
 							}
 							elementSubContent.appendChild(elementTmp);
 
@@ -8114,7 +8132,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 							elementTmp.appendChild(elementSubTmp);
 
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(TongTienChietKhauTM)));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
 									commons.formatNumberReal(TTDCThue).replaceAll(",", "")));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", TongTienBangchu));
