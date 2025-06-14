@@ -5393,7 +5393,8 @@ else {
 					String mccqt = commons.getTextFromNodeXML((Element) xPath.evaluate("MCCQT", nodeHDSSot, XPathConstants.NODE));
 					reportParams.put("HDSS_SHDon", shd);
 					reportParams.put("HDSS_MSHDon", khmshdon + khhdon);
-			        reportParams.put("HDSS_NPHanh", nphanh);
+			        reportParams.put("HDSS_NPHanh", commons.convertLocalDateTimeStringToString(nphanh, "yyyy-MM-dd",
+							Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			        reportParams.put("HDSS_MCCQT", mccqt);
 				}
 				
@@ -5406,7 +5407,8 @@ else {
 					String mccqt = commons.getTextFromNodeXML((Element) xPath.evaluate("MCCQT", nodeHDDCTThe, XPathConstants.NODE));
 					reportParams.put("HDDCTT_SHDon", shd);
 					reportParams.put("HDDCTT_MSHDon", khmshdon + khhdon);
-			        reportParams.put("HDDCTT_NPHanh", nphanh);
+					reportParams.put("HDDCTT_NPHanh", commons.convertLocalDateTimeStringToString(nphanh, "yyyy-MM-dd",
+							Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			        reportParams.put("HDDCTT_MCCQT", mccqt);
 				}
 
