@@ -7099,9 +7099,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 			/* DOC FILE EXCEL - GHI DU LIEU VO LIST */
 			for (; i < eInvoiceExcelFormList.size();) {
+				
 				dem = 0;
 				for (int j = i; j < eInvoiceExcelFormList.size(); j++) {
-					if (eInvoiceExcelFormList.get(i).getMaHD() == eInvoiceExcelFormList.get(j).getMaHD()) {
+					if (eInvoiceExcelFormList.get(i).getMaHD().equals(eInvoiceExcelFormList.get(j).getMaHD())) {
 						// Xu ly
 						dem++;
 						start = j + 1;
