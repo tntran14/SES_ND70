@@ -545,6 +545,7 @@
 														if(check_pass==null){
 															$('#f-issu-crud').find('button[data-action="back"]').trigger('click');	
 														}else{
+															alertDLSuccess(res.responseData.info, function(){});
 															$('#f-issu-crud').find('#password').val(res.responseData.password);
 														}
 													}else{

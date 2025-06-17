@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.asn1.x509.sigi.NameOrPseudonym;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -544,10 +545,13 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 	}
 
 ///*END - INSERT LOG MAIL*/
-			
+			hR = new HashMap<String, String>();
+			hR.put("_id", objectId.toString());
+			hR.put("Password", secureKey);
 			
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
-			rsp.setResponseStatus(responseStatus);				
+			rsp.setResponseStatus(responseStatus);		
+			rsp.setObjData(hR);
 			return rsp;
 			
 			

@@ -502,18 +502,25 @@ public class IssuCRUDController extends AbstractController{
 		MsgRsp rsp = restAPI.callAPINormal("/issu/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		if(rspStatus.getErrorCode() == 0) {
+			JsonNode jsonData = null;
+			HashMap<String, Object> hR = null;
 			dtoRes.setErrorCode(0);
 			switch (transaction) {
 			case "issu-cre":
-				dtoRes.setResponseData("Thêm mới thông tin khách hàng thành công.");
+//				dtoRes.setResponseData("Thêm mới thông tin khách hàng thành công.");
+				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				hR = new HashMap<String, Object>();
+				hR.put("info", "Thêm mới thông tin khách hàng thành công.");
+				hR.put("password", commons.getTextJsonNode(jsonData.at("/Password")));
+				dtoRes.setResponseData(hR);
 				break;
 			case "issu-edit":
 				dtoRes.setResponseData("Cập nhật thông tin khách hàng thành công.");
 				break;
 			case "issu-reset-pass":
-				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-				HashMap<String, Object> hR = new HashMap<String, Object>();
+				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 				hR = new HashMap<String, Object>();
 				hR.put("info", "Reset mật khẩu khách hàng thành công.");
 				hR.put("password", commons.getTextJsonNode(jsonData.at("/Password")));
