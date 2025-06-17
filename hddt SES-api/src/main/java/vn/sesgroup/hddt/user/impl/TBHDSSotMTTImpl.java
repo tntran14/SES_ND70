@@ -264,7 +264,7 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 			elementContent.setAttribute("Id", "data");
 			root.appendChild(elementContent);
 			
-			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML));
+			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_HDSS));
 			elementContent.appendChild(commons.createElementWithValue(doc, "MSo", "04/SS-HĐĐT"));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", "Thông báo hóa đơn điện tử có sai sót"));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaiThongBao));
@@ -515,7 +515,7 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 			elementContent.setAttribute("Id", "data");
 			root.appendChild(elementContent);
 			
-			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML));
+			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_HDSS));
 			elementContent.appendChild(commons.createElementWithValue(doc, "MSo", "04/SS-HĐĐT"));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", "Thông báo hóa đơn điện tử có sai sót"));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaiThongBao));
