@@ -64,6 +64,12 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 		
 		APIParams.PY_SERVER = env.getProperty("api.hddt.uri.python.server", "");
 		
+		System.out.println("======================================");
+		System.out.println("VERSION_XML: "+SystemParams.VERSION_XML);
+		System.out.println("VERSION_XML_PXK: "+SystemParams.VERSION_XML_PXK);
+		System.out.println("VERSION_XML_HDSS: "+SystemParams.VERSION_XML_HDSS);
+		System.out.println("VERSION_XML_TOKHAI: "+SystemParams.VERSION_XML_TOKHAI);
+		
 		try {
 			StringBuilder sb = new StringBuilder();
 			
