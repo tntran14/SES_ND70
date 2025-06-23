@@ -4860,7 +4860,7 @@ else {
 				reportParams.put("NMuaMDVQHNSach", 
 						commons.getTextFromNodeXML((Element) xPath.evaluate("MDVQHNSach", nodeNMua, XPathConstants.NODE))
 					);
-				reportParams.put("CCCD", 
+				reportParams.put("NMuaCCCDan", 
 						commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNMua, XPathConstants.NODE))
 					);
 				reportParams.put("NMuaSHChieu", 
