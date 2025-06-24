@@ -43,6 +43,10 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 		SystemParams.VERSION = env.getProperty("api.version", "1.0");
 		SystemParams.VERSION_XML = env.getProperty("version.xml", "2.0.0");
 		SystemParams.VERSION_XML_PXK = env.getProperty("version.xml_pxk", "2.0.0");
+//		SystemParams.VERSION_XML = env.getProperty("version.xml", "2.0.0");
+//		SystemParams.VERSION_XML_PXK = env.getProperty("version.xml_pxk", "2.0.0");
+		SystemParams.VERSION_XML = "2.1.0";
+		SystemParams.VERSION_XML_PXK =  "2.1.0";
 		SystemParams.VERSION_XML_HDSS = env.getProperty("version.xml_hdss", "2.0.0");
 		SystemParams.VERSION_XML_TOKHAI = env.getProperty("version.xml_tokhai", "2.0.0");
 		SystemParams.DIR_E_INVOICE_DATA = env.getProperty("dir.einvoice.data", "");
