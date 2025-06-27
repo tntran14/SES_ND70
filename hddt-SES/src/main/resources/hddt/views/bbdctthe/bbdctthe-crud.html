@@ -627,9 +627,14 @@
 								item['TgTCThue'] = value['TgTCThue'];
 								item['TgTThue'] = value['TgTThue'];
 								item['TgTTTBSo'] = value['TgTTTBSo'];
+								
 								objDataJson.push(item);
+								$('#f-lbbdctt-crud').find('#nm_mst').val(value['MSTNMHang']);
+								$('#f-lbbdctt-crud').find('#nm_dvmh').val(value['TNMHang']);
+								$('#f-lbbdctt-crud').find('#nm_dc').val(value['DCNMHang']);
 							});
 							_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+							
 						}
 					});
 					break;

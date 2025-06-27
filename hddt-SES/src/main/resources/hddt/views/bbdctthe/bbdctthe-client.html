@@ -19,11 +19,11 @@
 								<div class="row mT-0">
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-											<button type="button" title="Ký hợp đồng"
-												class="btns btns-export__ses hover-up__ses">
-												<a href="/lbbdctt-client/download-plugin" download> <i
-													class="fa fa-download"></i> <span class="m-l-10">Download</span>
-												</a>
+											<button type="button" name="btDownload"
+												data-action="download" data-target="backgroundFile"
+												class="btns btns-search_auto__ses m-t-0 m-b-0"
+												title="Download">
+												<i class="fa fa-download"></i> Tải xuống Plugin Ký
 											</button>
 											<button type="button" title="Ký hợp đồng"
 												data-action="lbbdctt-sign"
@@ -565,16 +565,36 @@
 
 			});
 
+			
+			$("#f-lbbdctt").find('button[name="btDownload"]').click(
+					function(event) {
+						event.preventDefault();
+						event.stopPropagation();
+						const downloadUrl = ROOT_PATH
+								+ "/lbbdctt-client/download-plugin";
+
+						const a = document.createElement('a');
+						a.href = downloadUrl;
+						a.download = '';
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+					});
+
 			function getDataSearch() {
 				var dataPost = {};
-				dataPost['_mtdiep'] = $('#f-lbbdctt').find('input[name="_mtdiep"]').val();
-				dataPost['_mst'] = $('#f-lbbdctt').find('input[name="_mst"]').val();
+				dataPost['_mtdiep'] = $('#f-lbbdctt').find(
+						'input[name="_mtdiep"]').val();
+				dataPost['_mst'] = $('#f-lbbdctt').find('input[name="_mst"]')
+						.val();
 				return dataPost;
 			}
 
 			function disableEnabledAllButton() {
-				var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
-				$("#f-lbbdctt").find('button[data-action="lbbdctt-sign"]').prop('disabled', checkRows.length == 0);
+				var checkRows = _gridMain
+						.find(' tbody tr input[type="checkbox"]:checked');
+				$("#f-lbbdctt").find('button[data-action="lbbdctt-sign"]')
+						.prop('disabled', checkRows.length == 0);
 			}
 		</script>
 	</th:block>
