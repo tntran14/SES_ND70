@@ -99,6 +99,8 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		IssuerInfo ii = cup.getLoginRes().getIssuerInfo();
 
 		req.setAttribute("NB_MSThue", ii.getTaxCode());
+		req.setAttribute("NB_DVBHang", ii.getName());
+		req.setAttribute("NB_DChi", ii.getAddress());
 
 		_id = commons.getParameterFromRequest(req, "_id");
 		String header = "Tạo biên bản điều chỉnh/thay thế";

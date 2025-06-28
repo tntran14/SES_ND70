@@ -237,14 +237,23 @@
 										   <button
 											  type="button"
 											  title="Thêm mới HĐ Điều chỉnh/Thay thế"
-											  data-action="einvoice-cre-dc-tt"
+											  data-action="einvoice-cre-dc"
 											  class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice-cre-dc-tt|')}"  
 											th:disabled="true" >
 										   <i class="mdi mdi-contrast"></i><span class="d-none d-md-inline"
-											  >Điều chỉnh/Thay thế HĐ</span
+											  >Điều chỉnh HĐ</span
 											  >
 										   </button>
-										   
+										   <button
+											  type="button"
+											  title="Thêm mới HĐ Điều chỉnh/Thay thế"
+											  data-action="einvoice-cre-tt"
+											  class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice-cre-dc-tt|')}"  
+											th:disabled="true" >
+										   <i class="mdi mdi-contrast"></i><span class="d-none d-md-inline"
+											  >Thay thế HĐ</span
+											  >
+										   </button>
 										
 										</div>
                             			
@@ -549,7 +558,7 @@
 //								$(obj).attr('title', $(obj).html())
 //							});
 							
-							$("#f-einvoices").find('button[data-action="einvoice-detail"], button[data-action="einvoice-edit"],button[data-action="einvoice-copy"], button[data-action="einvoice-sign"], button[data-action="einvoice-cre-dc-tt"]').prop('disabled', true);
+							$("#f-einvoices").find('button[data-action="einvoice-detail"], button[data-action="einvoice-edit"],button[data-action="einvoice-copy"], button[data-action="einvoice-sign"], button[data-action="einvoice-cre-dc"], button[data-action="einvoice-cre-tt"]').prop('disabled', true);
 							
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -838,12 +847,15 @@
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfCD"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-xml"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-sendMailAll"]').prop('disabled', false);
-				              
+				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc"]').prop('disabled', false);
+				              $("#f-einvoices").find('button[data-action="einvoice-cre-tt"]').prop('disabled', false);
 				            }else{
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfAll"]').prop('disabled', true);
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfCD"]').prop('disabled', true);
 				              $("#f-einvoices").find('button[data-action="einvoice-xml"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-sendMailAll"]').prop('disabled', true);
+				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc"]').prop('disabled', true);
+				              $("#f-einvoices").find('button[data-action="einvoice-cre-tt"]').prop('disabled', true);
 				            }		
 						
 						if('Đã xóa bỏ' == rowData['StatusDesc']){
@@ -854,11 +866,11 @@
 				          	$("#f-einvoices").find('button[data-action="einvoice-sign"]').prop('disabled', true);
 				          	$("#f-einvoices").find('button[data-action="einvoice-delete"]').prop('disabled', true);
 						}
-						if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
-				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc-tt"]').prop('disabled', false);
-				            }else{
-				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc-tt"]').prop('disabled', true);
-				            }
+// 						if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
+// 				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc-tt"]').prop('disabled', false);
+// 				            }else{
+// 				              $("#f-einvoices").find('button[data-action="einvoice-cre-dc-tt"]').prop('disabled', true);
+// 				            }
 				            
 				          });
 					
@@ -2001,13 +2013,21 @@
 							break;
 							
 						
-						case 'einvoice-cre-dc-tt':
+						case 'einvoice-cre-dc':
 							objData = {};
 							idx = $(checkRows[0].closest("tr")).index();
 							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 							objData['_id'] = rowData['_id'];
 							$('#divSubContent').show();$('#divMainContent').hide();
-							submitFormRenderArea(ROOT_PATH + '/main/einvoice-cre/init-dc-tt', objData, $('#divSubContent'));
+							submitFormRenderArea(ROOT_PATH + '/main/einvoice-cre/init-dc', objData, $('#divSubContent'));
+							break;
+						case 'einvoice-cre-tt':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							objData['_id'] = rowData['_id'];
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/einvoice-cre/init-tt', objData, $('#divSubContent'));
 							break;
 						case 'einvoice-cre':
 							$('#divSubContent').show();$('#divMainContent').hide();
