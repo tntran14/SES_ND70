@@ -86,7 +86,7 @@
 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" >
 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span>
 											  </button>  
-											<button type="button" title="Thêm mới" data-action="cttncn-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre|')}">
+											<button type="button" title="Thêm mới" data-action="cttncn-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre|')}" th:disabled="true">
                             					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
                             				</button>
                             				<button type="button" title="Chi tiết" data-action="cttncn-detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-detail|')}" th:disabled="true" >
