@@ -177,12 +177,9 @@
 								<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<th:block  th:if="${MaHD == null}">
+										
 										<input id="ma-hd" name="ma-hd" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaHD}" autocomplete="off" th:readonly="${!_isedit_}" />
-										</th:block>
-										<th:block  th:if="${MaHD != null}">
-										<input id="ma-hd" name="ma-hd" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaHD}"  th:disabled="true" autocomplete="off" th:readonly="${!_isedit_}" />
-										</th:block>
+										
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Mã hóa đơn</label></legend>
 										</fieldset>
