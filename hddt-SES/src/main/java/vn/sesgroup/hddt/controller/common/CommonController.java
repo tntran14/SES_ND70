@@ -2112,7 +2112,10 @@ public class CommonController extends AbstractController{
 						row.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
 						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
 					);
-					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));					
+					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));	
+					hItem.put("MSTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));	
+					hItem.put("DCNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/DChi")));	
+					hItem.put("TNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));	
 					grid.getRows().add(hItem);
 				}
 			}
