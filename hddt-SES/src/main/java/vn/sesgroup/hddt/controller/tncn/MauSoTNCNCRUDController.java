@@ -145,19 +145,15 @@ public class MauSoTNCNCRUDController extends AbstractController{
 		errorDesc = "";
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		_id = commons.getParameterFromRequest(req, "_id");
+		req.setAttribute("KyHieu", "CT");
 		String header = "Thêm mới mẫu hóa đơn";
 		String action = "CREATE";
 		boolean isEdit = false;
-		
-		
 		switch (transaction) {
 		case "mstncn-cre":
 			header = "Thêm mới mẫu hóa đơn";
 			action = "CREATE";
 			isEdit = true;
-		
-			
-		
 			break;
 		case "mstncn-edit":
 			header = "Thay đổi thông tin mẫu hóa đơn";
