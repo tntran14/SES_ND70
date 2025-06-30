@@ -5386,7 +5386,7 @@ else {
 				
 				Node nodeHDSSot = (Node) xPath.evaluate("HDSSot", nodeDLBBDCTThe, XPathConstants.NODE);
 				if (nodeHDSSot != null) {
-					String shd = commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDSSot, XPathConstants.NODE));
+					String shd = commons.formatNumberBillInvoice(commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDSSot, XPathConstants.NODE)));
 					String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeHDSSot, XPathConstants.NODE));
 					String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeHDSSot, XPathConstants.NODE));
 					String nphanh = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeHDSSot, XPathConstants.NODE));
@@ -5400,7 +5400,7 @@ else {
 				
 				Node nodeHDDCTThe = (Node) xPath.evaluate("HDDCTThe", nodeDLBBDCTThe, XPathConstants.NODE);
 				if (nodeHDDCTThe != null) {
-					String shd = commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDDCTThe, XPathConstants.NODE));
+					String shd = commons.formatNumberBillInvoice(commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDDCTThe, XPathConstants.NODE)));
 					String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeHDDCTThe, XPathConstants.NODE));
 					String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeHDDCTThe, XPathConstants.NODE));
 					String nphanh = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeHDDCTThe, XPathConstants.NODE));
