@@ -2787,6 +2787,29 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				return rsp;
 			}
 
+			docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
+					Document.class);
+			if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+				ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
+				Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+						.append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
+								Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+
+				Document dooo = collection.find(find).allowDiskUse(true).iterator().next();
+				collection.findOneAndUpdate(find,
+						new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
+						options);
+
+				mongoClient.close();
+			}
+
 
 			String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "");
 
@@ -2890,17 +2913,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				}
 			}
 
-			// TRONG EINVOICE LẤY ĐƯỢC SỐ HÓA ĐƠN HIỆN TẠI ĐỂ CHECK TRONG BẢNG MẪU SỐ KÍ
-			// HIỆU
-
-			// DỰA VÀO HÓA ĐƠN LẤY RA ĐƯỢC MẪU SỐ KÍ HIỆU VÀ CHECK TRONG BẢNG MẪU SỐ KÍ HIỆU
-			// LẤY RA SHDHT
-
-			// SO SÁNH 2 SỐ HÓA ĐƠN NẾU BẰNG NHAU THÌ CÓ THỂ XÓA. NGƯỢC LẠI THÌ KHÔNG THỂ
-			// XÓA
-
-			// NẾU XÓA SỐ HÓA ĐƠN THÌ CẬP NHẬT LẠI MẪU SỐ KÍ HIỆU SỐ LƯỢNG CÒN LẠI VÀ TỔNG
-			// SỐ LƯỢNG ĐÃ SỬ DỤNG
 
 		case Constants.MSG_ACTION_CODE.SEND_CQT:
 			objectId = null;
