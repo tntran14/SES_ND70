@@ -41,14 +41,13 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 	public void afterPropertiesSet() throws Exception {
 		System.out.println("API: Starting Initialization Parameters...");
 		SystemParams.VERSION = env.getProperty("api.version", "1.0");
-		SystemParams.VERSION_XML = env.getProperty("version.xml", "2.0.0");
-		SystemParams.VERSION_XML_PXK = env.getProperty("version.xml_pxk", "2.0.0");
-//		SystemParams.VERSION_XML = env.getProperty("version.xml", "2.0.0");
-//		SystemParams.VERSION_XML_PXK = env.getProperty("version.xml_pxk", "2.0.0");
 		SystemParams.VERSION_XML = "2.1.0";
 		SystemParams.VERSION_XML_PXK =  "2.1.0";
-		SystemParams.VERSION_XML_HDSS = env.getProperty("version.xml_hdss", "2.0.0");
-		SystemParams.VERSION_XML_TOKHAI = env.getProperty("version.xml_tokhai", "2.0.0");
+		SystemParams.VERSION_XML_HDSS = "2.1.0";
+		SystemParams.VERSION_XML_TOKHAI = "2.1.0";
+		SystemParams.VERSION_XML_TOKHAICHUNGTU = "2.1.0";
+		SystemParams.VERSION_XML_TNCN = "2.1.0";
+		SystemParams.VERSION_XML_TNCNSS =  "2.1.0";
 		SystemParams.DIR_E_INVOICE_DATA = env.getProperty("dir.einvoice.data", "");
 		SystemParams.DIR_E_INVOICE_TKHAI = env.getProperty("dir.einvoice.tkhai", "");
 		SystemParams.DIR_E_INVOICE_HDSS = env.getProperty("dir.einvoice.hdss", "");
@@ -73,6 +72,9 @@ public class InitializationParameter implements InitializingBean, DisposableBean
 		System.out.println("VERSION_XML_PXK: "+SystemParams.VERSION_XML_PXK);
 		System.out.println("VERSION_XML_HDSS: "+SystemParams.VERSION_XML_HDSS);
 		System.out.println("VERSION_XML_TOKHAI: "+SystemParams.VERSION_XML_TOKHAI);
+		System.out.println("VERSION_XML_TOKHAICHUNGTU: "+SystemParams.VERSION_XML_TOKHAICHUNGTU);
+		System.out.println("VERSION_XML_CHUNGTU_TNCN: "+SystemParams.VERSION_XML_TNCN);
+		System.out.println("VERSION_XML_CHUNGTU_TNCNSS "+SystemParams.VERSION_XML_TNCNSS);
 		
 		try {
 			StringBuilder sb = new StringBuilder();
