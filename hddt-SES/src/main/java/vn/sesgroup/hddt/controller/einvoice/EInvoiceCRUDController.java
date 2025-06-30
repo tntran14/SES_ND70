@@ -466,9 +466,7 @@ public class EInvoiceCRUDController extends AbstractController{
 
 				}				
 				
-				if (action != "COPY" && TCTBao.equals("")) {
-					req.setAttribute("MaHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MaHD")));
-				}		
+		
 				if(!TCTBao.equals("") && !action.equals("CREATE") && action != "COPY") {
 					req.setAttribute("MaHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MaHD")));
 				}
