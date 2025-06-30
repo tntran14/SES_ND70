@@ -372,7 +372,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -405,7 +405,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -439,7 +439,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -473,7 +473,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -784,7 +784,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -817,7 +817,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -851,7 +851,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -885,7 +885,7 @@ public class TBHDSSotImpl extends AbstractDAO implements TBHDSSotDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), Integer.class))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(o.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class) ), "yyyy-MM-dd")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", null == hItem? "": hItem.get("TCTBao")));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", null == hItem? "": hItem.get("LDo")));
 					
 					elementSubContent.appendChild(elementTmp);

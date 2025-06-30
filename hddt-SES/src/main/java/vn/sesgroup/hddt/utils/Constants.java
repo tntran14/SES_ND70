@@ -107,7 +107,7 @@ public class Constants {
 	public static final LinkedHashMap<String, String> MAP_EINVOICE_STATUS = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("CREATED", "Mới tạo");}
-		{put("PENDING", "Chưa được ký");}
+		{put("PENDING", "Đang xử lý");}
 		{put("PROCESSING", "Đang xử lý từ CQT");}
 		{put("COMPLETE", "Đã phát hành");}
 		{put("ERROR_CQT", "Lỗi từ CQT");}
@@ -163,8 +163,14 @@ public class Constants {
 	
 	public static final LinkedHashMap<String, String> MAP_LOAITB_HDSS = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;
-		{put("1", "Thông báo hủy/giải trình của NNT");}
-		{put("2", "Thông báo hủy/giải trình của NNT theo thông báo của CQT");}
+		{put("1", "Thông báo của NNT");}
+		{put("2", "Giải trình của NNT theo thông báo của CQT");}
+	};
+	
+	public static final LinkedHashMap<String, String> MAP_LOAITB_CTTNCNSS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("1", "NNT thông báo");}
+		{put("2", "Giải trình của NNT theo thông báo của CQT");}
 	};
 	
 	public static final LinkedHashMap<String, String> MAP_LOAIBB_LBBDCTT = new LinkedHashMap<String, String>(){
@@ -199,7 +205,7 @@ public class Constants {
 	
 	public static final HashMap<String, String> MAP_HDSS_LOAI_AD_HDDT = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
-		{put("1", "Theo Nghị định số 123/2020/NĐ-CP");}
+		{put("1", "Theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");}
 	};
 	public static final HashMap<String, String> MAP_HDSS_TCTBAO = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
@@ -209,6 +215,15 @@ public class Constants {
 		{put("4", "Giải trình");}
 	};
 	
+	public static final HashMap<String, String> MAP_HDSS_LOAI_AD_CTTNCN = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = 1L;
+		{put("1", "Chứng từ điện tử khấu trừ thuế TNCN theo Nghị định 70");}
+	};
+	public static final HashMap<String, String> MAP_CTTNCN_TCTBAO = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = 1L;
+		{put("1", "Thay thế");}
+		{put("2", "Điều chỉnh");}
+	};
 	
 	public static final HashMap<String, String> MAP_HD = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = 1L;

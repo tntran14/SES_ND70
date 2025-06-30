@@ -5,6 +5,7 @@ var signXML = "/signXML";
 var signDLTK = "/signDLTKhai";
 var signMultiXML = "/SignDocuments";
 var signXMLMTT = "/signXMLMTT";
+var signCTTNCN = "/signCTTNCN";
 
 var serialNumber = '';
 var base64Cert = '';

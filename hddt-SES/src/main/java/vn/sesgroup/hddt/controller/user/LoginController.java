@@ -283,7 +283,9 @@ public class LoginController extends AbstractController{
         	sbRights.append("issu-contract|issu-contract-cre|issu-contract-db|issu-contract-del|issu-contract-detail|issu-contract-edit|issu-contract-approve|issu-contract-active|issu-contract-deactive|");
         	sbRights.append("tkhai|tkhai-cre|tkhai-edit|tkhai-del|tkhai-detail|tkhai-sign|tkhai-copy|tkhaiV1|tkhai-creV1|tkhai-editV1|tkhai-delV1|tkhai-detailV1|tkhai-signV1|tkhai-copyV1|");
         	sbRights.append("mstncn|mstncn-cre|mstncn-edit|mstncn-del|mstncn-detail|mstncn-sign|");
+        	sbRights.append("tkctu|tkctu-cre|tkctu-edit|tkctu-del|tkctu-detail|tkctu-sign|tkctu-copy|");
         	sbRights.append("cttncn|cttncn-cre|cttncn-edit|cttncn-del|cttncn-detail|cttncn-sign|cttncn-import|cttncn-signAll|cttncn-xoabo|cttncn-xml|cttncn-send-mail|cttncn-pdfAll|");
+        	sbRights.append("cttncn-creV1|cttncn-editV1|cttncn-delV1|cttncn-detailV1|cttncn-signV1|cttncn-importV1|cttncn-signAllV1|cttncn-xoaboV1|cttncn-xmlV1|cttncn-send-mailV1|cttncn-pdfAllV1|cttncn-historyV1|");
         	sbRights.append("hdsduser|hdsduser-detail|");
         	sbRights.append("qlnvtncn|qlnvtncn-cre|qlnvtncn-edit|qlnvtncn-del|qlnvtncn-detail|");
         		sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");
@@ -317,7 +319,8 @@ public class LoginController extends AbstractController{
         	sbRights.append("tbhdssot|tbhdssot-history|tbhdssot-cre|tbhdssot-detail|tbhdssot-edit|tbhdssot-del|tbhdssot-sign|");
         	sbRights.append("lbbdctt|lbbdctt-cre|lbbdctt-detail|lbbdctt-edit|lbbdctt-del|lbbdctt-sign|lbbdctt-sendMail|");
         	sbRights.append("tbhdssot-send-cqt|tbhdssot-del|tbhdssot-send-mail|");
-  
+        	sbRights.append("cttncnss|cttncnss-history|cttncnss-cre|cttncnss-detail|cttncnss-edit|cttncnss-del|cttncnss-sign|cttncnss-send-cqt|cttncnss-refresh|cttncnss-send-mail|");
+        	
         	sbRights.append("introduce|");
         	sbRights.append("support|");
         	sbRights.append("config-mailjet|");
@@ -411,7 +414,7 @@ public class LoginController extends AbstractController{
             sc.setAuthentication(auth);
             SecurityContextHolder.setContext(sc);
             
-            session.setMaxInactiveInterval(60 * 60 * 1);
+            session.setMaxInactiveInterval(60 * 60 * 2);
 			
 			dtoRes = new BaseDTO(0, Constants.MAP_ERROR.get(0));
 			

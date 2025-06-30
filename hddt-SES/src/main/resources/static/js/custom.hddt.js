@@ -16,8 +16,9 @@ var _gridSub02 = null;
 var objVAT = {'0': '0%', '5': '5%', '7': '10%x70%', '8': '8%', '10': '10%', '-1': 'KCT', '-2': 'KKKNT'};
 var objFeature = {'1':'HH, DV', '2':'KM', '3':'CK', '4':'Ghi chú'};
 var objTCTBao = {'0': 'Mới', '1': 'Hủy', '2': 'Điều chỉnh', '3': 'Thay thế', '4': 'Giải trình', '5': 'Sai sót do tổng hợp'};
-var objLADHDDT = {'1': 'Theo Nghị định số 123/2020/NĐ-CP'};
-
+var objLADHDDT = {'1': 'Theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP'};
+var objLCTDT = {'1': 'Chứng từ điện tử khấu trừ thuế TNCN theo Nghị định 70'};
+var objTCTBCTTNCN = {'1': 'Thay thế', '2': 'Điều chỉnh'};
 var kendoGridMessages = {
 //		itemsPerPage: 'dòng trên trang',
 		itemsPerPage: '',

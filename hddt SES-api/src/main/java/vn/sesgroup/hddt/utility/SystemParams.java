@@ -13,10 +13,14 @@ public class SystemParams {
 	public static String VERSION_XML_PXK = "";
 	public static String VERSION_XML_HDSS = "";
 	public static String VERSION_XML_TOKHAI = "";
+	public static String VERSION_XML_TOKHAICHUNGTU = "";
+	public static String VERSION_XML_TNCN = "";
+	public static String VERSION_XML_TNCNSS = "";
 	public static String DIR_E_INVOICE_DATA = "";
 	public static String DIR_E_INVOICE_TKHAI = "";
 	public static String DIR_E_INVOICE_TNCN = "C:/hddt-ses/server/tncn";
 	public static String DIR_E_INVOICE_HDSS = "";
+	public static String DIR_E_INVOICE_CTTNCNSS = "C:/hddt-ses/server/cttncnss";
 	public static String DIR_E_INVOICE_BBDCTT = "";
 	public static String DIR_E_INVOICE_TEMPLATE = "";
 	public static  String DIR_E_INVOICE_IMG = "";
