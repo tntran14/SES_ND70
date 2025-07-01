@@ -303,7 +303,7 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			req.setAttribute("DTDDPLuat", commons.getTextJsonNode(jsonData.at("/DTDDPLuat")));
 			req.setAttribute("CCCDan", commons.getTextJsonNode(jsonData.at("/CCCDan")));
 			req.setAttribute("SHChieu", commons.getTextJsonNode(jsonData.at("/SHChieu")));
-			req.setAttribute("NSDDPLuat", commons.getTextJsonNode(jsonData.at("/NSDDPLuat")));
+			req.setAttribute("NSDDPLuat", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/NSDDPLuat").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			String sex = commons.getTextJsonNode(jsonData.at("/GTinh"));
 			if (sex.equals("0")) req.setAttribute("GTinhText", "Nữ");
 			if (sex.equals("1")) req.setAttribute("GTinhText", "Nam");
@@ -463,7 +463,6 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			
 			validateEmpty(tnddpLuat, "Vui lòng nhập tên người đại diện pháp luật.", dto);
 			validateEmpty(dtddpLuat, "Vui lòng nhập diện thoại người đại diện pháp luật.", dto);
-			validateEmpty(cccDan, "Vui lòng nhập CC/CCCD/số định danh.", dto);
 			validateEmpty(nsddpLuat, "Vui lòng nhập ngày sinh đại diện pháp luật.", dto);
 
 			if (!"".equals(dcCTDTu) && !commons.isValidEmailAddress(dcCTDTu)) {
