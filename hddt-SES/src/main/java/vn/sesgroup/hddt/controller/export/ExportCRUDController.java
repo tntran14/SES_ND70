@@ -587,26 +587,26 @@ public class ExportCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Phương tiện vận chuyển không được trống.");
 			}
-			if(!khMst.equals("")) {
-				if(khMst.length() < 10 || khMst.length() > 14 || khMst.length() == 11 || khMst.length() ==12 || khMst.length() ==13) {
-					dto.setErrorCode(1);
-					dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-				}else {					
-					if(khMst.length() == 14) {
-						if(!khMst.contains("-")){
-						dto.setErrorCode(1);
-						dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-						}else {
-							String split[] = khMst.split("-");
-							if(split[1].length() != 3) {
-								dto.setErrorCode(1);
-								dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-							}
-							
-						}
-					}
-				}
-			}
+//			if(!khMst.equals("")) {
+//				if(khMst.length() < 10 || khMst.length() > 14 || khMst.length() == 11 || khMst.length() ==12 || khMst.length() ==13) {
+//					dto.setErrorCode(1);
+//					dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
+//				}else {					
+//					if(khMst.length() == 14) {
+//						if(!khMst.contains("-")){
+//						dto.setErrorCode(1);
+//						dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
+//						}else {
+//							String split[] = khMst.split("-");
+//							if(split[1].length() != 3) {
+//								dto.setErrorCode(1);
+//								dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
+//							}
+//							
+//						}
+//					}
+//				}
+//			}
 			break;
 		case "export-deleteAll":
 			_token = commons.getParameterFromRequest(req, "_token").replaceAll("\\s", "");
