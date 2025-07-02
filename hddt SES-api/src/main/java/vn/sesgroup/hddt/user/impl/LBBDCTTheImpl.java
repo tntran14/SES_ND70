@@ -99,6 +99,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		
 		String loaibb = commons.getTextJsonNode(jsonData.at("/LBBan")).replaceAll("\\s", "");
 		String sbban = commons.getTextJsonNode(jsonData.at("/SBBan")).replaceAll("\\s", "");
+		String nlap = commons.getTextJsonNode(jsonData.at("/NLap")).replaceAll("\\s", "");
 		String ndsai = commons.getTextJsonNode(jsonData.at("/NDSai")).replaceAll("\\s+", " ");
 		String nddung = commons.getTextJsonNode(jsonData.at("/NDDung")).replaceAll("\\s+", " ");
 		String ndtnhat = commons.getTextJsonNode(jsonData.at("/NDTNhat")).replaceAll("\\s+", " ");
@@ -292,7 +293,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
-			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", LocalDate.now().toString()));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", nlap));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
@@ -400,7 +401,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				.append("Ten", tenbb)
 				.append("Loai", loaibb)
 				.append("SBBan", sbban)
-				.append("NLap", LocalDate.now().toString())
+				.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
 				.append("NDSai", ndsai)
 				.append("NDDung", nddung)
 				.append("NDTNhat", ndtnhat)
@@ -632,7 +634,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
-			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", LocalDate.now().toString()));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", nlap));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
@@ -744,7 +746,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			.append("Ten", tenbb)
 			.append("Loai", loaibb)
 			.append("SBBan", sbban)
-			.append("NLap", LocalDate.now().toString())
+			.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
 			.append("NDSai", ndsai)
 			.append("NDDung", nddung)
 			.append("NDTNhat", ndtnhat)

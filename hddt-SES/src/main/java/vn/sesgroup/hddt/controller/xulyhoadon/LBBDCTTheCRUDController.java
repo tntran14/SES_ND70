@@ -1,6 +1,7 @@
 package vn.sesgroup.hddt.controller.xulyhoadon;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +83,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 	private String loaibb;
 	private String sbban;
+	private String nlap;
 	private String ndsai;
 	private String nddung;
 	private String ndtnhat;
@@ -101,7 +103,8 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		req.setAttribute("NB_MSThue", ii.getTaxCode());
 		req.setAttribute("NB_DVBHang", ii.getName());
 		req.setAttribute("NB_DChi", ii.getAddress());
-
+		req.setAttribute("NLap", commons.convertLocalDateTimeToString(LocalDate.now(), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		
 		_id = commons.getParameterFromRequest(req, "_id");
 		String header = "Tạo biên bản điều chỉnh/thay thế";
 		String action = "CREATE";
@@ -183,6 +186,9 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 			req.setAttribute("loai_bb", commons.getTextJsonNode(jsonData.at("/Loai")));
 			req.setAttribute("SBBan", commons.getTextJsonNode(jsonData.at("/SBBan")));
+			req.setAttribute("NLap", commons.convertLocalDateTimeToString(
+					commons.convertLongToLocalDate(jsonData.at("/NLap").asLong()),
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			req.setAttribute("NDSai", commons.getTextJsonNode(jsonData.at("/NDSai")));
 			req.setAttribute("NDDung", commons.getTextJsonNode(jsonData.at("/NDDung")));
 			req.setAttribute("NDTNhat", commons.getTextJsonNode(jsonData.at("/NDTNhat")));
@@ -264,6 +270,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		loaibb = commons.getParameterFromRequest(req, "loaibb").replaceAll("\\s", "");
 		sbban = commons.getParameterFromRequest(req, "sbban").replaceAll("\\s", "");
 		ndsai = commons.getParameterFromRequest(req, "ndsai").replaceAll("\\s+", " ");
+		nlap = commons.getParameterFromRequest(req, "nlap").replaceAll("\\s+", " ");
 		nddung = commons.getParameterFromRequest(req, "nddung").replaceAll("\\s+", " ");
 		ndtnhat = commons.getParameterFromRequest(req, "ndtnhat").replaceAll("\\s+", " ");
 
@@ -288,6 +295,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 			validateRequired(dto, loaibb, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, sbban, "Vui lòng chọn loại biên bản.");
+			validateRequired(dto, nlap, "Vui lòng chọn ngày lập biên bản.");
 			validateRequired(dto, ndsai, "Vui lòng nhập nội dung sai.");
 			validateRequired(dto, nddung, "Vui lòng nhập nội dung đúng.");
 			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung thống nhất.");
@@ -487,6 +495,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 		hData.put("LBBan", loaibb);
 		hData.put("SBBan", sbban);
+		hData.put("NLap", nlap);
 		hData.put("NDSai", ndsai);
 		hData.put("NDDung", nddung);
 		hData.put("NDTNhat", ndtnhat);
