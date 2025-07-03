@@ -293,7 +293,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
-			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", nlap));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
@@ -634,7 +635,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
-			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", nlap));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));

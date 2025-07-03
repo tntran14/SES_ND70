@@ -186,9 +186,8 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 			req.setAttribute("loai_bb", commons.getTextJsonNode(jsonData.at("/Loai")));
 			req.setAttribute("SBBan", commons.getTextJsonNode(jsonData.at("/SBBan")));
-			req.setAttribute("NLap", commons.convertLocalDateTimeToString(
-					commons.convertLongToLocalDate(jsonData.at("/NLap").asLong()),
-					Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			String nlap = commons.convertLocalDateTimeStringToString( commons.getTextJsonNode(jsonData.at("/NLap")),"yyyy-MM-dd", Constants.FORMAT_DATE.FORMAT_DATE_WEB, false);
+			req.setAttribute("NLap", nlap);
 			req.setAttribute("NDSai", commons.getTextJsonNode(jsonData.at("/NDSai")));
 			req.setAttribute("NDDung", commons.getTextJsonNode(jsonData.at("/NDDung")));
 			req.setAttribute("NDTNhat", commons.getTextJsonNode(jsonData.at("/NDTNhat")));
