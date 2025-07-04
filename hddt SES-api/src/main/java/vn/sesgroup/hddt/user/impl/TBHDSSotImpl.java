@@ -1779,7 +1779,8 @@ db.getCollection('EInvoiceHDSS').find({
 //			rsp.setResponseStatus(responseStatus);
 //			return rsp;
 //		}
-		
+
+
 		String MTDiep = docTmp.get("MTDiep", "");
 		org.w3c.dom.Document rTCTN = null;
 		rTCTN = tctnService.callTraCuuThongDiep(MTDiep);
@@ -1852,14 +1853,7 @@ db.getCollection('EInvoiceHDSS').find({
 			return rsp; 
 			}	  
 		}
-		
-		
-		
-		
-		
-		
-		
-		
+
 		boolean check_ = false;
 		Node nodeTDiep = null;
 	    String CQT_MLTDiep = "";
@@ -1886,8 +1880,8 @@ db.getCollection('EInvoiceHDSS').find({
 	       }
 	       if(CQT_MLTDiep.equals("204")) {
 				check_ = true;
-				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
-				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
 				
 				CQT_MLTDiep1 = CQT_MLTDiep;
 				MTDTChieu1 = commons
@@ -3822,1046 +3816,1118 @@ db.getCollection('EInvoiceHDSS').find({
 		
 		
 		//MA 301--------------------------------
-		else if("301".equals(CQT_MLTDiep)){	
-			
-			if(TTTNCCQT.equals("1"))
-			{
-			
-			String TCTBao = "";
-			Document docFilter = null;
-			List<WriteModel<Document>> ous = new ArrayList<WriteModel<Document>>();
-//			BulkWriteResult r = null;
-			UpdateOptions uo = new UpdateOptions();
-			uo.upsert(false);
-			
-			for(Document doc: docTmp.getList("DSHDon", Document.class)) {
-				TCTBao = doc.get("TCTBao", "");
-				docFilter = new Document("IssuerId", header.getIssuerId())
-						//.append("HDSS", new Document("$exists", false))
-						.append("MCCQT", doc.get("MCQTCap", ""));
-				if("1".equals(TCTBao)) {
-					ous.add(
-						new UpdateOneModel<>(
-							docFilter, 
-							new Document("$set", 
-								new Document("EInvoiceStatus", Constants.INVOICE_STATUS.DELETED)
-								.append("HDSS", 
-									new Document("TCTBao", TCTBao)
-									.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
-									.append("LDo", doc.get("LDo", ""))
-								)
-							)
-							, 
-							uo
-						)
-					);	
+		else if ("301".equals(CQT_MLTDiep)) {
+			String maLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+			String moTaLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+			String huongDanXuLy = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/HDXLy", nodeTDiep, XPathConstants.NODE));
+
+			if (maLoi == null || maLoi.equals("")) {
+				String TCTBao = "";
+				Document docFilter = null;
+				List<WriteModel<Document>> ous = new ArrayList<WriteModel<Document>>();
+				UpdateOptions uo = new UpdateOptions();
+				uo.upsert(false);
+
+				for (Document doc : docTmp.getList("DSHDon", Document.class)) {
+					TCTBao = doc.get("TCTBao", "");
+					docFilter = new Document("IssuerId", header.getIssuerId())
+							// .append("HDSS", new Document("$exists", false))
+							.append("MCCQT", doc.get("MCQTCap", ""));
+					if ("1".equals(TCTBao)) {
+						ous.add(new UpdateOneModel<>(docFilter,
+								new Document("$set",
+										new Document("EInvoiceStatus", Constants.INVOICE_STATUS.DELETED).append("HDSS",
+												new Document("TCTBao", TCTBao)
+														.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
+														.append("LDo", doc.get("LDo", "")))),
+								uo));
+						Document docTmphd = null;
+						Document docTmphd1 = null;
+						Document docTmphd2 = null;
+						Document docTmphd3 = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+
+						try {
+							docTmphd = collection.find(docFilter).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
+						}
+
+						mongoClient.close();
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
+
+						try {
+							docTmphd1 = collection.find(docFilter).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
+						}
+
+						mongoClient.close();
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
+
+						try {
+							docTmphd2 = collection.find(docFilter).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
+						}
+
+						mongoClient.close();
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+
+						try {
+							docTmphd3 = collection.find(docFilter).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
+						}
+
+						mongoClient.close();
+
+						if (docTmphd != null) {
+							LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+							String shd = commons.formatNumberBillInvoice(
+									docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+							String mauhd = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"),
+									"")
+									+ docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+							String _tmp = "";
+							_tmp = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+							String mcqt = docTmphd.get("MCCQT", "");
+							_title = header.getUserFullName() + " "
+									+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+							StringBuilder sb = new StringBuilder();
+							sb.setLength(0);
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+											+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+											+ "</label><o:p></o:p></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+									+ header.getUserFullName()
+									+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+									+ shd + "</span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+									+ mauhd + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+											+ mcqt + " </span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "
+									+ ngay + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+							sb.append("<hr style='margin: 5px 0 5px 0;'>");
+							sb.append(
+									"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+							_content = sb.toString();
+							String m1 = docTmphd
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"), "");
+							String m2 = docTmphd
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), "");
+
+							// DM USER CONFIG
+							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+							Document docTmpUserConfig = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+							try {
+								docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator()
+										.next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							// DM FOOTER MAIL
+							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+							Document docTmpFooter = null;
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+							try {
+								docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							//
+							String CheckFooterMail = "";
+							if (docTmpUserConfig == null) {
+								CheckFooterMail = "N";
+							} else {
+								CheckFooterMail = docTmpUserConfig.get("footermail", "");
+							}
+
+							//
+							//
+
+							if (!CheckFooterMail.equals("Y")) {
+								_content = commons.decodeURIComponent(_content);
+
+								if (docTmpFooter == null) {
+									_content = commons.decodeURIComponent(_content);
+								} else {
+									String noidung = docTmpFooter.get("Noidung", "");
+									_content += noidung;
+								}
+							} else {
+								_content = commons.decodeURIComponent(_content);
+							}
+
+							Document docFindem = new Document("IssuerId", header.getIssuerId());
+							Document docTmpem = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+							try {
+								docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							if (docTmpem != null) {
+								MailConfig mailConfig = new MailConfig(docTmpem);
+								mailConfig.setNameSend(docTmphd
+										.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+
+								/* THUC HIEN GUI MAIL */
+								Document docFindMailjet = new Document("IsActive", true);
+								Document docTmpMailjet = null;
+
+								mongoClient = cfg.mongoClient();
+								collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+								try {
+									docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator()
+											.next();
+								} catch (Exception e) {
+
+								}
+
+								mongoClient.close();
+
+								// String doctmp_id = docTmphd.getObjectId("_id").toString();
+								// dir = docTmphd.getString("Dir");
+								String MailJet = docTmpem.get("MailJet", "");
+								String fileName_ = _id + "_signed.xml";
+								File file_ = null;
+								String fileNamePDF = _id + ".pdf";
+								file_ = new File(dir1, fileName_);
+
+								if (file_.exists() && file_.isFile()) {
+									org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+									String fileNameJP = "04SS.jrxml";
+									int numberRowInPage = 5;
+									int numberRowInPageMultiPage = 15;
+									int numberCharsInRow = 50;
+									String ImgLogo = "";
+									String ImgBackground = "";
+									File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+									ByteArrayOutputStream baosPDF = null;
+
+									baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+											numberRowInPageMultiPage, numberCharsInRow, Paths
+													.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+															(String) docTmp.getEmbedded(
+																	Arrays.asList("Issuer", "TaxCode"), ""),
+															ImgLogo)
+													.toString(),
+											Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+													(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+													ImgBackground).toString(),
+											false);
+									/* LUU TAP TIN PDF */
+									if (null != baosPDF) {
+										try (OutputStream fileOuputStream = new FileOutputStream(
+												new File(dir, fileNamePDF))) {
+											baosPDF.writeTo(fileOuputStream);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								file_ = null;
+								List<String> listFiles = new ArrayList<>();
+								List<String> listNames = new ArrayList<>();
+								file_ = new File(dir, fileNamePDF);
+								if (file_.exists() && file_.isFile()) {
+									listFiles.add(file_.toString());
+									listNames.add(mauhd + "-" + shd + ".pdf");
+								}
+
+								boolean sendmail = false;
+								if (m2 != "" || m1 != "") {
+
+									if (m2 != "" && m1 == "") {
+
+										_email = m2;
+									} else if (m2 == "" && m1 != "") {
+										_email = m1;
+									} else {
+										_email = m1 + "," + m2;
+									}
+
+								}
+							}
+
+						}
+						if (docTmphd1 != null) {
+							LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+							String shd = commons.formatNumberBillInvoice(
+									docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+							String mauhd = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"),
+									"")
+									+ docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+							String _tmp = "";
+							_tmp = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+							String mcqt = docTmphd1.get("MCCQT", "");
+							_title = header.getUserFullName() + " "
+									+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+							StringBuilder sb = new StringBuilder();
+							sb.setLength(0);
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+											+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+											+ "</label><o:p></o:p></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+									+ header.getUserFullName()
+									+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+									+ shd + "</span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+									+ mauhd + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+											+ mcqt + " </span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "
+									+ ngay + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+							sb.append("<hr style='margin: 5px 0 5px 0;'>");
+							sb.append(
+									"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+							_content = sb.toString();
+							String m1 = docTmphd1
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"), "");
+							String m2 = docTmphd1
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), "");
+
+							// DM USER CONFIG
+							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+							Document docTmpUserConfig = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+							try {
+								docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator()
+										.next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							// DM FOOTER MAIL
+							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+							Document docTmpFooter = null;
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+							try {
+								docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+							//
+							String CheckFooterMail = "";
+							if (docTmpUserConfig == null) {
+								CheckFooterMail = "N";
+							} else {
+								CheckFooterMail = docTmpUserConfig.get("footermail", "");
+							}
+
+							//
+							//
+
+							if (!CheckFooterMail.equals("Y")) {
+								_content = commons.decodeURIComponent(_content);
+
+								if (docTmpFooter == null) {
+									_content = commons.decodeURIComponent(_content);
+								} else {
+									String noidung = docTmpFooter.get("Noidung", "");
+									_content += noidung;
+								}
+							} else {
+								_content = commons.decodeURIComponent(_content);
+							}
+
+							Document docFindem = new Document("IssuerId", header.getIssuerId());
+							Document docTmpem = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+							try {
+								docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							if (docTmpem != null) {
+								MailConfig mailConfig = new MailConfig(docTmpem);
+								mailConfig.setNameSend(docTmphd1
+										.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+								/* THUC HIEN GUI MAIL */
+								Document docFindMailjet = new Document("IsActive", true);
+								Document docTmpMailjet = null;
+
+								mongoClient = cfg.mongoClient();
+								collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+								try {
+									docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator()
+											.next();
+								} catch (Exception e) {
+
+								}
+
+								mongoClient.close();
+
+								// String doctmp_id = docTmphd.getObjectId("_id").toString();
+								// dir = docTmphd.getString("Dir");
+								String MailJet = docTmpem.get("MailJet", "");
+								String fileName_ = _id + "_signed.xml";
+								File file_ = null;
+								String fileNamePDF = _id + ".pdf";
+								file_ = new File(dir1, fileName_);
+
+								if (file_.exists() && file_.isFile()) {
+									org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+									String fileNameJP = "04SS.jrxml";
+									int numberRowInPage = 5;
+									int numberRowInPageMultiPage = 15;
+									int numberCharsInRow = 50;
+									String ImgLogo = "";
+									String ImgBackground = "";
+									File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+									ByteArrayOutputStream baosPDF = null;
+
+									baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+											numberRowInPageMultiPage, numberCharsInRow, Paths
+													.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+															(String) docTmp.getEmbedded(
+																	Arrays.asList("Issuer", "TaxCode"), ""),
+															ImgLogo)
+													.toString(),
+											Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+													(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+													ImgBackground).toString(),
+											false);
+									/* LUU TAP TIN PDF */
+									if (null != baosPDF) {
+										try (OutputStream fileOuputStream = new FileOutputStream(
+												new File(dir, fileNamePDF))) {
+											baosPDF.writeTo(fileOuputStream);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								file_ = null;
+								List<String> listFiles = new ArrayList<>();
+								List<String> listNames = new ArrayList<>();
+								file_ = new File(dir, fileNamePDF);
+								if (file_.exists() && file_.isFile()) {
+									listFiles.add(file_.toString());
+									listNames.add(mauhd + "-" + shd + ".pdf");
+								}
+
+								boolean sendmail = false;
+
+								if (m2 != "" || m1 != "") {
+
+									if (m2 != "" && m1 == "") {
+
+										_email = m2;
+									} else if (m2 == "" && m1 != "") {
+										_email = m1;
+									} else {
+										_email = m1 + "," + m2;
+									}
+
+								}
+
+							}
+						}
+						/// HOA DON BAN HANG
+						if (docTmphd2 != null) {
+							LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+							String shd = commons.formatNumberBillInvoice(
+									docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+							String mauhd = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"),
+									"")
+									+ docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+							String _tmp = "";
+							_tmp = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+							String mcqt = docTmphd2.get("MCCQT", "");
+							_title = header.getUserFullName() + " "
+									+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+							StringBuilder sb = new StringBuilder();
+							sb.setLength(0);
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+											+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+											+ "</label><o:p></o:p></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+									+ header.getUserFullName()
+									+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+									+ shd + "</span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+									+ mauhd + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+											+ mcqt + " </span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "
+									+ ngay + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+							sb.append("<hr style='margin: 5px 0 5px 0;'>");
+							sb.append(
+									"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+							_content = sb.toString();
+							String m1 = docTmphd2
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"), "");
+							String m2 = docTmphd2
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), "");
+
+							// DM USER CONFIG
+							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+							Document docTmpUserConfig = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+							try {
+								docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator()
+										.next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							// DM FOOTER MAIL
+							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+							Document docTmpFooter = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+							try {
+								docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							//
+							String CheckFooterMail = "";
+							if (docTmpUserConfig == null) {
+								CheckFooterMail = "N";
+							} else {
+								CheckFooterMail = docTmpUserConfig.get("footermail", "");
+							}
+
+							//
+							//
+
+							if (!CheckFooterMail.equals("Y")) {
+								_content = commons.decodeURIComponent(_content);
+
+								if (docTmpFooter == null) {
+									_content = commons.decodeURIComponent(_content);
+								} else {
+									String noidung = docTmpFooter.get("Noidung", "");
+									_content += noidung;
+								}
+							} else {
+								_content = commons.decodeURIComponent(_content);
+							}
+
+							Document docFindem = new Document("IssuerId", header.getIssuerId());
+							Document docTmpem = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+							try {
+								docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							if (docTmpem != null) {
+								MailConfig mailConfig = new MailConfig(docTmpem);
+								mailConfig.setNameSend(docTmphd2
+										.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+								/* THUC HIEN GUI MAIL */
+								Document docFindMailjet = new Document("IsActive", true);
+								Document docTmpMailjet = null;
+
+								mongoClient = cfg.mongoClient();
+								collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+								try {
+									docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator()
+											.next();
+								} catch (Exception e) {
+
+								}
+
+								mongoClient.close();
+
+								// String doctmp_id = docTmphd.getObjectId("_id").toString();
+								// dir = docTmphd.getString("Dir");
+								String MailJet = docTmpem.get("MailJet", "");
+								String fileName_ = _id + "_signed.xml";
+								File file_ = null;
+								String fileNamePDF = _id + ".pdf";
+								file_ = new File(dir1, fileName_);
+
+								if (file_.exists() && file_.isFile()) {
+									org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+									String fileNameJP = "04SS.jrxml";
+									int numberRowInPage = 5;
+									int numberRowInPageMultiPage = 15;
+									int numberCharsInRow = 50;
+									String ImgLogo = "";
+									String ImgBackground = "";
+									File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+									ByteArrayOutputStream baosPDF = null;
+
+									baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+											numberRowInPageMultiPage, numberCharsInRow, Paths
+													.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+															(String) docTmp.getEmbedded(
+																	Arrays.asList("Issuer", "TaxCode"), ""),
+															ImgLogo)
+													.toString(),
+											Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+													(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+													ImgBackground).toString(),
+											false);
+									/* LUU TAP TIN PDF */
+									if (null != baosPDF) {
+										try (OutputStream fileOuputStream = new FileOutputStream(
+												new File(dir, fileNamePDF))) {
+											baosPDF.writeTo(fileOuputStream);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								file_ = null;
+								List<String> listFiles = new ArrayList<>();
+								List<String> listNames = new ArrayList<>();
+								file_ = new File(dir, fileNamePDF);
+								if (file_.exists() && file_.isFile()) {
+									listFiles.add(file_.toString());
+									listNames.add(mauhd + "-" + shd + ".pdf");
+								}
+
+								boolean sendmail = false;
+
+								if (m2 != "" || m1 != "") {
+
+									if (m2 != "" && m1 == "") {
+
+										_email = m2;
+									} else if (m2 == "" && m1 != "") {
+										_email = m1;
+									} else {
+										_email = m1 + "," + m2;
+									}
+
+								}
+
+							}
+						}
+
+						// PHIEU XUAT KHO HANG KÝ GUI BAN DAI LY
+						if (docTmphd3 != null) {
+							LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+							String shd = commons.formatNumberBillInvoice(
+									docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+							String mauhd = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"),
+									"")
+									+ docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+							String _tmp = "";
+							_tmp = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+							String mcqt = docTmphd3.get("MCCQT", "");
+							_title = header.getUserFullName() + " "
+									+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+							StringBuilder sb = new StringBuilder();
+							sb.setLength(0);
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+											+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+											+ "</label><o:p></o:p></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+									+ header.getUserFullName()
+									+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+									+ shd + "</span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+									+ mauhd + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+											+ mcqt + " </span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
+							sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "
+									+ ngay + "</span></p>\n");
+							sb.append(
+									"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+							sb.append("<hr style='margin: 5px 0 5px 0;'>");
+							sb.append(
+									"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+							_content = sb.toString();
+							String m1 = docTmphd3
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"), "");
+							String m2 = docTmphd3
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), "");
+
+							// DM USER CONFIG
+							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+							Document docTmpUserConfig = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+							try {
+								docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator()
+										.next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							// DM FOOTER MAIL
+							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+							Document docTmpFooter = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+							try {
+								docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							//
+							String CheckFooterMail = "";
+							if (docTmpUserConfig == null) {
+								CheckFooterMail = "N";
+							} else {
+								CheckFooterMail = docTmpUserConfig.get("footermail", "");
+							}
+
+							//
+							//
+
+							if (!CheckFooterMail.equals("Y")) {
+								_content = commons.decodeURIComponent(_content);
+
+								if (docTmpFooter == null) {
+									_content = commons.decodeURIComponent(_content);
+								} else {
+									String noidung = docTmpFooter.get("Noidung", "");
+									_content += noidung;
+								}
+							} else {
+								_content = commons.decodeURIComponent(_content);
+							}
+
+							Document docFindem = new Document("IssuerId", header.getIssuerId());
+							Document docTmpem = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+							try {
+								docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
+							}
+
+							mongoClient.close();
+
+							if (docTmpem != null) {
+								MailConfig mailConfig = new MailConfig(docTmpem);
+								mailConfig.setNameSend(docTmphd3
+										.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+								/* THUC HIEN GUI MAIL */
+								Document docFindMailjet = new Document("IsActive", true);
+								Document docTmpMailjet = null;
+
+								mongoClient = cfg.mongoClient();
+								collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+								try {
+									docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator()
+											.next();
+								} catch (Exception e) {
+
+								}
+
+								mongoClient.close();
+
+								// String doctmp_id = docTmphd.getObjectId("_id").toString();
+								// dir = docTmphd.getString("Dir");
+								String MailJet = docTmpem.get("MailJet", "");
+								String fileName_ = _id + "_signed.xml";
+								File file_ = null;
+								String fileNamePDF = _id + ".pdf";
+								file_ = new File(dir1, fileName_);
+
+								if (file_.exists() && file_.isFile()) {
+									org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+									String fileNameJP = "04SS.jrxml";
+									int numberRowInPage = 5;
+									int numberRowInPageMultiPage = 15;
+									int numberCharsInRow = 50;
+									String ImgLogo = "";
+									String ImgBackground = "";
+									File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+									ByteArrayOutputStream baosPDF = null;
+
+									baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+											numberRowInPageMultiPage, numberCharsInRow, Paths
+													.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+															(String) docTmp.getEmbedded(
+																	Arrays.asList("Issuer", "TaxCode"), ""),
+															ImgLogo)
+													.toString(),
+											Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+													(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+													ImgBackground).toString(),
+											false);
+									/* LUU TAP TIN PDF */
+									if (null != baosPDF) {
+										try (OutputStream fileOuputStream = new FileOutputStream(
+												new File(dir, fileNamePDF))) {
+											baosPDF.writeTo(fileOuputStream);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								file_ = null;
+								List<String> listFiles = new ArrayList<>();
+								List<String> listNames = new ArrayList<>();
+								file_ = new File(dir, fileNamePDF);
+								if (file_.exists() && file_.isFile()) {
+									listFiles.add(file_.toString());
+									listNames.add(mauhd + "-" + shd + ".pdf");
+								}
+
+								boolean sendmail = false;
+								if (m2 != "" || m1 != "") {
+
+									if (m2 != "" && m1 == "") {
+
+										_email = m2;
+									} else if (m2 == "" && m1 != "") {
+										_email = m1;
+									} else {
+										_email = m1 + "," + m2;
+									}
+
+								}
+
+							}
+						}
+
+						/// END SEARCH INFORMATION OF EINVOICE
+
+					} else {
+						ous.add(new UpdateOneModel<>(docFilter,
+								new Document("$set",
+										new Document("HDSS",
+												new Document("TCTBao", TCTBao)
+														.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
+														.append("LDo", doc.get("LDo", "")))),
+								uo));
+					}
+					String lido = doc.get("LDo", "");
+					String tctb = Constants.MAP_HDSS_TCTBAO.get(TCTBao);
 					Document docTmphd = null;
 					Document docTmphd1 = null;
 					Document docTmphd2 = null;
 					Document docTmphd3 = null;
 
-					
-					
-					 mongoClient = cfg.mongoClient();
+					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-					
+
 					try {
-						docTmphd =   collection.find(docFilter).allowDiskUse(true).iterator().next();			
+						docTmphd = collection.find(docFilter).allowDiskUse(true).iterator().next();
 					} catch (Exception e) {
-						
+
 					}
-						
+
 					mongoClient.close();
-					
-					 mongoClient = cfg.mongoClient();
+
+					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
-					
+
 					try {
-						docTmphd1 =   collection.find(docFilter).allowDiskUse(true).iterator().next();			
+						docTmphd1 = collection.find(docFilter).allowDiskUse(true).iterator().next();
 					} catch (Exception e) {
-						
+
 					}
-						
+
 					mongoClient.close();
-					
-					
-					 mongoClient = cfg.mongoClient();
+
+					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
-					
+
 					try {
-						docTmphd2 =   collection.find(docFilter).allowDiskUse(true).iterator().next();				
+						docTmphd2 = collection.find(docFilter).allowDiskUse(true).iterator().next();
 					} catch (Exception e) {
-						
+
 					}
-						
+
 					mongoClient.close();
-					
-					
-					 mongoClient = cfg.mongoClient();
+
+					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-					
+
 					try {
-						docTmphd3 =   collection.find(docFilter).allowDiskUse(true).iterator().next();		
+						docTmphd3 = collection.find(docFilter).allowDiskUse(true).iterator().next();
 					} catch (Exception e) {
-						
+
 					}
-							
+
 					mongoClient.close();
-					
-					
-					
-			if(docTmphd!=null) {
+					if (docTmphd != null) {
 						LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-			String shd = commons.formatNumberBillInvoice(
-					docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-				);
-			String mauhd = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-			String _tmp = "";					
-			_tmp = 	docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-			String mcqt = docTmphd.get("MCCQT", "");
-			_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-			StringBuilder sb = new StringBuilder();
-			sb.setLength(0);
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-	
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "+ngay+"</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-			sb.append("<hr style='margin: 5px 0 5px 0;'>");
-			sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-			
-			_content = 	sb.toString();
-			String m1 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-			String m2 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
+						String shd = commons.formatNumberBillInvoice(
+								docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+						String mauhd = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+								+ docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+						String _tmp = "";
+						_tmp = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+						String mcqt = docTmphd.get("MCCQT", "");
+						_title = header.getUserFullName() + " "
+								+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+						StringBuilder sb = new StringBuilder();
+						sb.setLength(0);
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+										+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+										+ "</label><o:p></o:p></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+								+ header.getUserFullName()
+								+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
 
-			
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+								+ shd + "</span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+								+ mauhd + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+										+ mcqt + " </span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"
+										+ tctb + "</label></span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"
+										+ lido + "</label></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "
+								+ ngay + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+						sb.append("<hr style='margin: 5px 0 5px 0;'>");
+						sb.append(
+								"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
 
-			//DM USER CONFIG
-					Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-					Document docTmpUserConfig = null;
+						_content = sb.toString();
+						String m1 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"),
+								"");
+						String m2 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"),
+								"");
 
-					 mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-					
-					try {
-						docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();	
-					} catch (Exception e) {
-						
-					}
-								
-					mongoClient.close();
-									
-					
-					//DM FOOTER MAIL 
-					Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-					Document docTmpFooter = null;
-					 mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-					
-					try {
-						docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();	
-					} catch (Exception e) {
-						
-					}
-								
-					mongoClient.close();
-					
-					//
-					String CheckFooterMail = "";
-					if(docTmpUserConfig ==null) {
-						 CheckFooterMail = "N";					
-					}else {
-						 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-					}
-				
-					//
-					//
-					
-					if(!CheckFooterMail.equals("Y")) {
-						_content = commons.decodeURIComponent(_content);
-						
-						if(docTmpFooter==null) {
-							_content = commons.decodeURIComponent(_content);	
-						}else {									
-						String noidung = docTmpFooter.get("Noidung", "");
-						_content += noidung;
-						}
-					}
-					else {
-						_content = commons.decodeURIComponent(_content);
-					}
-			
-			
-			Document docFindem = new Document("IssuerId", header.getIssuerId());
-			Document docTmpem = null;
+						// DM USER CONFIG
+						Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+						Document docTmpUserConfig = null;
 
-			 mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-			
-			try {
-				docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();
-			} catch (Exception e) {
-				
-			}
-					
-			mongoClient.close();
-			
-			
-				if(docTmpem != null) {
-			MailConfig mailConfig = new MailConfig(docTmpem);
-			mailConfig.setNameSend(docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-				
-			/*THUC HIEN GUI MAIL*/
-			Document docFindMailjet = new Document("IsActive", true);
-			Document docTmpMailjet = null;
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
 
-			
-			 mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-			
-			try {
-				docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();	
-			} catch (Exception e) {
-				
-			}
-					
-			mongoClient.close();
-			
-			
-					//String doctmp_id = docTmphd.getObjectId("_id").toString();
-					//dir = docTmphd.getString("Dir");
-					String MailJet = docTmpem.get("MailJet", "");
-					String fileName_ = _id +"_signed.xml";
-					File file_ = null;
-					String fileNamePDF = _id + ".pdf";
-					file_ = new File(dir1, fileName_);
-					
-					if (file_.exists() && file_.isFile()) {
-						org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-						String fileNameJP = "04SS.jrxml";
-						int numberRowInPage = 5;
-						int numberRowInPageMultiPage =  15;
-						int numberCharsInRow = 50;
-						String ImgLogo = "";
-				        String ImgBackground = "";
-						File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-						ByteArrayOutputStream baosPDF = null;
-						
-						baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-								numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-								false);
-						/* LUU TAP TIN PDF */
-						if (null != baosPDF) {
-							try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-								baosPDF.writeTo(fileOuputStream);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					file_ = null;
-					List<String> listFiles = new ArrayList<>();
-					List<String> listNames = new ArrayList<>();
-					file_ = new File(dir, fileNamePDF);
-					if (file_.exists() && file_.isFile()) {
-						listFiles.add(file_.toString());
-						listNames.add(mauhd + "-" + shd + ".pdf");
-					}
-					
-					boolean sendmail = false;	
-					if(m2!="" || m1 != "") {
-						
-						if(m2!="" && m1 =="") {
-							
-							_email = m2; 	
-						}
-						else if(m2 == "" && m1!="") {
-							_email = m1;	
-						}
-						else {
-							_email = m1 + "," + m2;
+						try {
+							docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
 						}
 
-					}
-			}
-			
-			}if(docTmphd1!=null) {
-					LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-			String shd = commons.formatNumberBillInvoice(
-					docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-				);
-			String mauhd = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-			String _tmp = "";					
-			_tmp = 	docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-			String mcqt = docTmphd1.get("MCCQT", "");
-			_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-			StringBuilder sb = new StringBuilder();
-			sb.setLength(0);
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-	
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "+ngay+"</span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-			sb.append("<hr style='margin: 5px 0 5px 0;'>");
-			sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-			
-			_content = 	sb.toString();
-			String m1 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-			String m2 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
+						mongoClient.close();
 
-			
+						// DM FOOTER MAIL
+						Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+						Document docTmpFooter = null;
 
-			//DM USER CONFIG
-					Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-					Document docTmpUserConfig = null;
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
 
-					
-					 mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-					
-					try {
-						docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
-					} catch (Exception e) {
-						
-					}
-								
-					mongoClient.close();				
-					
-					//DM FOOTER MAIL 
-					Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-					Document docTmpFooter = null;
-					 mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-					
-					try {
-						docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();
-					} catch (Exception e) {
-						
-					}
-									
-					mongoClient.close();	
-					//
-					String CheckFooterMail = "";
-					if(docTmpUserConfig ==null) {
-						 CheckFooterMail = "N";					
-					}else {
-						 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-					}
-				
-					//
-					//
-					
-					if(!CheckFooterMail.equals("Y")) {
-						_content = commons.decodeURIComponent(_content);
-						
-						if(docTmpFooter==null) {
-							_content = commons.decodeURIComponent(_content);	
-						}else {									
-						String noidung = docTmpFooter.get("Noidung", "");
-						_content += noidung;
-						}
-					}
-					else {
-						_content = commons.decodeURIComponent(_content);
-					}
-			
-			
-			Document docFindem = new Document("IssuerId", header.getIssuerId());
-			Document docTmpem = null;
+						try {
+							docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
 
-			
-			 mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-			
-			try {
-				docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();
-			} catch (Exception e) {
-				
-			}
-						
-			mongoClient.close();	
-			
-			
-				if(docTmpem != null) {
-			MailConfig mailConfig = new MailConfig(docTmpem);
-			mailConfig.setNameSend(docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-			/*THUC HIEN GUI MAIL*/
-			Document docFindMailjet = new Document("IsActive", true);
-			Document docTmpMailjet = null;
-
-			
-			 mongoClient = cfg.mongoClient();
-			collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-			
-			try {
-				docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();	
-			} catch (Exception e) {
-				
-			}
-						
-			mongoClient.close();
-			
-			
-					//String doctmp_id = docTmphd.getObjectId("_id").toString();
-					//dir = docTmphd.getString("Dir");
-					String MailJet = docTmpem.get("MailJet", "");
-					String fileName_ = _id +"_signed.xml";
-					File file_ = null;
-					String fileNamePDF = _id + ".pdf";
-					file_ = new File(dir1, fileName_);
-					
-					if (file_.exists() && file_.isFile()) {
-						org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-						String fileNameJP = "04SS.jrxml";
-						int numberRowInPage = 5;
-						int numberRowInPageMultiPage =  15;
-						int numberCharsInRow = 50;
-						String ImgLogo = "";
-				        String ImgBackground = "";
-						File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-						ByteArrayOutputStream baosPDF = null;
-						
-						baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-								numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-								false);
-						/* LUU TAP TIN PDF */
-						if (null != baosPDF) {
-							try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-								baosPDF.writeTo(fileOuputStream);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					file_ = null;
-					List<String> listFiles = new ArrayList<>();
-					List<String> listNames = new ArrayList<>();
-					file_ = new File(dir, fileNamePDF);
-					if (file_.exists() && file_.isFile()) {
-						listFiles.add(file_.toString());
-						listNames.add(mauhd + "-" + shd + ".pdf");
-					}
-					
-					boolean sendmail = false;		
-					
-			
-					if(m2!="" || m1 != "") {
-						
-						if(m2!="" && m1 =="") {
-							
-							_email = m2; 	
-						}
-						else if(m2 == "" && m1!="") {
-							_email = m1;	
-						}
-						else {
-							_email = m1 + "," + m2;
 						}
 
-			}
-			
-				}
-			}
-			///HOA DON BAN HANG
-			if(docTmphd2!=null) {
-				LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-		String shd = commons.formatNumberBillInvoice(
-				docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-			);
-		String mauhd = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-		String _tmp = "";					
-		_tmp = 	docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-		String mcqt = docTmphd2.get("MCCQT", "");
-		_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-		StringBuilder sb = new StringBuilder();
-		sb.setLength(0);
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+						mongoClient.close();
 
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "+ngay+"</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-		sb.append("<hr style='margin: 5px 0 5px 0;'>");
-		sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-		
-		_content = 	sb.toString();
-		String m1 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-		String m2 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
-
-		
-
-		//DM USER CONFIG
-				Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-				Document docTmpUserConfig = null;
-
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-				
-				try {
-					docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
-				} catch (Exception e) {
-					
-				}
-							
-				mongoClient.close();			
-				
-				//DM FOOTER MAIL 
-				Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-				Document docTmpFooter = null;
-
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-				
-				try {
-					docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();	
-				} catch (Exception e) {
-					
-				}
-						
-				mongoClient.close();
-				
-				//
-				String CheckFooterMail = "";
-				if(docTmpUserConfig ==null) {
-					 CheckFooterMail = "N";					
-				}else {
-					 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-				}
-			
-				//
-				//
-				
-				if(!CheckFooterMail.equals("Y")) {
-					_content = commons.decodeURIComponent(_content);
-					
-					if(docTmpFooter==null) {
-						_content = commons.decodeURIComponent(_content);	
-					}else {									
-					String noidung = docTmpFooter.get("Noidung", "");
-					_content += noidung;
-					}
-				}
-				else {
-					_content = commons.decodeURIComponent(_content);
-				}
-		
-		
-		Document docFindem = new Document("IssuerId", header.getIssuerId());
-		Document docTmpem = null;
-
-		
-		 mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-		
-		try {
-			docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();
-		} catch (Exception e) {
-			
-		}
-						
-		mongoClient.close();
-		
-			if(docTmpem != null) {
-		MailConfig mailConfig = new MailConfig(docTmpem);
-		mailConfig.setNameSend(docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-		/*THUC HIEN GUI MAIL*/
-		Document docFindMailjet = new Document("IsActive", true);
-		Document docTmpMailjet = null;
-
-		
-		 mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-		
-		try {
-			docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();	
-		} catch (Exception e) {
-			
-		}
-			
-		mongoClient.close();
-		
-		
-				//String doctmp_id = docTmphd.getObjectId("_id").toString();
-				//dir = docTmphd.getString("Dir");
-				String MailJet = docTmpem.get("MailJet", "");
-				String fileName_ = _id +"_signed.xml";
-				File file_ = null;
-				String fileNamePDF = _id + ".pdf";
-				file_ = new File(dir1, fileName_);
-				
-				if (file_.exists() && file_.isFile()) {
-					org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-					String fileNameJP = "04SS.jrxml";
-					int numberRowInPage = 5;
-					int numberRowInPageMultiPage =  15;
-					int numberCharsInRow = 50;
-					String ImgLogo = "";
-			        String ImgBackground = "";
-					File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-					ByteArrayOutputStream baosPDF = null;
-					
-					baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-							numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-							false);
-					/* LUU TAP TIN PDF */
-					if (null != baosPDF) {
-						try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-							baosPDF.writeTo(fileOuputStream);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				file_ = null;
-				List<String> listFiles = new ArrayList<>();
-				List<String> listNames = new ArrayList<>();
-				file_ = new File(dir, fileNamePDF);
-				if (file_.exists() && file_.isFile()) {
-					listFiles.add(file_.toString());
-					listNames.add(mauhd + "-" + shd + ".pdf");
-				}
-				
-					boolean sendmail = false;
-		
-		
-					if(m2!="" || m1 != "") {
-						
-						if(m2!="" && m1 =="") {
-							
-							_email = m2; 	
-						}
-						else if(m2 == "" && m1!="") {
-							_email = m1;	
-						}
-						else {
-							_email = m1 + "," + m2;
+						//
+						String CheckFooterMail = "";
+						if (docTmpUserConfig == null) {
+							CheckFooterMail = "N";
+						} else {
+							CheckFooterMail = docTmpUserConfig.get("footermail", "");
 						}
 
-		}
-	
-			}
-		}
-			
-			//PHIEU XUAT KHO HANG KÝ GUI BAN DAI LY
-			if(docTmphd3!=null) {
-				LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-		String shd = commons.formatNumberBillInvoice(
-				docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-			);
-		String mauhd = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-		String _tmp = "";					
-		_tmp = 	docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-		String mcqt = docTmphd3.get("MCCQT", "");
-		_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-		StringBuilder sb = new StringBuilder();
-		sb.setLength(0);
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+						//
+						//
 
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;color:red;'>Đã xóa bỏ</label></span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "+ngay+"</span></p>\n");
-		sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-		sb.append("<hr style='margin: 5px 0 5px 0;'>");
-		sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-		
-		_content = 	sb.toString();
-		String m1 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-		String m2 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
+						if (!CheckFooterMail.equals("Y")) {
+							_content = commons.decodeURIComponent(_content);
 
-		
-
-		//DM USER CONFIG
-				Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-				Document docTmpUserConfig = null;
-
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-				
-				try {
-					docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
-				} catch (Exception e) {
-					
-				}
-						
-				mongoClient.close();				
-				
-				//DM FOOTER MAIL 
-				Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-				Document docTmpFooter = null;
-
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-				
-				try {
-					docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();		
-				} catch (Exception e) {
-					
-				}
-						
-				mongoClient.close();	
-				
-				//
-				String CheckFooterMail = "";
-				if(docTmpUserConfig ==null) {
-					 CheckFooterMail = "N";					
-				}else {
-					 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-				}
-			
-				//
-				//
-				
-				if(!CheckFooterMail.equals("Y")) {
-					_content = commons.decodeURIComponent(_content);
-					
-					if(docTmpFooter==null) {
-						_content = commons.decodeURIComponent(_content);	
-					}else {									
-					String noidung = docTmpFooter.get("Noidung", "");
-					_content += noidung;
-					}
-				}
-				else {
-					_content = commons.decodeURIComponent(_content);
-				}
-		
-		
-		Document docFindem = new Document("IssuerId", header.getIssuerId());
-		Document docTmpem = null;
-
-		
-		 mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-		
-		try {
-			docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();	
-		} catch (Exception e) {
-			
-		}
-			
-		mongoClient.close();	
-		
-		
-			if(docTmpem != null) {
-		MailConfig mailConfig = new MailConfig(docTmpem);
-		mailConfig.setNameSend(docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-		/*THUC HIEN GUI MAIL*/
-		Document docFindMailjet = new Document("IsActive", true);
-		Document docTmpMailjet = null;
-
-		 mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-		
-		try {
-			docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();	
-		} catch (Exception e) {
-			
-		}
-			
-		mongoClient.close();
-		
-		
-				//String doctmp_id = docTmphd.getObjectId("_id").toString();
-				//dir = docTmphd.getString("Dir");
-				String MailJet = docTmpem.get("MailJet", "");
-				String fileName_ = _id +"_signed.xml";
-				File file_ = null;
-				String fileNamePDF = _id + ".pdf";
-				file_ = new File(dir1, fileName_);
-				
-				if (file_.exists() && file_.isFile()) {
-					org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-					String fileNameJP = "04SS.jrxml";
-					int numberRowInPage = 5;
-					int numberRowInPageMultiPage =  15;
-					int numberCharsInRow = 50;
-					String ImgLogo = "";
-			        String ImgBackground = "";
-					File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-					ByteArrayOutputStream baosPDF = null;
-					
-					baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-							numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-							false);
-					/* LUU TAP TIN PDF */
-					if (null != baosPDF) {
-						try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-							baosPDF.writeTo(fileOuputStream);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				file_ = null;
-				List<String> listFiles = new ArrayList<>();
-				List<String> listNames = new ArrayList<>();
-				file_ = new File(dir, fileNamePDF);
-				if (file_.exists() && file_.isFile()) {
-					listFiles.add(file_.toString());
-					listNames.add(mauhd + "-" + shd + ".pdf");
-				}
-				
-					boolean sendmail = false;		
-					if(m2!="" || m1 != "") {
-						
-						if(m2!="" && m1 =="") {
-							
-							_email = m2; 	
-						}
-						else if(m2 == "" && m1!="") {
-							_email = m1;	
-						}
-						else {
-							_email = m1 + "," + m2;
-						}
-
-		}
-		
-			}
-		}
-				
-			///END SEARCH INFORMATION OF EINVOICE
-			
-				}else {
-					ous.add(
-						new UpdateOneModel<>(
-							docFilter, 
-							new Document("$set", 
-								new Document("HDSS", 
-									new Document("TCTBao", TCTBao)
-									.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
-									.append("LDo", doc.get("LDo", ""))
-								)	
-							), 
-							uo
-						)
-					);
-				}
-				String lido = doc.get("LDo", "");
-				String tctb = Constants.MAP_HDSS_TCTBAO.get(TCTBao);
-				Document docTmphd = null;
-				Document docTmphd1 = null;
-				Document docTmphd2 = null;
-				Document docTmphd3 = null;
-
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-				
-				try {
-					docTmphd =   collection.find(docFilter).allowDiskUse(true).iterator().next();	
-				} catch (Exception e) {
-					
-				}
-			
-				mongoClient.close();
-				
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
-				
-				try {
-					docTmphd1 =   collection.find(docFilter).allowDiskUse(true).iterator().next();	
-				} catch (Exception e) {
-					
-				}
-								
-				mongoClient.close();
-				
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
-				
-				try {
-					docTmphd2 =   collection.find(docFilter).allowDiskUse(true).iterator().next();
-				} catch (Exception e) {
-					
-				}
-						
-				mongoClient.close();
-				
-				
-				 mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-				
-				try {
-					docTmphd3 =   collection.find(docFilter).allowDiskUse(true).iterator().next();	
-				} catch (Exception e) {
-					
-				}
-						
-				mongoClient.close();
-				if(docTmphd!=null) {
-					LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-					String shd = commons.formatNumberBillInvoice(
-							docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-						);
-					String mauhd = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-					String _tmp = "";					
-					_tmp = 	docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-					String mcqt = docTmphd.get("MCCQT", "");
-					_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-					StringBuilder sb = new StringBuilder();
-					sb.setLength(0);
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-			
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"+lido+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "+ngay+"</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-					sb.append("<hr style='margin: 5px 0 5px 0;'>");
-					sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-					
-					_content = 	sb.toString();
-					String m1 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-					String m2 = docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
-
-					
-
-					//DM USER CONFIG
-							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-							Document docTmpUserConfig = null;
-
-							
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-							 
-							 try {
-								 docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
-							} catch (Exception e) {
-								
-							}
-										
-							mongoClient.close();			
-							
-							//DM FOOTER MAIL 
-							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-							Document docTmpFooter = null;
-
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-							 
-							 try {
-								 docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();	
-							} catch (Exception e) {
-								
-							}
-								
-							mongoClient.close();
-							
-							//
-							String CheckFooterMail = "";
-							if(docTmpUserConfig ==null) {
-								 CheckFooterMail = "N";					
-							}else {
-								 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-							}
-						
-							//
-							//
-							
-							if(!CheckFooterMail.equals("Y")) {
+							if (docTmpFooter == null) {
 								_content = commons.decodeURIComponent(_content);
-								
-								if(docTmpFooter==null) {
-									_content = commons.decodeURIComponent(_content);	
-								}else {									
+							} else {
 								String noidung = docTmpFooter.get("Noidung", "");
 								_content += noidung;
-								}
 							}
-							else {
-								_content = commons.decodeURIComponent(_content);
+						} else {
+							_content = commons.decodeURIComponent(_content);
+						}
+
+						Document docFindem = new Document("IssuerId", header.getIssuerId());
+						Document docTmpem = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+						try {
+							docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
+						}
+
+						mongoClient.close();
+
+						if (docTmpem != null) {
+							MailConfig mailConfig = new MailConfig(docTmpem);
+							mailConfig.setNameSend(
+									docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+							/* THUC HIEN GUI MAIL */
+							Document docFindMailjet = new Document("IsActive", true);
+							Document docTmpMailjet = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+							try {
+								docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator().next();
+							} catch (Exception e) {
+
 							}
-					
-					
-					Document docFindem = new Document("IssuerId", header.getIssuerId());
-					Document docTmpem = null;
 
-					
-					
-					 mongoClient = cfg.mongoClient();
-					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-					 
-					 try {
-						 docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();		
-					} catch (Exception e) {
-						
-					}
-							
-					mongoClient.close();
-					
-					
-						if(docTmpem != null) {
-					MailConfig mailConfig = new MailConfig(docTmpem);
-					mailConfig.setNameSend(docTmphd.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-					/*THUC HIEN GUI MAIL*/
-					Document docFindMailjet = new Document("IsActive", true);
-					Document docTmpMailjet = null;
+							mongoClient.close();
 
-					
-					 mongoClient = cfg.mongoClient();
-					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-					 
-					 try {
-						 docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();
-					} catch (Exception e) {
-						
-					}
-						
-					mongoClient.close();
-					
-					
-							//String doctmp_id = docTmphd.getObjectId("_id").toString();
-							//dir = docTmphd.getString("Dir");
-							String MailJet = docTmpem.get("MailJet", "");	
-							String fileName_ = _id +"_signed.xml";
+							// String doctmp_id = docTmphd.getObjectId("_id").toString();
+							// dir = docTmphd.getString("Dir");
+							String MailJet = docTmpem.get("MailJet", "");
+							String fileName_ = _id + "_signed.xml";
 							File file_ = null;
 							String fileNamePDF = _id + ".pdf";
 							file_ = new File(dir1, fileName_);
-							
+
 							if (file_.exists() && file_.isFile()) {
 								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
 								String fileNameJP = "04SS.jrxml";
 								int numberRowInPage = 5;
-								int numberRowInPageMultiPage =  15;
+								int numberRowInPageMultiPage = 15;
 								int numberCharsInRow = 50;
 								String ImgLogo = "";
-						        String ImgBackground = "";
+								String ImgBackground = "";
 								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 								ByteArrayOutputStream baosPDF = null;
-								
-								baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-										numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
+
+								baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+										numberRowInPageMultiPage, numberCharsInRow,
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgLogo).toString(),
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgBackground).toString(),
 										false);
 								/* LUU TAP TIN PDF */
 								if (null != baosPDF) {
-									try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
+									try (OutputStream fileOuputStream = new FileOutputStream(
+											new File(dir, fileNamePDF))) {
 										baosPDF.writeTo(fileOuputStream);
 									} catch (IOException e) {
 										e.printStackTrace();
@@ -4876,789 +4942,801 @@ db.getCollection('EInvoiceHDSS').find({
 								listFiles.add(file_.toString());
 								listNames.add(mauhd + "-" + shd + ".pdf");
 							}
-							
-							boolean sendmail = false;		
-							if(m2!="" || m1 != "") {
-								
-								if(m2!="" && m1 =="") {
-									
-									_email = m2; 	
-								}
-								else if(m2 == "" && m1!="") {
-									_email = m1;	
-								}
-								else {
+
+							boolean sendmail = false;
+							if (m2 != "" || m1 != "") {
+
+								if (m2 != "" && m1 == "") {
+
+									_email = m2;
+								} else if (m2 == "" && m1 != "") {
+									_email = m1;
+								} else {
 									_email = m1 + "," + m2;
 								}
-						
-						if(MailJet.equals("Y")&&!MailJet.equals("")&&!MailJet.equals("N")) {				
-							//
-							String ApiKey = docTmpMailjet.getString("ApiKey");
-							String SecretKey = docTmpMailjet.getString("SecretKey");
-							String EmailAddress = docTmpMailjet.getString("EmailAddress");
-							mailConfig.setEmailAddress(ApiKey);
-							mailConfig.setEmailPassword(SecretKey);
-							mailConfig.setSmtpServer(EmailAddress);
-							 sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles, listNames, true);				 
-						}else{
-							 sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles, listNames, true);
+
+								if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N")) {
+									//
+									String ApiKey = docTmpMailjet.getString("ApiKey");
+									String SecretKey = docTmpMailjet.getString("SecretKey");
+									String EmailAddress = docTmpMailjet.getString("EmailAddress");
+									mailConfig.setEmailAddress(ApiKey);
+									mailConfig.setEmailPassword(SecretKey);
+									mailConfig.setSmtpServer(EmailAddress);
+									sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								} else {
+									sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								}
+								try {
+
+									mongoClient = cfg.mongoClient();
+									collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
+									collection.insertOne(new Document("IssuerId", header.getIssuerId())
+											.append("Title", _title).append("Email", _email)
+											.append("IsActive", sendmail).append("MailCheck", sendmail)
+											.append("IsDelete", false).append("EmailContent", _content)
+
+									);
+									mongoClient.close();
+
+								} catch (Exception ex) {
+								}
+							}
+
 						}
+					}
+					if (docTmphd1 != null) {
+						LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+						String shd = commons.formatNumberBillInvoice(
+								docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+						String mauhd = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+								+ docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+						String _tmp = "";
+						_tmp = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+						String mcqt = docTmphd1.get("MCCQT", "");
+						_title = header.getUserFullName() + " "
+								+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+						StringBuilder sb = new StringBuilder();
+						sb.setLength(0);
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+										+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+										+ "</label><o:p></o:p></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+								+ header.getUserFullName()
+								+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+								+ shd + "</span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+								+ mauhd + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+										+ mcqt + " </span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"
+										+ tctb + "</label></span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"
+										+ lido + "</label></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "
+								+ ngay + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+						sb.append("<hr style='margin: 5px 0 5px 0;'>");
+						sb.append(
+								"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+						_content = sb.toString();
+						String m1 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"),
+								"");
+						String m2 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"),
+								"");
+
+						// DM USER CONFIG
+						Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+						Document docTmpUserConfig = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
 						try {
-							
-							
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
-							collection.insertOne(
-									new Document("IssuerId", header.getIssuerId())
-									.append("Title", _title)
-									.append("Email", _email)
-									.append("IsActive", sendmail)
-									.append("MailCheck", sendmail)
-									.append("IsDelete", false)
-									.append("EmailContent", _content)
-									
-								);
-							mongoClient.close();
-							
-							
-						
-						}catch(Exception ex) {}
-					}
-				
+							docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
+						} catch (Exception e) {
+
 						}
-				}
-				if(docTmphd1!=null) {
-					LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-					String shd = commons.formatNumberBillInvoice(
-							docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-						);
-					String mauhd = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-					String _tmp = "";					
-					_tmp = 	docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-					String mcqt = docTmphd1.get("MCCQT", "");
-					_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-					StringBuilder sb = new StringBuilder();
-					sb.setLength(0);
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-			
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"+lido+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "+ngay+"</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-					sb.append("<hr style='margin: 5px 0 5px 0;'>");
-					sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-					
-					_content = 	sb.toString();
-					String m1 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-					String m2 = docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
+						mongoClient.close();
 
-					
+						// DM FOOTER MAIL
+						Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+						Document docTmpFooter = null;
 
-					//DM USER CONFIG
-							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-							Document docTmpUserConfig = null;
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
 
-							
-							 mongoClient = cfg.mongoClient();
-							 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-							 
-							 try {
-								 docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();				
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();				
-							
-							//DM FOOTER MAIL 
-							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-							Document docTmpFooter = null;
-
-							 mongoClient = cfg.mongoClient();
-							 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-							 
-							 try {
-								 docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();				
-	
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();
-							
-							//
-							String CheckFooterMail = "";
-							if(docTmpUserConfig ==null) {
-								 CheckFooterMail = "N";					
-							}else {
-								 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-							}
-						
-							//
-							//
-							
-							if(!CheckFooterMail.equals("Y")) {
-								_content = commons.decodeURIComponent(_content);
-								
-								if(docTmpFooter==null) {
-									_content = commons.decodeURIComponent(_content);	
-								}else {									
-								String noidung = docTmpFooter.get("Noidung", "");
-								_content += noidung;
-								}
-							}
-							else {
-								_content = commons.decodeURIComponent(_content);
-							}
-					
-					
-					Document docFindem = new Document("IssuerId", header.getIssuerId());
-					Document docTmpem = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-					 
-					 try {
-						 docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-						if(docTmpem != null) {
-					MailConfig mailConfig = new MailConfig(docTmpem);
-					mailConfig.setNameSend(docTmphd1.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-					/*THUC HIEN GUI MAIL*/
-					Document docFindMailjet = new Document("IsActive", true);
-					Document docTmpMailjet = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-					 
-					 try {
-						 docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-							//String doctmp_id = docTmphd.getObjectId("_id").toString();
-							//dir = docTmphd.getString("Dir");
-							String MailJet = docTmpem.get("MailJet", "");	
-							String fileName_ = _id +"_signed.xml";
-							File file_ = null;
-							String fileNamePDF = _id + ".pdf";
-							file_ = new File(dir1, fileName_);
-							
-							if (file_.exists() && file_.isFile()) {
-								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-								String fileNameJP = "04SS.jrxml";
-								int numberRowInPage = 5;
-								int numberRowInPageMultiPage =  15;
-								int numberCharsInRow = 50;
-								String ImgLogo = "";
-						        String ImgBackground = "";
-								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-								ByteArrayOutputStream baosPDF = null;
-								
-								baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-										numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-										false);
-								/* LUU TAP TIN PDF */
-								if (null != baosPDF) {
-									try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-										baosPDF.writeTo(fileOuputStream);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-							}
-							file_ = null;
-							List<String> listFiles = new ArrayList<>();
-							List<String> listNames = new ArrayList<>();
-							file_ = new File(dir, fileNamePDF);
-							if (file_.exists() && file_.isFile()) {
-								listFiles.add(file_.toString());
-								listNames.add(mauhd + "-" + shd + ".pdf");
-							}
-							
-					boolean sendmail = false;				
-					if(m2!="" || m1 != "") {
-						
-						if(m2!="" && m1 =="") {
-							
-							_email = m2; 	
-						}
-						else if(m2 == "" && m1!="") {
-							_email = m1;	
-						}
-						else {
-							_email = m1 + "," + m2;
-						}
-						if(MailJet.equals("Y")&&!MailJet.equals("")&&!MailJet.equals("N")) {				
-							//
-							String ApiKey = docTmpMailjet.getString("ApiKey");
-							String SecretKey = docTmpMailjet.getString("SecretKey");
-							String EmailAddress = docTmpMailjet.getString("EmailAddress");
-							mailConfig.setEmailAddress(ApiKey);
-							mailConfig.setEmailPassword(SecretKey);
-							mailConfig.setSmtpServer(EmailAddress);
-							 sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles, listNames, true);				 
-						}else{
-							 sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles, listNames, true);
-						}
 						try {
-							
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
-							collection.insertOne(
-									new Document("IssuerId", header.getIssuerId())
-									.append("Title", _title)
-									.append("Email", _email)
-									.append("IsActive", sendmail)
-									.append("MailCheck", sendmail)
-									.append("IsDelete", false)
-									.append("EmailContent", _content)
-									
-								);
-							mongoClient.close();
-						}catch(Exception ex) {}
-					}
-				
+							docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
 						}
-				}
-			
-				// HOA DON BAN HANG
-				if(docTmphd2!=null) {
-					LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-					String shd = commons.formatNumberBillInvoice(
-							docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-						);
-					String mauhd = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-					String _tmp = "";					
-					_tmp = 	docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-					String mcqt = docTmphd2.get("MCCQT", "");
-					_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-					StringBuilder sb = new StringBuilder();
-					sb.setLength(0);
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-			
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"+lido+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "+ngay+"</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-					sb.append("<hr style='margin: 5px 0 5px 0;'>");
-					sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-					
-					_content = 	sb.toString();
-					String m1 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-					String m2 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
+						mongoClient.close();
 
-					
-
-					//DM USER CONFIG
-							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-							Document docTmpUserConfig = null;
-
-							
-							 mongoClient = cfg.mongoClient();
-							 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-							 
-							 try {
-								 docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();				
-
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();			
-							
-							//DM FOOTER MAIL 
-							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-							Document docTmpFooter = null;
-
-							 mongoClient = cfg.mongoClient();
-							 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-							 
-							 try {
-								 docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();				
-
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();	
-							
-							//
-							String CheckFooterMail = "";
-							if(docTmpUserConfig ==null) {
-								 CheckFooterMail = "N";					
-							}else {
-								 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-							}
-						
-							//
-							//
-							
-							if(!CheckFooterMail.equals("Y")) {
-								_content = commons.decodeURIComponent(_content);
-								
-								if(docTmpFooter==null) {
-									_content = commons.decodeURIComponent(_content);	
-								}else {									
-								String noidung = docTmpFooter.get("Noidung", "");
-								_content += noidung;
-								}
-							}
-							else {
-								_content = commons.decodeURIComponent(_content);
-							}
-					
-					
-					Document docFindem = new Document("IssuerId", header.getIssuerId());
-					Document docTmpem = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-					 
-					 try {
-						 docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-					
-						if(docTmpem != null) {
-					MailConfig mailConfig = new MailConfig(docTmpem);
-					mailConfig.setNameSend(docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-					/*THUC HIEN GUI MAIL*/
-					Document docFindMailjet = new Document("IsActive", true);
-					Document docTmpMailjet = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-					 
-					 try {
-						 docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-					
-							//String doctmp_id = docTmphd.getObjectId("_id").toString();
-							//dir = docTmphd.getString("Dir");
-							String MailJet = docTmpem.get("MailJet", "");
-							String fileName_ = _id +"_signed.xml";
-							File file_ = null;
-							String fileNamePDF = _id + ".pdf";
-							file_ = new File(dir1, fileName_);
-							
-							if (file_.exists() && file_.isFile()) {
-								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-								String fileNameJP = "04SS.jrxml";
-								int numberRowInPage = 5;
-								int numberRowInPageMultiPage =  15;
-								int numberCharsInRow = 50;
-								String ImgLogo = "";
-						        String ImgBackground = "";
-								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-								ByteArrayOutputStream baosPDF = null;
-								
-								baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-										numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-										false);
-								/* LUU TAP TIN PDF */
-								if (null != baosPDF) {
-									try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-										baosPDF.writeTo(fileOuputStream);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-							}
-							file_ = null;
-							List<String> listFiles = new ArrayList<>();
-							List<String> listNames = new ArrayList<>();
-							file_ = new File(dir, fileNamePDF);
-							if (file_.exists() && file_.isFile()) {
-								listFiles.add(file_.toString());
-								listNames.add(mauhd + "-" + shd + ".pdf");
-							}
-							
-								boolean sendmail = false;	
-								if(m2!="" || m1 != "") {
-									
-									if(m2!="" && m1 =="") {
-										
-										_email = m2; 	
-									}
-									else if(m2 == "" && m1!="") {
-										_email = m1;	
-									}
-									else {
-										_email = m1 + "," + m2;
-									}
-						if(MailJet.equals("Y")&&!MailJet.equals("")&&!MailJet.equals("N")) {				
-							//
-							String ApiKey = docTmpMailjet.getString("ApiKey");
-							String SecretKey = docTmpMailjet.getString("SecretKey");
-							String EmailAddress = docTmpMailjet.getString("EmailAddress");
-							mailConfig.setEmailAddress(ApiKey);
-							mailConfig.setEmailPassword(SecretKey);
-							mailConfig.setSmtpServer(EmailAddress);
-							 sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles, listNames, true);				 
-						}else{
-							 sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles, listNames, true);
-						}
-						try {
-						
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
-							collection.insertOne(
-									new Document("IssuerId", header.getIssuerId())
-									.append("Title", _title)
-									.append("Email", _email)
-									.append("IsActive", sendmail)
-									.append("MailCheck", sendmail)
-									.append("IsDelete", false)
-									.append("EmailContent", _content)
-									
-								);
-							mongoClient.close();
-							
-							
-						}catch(Exception ex) {}
-					}
-					
-						}
-				}
-			// PHIEU XUAT KHO HANG KY GUI BAN DAI LY
-				if(docTmphd3!=null) {
-					LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-					String shd = commons.formatNumberBillInvoice(
-							docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)
-						);
-					String mauhd = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), "") + docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHHDon"), "");
-					String _tmp = "";					
-					_tmp = 	docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","Ten"), "");
-					String mcqt = docTmphd3.get("MCCQT", "");
-					_title = header.getUserFullName() + " " + "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";		
-					StringBuilder sb = new StringBuilder();
-					sb.setLength(0);
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>" + ("".equals(_tmp)? "Quý khách hàng": _tmp) + "</label><o:p></o:p></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + header.getUserFullName() + " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
-			
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + mauhd + "</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+mcqt +" </span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"+lido+"</label></span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "+ngay+"</span></p>\n");
-					sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
-					sb.append("<hr style='margin: 5px 0 5px 0;'>");
-					sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-					
-					_content = 	sb.toString();
-					String m1 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTuCC"), "");
-					String m2 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NMua","DCTDTu"), "");
-
-					
-
-					//DM USER CONFIG
-							Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
-							Document docTmpUserConfig = null;
-
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
-							 
-							 try {
-								 docTmpUserConfig =   collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();				
-
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();
-											
-							
-							//DM FOOTER MAIL 
-							Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
-							Document docTmpFooter = null;
-
-							
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
-							 
-							 try {
-								 docTmpFooter =   collection.find(docFindFooter).allowDiskUse(true).iterator().next();				
-
-							} catch (Exception e) {
-								
-							}
-							mongoClient.close();
-							//
-							String CheckFooterMail = "";
-							if(docTmpUserConfig ==null) {
-								 CheckFooterMail = "N";					
-							}else {
-								 CheckFooterMail = docTmpUserConfig.get("footermail", "");
-							}
-						
-							//
-							//
-							
-							if(!CheckFooterMail.equals("Y")) {
-								_content = commons.decodeURIComponent(_content);
-								
-								if(docTmpFooter==null) {
-									_content = commons.decodeURIComponent(_content);	
-								}else {									
-								String noidung = docTmpFooter.get("Noidung", "");
-								_content += noidung;
-								}
-							}
-							else {
-								_content = commons.decodeURIComponent(_content);
-							}
-					
-					
-					Document docFindem = new Document("IssuerId", header.getIssuerId());
-					Document docTmpem = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
-					 
-					 try {
-						 docTmpem =   collection.find(docFindem).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-					
-						if(docTmpem != null) {
-					MailConfig mailConfig = new MailConfig(docTmpem);
-					mailConfig.setNameSend(docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon","NBan","Ten"), ""));
-					/*THUC HIEN GUI MAIL*/
-					Document docFindMailjet = new Document("IsActive", true);
-					Document docTmpMailjet = null;
-
-					
-					 mongoClient = cfg.mongoClient();
-					 collection =  mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
-					 
-					 try {
-						 docTmpMailjet =   collection.find(docFindMailjet).allowDiskUse(true).iterator().next();				
-
-					} catch (Exception e) {
-						
-					}
-					mongoClient.close();
-					
-					
-							//String doctmp_id = docTmphd.getObjectId("_id").toString();
-							//dir = docTmphd.getString("Dir");
-							String MailJet = docTmpem.get("MailJet", "");
-							String fileName_ = _id +"_signed.xml";
-							File file_ = null;
-							String fileNamePDF = _id + ".pdf";
-							file_ = new File(dir1, fileName_);
-							
-							if (file_.exists() && file_.isFile()) {
-								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
-								String fileNameJP = "04SS.jrxml";
-								int numberRowInPage = 5;
-								int numberRowInPageMultiPage =  15;
-								int numberCharsInRow = 50;
-								String ImgLogo = "";
-						        String ImgBackground = "";
-								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-								ByteArrayOutputStream baosPDF = null;
-								
-								baosPDF = jpUtils.print04(fileJP, doc_,docTmp, numberRowInPage, numberRowInPageMultiPage,
-										numberCharsInRow, Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(), Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", (String)docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-										false);
-								/* LUU TAP TIN PDF */
-								if (null != baosPDF) {
-									try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
-										baosPDF.writeTo(fileOuputStream);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-							}
-							file_ = null;
-							List<String> listFiles = new ArrayList<>();
-							List<String> listNames = new ArrayList<>();
-							file_ = new File(dir, fileNamePDF);
-							if (file_.exists() && file_.isFile()) {
-								listFiles.add(file_.toString());
-								listNames.add(mauhd + "-" + shd + ".pdf");
-							}
-							
-								boolean sendmail = false;		
-								if(m2!="" || m1 != "") {
-									
-									if(m2!="" && m1 =="") {
-										
-										_email = m2; 	
-									}
-									else if(m2 == "" && m1!="") {
-										_email = m1;	
-									}
-									else {
-										_email = m1 + "," + m2;
-									}
-						
-						if(MailJet.equals("Y")&&!MailJet.equals("")&&!MailJet.equals("N")) {				
 						//
-						String ApiKey = docTmpMailjet.getString("ApiKey");
-						String SecretKey = docTmpMailjet.getString("SecretKey");
-						String EmailAddress = docTmpMailjet.getString("EmailAddress");
-						mailConfig.setEmailAddress(ApiKey);
-						mailConfig.setEmailPassword(SecretKey);
-						mailConfig.setSmtpServer(EmailAddress);
-						 sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles, listNames, true);				 
-						}else{
-							 sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles, listNames, true);
+						String CheckFooterMail = "";
+						if (docTmpUserConfig == null) {
+							CheckFooterMail = "N";
+						} else {
+							CheckFooterMail = docTmpUserConfig.get("footermail", "");
 						}
+
+						//
+						//
+
+						if (!CheckFooterMail.equals("Y")) {
+							_content = commons.decodeURIComponent(_content);
+
+							if (docTmpFooter == null) {
+								_content = commons.decodeURIComponent(_content);
+							} else {
+								String noidung = docTmpFooter.get("Noidung", "");
+								_content += noidung;
+							}
+						} else {
+							_content = commons.decodeURIComponent(_content);
+						}
+
+						Document docFindem = new Document("IssuerId", header.getIssuerId());
+						Document docTmpem = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
 						try {
-						
-							 mongoClient = cfg.mongoClient();
-							 collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
-							collection.insertOne(
-									new Document("IssuerId", header.getIssuerId())
-									.append("Title", _title)
-									.append("Email", _email)
-									.append("IsActive", sendmail)
-									.append("MailCheck", sendmail)
-									.append("IsDelete", false)
-									.append("EmailContent", _content)
-									
-								);
-							mongoClient.close();
-							
-							
-						}catch(Exception ex) {}
-					}
-					
+							docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
 						}
+						mongoClient.close();
+
+						if (docTmpem != null) {
+							MailConfig mailConfig = new MailConfig(docTmpem);
+							mailConfig.setNameSend(docTmphd1
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+							/* THUC HIEN GUI MAIL */
+							Document docFindMailjet = new Document("IsActive", true);
+							Document docTmpMailjet = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+							try {
+								docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator().next();
+
+							} catch (Exception e) {
+
+							}
+							mongoClient.close();
+
+							// String doctmp_id = docTmphd.getObjectId("_id").toString();
+							// dir = docTmphd.getString("Dir");
+							String MailJet = docTmpem.get("MailJet", "");
+							String fileName_ = _id + "_signed.xml";
+							File file_ = null;
+							String fileNamePDF = _id + ".pdf";
+							file_ = new File(dir1, fileName_);
+
+							if (file_.exists() && file_.isFile()) {
+								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+								String fileNameJP = "04SS.jrxml";
+								int numberRowInPage = 5;
+								int numberRowInPageMultiPage = 15;
+								int numberCharsInRow = 50;
+								String ImgLogo = "";
+								String ImgBackground = "";
+								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+								ByteArrayOutputStream baosPDF = null;
+
+								baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+										numberRowInPageMultiPage, numberCharsInRow,
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgLogo).toString(),
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgBackground).toString(),
+										false);
+								/* LUU TAP TIN PDF */
+								if (null != baosPDF) {
+									try (OutputStream fileOuputStream = new FileOutputStream(
+											new File(dir, fileNamePDF))) {
+										baosPDF.writeTo(fileOuputStream);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							file_ = null;
+							List<String> listFiles = new ArrayList<>();
+							List<String> listNames = new ArrayList<>();
+							file_ = new File(dir, fileNamePDF);
+							if (file_.exists() && file_.isFile()) {
+								listFiles.add(file_.toString());
+								listNames.add(mauhd + "-" + shd + ".pdf");
+							}
+
+							boolean sendmail = false;
+							if (m2 != "" || m1 != "") {
+
+								if (m2 != "" && m1 == "") {
+
+									_email = m2;
+								} else if (m2 == "" && m1 != "") {
+									_email = m1;
+								} else {
+									_email = m1 + "," + m2;
+								}
+								if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N")) {
+									//
+									String ApiKey = docTmpMailjet.getString("ApiKey");
+									String SecretKey = docTmpMailjet.getString("SecretKey");
+									String EmailAddress = docTmpMailjet.getString("EmailAddress");
+									mailConfig.setEmailAddress(ApiKey);
+									mailConfig.setEmailPassword(SecretKey);
+									mailConfig.setSmtpServer(EmailAddress);
+									sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								} else {
+									sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								}
+								try {
+
+									mongoClient = cfg.mongoClient();
+									collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
+									collection.insertOne(new Document("IssuerId", header.getIssuerId())
+											.append("Title", _title).append("Email", _email)
+											.append("IsActive", sendmail).append("MailCheck", sendmail)
+											.append("IsDelete", false).append("EmailContent", _content)
+
+									);
+									mongoClient.close();
+								} catch (Exception ex) {
+								}
+							}
+
+						}
+					}
+
+					// HOA DON BAN HANG
+					if (docTmphd2 != null) {
+						LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+						String shd = commons.formatNumberBillInvoice(
+								docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+						String mauhd = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+								+ docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+						String _tmp = "";
+						_tmp = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+						String mcqt = docTmphd2.get("MCCQT", "");
+						_title = header.getUserFullName() + " "
+								+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+						StringBuilder sb = new StringBuilder();
+						sb.setLength(0);
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+										+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+										+ "</label><o:p></o:p></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+								+ header.getUserFullName()
+								+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+								+ shd + "</span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+								+ mauhd + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+										+ mcqt + " </span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"
+										+ tctb + "</label></span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"
+										+ lido + "</label></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "
+								+ ngay + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+						sb.append("<hr style='margin: 5px 0 5px 0;'>");
+						sb.append(
+								"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+						_content = sb.toString();
+						String m1 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"),
+								"");
+						String m2 = docTmphd2.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"),
+								"");
+
+						// DM USER CONFIG
+						Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+						Document docTmpUserConfig = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+						try {
+							docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+
+						// DM FOOTER MAIL
+						Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+						Document docTmpFooter = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+						try {
+							docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+
+						//
+						String CheckFooterMail = "";
+						if (docTmpUserConfig == null) {
+							CheckFooterMail = "N";
+						} else {
+							CheckFooterMail = docTmpUserConfig.get("footermail", "");
+						}
+
+						//
+						//
+
+						if (!CheckFooterMail.equals("Y")) {
+							_content = commons.decodeURIComponent(_content);
+
+							if (docTmpFooter == null) {
+								_content = commons.decodeURIComponent(_content);
+							} else {
+								String noidung = docTmpFooter.get("Noidung", "");
+								_content += noidung;
+							}
+						} else {
+							_content = commons.decodeURIComponent(_content);
+						}
+
+						Document docFindem = new Document("IssuerId", header.getIssuerId());
+						Document docTmpem = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+						try {
+							docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+
+						if (docTmpem != null) {
+							MailConfig mailConfig = new MailConfig(docTmpem);
+							mailConfig.setNameSend(docTmphd2
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+							/* THUC HIEN GUI MAIL */
+							Document docFindMailjet = new Document("IsActive", true);
+							Document docTmpMailjet = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+							try {
+								docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator().next();
+
+							} catch (Exception e) {
+
+							}
+							mongoClient.close();
+
+							// String doctmp_id = docTmphd.getObjectId("_id").toString();
+							// dir = docTmphd.getString("Dir");
+							String MailJet = docTmpem.get("MailJet", "");
+							String fileName_ = _id + "_signed.xml";
+							File file_ = null;
+							String fileNamePDF = _id + ".pdf";
+							file_ = new File(dir1, fileName_);
+
+							if (file_.exists() && file_.isFile()) {
+								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+								String fileNameJP = "04SS.jrxml";
+								int numberRowInPage = 5;
+								int numberRowInPageMultiPage = 15;
+								int numberCharsInRow = 50;
+								String ImgLogo = "";
+								String ImgBackground = "";
+								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+								ByteArrayOutputStream baosPDF = null;
+
+								baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+										numberRowInPageMultiPage, numberCharsInRow,
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgLogo).toString(),
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgBackground).toString(),
+										false);
+								/* LUU TAP TIN PDF */
+								if (null != baosPDF) {
+									try (OutputStream fileOuputStream = new FileOutputStream(
+											new File(dir, fileNamePDF))) {
+										baosPDF.writeTo(fileOuputStream);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							file_ = null;
+							List<String> listFiles = new ArrayList<>();
+							List<String> listNames = new ArrayList<>();
+							file_ = new File(dir, fileNamePDF);
+							if (file_.exists() && file_.isFile()) {
+								listFiles.add(file_.toString());
+								listNames.add(mauhd + "-" + shd + ".pdf");
+							}
+
+							boolean sendmail = false;
+							if (m2 != "" || m1 != "") {
+
+								if (m2 != "" && m1 == "") {
+
+									_email = m2;
+								} else if (m2 == "" && m1 != "") {
+									_email = m1;
+								} else {
+									_email = m1 + "," + m2;
+								}
+								if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N")) {
+									//
+									String ApiKey = docTmpMailjet.getString("ApiKey");
+									String SecretKey = docTmpMailjet.getString("SecretKey");
+									String EmailAddress = docTmpMailjet.getString("EmailAddress");
+									mailConfig.setEmailAddress(ApiKey);
+									mailConfig.setEmailPassword(SecretKey);
+									mailConfig.setSmtpServer(EmailAddress);
+									sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								} else {
+									sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								}
+								try {
+
+									mongoClient = cfg.mongoClient();
+									collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
+									collection.insertOne(new Document("IssuerId", header.getIssuerId())
+											.append("Title", _title).append("Email", _email)
+											.append("IsActive", sendmail).append("MailCheck", sendmail)
+											.append("IsDelete", false).append("EmailContent", _content)
+
+									);
+									mongoClient.close();
+
+								} catch (Exception ex) {
+								}
+							}
+
+						}
+					}
+					// PHIEU XUAT KHO HANG KY GUI BAN DAI LY
+					if (docTmphd3 != null) {
+						LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
+						String shd = commons.formatNumberBillInvoice(
+								docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0));
+						String mauhd = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+								+ docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+						String _tmp = "";
+						_tmp = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "");
+						String mcqt = docTmphd3.get("MCCQT", "");
+						_title = header.getUserFullName() + " "
+								+ "Thông báo hủy/giải trình của NNT Hóa Đơn điện tử có sai sót";
+						StringBuilder sb = new StringBuilder();
+						sb.setLength(0);
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+										+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp)
+										+ "</label><o:p></o:p></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+								+ header.getUserFullName()
+								+ " xin trân trọng thông báo đến Quý Khách giải trình về việc hóa đơn điện tử có sai sót</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót</label></span></p>\n");
+
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  "
+								+ shd + "</span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: "
+								+ mauhd + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+										+ mcqt + " </span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"
+										+ tctb + "</label></span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lí do:<label style='font-weight: bold;'>"
+										+ lido + "</label></span></p>\n");
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>6.  Thời gian: "
+								+ ngay + "</span></p>\n");
+						sb.append(
+								"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+						sb.append("<hr style='margin: 5px 0 5px 0;'>");
+						sb.append(
+								"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+						_content = sb.toString();
+						String m1 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTuCC"),
+								"");
+						String m2 = docTmphd3.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"),
+								"");
+
+						// DM USER CONFIG
+						Document docFindUserConfig = new Document("IssuerId", header.getIssuerId());
+						Document docTmpUserConfig = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
+
+						try {
+							docTmpUserConfig = collection.find(docFindUserConfig).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+
+						// DM FOOTER MAIL
+						Document docFindFooter = new Document("IsActive", true).append("IsDelete", false);
+						Document docTmpFooter = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMFooterWeb");
+
+						try {
+							docTmpFooter = collection.find(docFindFooter).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+						//
+						String CheckFooterMail = "";
+						if (docTmpUserConfig == null) {
+							CheckFooterMail = "N";
+						} else {
+							CheckFooterMail = docTmpUserConfig.get("footermail", "");
+						}
+
+						//
+						//
+
+						if (!CheckFooterMail.equals("Y")) {
+							_content = commons.decodeURIComponent(_content);
+
+							if (docTmpFooter == null) {
+								_content = commons.decodeURIComponent(_content);
+							} else {
+								String noidung = docTmpFooter.get("Noidung", "");
+								_content += noidung;
+							}
+						} else {
+							_content = commons.decodeURIComponent(_content);
+						}
+
+						Document docFindem = new Document("IssuerId", header.getIssuerId());
+						Document docTmpem = null;
+
+						mongoClient = cfg.mongoClient();
+						collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigEmail");
+
+						try {
+							docTmpem = collection.find(docFindem).allowDiskUse(true).iterator().next();
+
+						} catch (Exception e) {
+
+						}
+						mongoClient.close();
+
+						if (docTmpem != null) {
+							MailConfig mailConfig = new MailConfig(docTmpem);
+							mailConfig.setNameSend(docTmphd3
+									.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "Ten"), ""));
+							/* THUC HIEN GUI MAIL */
+							Document docFindMailjet = new Document("IsActive", true);
+							Document docTmpMailjet = null;
+
+							mongoClient = cfg.mongoClient();
+							collection = mongoClient.getDatabase(cfg.dbName).getCollection("ConfigMailJet");
+
+							try {
+								docTmpMailjet = collection.find(docFindMailjet).allowDiskUse(true).iterator().next();
+
+							} catch (Exception e) {
+
+							}
+							mongoClient.close();
+
+							// String doctmp_id = docTmphd.getObjectId("_id").toString();
+							// dir = docTmphd.getString("Dir");
+							String MailJet = docTmpem.get("MailJet", "");
+							String fileName_ = _id + "_signed.xml";
+							File file_ = null;
+							String fileNamePDF = _id + ".pdf";
+							file_ = new File(dir1, fileName_);
+
+							if (file_.exists() && file_.isFile()) {
+								org.w3c.dom.Document doc_ = commons.fileToDocument(file_);
+								String fileNameJP = "04SS.jrxml";
+								int numberRowInPage = 5;
+								int numberRowInPageMultiPage = 15;
+								int numberCharsInRow = 50;
+								String ImgLogo = "";
+								String ImgBackground = "";
+								File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+								ByteArrayOutputStream baosPDF = null;
+
+								baosPDF = jpUtils.print04(fileJP, doc_, docTmp, numberRowInPage,
+										numberRowInPageMultiPage, numberCharsInRow,
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgLogo).toString(),
+										Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+												(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""),
+												ImgBackground).toString(),
+										false);
+								/* LUU TAP TIN PDF */
+								if (null != baosPDF) {
+									try (OutputStream fileOuputStream = new FileOutputStream(
+											new File(dir, fileNamePDF))) {
+										baosPDF.writeTo(fileOuputStream);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							file_ = null;
+							List<String> listFiles = new ArrayList<>();
+							List<String> listNames = new ArrayList<>();
+							file_ = new File(dir, fileNamePDF);
+							if (file_.exists() && file_.isFile()) {
+								listFiles.add(file_.toString());
+								listNames.add(mauhd + "-" + shd + ".pdf");
+							}
+
+							boolean sendmail = false;
+							if (m2 != "" || m1 != "") {
+
+								if (m2 != "" && m1 == "") {
+
+									_email = m2;
+								} else if (m2 == "" && m1 != "") {
+									_email = m1;
+								} else {
+									_email = m1 + "," + m2;
+								}
+
+								if (MailJet.equals("Y") && !MailJet.equals("") && !MailJet.equals("N")) {
+									//
+									String ApiKey = docTmpMailjet.getString("ApiKey");
+									String SecretKey = docTmpMailjet.getString("SecretKey");
+									String EmailAddress = docTmpMailjet.getString("EmailAddress");
+									mailConfig.setEmailAddress(ApiKey);
+									mailConfig.setEmailPassword(SecretKey);
+									mailConfig.setSmtpServer(EmailAddress);
+									sendmail = mailJet.sendMailJet(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								} else {
+									sendmail = mailUtils.sendMail(mailConfig, _title, _content, _email, listFiles,
+											listNames, true);
+								}
+								try {
+
+									mongoClient = cfg.mongoClient();
+									collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
+									collection.insertOne(new Document("IssuerId", header.getIssuerId())
+											.append("Title", _title).append("Email", _email)
+											.append("IsActive", sendmail).append("MailCheck", sendmail)
+											.append("IsDelete", false).append("EmailContent", _content)
+
+									);
+									mongoClient.close();
+
+								} catch (Exception ex) {
+								}
+							}
+
+						}
+					}
+
 				}
-						
-				
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+				collection.bulkWrite(ous, new BulkWriteOptions().ordered(false));
+				mongoClient.close();
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
+				collection.bulkWrite(ous, new BulkWriteOptions().ordered(false));
+				mongoClient.close();
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
+				collection.bulkWrite(ous, new BulkWriteOptions().ordered(false));
+				mongoClient.close();
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+				collection.bulkWrite(ous, new BulkWriteOptions().ordered(false));
+				mongoClient.close();
+
+				/* CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT */
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceHDSS");
+				collection.findOneAndUpdate(docFind, new Document("$set",
+						new Document("Status", Constants.INVOICE_STATUS.COMPLETE).append("MTDTChieu", MTDTChieu)),
+						options);
+				mongoClient.close();
+
+				responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+
+			} else  {
+				/* if(TTTNCCQT.equals("2")) */
+				hItem = new HashMap<String, String>();
+				hItem.put("MLoi", maLoi);
+				hItem.put("MTLoi", moTaLoi + " - " + huongDanXuLy);
+				DSLoi.add(hItem);
+
+				/* CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT */
+				options = new FindOneAndUpdateOptions();
+				options.upsert(false);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+
+				mongoClient = cfg.mongoClient();
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceHDSS");
+				collection.findOneAndUpdate(docFind,
+						new Document("$set",
+								new Document("Status", Constants.INVOICE_STATUS.ERROR_CQT).append("DSLoi", DSLoi)),
+						options);
+				mongoClient.close();
+
+				responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+
 			}
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-			collection.bulkWrite(
-					ous,
-					new BulkWriteOptions().ordered(false)
-				);
-			mongoClient.close();
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
-			collection.bulkWrite(
-					ous,
-					new BulkWriteOptions().ordered(false)
-				);
-			mongoClient.close();
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
-			collection.bulkWrite(
-					ous,
-					new BulkWriteOptions().ordered(false)
-				);
-			mongoClient.close();
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-			collection.bulkWrite(
-					ous,
-					new BulkWriteOptions().ordered(false)
-				);
-			mongoClient.close();
-			
-			
-		
-			
-			/*CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT*/
-			options = new FindOneAndUpdateOptions();
-			options.upsert(false);
-			options.maxTime(5000, TimeUnit.MILLISECONDS);
-			options.returnDocument(ReturnDocument.AFTER);
-			
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceHDSS");
-			collection.findOneAndUpdate(
-					docFind, 
-					new Document("$set", 
-						new Document("Status", Constants.INVOICE_STATUS.COMPLETE)
-						.append("MTDTChieu", MTDTChieu)
-					), 
-					options
-				);
-			mongoClient.close();
-			
-			
-			responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-			
-		} else /* if(TTTNCCQT.equals("2")) */{
-			
-			hItem = new HashMap<String, String>();
-			hItem.put("MLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE)));
-			hItem.put("MTLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MTa", nodeTDiep, XPathConstants.NODE)));
-			DSLoi.add(hItem);
-		
-		/*CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT*/
-		options = new FindOneAndUpdateOptions();
-		options.upsert(false);
-		options.maxTime(5000, TimeUnit.MILLISECONDS);
-		options.returnDocument(ReturnDocument.AFTER);
-		
-		
-		 mongoClient = cfg.mongoClient();
-		 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceHDSS");
-		collection.findOneAndUpdate(
-				docFind, 
-				new Document("$set", 
-					new Document("Status", Constants.INVOICE_STATUS.ERROR_CQT)
-					.append("DSLoi", DSLoi)
-				), 
-				options
-			);
-		mongoClient.close();
-		
-		
-		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
-		rsp.setResponseStatus(responseStatus);
-		return rsp;
-		
-	}
-				
-	///ELSE 301
+
+			/// ELSE 301
 		}
 		else if("999".equals(CQT_MLTDiep)){	
 			  TTTNhan = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/TTTNhan", nodeTDiep, XPathConstants.NODE));

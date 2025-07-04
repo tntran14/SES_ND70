@@ -1366,14 +1366,7 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 			return rsp; 
 			}	  
 		}
-		
-		
-		
-		
-		
-		
-		
-		
+
 		boolean check_ = false;
 		Node nodeTDiep = null;
 	    String CQT_MLTDiep = "";
@@ -1398,8 +1391,8 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 	       }
 	       if(CQT_MLTDiep.equals("204")) {
 				check_ = true;
-				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
-				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
 				
 				CQT_MLTDiep1 = CQT_MLTDiep;
 				MTDTChieu1 = commons
@@ -2043,9 +2036,11 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 		
 		//MA 301--------------------------------
 		else if("301".equals(CQT_MLTDiep)){		
-			
-			if(TTTNCCQT.equals("1"))
-			{
+			String maLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+			String moTaLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
+			String huongDanXuLy = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSLDKTNhan/LDo/HDXLy", nodeTDiep, XPathConstants.NODE));
+
+			if (maLoi == null || maLoi.equals("")) {
 			String TCTBao = "";
 			Document docFilter = null;
 			List<WriteModel<Document>> ous = new ArrayList<WriteModel<Document>>();
@@ -2542,8 +2537,8 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 } else /* if(TTTNCCQT.equals("2")) */{
 			
 			hItem = new HashMap<String, String>();
-			hItem.put("MLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE)));
-			hItem.put("MTLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MTa", nodeTDiep, XPathConstants.NODE)));
+			hItem.put("MLoi", maLoi);
+			hItem.put("MTLoi", moTaLoi + " - " + huongDanXuLy);
 			DSLoi.add(hItem);
 		
 		/*CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT*/
