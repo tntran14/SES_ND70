@@ -1745,6 +1745,7 @@ else {
 	      reportParams.put("CQTQLy", (String)docTmp.getEmbedded(Arrays.asList("DDanh"), "") + "-" + (String)docTmp.getEmbedded(Arrays.asList("TCQT"), ""));
 	      reportParams.put("NNTTen", TNNT);
 	      reportParams.put("NNTMST", MST);
+	      String tbgtrinh=(String)docTmp.getEmbedded(Arrays.asList("Loai"), "");
 	      List<HashMap<String, Object>> arrayData = new ArrayList();
 	      HashMap<String, Object> hItem = null;
 	      int lenProName = 0;
@@ -1829,8 +1830,10 @@ else {
 	               hItem.put("GroupPageIDX", groupPageIDX);
 	               hItem.put("STT", this.commons.getTextFromNodeXML((Element)xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("MCQTCap", productName);
-	               hItem.put("MSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)) + this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("KHMSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("KHHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("SHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");
 	               ngayc = this.commons.getTextFromNodeXML((Element)xPath.evaluate("Ngay", nodeTmp, XPathConstants.NODE));
 	               String ngayky = (String) docTmp.get("NTBao");
 	               words = ngayc.split("-");
@@ -1859,13 +1862,7 @@ else {
 		  	         reportParams.put("InvoiceYear", nam);
 	           
 	               ladhddt = this.commons.getTextFromNodeXML((Element)xPath.evaluate("LADHDDT", nodeTmp, XPathConstants.NODE));
-	               if ("1".equals(ladhddt)) {
-	                  hItem.put("LADHDDT", "Thông báo hủy/giải trình của NNT");
-	               }
-
-	               if ("2".equals(ladhddt)) {
-	                  hItem.put("LADHDDT", "Thông báo hủy/giải trình của NNT theo thông báo của CQT");
-	               }
+	               hItem.put("LoaiTB", Constants.MAP_LOAITB_HDSS.get(tbgtrinh));
 
 	               tctb = this.commons.getTextFromNodeXML((Element)xPath.evaluate("TCTBao", nodeTmp, XPathConstants.NODE));
 	               if ("1".equals(tctb)) {
@@ -1945,8 +1942,10 @@ else {
 	               hItem.put("GroupPageIDX", groupPageIDX);
 	               hItem.put("STT", this.commons.getTextFromNodeXML((Element)xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("MCQTCap", productName);
-	               hItem.put("MSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)) + this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("KHMSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("KHHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("SHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
+	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");
 	               ngayc = this.commons.getTextFromNodeXML((Element)xPath.evaluate("Ngay", nodeTmp, XPathConstants.NODE));
 	            String ngayky = (String) docTmp.get("NTBao");
 	               
@@ -1976,13 +1975,9 @@ else {
 	  	    
 	           	
 	               ladhddt = this.commons.getTextFromNodeXML((Element)xPath.evaluate("LADHDDT", nodeTmp, XPathConstants.NODE));
-	               if ("1".equals(ladhddt)) {
-	                  hItem.put("LADHDDT", "Thông báo hủy/giải trình của NNT");
-	               }
+	                hItem.put("LoaiTB", Constants.MAP_LOAITB_HDSS.get(tbgtrinh));
 
-	               if ("2".equals(ladhddt)) {
-	                  hItem.put("LADHDDT", "Thông báo hủy/giải trình của NNT theo thông báo của CQT");
-	               }
+
 
 	               tctb = this.commons.getTextFromNodeXML((Element)xPath.evaluate("TCTBao", nodeTmp, XPathConstants.NODE));
 	               if ("1".equals(tctb)) {
