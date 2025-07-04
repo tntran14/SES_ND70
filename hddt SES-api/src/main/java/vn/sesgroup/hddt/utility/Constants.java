@@ -170,4 +170,18 @@ public class Constants {
 		{put("4", "COMPLETE");}
 		
 	};
+	public static final HashMap<String, String> MAP_STATUSLoaiHD = new HashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("1", "Hóa đơn giá trị gia tăng");}
+		{put("2", "Hóa đơn bán hàng");}
+		{put("3", "Hóa đơn bán tài sản công");}
+		{put("4", "Hóa đơn bán hàng dự trữ quốc gia");}
+		{put("5", "Hóa đơn theo nghị định số 123/2020/NĐ-CP");}
+		{put("6", "Hóa đơn Phiếu xuất kho(Kiêm vận chuyển nội bộ - Hàng gửi bán đại lý điện tử");}
+	};
+	public static final LinkedHashMap<String, String> MAP_LOAITB_HDSS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("1", "Thông báo của NNT");}
+		{put("2", "Giải trình của NNT theo thông báo của CQT");}
+	};
 }
