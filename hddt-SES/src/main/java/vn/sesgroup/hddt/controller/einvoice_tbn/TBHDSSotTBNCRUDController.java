@@ -132,7 +132,8 @@ public class TBHDSSotTBNCRUDController extends AbstractController{
 				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
 					for(JsonNode o: jsonData.at("/param02")) {
-						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
+                        String name = commons.getTextJsonNode(o.get("name")) + " ("+commons.getTextJsonNode(o.at("/note"))+")";
+						hItem.put(commons.getTextJsonNode(o.get("code")), name);
 					}
 					req.setAttribute("map_cucthue", hItem);
 				}
@@ -330,7 +331,8 @@ public class TBHDSSotTBNCRUDController extends AbstractController{
 			req.setAttribute("TThanhName", commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/name")));
 			cqtQLy = commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/code"));
 			req.setAttribute("CQThueCode", cqtQLy);
-			req.setAttribute("CQThueName", commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/name")));
+            String name = commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/name")) + " ("+commons.getTextJsonNode(jsonData.at("/ChiCucThueInfo/note"))+")";
+			req.setAttribute("CQThueName", name);
 			
 			req.setAttribute("Loai", commons.getTextJsonNode(jsonData.at("/Loai")));
 			if("2".equals(commons.getTextJsonNode(jsonData.at("/Loai")))) {
