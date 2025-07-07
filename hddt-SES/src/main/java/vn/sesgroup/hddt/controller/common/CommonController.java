@@ -601,11 +601,12 @@ public class CommonController extends AbstractController{
 				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
 					for(JsonNode o: jsonData.at("/param01")) {
+						String name = commons.getTextJsonNode(o.at("/name")) + " ("+commons.getTextJsonNode(o.at("/note"))+")";
 						rows.add(
 							new LinkedHashMap<String, String>(){
 								private static final long serialVersionUID = 5320109478345573105L;
 								{put("code", commons.getTextJsonNode(o.at("/code")));}
-								{put("name", commons.getTextJsonNode(o.at("/name")));}
+								{put("name", name);}
 							}
 						);
 					}
