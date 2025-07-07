@@ -81,29 +81,28 @@
 														</div>
 													</div>
 												</div>
-											
-											
-											
-											
-											
-											
-											
-											
-											
-											
+
+
+
+
+
+
+
+
+
+
 											<div class="row">
-												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+												<div class="col-12 custom-field m-b-16">
 													<div class="c-f__wrapper c-service__related">
-												
-								
-								
-							<select class="form-control form-control-sm c-f__textbox" id="tinh-thanh" name="tinh-thanh" >
-										<option value=""></option>
-										<th:block th:if="${map_dmtinhthanh != null}" >
-											<option th:each="entry : ${map_dmtinhthanh.entrySet()}"
-												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${TThanhCode == entry.key}" > </option>
-										</th:block>
-									</select>
+														<select class="form-control form-control-sm c-f__textbox"
+															id="tinh-thanh" name="tinh-thanh">
+															<option value=""></option>
+															<th:block th:if="${map_dmtinhthanh != null}">
+																<option th:each="entry : ${map_dmtinhthanh.entrySet()}"
+																	th:value="${entry.key}" th:utext="${entry.value}"
+																	th:selected="${TThanhCode == entry.key}"></option>
+															</th:block>
+														</select>
 														<fieldset aria-hidden="true" class="c-f__set">
 															<legend class="c-f__legend">
 																<label>Tỉnh/Thành phố<span class="text-danger">*</span></label>
@@ -111,19 +110,20 @@
 														</fieldset>
 													</div>
 												</div>
-												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
+											</div>
+											<div class="row">
+												<div class="col-12 custom-field m-b-16">
 													<div class="c-f__wrapper c-service__related">
-								
-								
-							
-								<select class="form-control form-control-sm c-f__textbox" id="CQTQLy" name="CQTQLy">
-										<option value=""></option>
-										<th:block th:if="${map_cucthue != null}">
-											<option th:each="entry : ${map_cucthue.entrySet()}"
-												th:value="${entry.key}" th:utext="${entry.value}" th:selected="${CQThueCode == entry.key}" > </option>
-										</th:block>
-									</select>
-								
+														<select class="form-control form-control-sm c-f__textbox"
+															id="CQTQLy" name="CQTQLy">
+															<option value=""></option>
+															<th:block th:if="${map_cucthue != null}">
+																<option th:each="entry : ${map_cucthue.entrySet()}"
+																	th:value="${entry.key}" th:utext="${entry.value}"
+																	th:selected="${CQThueCode == entry.key}"></option>
+															</th:block>
+														</select>
+
 														<fieldset aria-hidden="true" class="c-f__set">
 															<legend class="c-f__legend">
 																<label>Cơ quan thuế<span class="text-danger">*</span></label>
@@ -133,8 +133,7 @@
 													</div>
 												</div>
 											</div>
-				
-										
+
 											<div class="row">
 												<div class="col-12 col-sm-12 col-md-6 custom-field m-b-16">
 													<div class="c-f__wrapper">
