@@ -166,7 +166,7 @@ public class CKSImpl extends AbstractDAO implements CKSDAO {
 							new Document("$match",
 									new Document("IsDelete", new Document("$ne", true)).append("code",
 											commons.regexEscapeForMongoQuery(cqtQLy))),
-							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))))
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1).append("note", 1))))
 					.append("as", "DMChiCucThueInfo")));
 			pipeline.add(new Document("$unwind",
 					new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
@@ -289,7 +289,7 @@ public class CKSImpl extends AbstractDAO implements CKSDAO {
 							new Document("$match",
 									new Document("IsDelete", new Document("$ne", true)).append("code",
 											commons.regexEscapeForMongoQuery(cqtQLy))),
-							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1))))
+							new Document("$project", new Document("_id", 0).append("code", 1).append("name", 1).append("note", 1))))
 					.append("as", "DMChiCucThueInfo")));
 			pipeline.add(new Document("$unwind",
 					new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
