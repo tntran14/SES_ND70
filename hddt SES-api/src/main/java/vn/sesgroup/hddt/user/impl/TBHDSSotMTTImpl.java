@@ -182,7 +182,7 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 					new Document("from", "DMChiCucThue")
 					.append("pipeline", 
 						Arrays.asList(
-							new Document("$match", new Document("code", coQuanThue)),
+							new Document("$match", new Document("code", coQuanThue).append("IsDelete", false)),
 							new Document("$project", new Document("_id", 0))
 						)
 					)
@@ -417,7 +417,7 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 					new Document("from", "DMChiCucThue")
 					.append("pipeline", 
 						Arrays.asList(
-							new Document("$match", new Document("code", coQuanThue)),
+							new Document("$match", new Document("code", coQuanThue).append("IsDelete", false)),
 							new Document("$project", new Document("_id", 0))
 						)
 					)
