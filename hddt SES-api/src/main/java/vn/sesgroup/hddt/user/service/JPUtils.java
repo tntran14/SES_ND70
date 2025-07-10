@@ -5331,8 +5331,10 @@ else {
 			        String nddung = commons.getTextFromNodeXML((Element) xPath.evaluate("NDDung", nodeDLBBDCTThe, XPathConstants.NODE));
 			        String ndtnhat = commons.getTextFromNodeXML((Element) xPath.evaluate("NDTNhat", nodeDLBBDCTThe, XPathConstants.NODE));
 			        String sbban = commons.getTextFromNodeXML((Element) xPath.evaluate("SBBan", nodeDLBBDCTThe, XPathConstants.NODE));
+			        String ldo = commons.getTextFromNodeXML((Element) xPath.evaluate("LDo", nodeDLBBDCTThe, XPathConstants.NODE));
 			        
 			        reportParams.put("SBBan", sbban);
+			        reportParams.put("LDo", ldo);
 			        reportParams.put("NDSai", ndsai);
 			        reportParams.put("NDDung", nddung);
 			        reportParams.put("NDTNhat", ndtnhat);
@@ -5356,11 +5358,13 @@ else {
 					String mst = commons.getTextFromNodeXML((Element) xPath.evaluate("MSThue", nodeTTNBan, XPathConstants.NODE));
 					String dc = commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTTNBan, XPathConstants.NODE));
 					String dd = commons.getTextFromNodeXML((Element) xPath.evaluate("DDien", nodeTTNBan, XPathConstants.NODE));
+					String sdt = commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTTNBan, XPathConstants.NODE));
 					String cv = commons.getTextFromNodeXML((Element) xPath.evaluate("CVu", nodeTTNBan, XPathConstants.NODE));
 					reportParams.put("DVBHang", dvbhang);
 			        reportParams.put("NB_MSThue", mst);
 			        reportParams.put("NB_DChi", dc);
 			        reportParams.put("NB_DDien", dd);
+			        reportParams.put("NB_SDThoai", sdt);
 			        reportParams.put("NB_CVu", cv);
 				}
 				
@@ -5371,11 +5375,13 @@ else {
 					String mst = commons.getTextFromNodeXML((Element) xPath.evaluate("MSThue", nodeTTNMua, XPathConstants.NODE));
 					String dc = commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTTNMua, XPathConstants.NODE));
 					String dd = commons.getTextFromNodeXML((Element) xPath.evaluate("DDien", nodeTTNMua, XPathConstants.NODE));
+					String sdt = commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTTNMua, XPathConstants.NODE));
 					String cv = commons.getTextFromNodeXML((Element) xPath.evaluate("CVu", nodeTTNMua, XPathConstants.NODE));
 					reportParams.put("DVMHang", dvmhang);
 			        reportParams.put("NM_MSThue", mst);
 			        reportParams.put("NM_DChi", dc);
 			        reportParams.put("NM_DDien", dd);
+			        reportParams.put("NM_SDThoai", sdt);
 			        reportParams.put("NM_CVu", cv);
 				}
 				

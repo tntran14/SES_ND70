@@ -83,6 +83,15 @@
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nb_sdt" name="nb_sdt"
+										type="text" autocomplete="off" th:value="${NB_SDThoai}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Số điện thoại</label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
 									<input class="form-control form-control-sm c-f__textbox" id="nb_cv" name="nb_cv"
 										type="text" autocomplete="off" th:value="${NB_CVu}" th:disabled="${!_isedit_}"/>
 									<fieldset aria-hidden="true" class="c-f__set">
@@ -149,6 +158,15 @@
 									<fieldset aria-hidden="true" class="c-f__set">
 										<legend class="c-f__legend"><label>Đại diện<span class="text-danger"
 													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_sdt" name="nm_sdt"
+										type="text" autocomplete="off" th:value="${NM_SDThoai}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Số điện thoại</label></legend>
 									</fieldset>
 								</div>
 							</div>
@@ -228,10 +246,20 @@
 						<div class="col-12">
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="ldo" name="ldo"
+										type="text" autocomplete="off" th:value="${LDo}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Lý do<span class="text-danger"
+													style="font-size:15px">(*)</span></label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
 									<input class="form-control form-control-sm c-f__textbox" id="ndsai" name="ndsai"
 										type="text" autocomplete="off" th:value="${NDSai}" th:disabled="${!_isedit_}"/>
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Nội dung sai<span class="text-danger"
+										<legend class="c-f__legend"><label>Nội dung trước khi điều chỉnh/thay thế<span class="text-danger"
 													style="font-size:15px">(*)</span></label></legend>
 									</fieldset>
 								</div>
@@ -251,7 +279,7 @@
 									<input class="form-control form-control-sm c-f__textbox" id="ndtnhat" name="ndtnhat"
 										type="text" autocomplete="off" th:value="${NDTNhat}" th:disabled="${!_isedit_}"/>
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Hai bên thống nhất<span class="text-danger"
+										<legend class="c-f__legend"><label>Nội dung hai bên thống nhất điều chỉnh/thay thế<span class="text-danger"
 													style="font-size:15px">(*)</span></label></legend>
 									</fieldset>
 								</div>
@@ -858,6 +886,7 @@
 		dataPost['nb_dvbh'] = $('#f-lbbdctt-crud').find('#nb_dvbh').val();
 		dataPost['nb_dc'] = $('#f-lbbdctt-crud').find('#nb_dc').val();
 		dataPost['nb_dd'] = $('#f-lbbdctt-crud').find('#nb_dd').val();
+		dataPost['nb_sdt'] = $('#f-lbbdctt-crud').find('#nb_sdt').val();
 		dataPost['nb_cv'] = $('#f-lbbdctt-crud').find('#nb_cv').val();
 		dataPost['email_receive'] = $('#f-lbbdctt-crud').find('#email_receive').val();
 
@@ -865,12 +894,14 @@
 		dataPost['nm_dvmh'] = $('#f-lbbdctt-crud').find('#nm_dvmh').val();
 		dataPost['nm_dc'] = $('#f-lbbdctt-crud').find('#nm_dc').val();
 		dataPost['nm_dd'] = $('#f-lbbdctt-crud').find('#nm_dd').val();
+		dataPost['nm_sdt'] = $('#f-lbbdctt-crud').find('#nm_sdt').val();
 		dataPost['nm_cv'] = $('#f-lbbdctt-crud').find('#nm_cv').val();
 		dataPost['email_send'] = $('#f-lbbdctt-crud').find('#email_send').val();
 
 		dataPost['loaibb'] = $('#f-lbbdctt-crud').find('#loaibb').val();
 		dataPost['sbban'] = $('#f-lbbdctt-crud').find('#sbban').val();
 		dataPost['nlap'] = $('#f-lbbdctt-crud').find('#nlap').val();
+		dataPost['ldo'] = $('#f-lbbdctt-crud').find('#ldo').val();
 		dataPost['ndsai'] = $('#f-lbbdctt-crud').find('#ndsai').val();
 		dataPost['nddung'] = $('#f-lbbdctt-crud').find('#nddung').val();
 		dataPost['ndtnhat'] = $('#f-lbbdctt-crud').find('#ndtnhat').val();

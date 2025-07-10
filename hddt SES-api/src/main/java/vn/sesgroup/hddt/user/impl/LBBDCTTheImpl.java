@@ -87,6 +87,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		String nb_dvbh = commons.getTextJsonNode(jsonData.at("/NB_DVBHang")).replaceAll("\\s+", " ");
 		String nb_dc = commons.getTextJsonNode(jsonData.at("/NB_DChi")).replaceAll("\\s+", " ");
 		String nb_dd = commons.getTextJsonNode(jsonData.at("/NB_DDien")).replaceAll("\\s+", " ");
+		String nb_sdt = commons.getTextJsonNode(jsonData.at("/NB_SDThoai")).replaceAll("\\s+", " ");
 		String nb_cv = commons.getTextJsonNode(jsonData.at("/NB_CVu")).replaceAll("\\s+", " ");
 		String nb_email_receive  = commons.getTextJsonNode(jsonData.at("/Email_Recive")).replaceAll("\\s", "");
 		
@@ -94,12 +95,14 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		String nm_dvmh = commons.getTextJsonNode(jsonData.at("/NM_DVMHang")).replaceAll("\\s+", " ");
 		String nm_dc = commons.getTextJsonNode(jsonData.at("/NM_DChi")).replaceAll("\\s+", " ");
 		String nm_dd = commons.getTextJsonNode(jsonData.at("/NM_DDien")).replaceAll("\\s+", " ");
+		String nm_sdt = commons.getTextJsonNode(jsonData.at("/NM_SDThoai")).replaceAll("\\s+", " ");
 		String nm_cv = commons.getTextJsonNode(jsonData.at("/NM_CVu")).replaceAll("\\s+", " ");
 		String nm_email_send  = commons.getTextJsonNode(jsonData.at("/Email_Send")).replaceAll("\\s", "");
 		
 		String loaibb = commons.getTextJsonNode(jsonData.at("/LBBan")).replaceAll("\\s", "");
 		String sbban = commons.getTextJsonNode(jsonData.at("/SBBan")).replaceAll("\\s", "");
 		String nlap = commons.getTextJsonNode(jsonData.at("/NLap")).replaceAll("\\s", "");
+		String ldo = commons.getTextJsonNode(jsonData.at("/LDo")).replaceAll("\\s+", " ");
 		String ndsai = commons.getTextJsonNode(jsonData.at("/NDSai")).replaceAll("\\s+", " ");
 		String nddung = commons.getTextJsonNode(jsonData.at("/NDDung")).replaceAll("\\s+", " ");
 		String ndtnhat = commons.getTextJsonNode(jsonData.at("/NDTNhat")).replaceAll("\\s+", " ");
@@ -295,6 +298,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
 					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+			elementContent.appendChild(commons.createElementWithValue(doc, "LDo", ldo));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
@@ -305,6 +309,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVBHang", nb_dvbh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nb_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nb_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nb_sdt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nb_cv));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "EReceive", nb_email_receive));
 
@@ -315,6 +320,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nm_cv));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ESend", nm_email_send));
 
@@ -404,6 +410,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				.append("SBBan", sbban)
 				.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
 						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+				.append("LDo", ldo)
 				.append("NDSai", ndsai)
 				.append("NDDung", nddung)
 				.append("NDTNhat", ndtnhat)
@@ -413,6 +420,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						.append("DVBHang", nb_dvbh)
 						.append("DChi", nb_dc)
 						.append("DDien", nb_dd)
+						.append("SDThoai", nb_sdt)
 						.append("CVu", nb_cv)
 						.append("EReceive", nb_email_receive)
 						)
@@ -422,6 +430,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						.append("DVMHang", nm_dvmh)
 						.append("DChi", nm_dc)
 						.append("DDien", nm_dd)
+						.append("SDThoai", nm_sdt)
 						.append("CVu", nm_cv)
 						.append("ESend", nm_email_send)
 						)
@@ -637,6 +646,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
 					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+			elementContent.appendChild(commons.createElementWithValue(doc, "LDo", ldo));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
 			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
@@ -647,6 +657,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVBHang", nb_dvbh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nb_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nb_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nb_sdt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nb_cv));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "EReceive", nb_email_receive));
 
@@ -657,6 +668,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nm_cv));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "ESend", nm_email_send));
 
@@ -750,6 +762,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			.append("SBBan", sbban)
 			.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
 					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+			.append("LDo", ldo)
 			.append("NDSai", ndsai)
 			.append("NDDung", nddung)
 			.append("NDTNhat", ndtnhat)
@@ -759,6 +772,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("DVBHang", nb_dvbh)
 					.append("DChi", nb_dc)
 					.append("DDien", nb_dd)
+					.append("SDThoai", nb_sdt)
 					.append("CVu", nb_cv)
 					.append("EReceive", nb_email_receive)
 					)
@@ -768,6 +782,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("DVMHang", nm_dvmh)
 					.append("DChi", nm_dc)
 					.append("DDien", nm_dd)
+					.append("SDThoai", nm_sdt)
 					.append("CVu", nm_cv)
 					.append("ESend", nm_email_send)
 					)
@@ -1008,6 +1023,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("Ten", 1)
 					.append("SBBan", 1)
 					.append("NLap", 1)
+					.append("LDo", 1)
 					.append("NDSai", 1)
 					.append("NDDung", 1)
 					.append("NDTNhat", 1)
@@ -1053,6 +1069,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				hItem.put("Ten", doc.get("Ten"));
 				hItem.put("SBBan", doc.get("SBBan"));
 				hItem.put("NLap", doc.get("NLap"));
+				hItem.put("LDo", doc.get("LDo"));
 				hItem.put("NDSai", doc.get("NDSai"));
 				hItem.put("NDDung", doc.get("NDDung"));
 				hItem.put("NDTNhat", doc.get("NDTNhat"));

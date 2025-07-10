@@ -71,6 +71,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 	private String nb_dvbh;
 	private String nb_dc;
 	private String nb_dd;
+	private String nb_sdt;
 	private String nb_cv;
 	private String nb_email_receive;
 
@@ -78,12 +79,14 @@ public class LBBDCTTheCRUDController extends AbstractController {
 	private String nm_dvmh;
 	private String nm_dc;
 	private String nm_dd;
+	private String nm_sdt;
 	private String nm_cv;
 	private String nm_email_send;
 
 	private String loaibb;
 	private String sbban;
 	private String nlap;
+	private String ldo;
 	private String ndsai;
 	private String nddung;
 	private String ndtnhat;
@@ -174,6 +177,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			req.setAttribute("NB_DVBHang", commons.getTextJsonNode(jsonData.at("/TTNBan/DVBHang")));
 			req.setAttribute("NB_DChi", commons.getTextJsonNode(jsonData.at("/TTNBan/DChi")));
 			req.setAttribute("NB_DDien", commons.getTextJsonNode(jsonData.at("/TTNBan/DDien")));
+			req.setAttribute("NB_SDThoai", commons.getTextJsonNode(jsonData.at("/TTNBan/SDThoai")));
 			req.setAttribute("NB_CVu", commons.getTextJsonNode(jsonData.at("/TTNBan/CVu")));
 			req.setAttribute("Email_Receive", commons.getTextJsonNode(jsonData.at("/TTNBan/EReceive")));
 
@@ -181,6 +185,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			req.setAttribute("NM_DVMHang", commons.getTextJsonNode(jsonData.at("/TTNMua/DVMHang")));
 			req.setAttribute("NM_DChi", commons.getTextJsonNode(jsonData.at("/TTNMua/DChi")));
 			req.setAttribute("NM_DDien", commons.getTextJsonNode(jsonData.at("/TTNMua/DDien")));
+			req.setAttribute("NM_SDThoai", commons.getTextJsonNode(jsonData.at("/TTNMua/SDThoai")));
 			req.setAttribute("NM_CVu", commons.getTextJsonNode(jsonData.at("/TTNMua/CVu")));
 			req.setAttribute("Email_Send", commons.getTextJsonNode(jsonData.at("/TTNMua/ESend")));
 
@@ -188,6 +193,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			req.setAttribute("SBBan", commons.getTextJsonNode(jsonData.at("/SBBan")));
 			String nlap = commons.convertLocalDateTimeStringToString( commons.getTextJsonNode(jsonData.at("/NLap")),"yyyy-MM-dd", Constants.FORMAT_DATE.FORMAT_DATE_WEB, false);
 			req.setAttribute("NLap", nlap);
+			req.setAttribute("LDo", commons.getTextJsonNode(jsonData.at("/LDo")));
 			req.setAttribute("NDSai", commons.getTextJsonNode(jsonData.at("/NDSai")));
 			req.setAttribute("NDDung", commons.getTextJsonNode(jsonData.at("/NDDung")));
 			req.setAttribute("NDTNhat", commons.getTextJsonNode(jsonData.at("/NDTNhat")));
@@ -256,6 +262,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		nb_dvbh = commons.getParameterFromRequest(req, "nb_dvbh").replaceAll("\\s+", " ");
 		nb_dc = commons.getParameterFromRequest(req, "nb_dc").replaceAll("\\s+", " ");
 		nb_dd = commons.getParameterFromRequest(req, "nb_dd").replaceAll("\\s+", " ");
+		nb_sdt = commons.getParameterFromRequest(req, "nb_sdt").replaceAll("\\s+", " ");
 		nb_cv = commons.getParameterFromRequest(req, "nb_cv").replaceAll("\\s+", " ");
 		nb_email_receive = commons.getParameterFromRequest(req, "email_receive").replaceAll("\\s", "");
 
@@ -263,11 +270,13 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		nm_dvmh = commons.getParameterFromRequest(req, "nm_dvmh").replaceAll("\\s+", " ");
 		nm_dc = commons.getParameterFromRequest(req, "nm_dc").replaceAll("\\s+", " ");
 		nm_dd = commons.getParameterFromRequest(req, "nm_dd").replaceAll("\\s+", " ");
+		nm_sdt = commons.getParameterFromRequest(req, "nm_sdt").replaceAll("\\s+", " ");
 		nm_cv = commons.getParameterFromRequest(req, "nm_cv").replaceAll("\\s+", " ");
 		nm_email_send = commons.getParameterFromRequest(req, "email_send").replaceAll("\\s", "");
 
 		loaibb = commons.getParameterFromRequest(req, "loaibb").replaceAll("\\s", "");
 		sbban = commons.getParameterFromRequest(req, "sbban").replaceAll("\\s", "");
+		ldo = commons.getParameterFromRequest(req, "ldo").replaceAll("\\s+", " ");
 		ndsai = commons.getParameterFromRequest(req, "ndsai").replaceAll("\\s+", " ");
 		nlap = commons.getParameterFromRequest(req, "nlap").replaceAll("\\s+", " ");
 		nddung = commons.getParameterFromRequest(req, "nddung").replaceAll("\\s+", " ");
@@ -295,9 +304,10 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			validateRequired(dto, loaibb, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, sbban, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, nlap, "Vui lòng chọn ngày lập biên bản.");
-			validateRequired(dto, ndsai, "Vui lòng nhập nội dung sai.");
+			validateRequired(dto, ldo, "Vui lòng nhập lý do.");
+			validateRequired(dto, ndsai, "Vui lòng nhập nội trước khi điều chỉnh/thay thế.");
 			validateRequired(dto, nddung, "Vui lòng nhập nội dung đúng.");
-			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung thống nhất.");
+			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung hai bên thống nhất điều chỉnh/thay thế.");
 			break;
 		default:
 			break;
@@ -482,6 +492,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		hData.put("NB_DVBHang", nb_dvbh);
 		hData.put("NB_DChi", nb_dc);
 		hData.put("NB_DDien", nb_dd);
+		hData.put("NB_SDThoai", nb_sdt);
 		hData.put("NB_CVu", nb_cv);
 		hData.put("Email_Recive", nb_email_receive);
 
@@ -489,12 +500,14 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		hData.put("NM_DVMHang", nm_dvmh);
 		hData.put("NM_DChi", nm_dc);
 		hData.put("NM_DDien", nm_dd);
+		hData.put("NM_SDThoai", nm_sdt);
 		hData.put("NM_CVu", nm_cv);
 		hData.put("Email_Send", nm_email_send);
 
 		hData.put("LBBan", loaibb);
 		hData.put("SBBan", sbban);
 		hData.put("NLap", nlap);
+		hData.put("LDo", ldo);
 		hData.put("NDSai", ndsai);
 		hData.put("NDDung", nddung);
 		hData.put("NDTNhat", ndtnhat);
