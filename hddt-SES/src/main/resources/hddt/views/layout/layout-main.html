@@ -411,6 +411,7 @@
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkhai|'): false}" ><a th:href="@{/main/tkhai/init}">Danh sách tờ khai 01 - Thông tư 78</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkhai|'): false}" ><a th:href="@{/main/tkhaiV1/init}">Danh sách tờ khai 01 - NĐ 70</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkctu|'): false}" ><a th:href="@{/main/tkctu/init}">Danh sách tờ khai chứng từ - NĐ 70</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd|'): false}" ><a th:href="@{/main/mauhd/init}">Mẫu hóa đơn</a></li>
           						<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mstncn|'): false}" ><a th:href="@{/main/mstncn/init}">Mẫu số chứng từ khấu trừ thuế TNCN</a></li>
                   				<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|quantitys|'): false}" ><a th:href="@{/main/quantitys/init}">Phát hành số lượng</a></li>
@@ -437,6 +438,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|agent|'): false}" ><a th:href="@{/main/agent/init}">PXK hàng gửi bán đại lý</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|export|'): false}" ><a th:href="@{/main/export/init}">PXK kiêm vận chuyển nội bộ</a></li>					
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|cttncn|'): false}" ><a th:href="@{/main/cttncn/init}">Lập chứng từ khấu trừ thuế</a></li> 
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|cttncn|'): false}" ><a th:href="@{/main/cttncn/initV1}">Lập chứng từ khấu trừ thuế TNCN</a></li> 
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|einvoice_mtt|'): false}" ><a th:href="@{/main/einvoice_mtt/init}">Danh sách HĐĐT từ máy tính tiền</a></li> 
 				<!--			<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|einvoice_mtt_list|'): false}" ><a th:href="@{/main/einvoice_mtt_list/init}">Tổng hợp dữ liệu HD MTT gửi CQT</a></li> 
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|einvoice_mtt_cqt|'): false}" ><a th:href="@{/main/einvoice_mtt_cqt/init}">Kết quả gửi dữ liệu HD MTT đến CQT</a></li>--> 
@@ -450,6 +452,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tbhdssot_mtt|'): false}" ><a th:href="@{/main/tbhdssot_mtt/init}">Thông báo HĐ sai sót từ MTT</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tbhdssot_tbn|'): false}" ><a th:href="@{/main/tbhdssot_tbn/init}">Thông báo HĐ sai sót từ bên ngoài</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|lbbdctt|'): false}" ><a th:href="@{/main/lbbdctt/init}">Lập biên bản điều chỉnh/thay thế</a></li>
+<!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|cttncnss|'): false}" ><a th:href="@{/main/cttncnss/init}">Thông báo Chứng từ TNCN sai sót</a></li> -->
 							</ul>
 						</li>
 						<li class="nav-small-cap">REPORT</li>
