@@ -214,6 +214,7 @@
 									<span class="fw-800 text-danger fs-i fs-12"
 										th:text="${_notice}"></span>
 								</div>
+								<input type="hidden" name="_tchdon" th:value="${_tchdon}">
 								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}">
 							</div>
 							<div class="row m-b-16" th:if="false">
@@ -1691,6 +1692,7 @@
 		dataPost['hinh-thuc-thanh-toan'] = $('#f-einvoice-crud').find('#hinh-thuc-thanh-toan').val();
 		dataPost['hinh-thuc-thanh-toan-text'] = $('#f-einvoice-crud').find('#hinh-thuc-thanh-toan').find('option:selected').text();
 		dataPost['ngay-lap'] = $('#f-einvoice-crud').find('#ngay-lap').val();
+        dataPost['_tchdon'] = $('#f-einvoice-crud').find('input[name="_tchdon"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_tchdon"]').val();
 		
 		dataPost['kh-mst'] = $('#f-einvoice-crud').find('#kh-mst').val();
 		dataPost['kh-ho-ten-nguoi-mua'] = $('#f-einvoice-crud').find('#kh-ho-ten-nguoi-mua').val();
