@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-main}">
+<body>
+	<th:block layout:fragment="content">
+		<style>
+.text-red {
+	color: red;
+}
+</style>
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh
+					sách chứng từ khấu trừ thuế V1</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-cttncn" name="f-cttncn" method="post"
+					enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="row p-r-0 p-l-0">
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="sctu" name="sctu" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Số chứng từ</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-12 col-sm-6 col-md-3">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="date" name="date" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Thời gian lập</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6 col-md-2 m-b-10">
+									<div class="row">
+										<div class="col-12">
+											<button
+												class=" btns btns-search_auto__ses hover-up__ses w-100p"
+												data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i> <span
+													class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<hr style="margin: 0 0 10px 0" />
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+											<!-- 											<button type="button" title="Xóa bỏ chứng từ" -->
+											<!-- 												data-action="cttncn-xoabo" class="btns xoa_hd hover-up__ses" -->
+											<!-- 												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xoabo|')}"> -->
+											<!-- 												<i class="mdi mdi-delete"> </i><span -->
+											<!-- 													class="d-none d-md-inline">Xóa bỏ chứng từ</span> -->
+											<!-- 											</button> -->
+											<!-- 											 <button type="button" title="Import danh sách" data-action="cttncn-import" class="btns import_hdon hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-import|')}"> -->
+											<!--                             					 <i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline">Import danh sách</span> -->
+											<!--                             				</button>  -->
+											<!--                             				<button  type="button" title="Xuất XML" data-action="cttncn-xml" class="btns xuat_xml hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-xml|')}"> -->
+											<!-- 										   			<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất XML</span> -->
+											<!-- 										   </button> -->
+											<!-- 										   	<button  type="button" title="Xuất PDF hàng loạt" data-action="cttncn-pdfAll" class="btns in_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAll|')}"> -->
+											<!-- 										   			<i class="mdi mdi-file-pdf"> </i><span class="d-none d-md-inline">Xuất PDF hàng loạt</span> -->
+											<!-- 										   </button> -->
+											<!-- 										   <button type="button" title="Send mail all" data-action="cttncn-sendMailAll" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail|')}"  th:disabled="true"> -->
+											<!--                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Gửi mail hàng loạt</span> -->
+											<!--                             				</button> -->
+											
+
+											<!-- 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" > -->
+											<!-- 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span> -->
+											<!-- 											  </button>   -->
+											<button type="button" title="Thêm mới"
+												data-action="cttncn-creV1"
+												class="btns btns-add__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-creV1|')}">
+												<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+													class="d-none d-md-inline">Thêm mới</span>
+											</button>
+											<button type="button" title="Chi tiết"
+												data-action="cttncn-detailV1"
+												class="btns btns-detail__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-detailV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Chi tiết</span>
+											</button>
+											<button type="button" title="Thay đổi"
+												data-action="cttncn-editV1"
+												class="btns btns-edit__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-editV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-tooltip-edit"> </i><span
+													class="d-none d-md-inline">Thay đổi</span>
+											</button>
+											<button type="button" title="Thêm mới CT Điều chỉnh/Thay thế"
+												data-action="cttncn-cre-dc"
+												class="btns dc_tt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}"
+												th:disabled="true">
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">Điều chỉnh
+													CT</span>
+											</button>
+											<button type="button" title="Thêm mới CT Điều chỉnh/Thay thế"
+												data-action="cttncn-cre-tt"
+												class="btns dc_tt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}"
+												th:disabled="true">
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">Thay thế
+													CT</span>
+											</button>
+											<button type="button" title="Ký từng chứng từ"
+												data-action="cttncn-signV1"
+												class="btns btns-export__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-account-check-outline"> </i><span
+													class="d-none d-md-inline">Ký từng chứng từ</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row m-b-5 m-t-7">
+								<div class="col-12 has-min-height-grid">
+									<div id="grid"></div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</form>
+				<script type="text/javascript">
+				_gridMain = $('#f-cttncn').find('#grid');
+				</script>
+				<!-- <script th:src="@{/static/function/dm/cttncn.js(v=1.3) }"></script> -->
+				<script type="text/javascript">
+				$(function(){
+					
+					dateInputFormat($('#f-cttncn').find('#date'));
+					
+					_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource({
+							transport: {
+								read: {
+									type: 'POST',
+									url: ROOT_PATH + '/main/cttncn/searchV1',
+				                    dataType: 'json',
+				                    data: function(){return getDataSearch();},
+				                    beforeSend: function(req){
+				                    	initAjaxJsonGridRequest(req);
+				                	},
+								}
+							},
+							requestEnd: function (e) {
+				               	if (e.type === "read" && e.response) {
+				               		if(e.response.errorCode == 0){
+				               		}else{
+				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}
+				               	}
+				           	},
+				            schema: {
+								data: "rows",
+				                total: "total",
+				                model: {
+									fields: {
+									}
+								}
+							},
+							pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+							serverPaging: true,
+							serverSorting: true,
+				           	serverFiltering: true,
+				           	change: function(e) {
+				            },
+						}),
+						selectable: false, scrollable: true, 
+				 		sortable: {mode: "single", allowUnsort: true},
+						sortable: true,
+//				 		filterable: { mode: "row"},
+						filterable: false, resizable: true,
+						serverSorting: false,
+//						height: kendoGridHeight,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+				        },
+				        columns: [
+				        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+				  			},
+				  			{field: 'isCheck', title: '', width: '60px', encoded: false
+								, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+								, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
+							},
+							{field: 'func', title: '', width: '100px', encoded: false
+				  				, headerTemplate: '<a class="k-link";">Chức năng</a>'
+								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
+								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+								, template: '#= window.setTemplateForGridMAIN("func", data) #'
+							},
+							{field: 'SCTu', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số chứng từ</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Status', width: '140px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+								template: '#= window.setTemplateForGridMAIN("Status", data) #'
+							},
+							{field: 'SignStatus', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái ký</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày lập</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'DateSave', width: '180px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Thời gian</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Code', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã nhân viên</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'TaxCode', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">MST nhân viên</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Name', width: '180px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên nhân viên</a>',
+								attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'Address', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa chỉ</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'ErrorFromCQT', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Chi tiết lỗi</a>',
+								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+				    	],
+				    	dataBound: function(e) {
+
+							
+							$("#f-cttncn").find('button[data-action="cttncn-detailV1"],button[data-action="cttncn-signV1"], button[data-action="cttncn-editV1"], button[data-action="cttncn-xoaboV1"], button[data-action="cttncn-cre-dc"], button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+							
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+								e.preventDefault();/*e.stopPropagation();*/
+								
+								var $obj = $(this);
+								var $tr = $obj.closest('tr');
+								var subAction = $obj.attr('data-sub-action');
+								
+								var indexRow = $tr.index();
+								var rowData = null;
+								var objData = {};
+								var objURL = {};
+								
+								switch (subAction) {
+								case 'viewpdftncn':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									window.open(ROOT_PATH + '/common/viewpdfcttncnV1/' + rowData['_id'],'_blank');
+									break;
+								case 'send-email':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-send-mailV1/init', objData, false, function(e){
+									});
+									break;
+								case 'delete':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/cttncn-delV1/check-data-save',
+										data: objData,
+										beforeSend: function(req) {
+											initAjaxJsonRequest(req);
+								        	showLoading();
+										},
+										success:function(res) {
+											hideLoading();
+											if(res) {
+												if(res.errorCode == 0) {
+													var responseData = res.responseData;
+													
+													var confirmText = responseData['CONFIRM'];
+													tokenTransaction = responseData['TOKEN'];
+													
+													objData['tokenTransaction'] = tokenTransaction;
+													
+													alertConfirm(confirmText,
+														function(e){
+															$.ajax({
+																type: "POST",
+																datatype: "json",
+																url: ROOT_PATH + '/main/cttncn-delV1/save-data',
+																data: objData,
+																beforeSend: function(req) {
+																	initAjaxJsonRequest(req);
+														        	showLoading();
+																},
+																success:function(res) {
+																	hideLoading();
+																	if(res) {
+																		if(res.errorCode == 0) {
+																			if($('#f-cttncn').find('#grid').length > 0){
+																				_gridMain.data("kendoGrid").dataSource.read();
+																			}
+																		}else{
+																			alertDLSuccess(createObjectError(res).html(), function(){});
+																		}
+																	}else{
+																		alertDLSuccess('unknown error!!!', function(){});
+																		hideLoading();
+																	}
+																},
+																error:function (xhr, ajaxOptions, thrownError){
+																	alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+														            hideLoading();
+														        }
+															});
+														},
+														function(e){}
+													);
+												}else{
+													alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											}else{
+												alertDLSuccess('unknown error!!!', function(){});
+												hideLoading();
+											}
+										},
+										error:function (xhr, ajaxOptions, thrownError){
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+								            hideLoading();
+								        }
+									});
+									break;
+								case 'send-cqt':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									sendToCQT(rowData['_id']);
+									break;
+								case 'refresh':	
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									getResultFromCQT(rowData['_id']);
+									break;
+								case 'history':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									$('#divSubContent').show();$('#divMainContent').hide();
+									submitFormRenderArea(ROOT_PATH + '/main/cttncn-historyV1/history', objData, $('#divSubContent'));
+									break;
+								case 'send-emailV1':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+									showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-send-mailV1/init', objData, false, function(e){
+									});
+									break;
+								default:
+									break;
+								}
+							});
+							
+						}
+					});
+					
+					_gridMain.find('table[role="grid"]').find('thead').undelegate('input[type="checkbox"][data-check-all]', 'click');
+					_gridMain.find('table[role="grid"]').find('thead').delegate('input[type="checkbox"][data-check-all]', 'click', function(e){
+						var _obj = this;
+						
+						_gridMain.find('table[role="grid"] tbody input[type="checkbox"][data-check-item]').prop('checked', $(_obj).prop('checked'));
+						if ($(_obj).prop('checked')) {
+							_gridMain.find(' tbody tr').addClass("k-state-selected");
+						}else{
+							_gridMain.find(' tbody tr').removeClass("k-state-selected");
+						}
+						
+						isDisabledEditDel();
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('input[type="checkbox"][data-check-item]', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('input[type="checkbox"][data-check-item]', 'click', function(e){
+						var checked = $(this).prop('checked');
+						var $tr = $(this).closest("tr");		
+						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					
+						
+						if(checked){
+							$(this).closest("tr").addClass("k-state-selected");
+						}else{
+							$(this).closest("tr").removeClass("k-state-selected");
+						}
+						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+						isDisabledEditDel();
+					});
+					
+					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr td:not(:eq(1))', 'click');
+					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr td:not(:eq(1))', 'click', function(e){
+						var _obj = $(this).closest("tr");
+						var $tr = $(this).closest("tr");
+						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
+						
+					
+						$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
+						$("#f-cttncn").find('button[data-action="cttncn-signAll"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
+						$("#f-cttncn").find('button[data-action="cttncn-editV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);						
+						if('Đã phát hành' == rowData['Status'] && 'Đã ký' == rowData['SignStatus']){						  
+					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', false);
+					          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', false);
+					        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', false);
+							}else{
+								$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+							}
+						
+						var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
+						
+				
+						
+						$(_obj).find('input[type=checkbox][data-check-item]').prop('checked', !_oldChecked);
+						if(!_oldChecked){
+							$(this).closest("tr").addClass("k-state-selected");
+						}else{
+							$(this).closest("tr").removeClass("k-state-selected");
+						}
+						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+						isDisabledEditDel();
+					});
+
+					$("#f-cttncn").find('button[data-action]').click(function (event) {
+						event.preventDefault();/*event.stopPropagation();*/
+						var dataAction = $(this).data('action');
+						
+						var $obj = $(this);
+						var objData = {};
+						
+						var rowData = null;
+						var actionCheck = '|cttncn-detailV1|cttncn-editV1|cttncn-signV1|cttncn-deleteV1|cttncn-signAllV1|';
+						var grid = _gridMain.data("kendoGrid");
+						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+						var ids = null;
+						var idx = -1;
+						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && 0 == checkRows.length){
+							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+							return;
+						}
+						
+						switch (dataAction) {
+						case 'cttncn-xml':
+							var objData = null;
+							var ids = null;
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							
+							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var idData = responseData['ID'];										
+											  window.open(ROOT_PATH + '/common/cttncnXml/' + idData,'_blank');
+											  
+										}else{
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
+							
+							/* objData =  encodeObjJsonBase64UTF8(ids);
+							window.open(ROOT_PATH + '/common/cttncnXml/' + objData,'_blank'); */
+						break;
+							
+						case 'cttncn-pdfAll':
+							var objData = null;
+							var ids = null;
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var result = responseData['ID'];
+											  window.open(ROOT_PATH + '/common/view-pdfAll-cttncn/' + result,'_blank');
+											  
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+								            hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
+							break;
+						case 'cttncn-signAll':
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+										idx = $(checkRows[i].closest("tr")).index();
+										rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+										ids.push(rowData['_id']);
+									});
+							/*CHECK THONG TIN HD*/
+							objData = {
+								_token : encodeObjJsonBase64UTF8(ids)
+							};
+							dsID = {
+								_token : encodeObjJsonBase64UTF8(ids)
+							};
+							$.ajax({
+										type : "POST",
+										datatype : "json",
+										url : ROOT_PATH
+												+ '/main/cttncn-signAll/check-data-signAll',
+										data : objData,
+										beforeSend : function(
+												req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success : function(
+												res) {
+											if (res) {
+												if (res.errorCode == 0) {
+													var responseData = res.responseData;
+													var token = responseData.Token;
+													var time = responseData.Time;
+													var numbers = responseData.Numbers;
+													var formIssueInvoiceID = responseData.FormIssueInvoiceID;
+													var taxCode = responseData.TaxCode;
+													
+													datetimeString = responseData.DateTime;
+													
+													var shd = responseData.SHD;
+													objData = {
+														_token : encodeObjJsonBase64UTF8(tokenTransaction)
+													};
+													objData['tokenTransaction'] = tokenTransaction;
+
+													var urlOrigin = window.location.origin;
+													var urlPathname = window.location.pathname;
+													var url = urlOrigin;
+													var link = taxCode
+															+ ","
+															+ time
+															+ ","
+															+ token;
+
+													url += ROOT_PATH
+															+ '/InvoiceUtility/downloadFileForSignMulti/'
+															+ link;
+
+													getCert(function(e) {
+														if (null == e) {
+															alertDLSuccess(
+																	'Lấy chữ ký số không thành công.',
+																	function myFunction() {
+																		  timeout = setTimeout(ckserro, 0);
+																		}
+																
+																	);
+															
+																
+															
+															hideLoading();
+															$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
+															/*Get Certificate*/
+														}
+													
+														
+														checkToken(function(e) {
+															if (e) {
+																showLoading();
+																
+																serialNumber = serialNumber['Seri'];
+																var postEnc = new FormData();
+																	postEnc.append('DateTime',datetimeString);
+																postEnc.append('SerialNumber',serialNumber);
+																postEnc.append('UrlDecode',base64.encode(base64._utf8_encode(url)));
+
+																var xhrSignMulti = new XMLHttpRequest();
+																xhrSignMulti.onreadystatechange = function() {
+																	if (this.readyState == 4) {
+																		hideLoading();
+																		if (this.status == 200) {
+																			var blob = new Blob(
+																					[ this.response ],
+																					{
+																						type : "application/zip"
+																					});
+																			var formData = new FormData();
+																			formData
+																					.append(
+																							_csrf_name,
+																							_csrf_value);
+																			formData
+																					.append(
+																							"Numbers",
+																							base64
+																									.encode(base64
+																											._utf8_encode(JSON
+																													.stringify(numbers))));
+																			formData
+																					.append(
+																							"FormIssueInvoiceID",
+																							formIssueInvoiceID);
+																			formData
+																					.append(
+																							"zipFile",
+																							blob);
+																			formData
+																					.append(
+																							"Certificate",
+																							base64Cert
+																									.replace(
+																											/\+/g,
+																											"@"));
+																			sendSignMulti(formData);
+																		} else if (this.status == 401) {
+																		
+																			alertDLSuccess(
+																					'<span class="text-error">Lỗi trong quá trình ký tập tin.<span>',
+																					function myFunction() {
+																						
+																						}
+																				
+																					);
+																		} else {
+																			alertDLSuccess(
+																					'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<br>Quý khách vui lòng cập nhật lại plugin ký số.<span>',
+																					function myFunction() {
+																						
+																						}
+																				
+																					);
+																		
+																		}
+
+																	}
+																}
+																xhrSignMulti
+																		.open(
+																				'POST',
+																				urlPluginSign
+																						+ signMultiXML,
+																				true);
+																xhrSignMulti.timeout = 5 * 60 * 1000;
+																xhrSignMulti.responseType = 'blob'; //or arraybuffer
+																xhrSignMulti
+																		.send(postEnc);
+															}
+														});
+													});
+												} else {
+													hideLoading();
+													  alertDLSuccess(createObjectError(res).html(), function(){});
+												}
+											} else {
+												console.log(res)
+												  alertDLSuccess(createObjectError(res).html(), function(){});
+												hideLoading();
+											}
+										},
+										error : function(
+												xhr,
+												ajaxOptions,
+												thrownError) {
+											  alertDLSuccess(createObjectError(res).html(), function(){});
+											hideLoading();
+										}
+
+									});
+							
+							
+							function checkToken(cb) {
+								serialNumber = '';
+								$
+										.ajax({
+											type : "POST",
+											datatype : "json",
+											url : ROOT_PATH
+													+ '/main/common/check-cert',
+											data : {
+											'cert' : base64Cert
+											},
+										
+											beforeSend : function(
+													req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success : function(
+													res) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+														serialNumber = res.responseData;
+														var check = serialNumber['check'];
+														
+														if(check==="300"){
+															alertDLSuccess('Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.', function(){});
+												
+														}else{
+															cb(serialNumber)
+														}
+													
+													} else {
+														alertDLSuccess(
+																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																function myFunction() {
+																
+																	}
+															
+																);
+													}
+												} else {
+													alertDLSuccess(
+															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+															function myFunction() {
+																
+																}
+														
+															);
+													hideLoading();
+												}
+											},
+											error : function(
+													xhr,
+													ajaxOptions,
+													thrownError) {
+												alertDLSuccess(
+														'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+														function myFunction() {
+															 
+															}
+													
+														);
+												hideLoading();
+											}
+										});
+							}
+
+							function sendSignMulti(formData) {
+								$
+										.ajax({
+											url : ROOT_PATH
+													+ '/main/cttncn-signAll/signFileAll',
+											type : 'POST',
+											data : formData,
+											async : false,
+											cache : false,
+											contentType : false,
+											enctype : 'multipart/form-data',
+											processData : false,
+											dataType : 'json',
+											beforeSend : function(
+													req) {
+												initAjaxJsonRequest(req);
+												showLoading();
+											},
+											success : function(
+													res,
+													textStatus,
+													xhr) {
+												hideLoading();
+												if (res) {
+													if (res.errorCode == 0) {
+														$(
+																'#f-cttncn').find("#grid").data("kendoGrid").dataSource.read();
+														hideLoading();
+													
+													} else {
+														alertDLSuccess(
+																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+																function myFunction() {
+																	
+																	}
+															
+																);
+													}
+												} else {
+													alertDLSuccess(
+															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+															function myFunction() {
+																 
+																}
+														
+															);
+													hideLoading();
+												}
+											},
+											error : function(
+													xhr,
+													ajaxOptions,
+													thrownError) {
+												alertDLSuccess(
+														'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+														function myFunction() {
+															  
+															}
+													
+														);
+												hideLoading();
+											}
+										});
+							}
+
+							
+							break;
+						case 'cttncn-signV1':
+							objDataSend = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							objDataSend['_id'] = rowData['_id'];
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/cttncn-signV1/check-data-sign',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											
+											tokenTransaction = responseData['TOKEN'];
+											objDataSend['tokenTransaction'] = tokenTransaction;
+											getCert(function(e){
+												if(null == e) {
+													alertDLSuccess('Lấy chữ ký số không thành công.', function(){});
+													hideLoading();
+													$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
+													return;
+												}
+												serialNumber = '';
+												//KIEM TRA THONG TIN CERT
+												$.ajax({
+													type: "POST",
+													datatype: "json",
+													url: ROOT_PATH + '/main/common/check-cert',
+													data: {'cert': base64Cert.replace(/\+/g, "@")},
+													beforeSend: function(req) {
+														initAjaxJsonRequest(req);
+											        	showLoading();
+													},
+													success:function(res) {
+														hideLoading();
+														if(res) {
+															if(res.errorCode == 0) {
+																
+																serialNumber = res.responseData;
+																var check = responseData['check'];
+																
+																if(check==="300"){
+																	alertDLSuccess('Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.', function(){});
+														
+																}else{
+																	//LAY NOI DUNG FILE XML
+																	jQuery.ajax({
+																		url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
+																        cache:false,
+																        xhr:function(){// Seems like the only way to get access to the xhr object
+																            var xhr = new XMLHttpRequest();
+																            xhr.responseType= 'blob'
+																            return xhr;
+																        },
+																        success:function(data, textStatus, xhr) {
+//																        	hideLoading();
+																	    	if(xhr.status == 200){
+																	    		var blob = new Blob([data], { type: 'octet/stream' });
+																	    		serialNumber = serialNumber['Seri'];
+																	    			datetimeString = serialNumber['DateTime'];
+																	    		var postEnc = new FormData();
+																	    			postEnc.append('DateTime', datetimeString);
+																	    		postEnc.append('SerialNumber', serialNumber);
+																	    		postEnc.append('xmlFile', blob);
+																	    		
+																	    		var xhrSign = new XMLHttpRequest();
+																	    		xhrSign.onreadystatechange = function(e) {
+																	    			if(4 == this.readyState) {
+																	    				if(this.status == 200){	
+																	    					/*NOI DUNG XML DA KY - SEND TO SERVER*/
+																	    					blob = new Blob( [this.response], { type : "octet/stream" } );
+																	    					showLoading();
+																	    					
+																	    					formData = new FormData();
+																							formData.append("XMLFileSigned", blob);
+																							formData.append('certificate', base64Cert.replace(/\+/g, "@"));
+																							formData.append('_id', rowData['_id']);
+																							
+																							xhrSign = new XMLHttpRequest();
+																							xhrSign.upload.addEventListener('progress', function(e) {
+																								
+																							});
+																							if(xhrSign.upload) {
+																								
+																							};
+																							xhrSign.onreadystatechange = function(e) {
+																								if(4 == this.readyState && this.status == 200) {
+																									var res = xhrSign.response;
+																									if(res){
+																										if(res.errorCode == 0) { 
+																											hideLoading();
+// 																										     _gridMain.data("kendoGrid").dataSource.read();
+																											sendToCQT(rowData['_id']);
+															
+																										}else{
+																					            			alertDLSuccess(createObjectError(res).html(), function(){});
+																					            			hideLoading();
+																					            			$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
+																					            		}
+																									}else{
+																										alertDLSuccess('unknown error!!!', function(){});
+																										hideLoading();
+																					            	}
+																								}
+																							}
+																							xhrSign.onerror = function() {
+																								
+																							}
+																							xhrSign.ontimeout = function() {
+																								
+																							}
+																							
+																							var urlPost = ROOT_PATH + '/main/cttncn-signV1/signFile';
+																							xhrSign.open("POST", urlPost, true);
+																							xhrSign.responseType = 'json';
+																							xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
+																							xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
+																							
+																							xhrSign.setRequestHeader("Cache-Control", "no-cache");
+																							xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+																							xhrSign.send(formData);
+																	    				}else{
+																							hideLoading();
+																							alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function(){});
+																						}
+																	    			}
+																	    		}
+																	    		
+																	    		xhrSign.open('POST', urlPluginSign + signCTTNCN, true);
+																				xhrSign.timeout = 5 * 60 * 1000;
+																				xhrSign.responseType = 'blob';	//or arraybuffer
+																				xhrSign.send(postEnc);
+																	    	}else{
+																	    		hideLoading();
+																	    		alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function(){});
+																			}
+																	    
+																        },
+																        error:function(){
+																            
+																        }
+																	});
+																}
+															}else{
+																alertDLSuccess(createObjectError(res).html(), function(){});
+															}
+														}else{
+															alertDLSuccess('unknown error!!!', function(){});
+															hideLoading();
+														}
+														
+													
+													},
+													error:function (xhr, ajaxOptions, thrownError){
+														alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+											            hideLoading();
+											        }
+												});
+											});
+										}else{
+											hideLoading();
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+							
+				
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+								
+							});
+							break;
+						case 'search':
+							_gridMain.data("kendoGrid").dataSource.page(1);
+							break;
+							
+						case 'cttncn-xoabo':			
+							var objData = {};
+							var objURL = {};
+
+							var $obj = $(this);
+							var $tr = $obj.closest('tr');
+							
+		                    objURL['check'] = ROOT_PATH + '/main/cttncn-del/check-data';
+		                    objURL['exec'] = ROOT_PATH + '/main/cttncn-del/exec-data';					                 					                  
+		                  	
+		                  	objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							
+							objData['_id'] = rowData['_id'];
+		                  $.ajax({
+		                    type: "POST",
+		                    datatype: "json",
+		                    url: objURL['check'],
+		                    data: objData,
+		                    beforeSend: function(req) {
+		                      initAjaxJsonRequest(req);
+		                          showLoading();
+		                    },
+		                    success:function(res) {
+		                      hideLoading();
+		                      if(res) {
+		                        if(res.errorCode == 0) {
+		                          var responseData = res.responseData;
+		                          
+		                          var confirmText = responseData['CONFIRM'];
+		                          tokenTransaction = responseData['TOKEN'];
+		                          
+		                          objData['tokenTransaction'] = tokenTransaction;
+		                          
+		                          alertConfirm(confirmText,
+		                            function(e){
+		                              $.ajax({
+		                                type: "POST",
+		                                datatype: "json",
+		                                url: objURL['exec'],
+		                                data: objData,
+		                                beforeSend: function(req) {
+		                                  initAjaxJsonRequest(req);
+		                                      showLoading();
+		                                },
+		                                success:function(res) {
+		                                  hideLoading();
+		                                  if(res) {
+		                                    if(res.errorCode == 0) {
+		                                      _gridMain.data("kendoGrid").dataSource.read();
+		                                    }else{
+		                                      alertDLSuccess(createObjectError(res).html(), function(){});
+		                                    }
+		                                  }else{
+		                                    alertDLSuccess('unknown error!!!', function(){});
+		                                    hideLoading();
+		                                  }
+		                                },
+		                                error:function (xhr, ajaxOptions, thrownError){
+		                                  alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		                                        hideLoading();
+		                                    }
+		                              });
+		                            },
+		                            function(e){}
+		                          );
+		                        }else{
+		                          alertDLSuccess(createObjectError(res).html(), function(){});
+		                        }
+		                      }else{
+		                        alertDLSuccess('unknown error!!!', function(){});
+		                        hideLoading();
+		                      }
+		                    },
+		                    error:function (xhr, ajaxOptions, thrownError){
+		                      alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+		                            hideLoading();
+		                        }
+		                  });
+		                  break;	
+							
+						case 'cttncn-import':
+							showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-import/init', objData, true, function(e){
+							});
+							break;
+						case 'cttncn-creV1':
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+							break;
+						case 'cttncn-editV1':
+						case 'cttncn-detailV1':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							
+							objData['_id'] = rowData['_id'];
+							
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+							break;
+						case 'cttncn-sendMailAll':									
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
+							});
+							/*CHECK THONG TIN HD*/
+							objData = {
+								_ids : encodeObjJsonBase64UTF8(ids)
+							};
+							dsID = {
+								_token : encodeObjJsonBase64UTF8(ids)
+							};
+						
+							var objURL = {};	
+							objURL['check'] = ROOT_PATH + '/main/cttncn-send-mail/check-data-sendAll';
+							objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mail/send-mailAll';
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: objURL['check'],
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											var responseData = res.responseData;
+											tokenTransaction = responseData['TOKEN'];
+											
+											objData['tokenTransaction'] = tokenTransaction;
+
+													$.ajax({
+														type: "POST",
+														datatype: "json",
+														url: objURL['exec'],
+														data: objData,
+														beforeSend: function(req) {
+															initAjaxJsonRequest(req);
+												        	showLoading();
+														},
+														success:function(res) {
+															hideLoading();
+															if(res) {
+																if(res.errorCode == 0) {
+																	_gridMain.data("kendoGrid").dataSource.read();
+																}else{
+																	alertDLSuccess(createObjectError(res).html(), function(){});
+																}
+															}else{
+																alertDLSuccess('unknown error!!!', function(){});
+																hideLoading();
+															}
+														},
+														error:function (xhr, ajaxOptions, thrownError){
+															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+												            hideLoading();
+												        }
+													});
+											
+												
+										
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							}); 
+							break;
+						case 'cttncn-cre-dc':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							objData['_id'] = rowData['_id'];
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/cttncn-cre-dc-tt/init-dc', objData, $('#divSubContent'));
+							break;
+						case 'cttncn-cre-tt':
+							objData = {};
+							idx = $(checkRows[0].closest("tr")).index();
+							rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							objData['_id'] = rowData['_id'];
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/cttncn-cre-dc-tt/init-tt', objData, $('#divSubContent'));
+							break;
+						default:
+							break;
+						}
+					});
+				});
+				
+				function sendToCQT(data) {
+					objDataSend = {};
+					objDataSend['_id'] = data;
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/cttncn-signV1/check-data-send-cqtV1',
+						data: objDataSend,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							hideLoading();
+							if (res) {
+								if (res.errorCode == 0) {
+									var responseData = res.responseData;
+									tokenTransaction = responseData['TOKEN'];
+
+									objDataSend['tokenTransaction'] = tokenTransaction;
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/cttncn-signV1/send-cqtV1',
+										data: objDataSend,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											hideLoading();
+											if (res) {
+												if (res.errorCode == 0) {
+													_gridMain.data("kendoGrid").dataSource.read();
+													getResultFromCQT(data);
+												} else {
+				                                    _gridMain.data("kendoGrid").dataSource.read();
+													alertDLSuccess(createObjectError(res).html(), function () { });
+												}
+											} else {
+												alertDLSuccess('unknown error!!!', function () { });
+												hideLoading();
+											}
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+											hideLoading();
+										}
+									});
+								} else {
+									alertDLSuccess(createObjectError(res).html(), function () { });
+								}
+							} else {
+								alertDLSuccess('unknown error!!!', function () { });
+								hideLoading();
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+				}
+				
+				function getResultFromCQT(data) {
+					objDataSend = {};
+					objDataSend['_id'] = data;
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/cttncn-signV1/check-data-refresh-cqtV1',
+						data: objDataSend,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							hideLoading();
+							if (res) {
+								if (res.errorCode == 0) {
+									var responseData = res.responseData;
+									tokenTransaction = responseData['TOKEN'];
+
+									objDataSend['tokenTransaction'] = tokenTransaction;
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: ROOT_PATH + '/main/cttncn-signV1/refresh-cqtV1',
+										data: objDataSend,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											hideLoading();
+											if (res) {
+												if (res.errorCode == 0) {
+													_gridMain.data("kendoGrid").dataSource.read();
+												} else {
+				                                    _gridMain.data("kendoGrid").dataSource.read();
+													alertDLSuccess(createObjectError(res).html(), function () { });
+												}
+											} else {
+												alertDLSuccess('unknown error!!!', function () { });
+												hideLoading();
+											}
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+											hideLoading();
+										}
+									});
+								} else {
+									alertDLSuccess(createObjectError(res).html(), function () { });
+								}
+							} else {
+								alertDLSuccess('unknown error!!!', function () { });
+								hideLoading();
+							}
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+				}
+
+				function getDataSearch(){
+					var dataPost = {};
+					dataPost['sctu'] = $('#f-cttncn #sctu').val() == null? '': $('#f-cttncn #sctu').val();
+					dataPost['date'] = $('#f-cttncn #date').val() == null? '': $('#f-cttncn #date').val();
+					
+					return dataPost;
+				}
+
+		 		function isDisabledEditDel(){
+					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+					$('#f-cttncn').find('button[data-action="cttncn-detailV1"]').prop('disabled', checkRows.length != 1);
+					$('#f-cttncn').find('button[data-action="cttncn-deleteV1"]').prop('disabled', checkRows.length == 0);
+				} 
+				function setTemplateForGridMAIN(key, data){
+					var statusCode = data['StatusCode']?? "";
+					var signStatusCode = data['SignStatusCode']?? "";
+					var text = '';
+					switch (key) {
+					case 'func':
+						text += '<i title="Xem mẫu chứng từ" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="viewpdftncn" ></i>';
+						if (signStatusCode == 'NOSIGN' && ('CREATED' == statusCode || 'PENDING' == statusCode)) {
+							text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';
+						}
+						if (signStatusCode == 'SIGNED' && 'PENDING' == statusCode) {
+							text += '<i title="Gửi CQT" class="mdi mdi-telegram fs-25 text-info c-pointer" data-sub-action="send-cqt" ></i>';						}
+						if(signStatusCode == 'SIGNED' && (statusCode == 'PROCESSING'  || 'ERROR_CQT' == statusCode)){
+							text += '<i title="Lấy kết quả từ CQT" class="mdi mdi-refresh-circle fs-25 text-info c-pointer" data-sub-action="refresh" ></i>';
+					    }
+						if(signStatusCode == 'SIGNED' && (statusCode == 'COMPLETE' || statusCode == 'REPLACED' || statusCode == 'ADJUSTED')){
+							text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-emailV1" ></i>';
+					    }
+						break;
+					case 'Status':
+// 						if ('Đã xóa bỏ' == statusCode) {
+// 							text = '<div style="background: red;border-radius: 10px;color: blue;">'+ status + '</div>';
+// 						} else {
+// 							text = '<div>' + statusCode + '</div>';
+// 						}
+						text = '<div>' + statusCode + '</div>';
+						if('REPLACED' == statusCode){
+							text = '<div style="background: #FFFF66;border-radius: 10px;color: black;">' + data['Status'] + '</div>';
+						}
+						if('ADJUSTED' == statusCode){
+							text = '<div style="background: #CC99CC;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('COMPLETE' == statusCode){
+							text = '<div style="background: #85DE77;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('CREATED' == statusCode){
+							text = '<div style="background: #669966;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('PROCESSING' == statusCode){
+							text = '<div style="background: #000099;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('PENDING' == statusCode && 'SIGNED' != signStatusCode){
+							text = '<div style="background: #99CCFF;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('PENDING' == statusCode && 'SIGNED' == signStatusCode){
+							text = '<div style="background: #0033FF;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+						}
+						if('ERROR_CQT' == statusCode){
+							text = '<div style="background: #DD0000;border-radius: 10px;color: white;">' + data['Status'] + '</div>';
+							text += '<i title="Chi tiết lỗi" class="text-info c-pointer fs-15 font-weight-bold text-decoration-underline" data-sub-action="history" >Chi tiết lỗi</i>';
+						}
+						break;
+					default:
+						break;
+					}
+					return text;
+					}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

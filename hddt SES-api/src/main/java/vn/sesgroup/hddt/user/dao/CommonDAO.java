@@ -64,5 +64,6 @@ public interface CommonDAO {
 	public MsgRsp scratchingTaxCode(JSONRoot jsonRoot) throws Exception;
 	public MsgRsp scratchingTaxCodeV2(JSONRoot jsonRoot) throws Exception;
 	public FileInfo printbb(JSONRoot jsonRoot)throws Exception;
-	
+	public MsgRsp listCTTNCNSigned(JSONRoot jsonRoot) throws Exception;
+	public FileInfo viewpdfcttncnV1(JSONRoot jsonRoot)throws Exception;
 }

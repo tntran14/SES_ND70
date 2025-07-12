@@ -916,6 +916,81 @@ public class CommonController extends AbstractController{
 	     
 		}	
 	
+		@RequestMapping(value = { "/common/viewpdfcttncnV1/{_id}", "/common/viewpdfcttncn-convert/{_id}" }, method = {
+				RequestMethod.POST, RequestMethod.GET })
+		public void viewpdfcttncnV1(Locale locale, HttpServletRequest req, HttpServletResponse resp,
+				HttpSession session, @PathVariable(value = "_id") String _id) throws Exception {
+			PrintWriter writer = null;
+
+			String uri = req.getRequestURI();
+			boolean isConvert = uri.contains("viewpdf-convert");
+
+			_id = _id.replaceAll("\\s", "");
+			if ("".equals(_id) || null == _id) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Không tìm thấy thông tin mẫu hóa đơn.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+			BaseDTO dto = new BaseDTO();
+
+			dto = new BaseDTO(req);
+			Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
+			HashMap<String, Object> hData = new HashMap<>();
+			hData.put("_id", _id);
+			hData.put("IsConvert", isConvert ? "Y" : "N");
+
+			msg.setObjData(hData);
+			JSONRoot root = new JSONRoot(msg);
+
+			FileInfo fileInfo = restAPI.callAPIGetFileInfo("/commons/viewpdfcttncnV1", cup.getLoginRes().getToken(),
+					HttpMethod.POST, root);
+			if (null == fileInfo || null == fileInfo.getContentFile()) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Xem mẫu hóa đơn không thành công.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			String type = "application/pdf";
+			InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
+			resp.setHeader("Content-Type", type);
+
+			resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+			resp.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+			resp.setHeader("Expires", "0"); // Proxies.
+
+			int bufferSize = 1024;
+			resp.setContentType(type);
+			final byte[] buffer = new byte[bufferSize];
+			int bytesRead = 0;
+			OutputStream out = null;
+			try {
+				out = resp.getOutputStream();
+				long totalWritten = 0;
+				while ((bytesRead = inputStream.read(buffer)) > 0) {
+					out.write(buffer, 0, bytesRead);
+					totalWritten += bytesRead;
+					if (totalWritten >= buffer.length) {
+						out.flush();
+					}
+				}
+			} finally {
+				tryToCloseStream(out);
+				tryToCloseStream(inputStream);
+			}
+
+		}
 	
 	
 		@RequestMapping(value = { "/common/view-pdfAll-cttncn/{_id}"}, method = {
@@ -1900,6 +1975,170 @@ public class CommonController extends AbstractController{
 
 		LoadParameterFor_DSHDDKy(cup, locale, req, "DETAIL");
 		return "common/search-dshddky";
+	}
+	
+	private void LoadParameterFor_CTTNCNDKy(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
+		try {
+			BaseDTO baseDTO = new BaseDTO(req);
+			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
+			
+			/*DANH SACH THAM SO*/
+			HashMap<String, String> hashConds = null;
+			ArrayList<HashMap<String, String>> conds = null;
+			MsgParam msgParam = null;
+			MsgParams msgParams = new MsgParams();
+			
+			msgParam = new MsgParam();
+			msgParam.setId("param01");
+			msgParam.setParam("DMMauSoKyHieu");
+			msgParams.getParams().add(msgParam);
+			
+			/*END: DANH SACH THAM SO*/
+			msg.setObjData(msgParams);
+			
+			JSONRoot root = new JSONRoot(msg);
+			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			MspResponseStatus rspStatus = rsp.getResponseStatus();
+			
+			if(rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
+				LinkedHashMap<String, String> hItem = null;
+				
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+			
+				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
+					hItem = new LinkedHashMap<String, String>();
+					for(JsonNode o: jsonData.at("/param01")) {
+						hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));
+					}
+					req.setAttribute("map_mausokyhieu", hItem);
+				}
+				
+			}
+			
+		}catch(Exception e) {}
+	}
+	
+	@RequestMapping(value = {"/common/show-search-cttncndky"}, method = {RequestMethod.POST})
+	public String showSearchCTTNCNDKy(Locale locale, HttpServletRequest req, HttpSession session) throws Exception{
+		req.setAttribute("_header_", "Danh sách chứng từ tncn đã ký");
+		
+		LocalDate now = LocalDate.now();
+		req.setAttribute("FromDate", commons.convertLocalDateTimeToString(now.with(ChronoField.DAY_OF_MONTH, 1), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		req.setAttribute("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+
+		LoadParameterFor_CTTNCNDKy(cup, locale, req, "DETAIL");
+		return "common/search-cttncndky";
+	}
+	
+	private BaseDTO checkDataSearchCTTNCNSigned(Locale locale, HttpServletRequest req, HttpSession session) {
+		BaseDTO dto = new BaseDTO();
+		dto.setErrorCode(0);
+		
+		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
+		soHoaDon = commons.getParameterFromRequest(req, "so-hoa-don").replaceAll("\\s", "");
+		fromDate = commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "");
+		toDate = commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "");
+		nbanMst = commons.getParameterFromRequest(req, "nban-mst").replaceAll("\\s", "");
+		nbanTen = commons.getParameterFromRequest(req, "nban-ten").replaceAll("\\s", "");
+		
+		if(!"".equals(fromDate) && !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Từ ngày không đúng định dạng.");
+		}
+		if(!"".equals(toDate) && !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Từ ngày không đúng định dạng.");
+		}
+		
+		return dto;
+	}
+	
+	@RequestMapping(value = "/common/list-cttncn-signed", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO listCTTNCNSigned(Locale locale, HttpServletRequest req, HttpSession session) throws Exception {
+		JsonGridDTO grid = new JsonGridDTO();
+
+		try {
+			BaseDTO dto = new BaseDTO();
+			dto.setErrorCode(0);
+			
+			String soChungTu = commons.getParameterFromRequest(req, "so-chung-tu").replaceAll("\\s", "");
+			String fromDate = commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "");
+			String toDate = commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "");
+			String nvMst = commons.getParameterFromRequest(req, "nv-mst").replaceAll("\\s", "");
+			
+			if(!"".equals(fromDate) && !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Từ ngày không đúng định dạng.");
+			}
+			if(!"".equals(toDate) && !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Từ ngày không đúng định dạng.");
+			}
+			if (0 != dto.getErrorCode()) {
+				grid.setErrorCode(dto.getErrorCode());
+				grid.setErrorMessages(dto.getErrorMessages());
+				grid.setResponseData(Constants.MAP_ERROR.get(999));
+				return grid;
+			}
+
+			CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+			dto = new BaseDTO(req);
+			Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SEARCH);
+
+			HashMap<String, Object> hData = new HashMap<>();
+			hData.put("SoChungTu", soChungTu);
+			hData.put("FromDate", fromDate);
+			hData.put("ToDate", toDate);
+			hData.put("NVienMST", nvMst);
+
+			msg.setObjData(hData);
+
+			JSONRoot root = new JSONRoot(msg);
+			MsgRsp rsp = restAPI.callAPINormal("/commons/list-cttncn-signed", cup.getLoginRes().getToken(),
+					HttpMethod.POST, root);
+			MspResponseStatus rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				MsgPage page = rsp.getMsgPage();
+				grid.setTotal(page.getTotalRows());
+
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				JsonNode rows = null;
+				HashMap<String, String> hItem = null;
+				if (!jsonData.at("/rows").isMissingNode()) {
+					rows = jsonData.at("/rows");
+					for (JsonNode row : rows) {
+						hItem = new HashMap<String, String>();
+
+						hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
+						hItem.put("KHCTu", commons.getTextJsonNode(row.at("/KHCTu")));
+						hItem.put("MSCTu", commons.getTextJsonNode(row.at("/MSCTu")));
+						hItem.put("SCTu", commons.getTextJsonNode(row.at("/SCTu")));
+						hItem.put("NLap",
+								commons.convertLocalDateTimeToString(
+										commons.convertLongToLocalDate(row.at("/NLap").asLong()),
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						hItem.put("MST", commons.getTextJsonNode(row.at("/NNT/MST")));
+						hItem.put("Name", commons.getTextJsonNode(row.at("/NNT/Ten")));
+						hItem.put("Code", commons.getTextJsonNode(row.at("/NNT/Code")));
+						hItem.put("CCCD", commons.getTextJsonNode(row.at("/NNT/CCCDan")));
+						grid.getRows().add(hItem);
+					}
+				}
+			} else {
+				grid = new JsonGridDTO();
+				grid.setErrorCode(rspStatus.getErrorCode());
+				grid.setResponseData(rspStatus.getErrorDesc());
+			}
+
+		} catch (Exception e) {
+			grid = new JsonGridDTO();
+			grid.setErrorCode(999);
+			grid.setResponseData("Không tìm thấy thông tin. Vui lòng thử lại!!!");
+		}
+		return grid;
 	}
 	
 	@RequestMapping(value = {

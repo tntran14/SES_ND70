@@ -285,7 +285,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("mstncn|mstncn-cre|mstncn-edit|mstncn-del|mstncn-detail|mstncn-sign|");
         	sbRights.append("tkctu|tkctu-cre|tkctu-edit|tkctu-del|tkctu-detail|tkctu-sign|tkctu-copy|");
         	sbRights.append("cttncn|cttncn-cre|cttncn-edit|cttncn-del|cttncn-detail|cttncn-sign|cttncn-import|cttncn-signAll|cttncn-xoabo|cttncn-xml|cttncn-send-mail|cttncn-pdfAll|");
-        	sbRights.append("cttncn-creV1|cttncn-editV1|cttncn-delV1|cttncn-detailV1|cttncn-signV1|cttncn-importV1|cttncn-signAllV1|cttncn-xoaboV1|cttncn-xmlV1|cttncn-send-mailV1|cttncn-pdfAllV1|cttncn-historyV1|");
+        	sbRights.append("cttncn-creV1|cttncn-editV1|cttncn-delV1|cttncn-detailV1|cttncn-signV1|cttncn-importV1|cttncn-signAllV1|cttncn-xoaboV1|cttncn-xmlV1|cttncn-send-mailV1|cttncn-pdfAllV1|cttncn-historyV1|cttncn-cre-dc-tt|");
         	sbRights.append("hdsduser|hdsduser-detail|");
         	sbRights.append("qlnvtncn|qlnvtncn-cre|qlnvtncn-edit|qlnvtncn-del|qlnvtncn-detail|");
         		sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");

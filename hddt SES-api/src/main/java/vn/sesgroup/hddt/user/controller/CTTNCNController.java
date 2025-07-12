@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -218,6 +219,107 @@ public class CTTNCNController {
 			produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> sendMailAll(@RequestBody JSONRoot jsonRoot) throws Exception{
 		MsgRsp rsp = dao.sendMailAll(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/crudV1", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> crudV1(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.crudV1(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
+
+	@RequestMapping(value = "/listV1", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> listV1(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.listV1(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
+	
+	@RequestMapping(value = "/detailV1/{_id}", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> detailV1(@RequestBody JSONRoot jsonRoot
+			, @PathVariable(name = "_id", required = false) String _id) throws Exception{
+		MsgRsp rsp = dao.detailV1(jsonRoot, _id);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/get-file-for-signV1", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	public ResponseEntity<?> getFilesForSignV1(@RequestBody JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = dao.getFileForSignV1(jsonRoot);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "template.data");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
+	
+	@RequestMapping(value = "/sign-singleV1", method = RequestMethod.POST, consumes = {
+			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> signSingleV1(HttpServletRequest req,
+			MultipartHttpServletRequest multipartHttpServletRequest,
+			@RequestParam(name = "Base64JsonRoot", defaultValue = "") String _Base64JsonRoot,
+			@RequestParam(name = "_id", defaultValue = "") String _id
+		) throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		
+		JSONRoot jsonRoot = null;		
+		try {
+			jsonRoot = Json.serializer().fromJson(commons.decodeBase64ToString(_Base64JsonRoot), new TypeReference<JSONRoot>() {
+			});
+		}catch(Exception e) {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		
+		InputStream is = multipartHttpServletRequest.getFile("XMLFileSigned").getInputStream();
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(dao.signSingleV1(is, jsonRoot, _id));
+	}
+	
+	@PostMapping(value = "/history/{_id}",
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> history(@RequestBody JSONRoot jsonRoot
+			, @PathVariable(name = "_id", required = false) String _id) throws Exception{
+		MsgRsp rsp = dao.history(jsonRoot, _id);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/send-mailV1", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> sendMailV1(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.sendMailV1(jsonRoot);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
 		return ResponseEntity.ok()

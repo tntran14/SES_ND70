@@ -5470,4 +5470,129 @@ else {
 				return out;
 			}
 
+			public ByteArrayOutputStream viewpdfcttncnV1(File fileJP, Document doc, org.bson.Document docTmp,
+					String pathLogo, String KH, String MS, String link, boolean isConvert)
+					throws Exception {
+				Map<String, Object> reportParams = new HashMap<String, Object>();
+
+				/* KIEM TRA FILE LOG & BACKGROUND CO TON TAI KHONG */
+				File f = new File(pathLogo);
+				if (f.exists() && f.isFile())
+					reportParams.put("URL_IMG_BACKGROUND", pathLogo);
+				else
+					reportParams.put("URL_IMG_BACKGROUND",
+							Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, IMAGE_FILENAME_BLANK).toString());
+				
+				reportParams.put("KHHDon", KH);
+				reportParams.put("MauSo", MS);
+
+				String isSigned = docTmp.getEmbedded(Arrays.asList("SignStatus"), "");
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				Node nodeCTu = (Node) xPath.evaluate("/CTu", doc, XPathConstants.NODE);
+				LocalDateTime ldt = null;
+				
+				if (isSigned.equals("NOSIGN")) {
+					reportParams.put("IsSigned", false);
+					reportParams.put("SignDesc", "Chưa ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE,
+							Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+				} else {
+					Node nodeSignature = null;
+					Node nodeDSCKS = (Node) xPath.evaluate("DSCKS", nodeCTu, XPathConstants.NODE);
+					nodeSignature = (Node) xPath.evaluate("TCTTNhap/Signature", nodeDSCKS, XPathConstants.NODE);
+					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate(
+							"Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime",
+							nodeSignature, XPathConstants.NODE));
+					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					reportParams.put("IsSigned", true);
+					reportParams.put("SignDesc", "Đã ký");
+					reportParams.put("SignDate",
+							commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					reportParams.put("SignName",
+							docTmp.getEmbedded(Arrays.asList("InfoSigned", "SignedUserFullName"), ""));
+					reportParams.put("UrlImageVerify", Paths
+							.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID)
+							.toString());
+				}
+				Node nodeTTChung = (Node) xPath.evaluate("DLCTu/TTChung", nodeCTu, XPathConstants.NODE);
+				reportParams.put("SHDonOrigin", commons.getTextFromNodeXML((Element) xPath.evaluate("SCTu", nodeTTChung, XPathConstants.NODE)));
+
+				Node nodeTCCTNhap = (Node) xPath.evaluate("DLCTu/NDCTu/TCTTNhap", nodeCTu, XPathConstants.NODE);
+				reportParams.put("TChucCNTen",  commons.getTextFromNodeXML((Element) xPath.evaluate("Ten", nodeTCCTNhap, XPathConstants.NODE)));
+				reportParams.put("TChucCNMST",  commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeTCCTNhap, XPathConstants.NODE)));
+				reportParams.put("TChucCNDChi",  commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTCCTNhap, XPathConstants.NODE)));
+				reportParams.put("TChucCNSDThoai", commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTCCTNhap, XPathConstants.NODE)));
+				
+				Node nodeNNThue = (Node) xPath.evaluate("DLCTu/NDCTu/NNT", nodeCTu, XPathConstants.NODE);
+				reportParams.put("NNThueTen", commons.getTextFromNodeXML((Element) xPath.evaluate("Ten", nodeNNThue, XPathConstants.NODE)));
+				reportParams.put("NNThueMST", commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeNNThue, XPathConstants.NODE)));
+				reportParams.put("NNThueQTich", commons.getTextFromNodeXML((Element) xPath.evaluate("QTich", nodeNNThue, XPathConstants.NODE)));
+				String cuTru = commons.getTextFromNodeXML((Element) xPath.evaluate("CNCTru", nodeNNThue, XPathConstants.NODE));
+				reportParams.put(cuTru.equals("0") ? "isNNThueKCuTru": "isNNThueCuTru", true);
+				reportParams.put("UrlImageChecked", Paths
+						.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID)
+						.toString());
+				reportParams.put("NNThueDChi", commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNNThue, XPathConstants.NODE)));
+				reportParams.put("NNSDTLienHe", commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeNNThue, XPathConstants.NODE)));
+				reportParams.put("NNThueCMND", commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNNThue, XPathConstants.NODE)));
+				
+				Node nodeTTNCHKTru = (Node) xPath.evaluate("DLCTu/NDCTu/TTNCNKTru", nodeCTu, XPathConstants.NODE);
+				String CNhanTNhap = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanThuNhap"), "")
+						.replaceAll("\\₫", "");
+				String CNhanBHiem = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanBaoHiem"), "")
+						.replaceAll("\\₫", "");
+				String CNTThienNDaoKhuyenHoc = docTmp
+						.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanTuThienNhanDaoKhuyenHoc"), "")
+						.replaceAll("\\₫", "");
+				String CNTongTNhapChiuThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "TongTNKhauTru"), "")
+						.replaceAll("\\₫", "");
+				String CNTongTNhapTinhThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "TongTNTinhThue"), "")
+						.replaceAll("\\₫", "");
+				String CNTNhapDaKhauTru = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "SoTienCaNhanKhauTru"), "")
+						.replaceAll("\\₫", "");
+
+				String date = docTmp.getEmbedded(Arrays.asList("DateSave"), "");
+
+				reportParams.put("CNhanTNhap", commons.getTextFromNodeXML((Element) xPath.evaluate("KTNhap", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNhanBHiem", commons.getTextFromNodeXML((Element) xPath.evaluate("BHiem", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTThienNDaoKhuyenHoc", commons.getTextFromNodeXML((Element) xPath.evaluate("TThien", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTraTNhapFrom", commons.getTextFromNodeXML((Element) xPath.evaluate("TThang", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTraTNhapTo", commons.getTextFromNodeXML((Element) xPath.evaluate("DThang", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTraTNhapYear", commons.getTextFromNodeXML((Element) xPath.evaluate("Nam", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTongTNhapChiuThue", commons.getTextFromNodeXML((Element) xPath.evaluate("TTNCThue", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTongTNhapTinhThue", commons.getTextFromNodeXML((Element) xPath.evaluate("TTNTThue", nodeTTNCHKTru, XPathConstants.NODE)));
+				reportParams.put("CNTNhapDaKhauTru", commons.getTextFromNodeXML((Element) xPath.evaluate("SThue", nodeTTNCHKTru, XPathConstants.NODE)));
+
+				LocalDate nlap = commons.convertStringToLocalDate(commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeTTChung, XPathConstants.NODE)), "yyyy-MM-dd");
+				if (null != nlap) {
+					reportParams.put("LicenseDate",
+							StringUtils.leftPad(String.valueOf(nlap.get(ChronoField.DAY_OF_MONTH)), 2, "0"));
+					reportParams.put("LicenseMonth",
+							StringUtils.leftPad(String.valueOf(nlap.get(ChronoField.MONTH_OF_YEAR)), 2, "0"));
+					reportParams.put("LicenseYear",
+							StringUtils.leftPad(String.valueOf(nlap.get(ChronoField.YEAR)), 4, "0"));
+				}
+
+				reportParams.put("PortalLink", link);
+				reportParams.put("SecureKey", docTmp.get("SecureKey", ""));
+				
+				reportParams.put("UrlImageCTuThayThe", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_CTU_THAYTHE).toString());
+				reportParams.put("UrlImageCTUDieuChinh", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_CTU_DIEUCHINH).toString());
+				reportParams.put("IsThayThe", false);
+				reportParams.put("IsDieuChinh", false);
+
+				JRDataSource jds = new JREmptyDataSource();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				JasperReport jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
+				JasperPrint jp = JasperFillManager.fillReport(jr, reportParams, jds);
+
+				Exporter exporter = new JRPdfExporter();
+				exporter.setExporterInput(new SimpleExporterInput(jp));
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+				SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+				configuration.setCreatingBatchModeBookmarks(true);
+				exporter.setConfiguration(configuration);
+				exporter.exportReport();
+				return out;
+			}
 }

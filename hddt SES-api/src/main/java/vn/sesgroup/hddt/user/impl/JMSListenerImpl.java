@@ -1013,10 +1013,10 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				String fileNameJP = toEmail.getEmbedded(Arrays.asList("Data", "DMMSTNCN", "FileName"), "");
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 				ByteArrayOutputStream baosPDF = null;
-				baosPDF = jpUtils.viewpdfcttncn(fileJP, doc, toEmail.get("Data", Document.class),
+				baosPDF = jpUtils.viewpdfcttncnV1(fileJP, doc, toEmail.get("Data", Document.class),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN", toEmail.get("TaxCode", ""), imgLogo)
 								.toString(),
-						kh, ms, link, false, Constants.INVOICE_STATUS.XOABO.equals(status));
+						kh, ms, link, false);
 
 				if (null != baosPDF) {
 					try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {

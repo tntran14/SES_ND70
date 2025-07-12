@@ -2398,6 +2398,10 @@ try {
 		if (iter.hasNext()) {
 			docTmp = iter.next();
 		}
+		
+		if (docTmp == null) {
+			return fileInfo;
+		}
 
 		String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "LoGo"), "");
 
@@ -5718,5 +5722,225 @@ try {
 			} else {
 				return new FileInfo();
 			}
+		}
+
+		@Override
+		public MsgRsp listCTTNCNSigned(JSONRoot jsonRoot) throws Exception {
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			MsgPage page = msg.getMsgPage();
+			Object objData = msg.getObjData();
+
+			String soChungTu = "";
+			String fromDate = "";
+			String toDate = "";
+			String nvMst = "";
+
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(objData);
+				soChungTu = commons.getTextJsonNode(jsonData.at("/SoHoaDon")).replaceAll("\\s", "");
+				fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
+				toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+				nvMst = commons.getTextJsonNode(jsonData.at("/NbanMst")).trim().replaceAll("\\s+", " ");
+			}
+
+			MsgRsp rsp = new MsgRsp(header);
+			MspResponseStatus responseStatus = null;
+
+			ObjectId objectId = null;
+			Document docTmp = null;
+
+			Iterable<Document> cursor = null;
+			Iterator<Document> iter = null;
+
+
+			LocalDate dateFrom = null;
+			LocalDate dateTo = null;
+			Document docMatchDate = null;
+
+			dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+					? null
+					: commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+			dateTo = "".equals(toDate) || !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ? null
+					: commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+			if (null != dateTo)
+				dateTo = dateTo.plus(1, ChronoUnit.DAYS);
+			if (null != dateFrom || null != dateTo) {
+				docMatchDate = new Document();
+				if (null != dateFrom)
+					docMatchDate.append("$gte", dateFrom);
+				if (null != dateTo)
+					docMatchDate.append("$lt", dateTo);
+			}
+
+			Document docMatch = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+					.append("SignStatus", "SIGNED")
+					.append("Status",
+							new Document("$in",
+									Arrays.asList(Constants.INVOICE_STATUS.COMPLETE)))
+					;
+			if (!"".equals(soChungTu))
+				docMatch.append("SCTu", commons.stringToInteger(soChungTu));
+			if (null != docMatchDate)
+				docMatch.append("NLap", docMatchDate);
+			if (!"".equals(nvMst))
+				docMatch.append("NNT.MST",
+						new Document("$regex", commons.regexEscapeForMongoQuery(nvMst)).append("$options", "i"));
+			
+			List<Document> pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docMatch));
+
+			pipeline.add(new Document("$sort",
+					new Document("SCTu", -1).append("_id", -1)));
+			pipeline.addAll(createFacetForSearchNotSort(page));
+
+			cursor = mongoTemplate.getCollection("CTTNCNhan").aggregate(pipeline).allowDiskUse(true);
+			iter = cursor.iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+			rsp = new MsgRsp(header);
+			responseStatus = null;
+			ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
+			HashMap<String, Object> hItem = null;
+			if (null != docTmp) {
+				page.setTotalRows(docTmp.getInteger("total", 0));
+				rsp.setMsgPage(page);
+				List<Document> rows = null;
+				if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
+					rows = docTmp.getList("data", Document.class);
+				}
+				if (null != rows) {
+					for (Document doc : rows) {
+						objectId = (ObjectId) doc.get("_id");
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("Status", doc.get("Status"));
+						hItem.put("SignStatus", doc.get("SignStatus"));
+						hItem.put("MSCTu", doc.get("MSCTu"));
+						hItem.put("KHCTu", doc.get("KHCTu"));
+						hItem.put("NLap", doc.get("NLap"));
+						hItem.put("SCTu", doc.get("SCTu"));
+						hItem.put("NNT", doc.get("NNT"));
+						rowsReturn.add(hItem);
+					}
+				}
+			}
+			
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+
+			HashMap<String, Object> mapDataR = new HashMap<String, Object>();
+			mapDataR.put("rows", rowsReturn);
+			rsp.setObjData(mapDataR);
+			return rsp;
+		}
+
+		@Override
+		public FileInfo viewpdfcttncnV1(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			Object objData = msg.getObjData();
+
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+			} else {
+				return new FileInfo();
+			}
+
+			String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+			String isConvert = commons.getTextJsonNode(jsonData.at("/IsConvert")).replaceAll("\\s", "");
+			ObjectId objectId = null;
+			try {
+				objectId = new ObjectId(_id);
+			} catch (Exception e) {
+			}
+			ObjectId objectIdIssu = null;
+			try {
+				objectIdIssu = new ObjectId(header.getIssuerId());
+			} catch (Exception e) {
+			}
+
+			List<Document> pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match",
+					new Document("_id", objectId).append("IsDelete", new Document("$ne", true))));
+			pipeline.add(
+					new Document("$lookup",
+							new Document("from", "Issuer")
+									.append("pipeline",
+											Arrays.asList(
+													new Document("$match",
+															new Document("_id", objectIdIssu).append("IsDelete",
+																	new Document("$ne", true)))))
+									.append("as", "Issuer")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+
+			pipeline.add(new Document("$lookup",
+					new Document("from", "DMMSTNCN").append("let", new Document("vMauSo", "$MauSo"))
+							.append("pipeline", Arrays.asList(new Document("$match",
+									new Document("$expr",
+											new Document("$and", Arrays.asList(
+													new Document("$eq",
+															Arrays.asList("$_id",
+																	new Document("$toObjectId", "$$vMauSo"))),
+													new Document("$eq",
+															Arrays.asList("$IssuerId", objectIdIssu.toString())),
+													new Document("$eq", Arrays.asList("$IsDelete", false)),
+													new Document("$eq", Arrays.asList("$IsActive", true))))))))
+							.append("as", "DMMSTNCN")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(new Document("$lookup",
+					new Document("from", "PramLink")
+							.append("pipeline",
+									Arrays.asList(new Document("$match",
+											new Document("$expr", new Document("IsDelete", false)))))
+							.append("as", "PramLink")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
+			Document docTmp = null;
+			Iterable<Document> cursor = mongoTemplate.getCollection("CTTNCNhan").aggregate(pipeline).allowDiskUse(true);
+			Iterator<Document> iter = cursor.iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+
+			if (docTmp == null) {
+				return fileInfo;
+			}
+
+			String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "LoGo"), "");
+			String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+			String KH = docTmp.getEmbedded(Arrays.asList("KHCTu"), "");
+			String MS = docTmp.getEmbedded(Arrays.asList("MSCTu"), "");
+			String fileNameJP = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "FileName"), "");
+			String dir = docTmp.get("Dir", "");
+			String SignStatus = docTmp.get("SignStatus", "");
+			String pathLogo = Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN",
+					docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString();
+			String fileName = _id + ".xml";
+			if ("SIGNED".equals(SignStatus)) {
+				fileName = _id + "_signed.xml";
+			}
+
+			File file = new File(dir, fileName);
+			if (!file.exists() || !file.isFile()) {
+				return new FileInfo();
+			}
+
+			org.w3c.dom.Document doc = commons.fileToDocument(file);
+			File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+
+			ByteArrayOutputStream baosPDF = null;
+			baosPDF = jpUtils.viewpdfcttncnV1(fileJP, doc, docTmp, pathLogo, KH, MS, link, "Y".equals(isConvert));
+			fileInfo.setFileName("viewpdftncn.pdf");
+			fileInfo.setContentFile(baosPDF.toByteArray());
+
+			return fileInfo;
 		}
 }

@@ -551,4 +551,28 @@ public class CommonsController {
 				.cacheControl(CacheControl.noCache())
 				.body(SerializationUtils.serialize(fileInfo));
 	}
+	
+	@RequestMapping(value = "/list-cttncn-signed", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> listCTTNCNSigned(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.listCTTNCNSigned(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
+	
+	@RequestMapping(value = "/viewpdfcttncnV1", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	public ResponseEntity<?> viewpdfcttncnV1(@RequestBody JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = dao.viewpdfcttncnV1(jsonRoot);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "viewpdf.pdf");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
 }
