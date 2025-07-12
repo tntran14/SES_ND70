@@ -93,6 +93,7 @@ public class AgentCRUDController extends AbstractController{
 	private String errorDesc;
 	private String _id;
 	private String _id_tt_dc;
+    private String _tchdon;
 	private String mauSoHdon;
 	private String tenLoaiHd;
 	private String ngayLap;
@@ -199,7 +200,7 @@ public class AgentCRUDController extends AbstractController{
 		}catch(Exception e) {}
 	}
 	
-	@RequestMapping(value =  {"/init", "/init-dc-tt"}, method = {RequestMethod.POST})
+	@RequestMapping(value =  {"/init", "/init-dc", "/init-tt"}, method = {RequestMethod.POST})
 	public String init(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
 			, @RequestAttribute(name = "method", value = "", required = false) String method
@@ -225,7 +226,7 @@ public class AgentCRUDController extends AbstractController{
 		if(rspStatus.getErrorCode() == 0) {		
 			mauso =  rsp.getResponseStatus().getErrorDesc();
 		}
-		if("agent-cre".equals(transaction) && !"init-dc-tt".equals(method)) {
+		if("agent-cre".equals(transaction) && (!"init-dc".equals(method) || !"init-tt".equals(method))) {
 			if(!mauso.equals("")) {
 				req.setAttribute("MauSoHD", mauso);
 			}
@@ -271,9 +272,9 @@ public class AgentCRUDController extends AbstractController{
 			break;
 		}
 		
-		if("|agent-edit|agent-detail|agent-copy|agent-sign|".indexOf(transaction) != -1|| "init-dc-tt".equals(method))
+		if("|agent-edit|agent-detail|agent-copy|agent-sign|".indexOf(transaction) != -1 || "init-dc".equals(method)|| "init-tt".equals(method))
 			inquiry(cup, locale, req, session, _id, action, transaction, method);
-		if("agent-cre".equals(transaction) && "init-dc-tt".equals(method)) {
+		if("agent-cre".equals(transaction) && ("init-dc".equals(method) || "init-tt".equals(method))) {
 			req.setAttribute("NLap", commons.convertLocalDateTimeToString(LocalDate.now(), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			req.setAttribute("NBanHDKTNgay", commons.convertLocalDateTimeToString(LocalDate.now(), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 		}
@@ -312,30 +313,19 @@ public class AgentCRUDController extends AbstractController{
 			
 			String TCTBao = "";
 			String notice = "";
-			if("init-dc-tt".equals(method) && "agent-cre".equals(transaction)) {
-				TCTBao = commons.getTextJsonNode(jsonData.at("/HDSS/TCTBao"));
-				if("|2|3|".indexOf("|" + TCTBao + "|") == -1) {
-					errorDesc = "Không tìm thấy thông tin hóa đơn điều chỉnh hoặc thay thế.";
-					return;
-				}
-				
-				if("3".equals(TCTBao)) {
-					notice = String.format("(Thay thế cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon")),
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")),
-							commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()),
-							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-						);
-				}else if("2".equals(TCTBao)) {
-					notice = String.format("(Điều chỉnh cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon")),
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")),
-							commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()),
-							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-						);
-				}
+			if(("init-dc".equals(method) || "init-tt".equals(method)) && "agent-cre".equals(transaction)) {
+				String title = "init-dc".equals(method) ? "Điều chỉnh" : "Thay thế";
+				notice = String.format("(%s cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", title,
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon")),
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")),
+						commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()),
+						commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+
 				req.setAttribute("_notice", notice);
 				req.setAttribute("_id_tt_dc", _id);
+				req.setAttribute("_tchdon", "init-tt".equals(method) ? "1" : "2");
 			}else {
 				if(!jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan").isMissingNode()) {
 					TCTBao = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon"));
@@ -474,6 +464,7 @@ public class AgentCRUDController extends AbstractController{
 		
 		_id = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
 		_id_tt_dc = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+        _tchdon = commons.getParameterFromRequest(req, "_tchdon").trim().replaceAll("\\s+", " ");
 		mauSoHdon = commons.getParameterFromRequest(req, "mau-so-hdon").replaceAll("\\s", "");
 		tenLoaiHd = commons.getParameterFromRequest(req, "ten-loai-hd").trim().replaceAll("\\s+", " ");
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
@@ -790,6 +781,7 @@ public class AgentCRUDController extends AbstractController{
 		default:
 		hData.put("_id", _id);
 		hData.put("_id_tt_dc", _id_tt_dc);
+        hData.put("_tchdon", _tchdon);
 		hData.put("MauSoHdon", mauSoHdon);
 		hData.put("TenLoaiHd", tenLoaiHd);
 		hData.put("NgayLap", ngayLap);

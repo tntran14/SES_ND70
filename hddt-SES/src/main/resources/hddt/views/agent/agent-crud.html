@@ -222,6 +222,7 @@
 								<div class="col-12 p-t-0">
 									<span class="fw-800 text-danger fs-i fs-12" th:text="${_notice}"></span>
 								</div>
+								<input type="hidden" name="_tchdon" th:value="${_tchdon}" >
 								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}" >
 							</div>
 														
@@ -1541,7 +1542,7 @@ case 'kh_search':
 		dataPost['hinh-thuc-thanh-toan'] = $('#f-agent-crud').find('#hinh-thuc-thanh-toan').val();
 		dataPost['hinh-thuc-thanh-toan-text'] = $('#f-agent-crud').find('#hinh-thuc-thanh-toan').find('option:selected').text();
 		dataPost['ngay-lap'] = $('#f-agent-crud').find('#ngay-lap').val();
-		
+        dataPost['_tchdon'] = $('#f-agent-crud').find('input[name="_tchdon"]').length == 0? '': $('#f-agent-crud').find('input[name="_tchdon"]').val();
 		dataPost['kh-mst'] = $('#f-agent-crud').find('#kh-mst').val();
 		dataPost['kh-ho-ten-ng-xuat'] = $('#f-agent-crud').find('#kh-ho-ten-ng-xuat').val();
 			dataPost['nban-dchi'] = $('#f-agent-crud').find('#nban-dchi').val();

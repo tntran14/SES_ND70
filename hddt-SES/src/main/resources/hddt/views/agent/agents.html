@@ -149,9 +149,13 @@
                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hóa đơn</span>
                             				</button>
                             				
-                            				<button type="button" title="Thêm mới HĐ Điều chỉnh/Thay thế" data-action="agent-cre-dc-tt" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|agent-cre-dc-tt|')}"
+                            				<button type="button" title="Thêm mới HĐ Điều chỉnh" data-action="agent-cre-dc" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|agent-cre-dc-tt|')}"
                             					th:disabled="true">
-                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới hđ điều chỉnh/thay thế</span>
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới HĐ điều chỉnh</span>
+                            				</button>
+                            				<button type="button" title="Thêm mới HĐ Thay thế" data-action="agent-cre-tt" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|agent-cre-dc-tt|')}"
+                            					th:disabled="true">
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới HĐ thay thế</span>
                             				</button>
                             					<button type="button" title="Xóa hàng loạt" data-action="agent-delete" class="btns xoa_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|agent-del|')}"  >
 										   <i class="mdi mdi-delete"> </i
@@ -350,7 +354,7 @@
 //							$(obj).attr('title', $(obj).html())
 //						});
 						
-						$("#f-agent").find('button[data-action="agent-detail"], button[data-action="agent-edit"], button[data-action="agent-copy"],button[data-action="agent-sign"],button[data-action="agent-cre-dc-tt"]').prop('disabled', true);
+						$("#f-agent").find('button[data-action="agent-detail"], button[data-action="agent-edit"], button[data-action="agent-copy"],button[data-action="agent-sign"],button[data-action="agent-cre-dc"],button[data-action="agent-cre-tt"]').prop('disabled', true);
 						
 						_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 						_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -639,11 +643,19 @@
 			          	$("#f-agent").find('button[data-action="agent-sign"]').prop('disabled', true);
 			          	$("#f-agent").find('button[data-action="agent-delete"]').prop('disabled', true);
 					}
-					if('2' == rowData['HDSS_TCTBao']|| '3' == rowData['HDSS_TCTBao'] && "COMPLETE" == rowData['EInvoiceStatus']){
-						$("#f-agent").find('button[data-action="agent-cre-dc-tt"]').prop('disabled', false);
-					}else{
-						$("#f-agent").find('button[data-action="agent-cre-dc-tt"]').prop('disabled', true);
-					}
+					
+					if('Đã phát hành' == rowData['StatusDesc'] || 'Đã thay thế' == rowData['StatusDesc'] || 'Đã điều chỉnh' == rowData['StatusDesc'] || 'Đã xóa bỏ' == rowData['StatusDesc']){
+			              $("#f-agent").find('button[data-action="agent-cre-dc"]').prop('disabled', false);
+			              $("#f-agent").find('button[data-action="agent-cre-tt"]').prop('disabled', false);
+			            }else{
+			              $("#f-agent").find('button[data-action="agent-cre-dc"]').prop('disabled', true);
+			              $("#f-agent").find('button[data-action="agent-cre-tt"]').prop('disabled', true);
+			            }	
+// 					if('2' == rowData['HDSS_TCTBao']|| '3' == rowData['HDSS_TCTBao'] && "COMPLETE" == rowData['EInvoiceStatus']){
+// 						$("#f-agent").find('button[data-action="agent-cre-dc-tt"]').prop('disabled', false);
+// 					}else{
+// 						$("#f-agent").find('button[data-action="agent-cre-dc-tt"]').prop('disabled', true);
+// 					}
 					
 				});
 				
@@ -1130,17 +1142,21 @@
 						$('#divSubContent').show();$('#divMainContent').hide();
 						submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 						break;
-					case 'agent-cre-dc-tt':
-						/*objData = {};
-						idx = $(checkRows[0].closest("tr")).index();
-						rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
-						objData['_id'] = rowData['_id'];*/
+					case 'agent-cre-dc':
 						objData = {};
 						idx = $(checkRows[0].closest("tr")).index();
 						rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 						objData['_id'] = rowData['_id'];
 						$('#divSubContent').show();$('#divMainContent').hide();
-						submitFormRenderArea(ROOT_PATH + '/main/agent-cre/init-dc-tt', objData, $('#divSubContent'));
+						submitFormRenderArea(ROOT_PATH + '/main/agent-cre/init-dc', objData, $('#divSubContent'));
+						break;
+					case 'agent-cre-tt':
+						objData = {};
+						idx = $(checkRows[0].closest("tr")).index();
+						rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+						objData['_id'] = rowData['_id'];
+						$('#divSubContent').show();$('#divMainContent').hide();
+						submitFormRenderArea(ROOT_PATH + '/main/agent-cre/init-tt', objData, $('#divSubContent'));
 						break;
 					case 'agent-cre':
 						$('#divSubContent').show();$('#divMainContent').hide();
