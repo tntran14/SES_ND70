@@ -26,6 +26,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.exolab.castor.types.DateTime;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -5537,19 +5538,6 @@ else {
 				reportParams.put("NNThueCMND", commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNNThue, XPathConstants.NODE)));
 				
 				Node nodeTTNCHKTru = (Node) xPath.evaluate("DLCTu/NDCTu/TTNCNKTru", nodeCTu, XPathConstants.NODE);
-				String CNhanTNhap = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanThuNhap"), "")
-						.replaceAll("\\₫", "");
-				String CNhanBHiem = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanBaoHiem"), "")
-						.replaceAll("\\₫", "");
-				String CNTThienNDaoKhuyenHoc = docTmp
-						.getEmbedded(Arrays.asList("TNCNKhauTru", "KhoanTuThienNhanDaoKhuyenHoc"), "")
-						.replaceAll("\\₫", "");
-				String CNTongTNhapChiuThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "TongTNKhauTru"), "")
-						.replaceAll("\\₫", "");
-				String CNTongTNhapTinhThue = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "TongTNTinhThue"), "")
-						.replaceAll("\\₫", "");
-				String CNTNhapDaKhauTru = docTmp.getEmbedded(Arrays.asList("TNCNKhauTru", "SoTienCaNhanKhauTru"), "")
-						.replaceAll("\\₫", "");
 
 				String date = docTmp.getEmbedded(Arrays.asList("DateSave"), "");
 
@@ -5572,14 +5560,30 @@ else {
 					reportParams.put("LicenseYear",
 							StringUtils.leftPad(String.valueOf(nlap.get(ChronoField.YEAR)), 4, "0"));
 				}
-
-				reportParams.put("PortalLink", link);
-				reportParams.put("SecureKey", docTmp.get("SecureKey", ""));
+				
+				Node nodeTTCTLQuan = (Node) xPath.evaluate("TTCTLQuan", nodeTTChung, XPathConstants.NODE);
+				if (nodeTTCTLQuan != null) {
+					String tcctu = commons.getTextFromNodeXML((Element) xPath.evaluate("TCCTu", nodeTTCTLQuan, XPathConstants.NODE));
+					String title = tcctu.equals("1") ? "Thay thế" : "Điều chỉnh";
+					String notice = String.format("(%s cho chứng từ Ký hiệu %s, số %s, ngày %s)", 
+							title,
+							commons.getTextFromNodeXML((Element) xPath.evaluate("KHCTCLQuan", nodeTTCTLQuan, XPathConstants.NODE)),
+							commons.getTextFromNodeXML((Element) xPath.evaluate("SCTCLQuan", nodeTTCTLQuan, XPathConstants.NODE)),
+							commons.convertLocalDateTimeStringToString(commons.getTextFromNodeXML((Element) xPath.evaluate("NLCTCLQuan", nodeTTCTLQuan, XPathConstants.NODE)), "yyyy-MM-dd",
+									Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+						);
+					reportParams.put("NoticeTTDC", notice);
+				}
 				
 				reportParams.put("UrlImageCTuThayThe", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_CTU_THAYTHE).toString());
 				reportParams.put("UrlImageCTUDieuChinh", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_CTU_DIEUCHINH).toString());
-				reportParams.put("IsThayThe", false);
-				reportParams.put("IsDieuChinh", false);
+				
+				String status = docTmp.getEmbedded(Arrays.asList("Status"), "");
+				reportParams.put("IsThayThe", status.equals(Constants.INVOICE_STATUS.REPLACED));
+				reportParams.put("IsDieuChinh", status.equals(Constants.INVOICE_STATUS.ADJUSTED));
+				
+				reportParams.put("PortalLink", link);
+				reportParams.put("SecureKey", docTmp.get("SecureKey", ""));
 
 				JRDataSource jds = new JREmptyDataSource();
 				ByteArrayOutputStream out = new ByteArrayOutputStream();

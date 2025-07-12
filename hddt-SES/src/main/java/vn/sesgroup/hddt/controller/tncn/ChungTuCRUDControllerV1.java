@@ -253,12 +253,9 @@ public class ChungTuCRUDControllerV1 extends AbstractController{
 			if(("init-dc".equals(method) || "init-tt".equals(method))) {
 				String title = "init-dc".equals(method)? "Điều chỉnh":"Thay thế";
 				
-					notice = String.format("(%s cho chứng từ Mẫu số TNCN %s, từ tháng %s, đến tháng %s, năm %s, số %s, ngày %s)", 
+					notice = String.format("(%s cho chứng từ Ký hiệu %s, số %s, ngày %s)", 
 							title,
 							commons.getTextJsonNode(jsonData.at("/KHCTu")),
-							commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TThang")),
-							commons.getTextJsonNode(jsonData.at("/TTNCNKTru/DThang")),
-							commons.getTextJsonNode(jsonData.at("/TTNCNKTru/Nam")),
 							commons.getTextJsonNode(jsonData.at("/SCTu")),
 							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
 						);
@@ -267,23 +264,15 @@ public class ChungTuCRUDControllerV1 extends AbstractController{
 				req.setAttribute("_id_tt_dc", _id);
 				req.setAttribute("_tcctu", "init-tt".equals(method)? "1":"2");
 			}else {
-				if(!jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan").isMissingNode()) {
-//					TCTBao = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon"));
-//					if("1".equals(TCTBao)) {
-//						notice = String.format("(Thay thế cho hóa đơ3n Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan")),
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")),
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")),
-//								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-//							);
-//					}else if("2".equals(TCTBao)) {
-//						notice = String.format("(Điều chỉnh cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan")),
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")),
-//								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")),
-//								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-//							);
-//					}
+				if(!jsonData.at("/TTCTLQuan").isMissingNode()) {
+					String title = commons.getTextJsonNode(jsonData.at("/TTCTLQuan/TCCTu")).equals("1")? "Thay thế":"Điều chỉnh";
+					notice = String.format("(%s cho chứng từ Ký hiệu %s, số %s, ngày %s)", 
+							title,
+							commons.getTextJsonNode(jsonData.at("/TTCTLQuan/KHCTCLQuan")),
+							commons.getTextJsonNode(jsonData.at("/TTCTLQuan/SCTCLQuan")),
+							commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(jsonData.at("/TTCTLQuan/NLCTCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+
+							);
 					req.setAttribute("_notice", notice);
 				}
 			}
