@@ -160,9 +160,13 @@
                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hóa đơn</span>
                             				</button>
                             				
-                            			<button type="button" title="Thêm mới HĐ Điều chỉnh/Thay thế" data-action="export-cre-dc-tt" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|export-cre-dc-tt|')}"
+                            			<button type="button" title="Thêm mới HĐ Điều chỉnh" data-action="export-cre-dc" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|export-cre-dc-tt|')}"
                             					th:disabled="true">
-                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới hđ điều chỉnh/thay thế</span>
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới HĐ điều chỉnh</span>
+                            				</button>
+                            				<button type="button" title="Thêm mới HĐ Thay thế" data-action="export-cre-tt" class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|export-cre-dc-tt|')}"
+                            					th:disabled="true">
+                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới HĐ thay thế</span>
                             				</button>
                             					   <button type="button"  title="Xóa hàng loạt" data-action="export-delete" class="btns xoa_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|export-del|')}">
 										   <i class="mdi mdi-delete"> </i
@@ -363,7 +367,7 @@ $(function(){
 //				$(obj).attr('title', $(obj).html())
 //			});
 			
-			$("#f-export").find('button[data-action="export-detail"], button[data-action="export-edit"], button[data-action="export-copy"],button[data-action="export-cre-dc-tt"], button[data-action="export-sign"]').prop('disabled', true);
+			$("#f-export").find('button[data-action="export-detail"], button[data-action="export-edit"], button[data-action="export-copy"],button[data-action="export-cre-dc"],button[data-action="export-cre-tt"], button[data-action="export-sign"]').prop('disabled', true);
 			
 			_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 			_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -672,11 +676,18 @@ $(function(){
 				          	 $("#f-export").find('button[data-action="export-pdfCD"]').prop('disabled', true);
 						}
 		
-		if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
-		$("#f-export").find('button[data-action="export-cre-dc-tt"]').prop('disabled', false);
-	}else{
-		$("#f-export").find('button[data-action="export-cre-dc-tt"]').prop('disabled', true);
-	}
+			if('Đã phát hành' == rowData['StatusDesc'] || 'Đã thay thế' == rowData['StatusDesc'] || 'Đã điều chỉnh' == rowData['StatusDesc'] || 'Đã xóa bỏ' == rowData['StatusDesc']){
+	              $("#f-export").find('button[data-action="export-cre-dc"]').prop('disabled', false);
+	              $("#f-export").find('button[data-action="export-cre-tt"]').prop('disabled', false);
+	            }else{
+	              $("#f-export").find('button[data-action="export-cre-dc"]').prop('disabled', true);
+	              $("#f-export").find('button[data-action="export-cre-tt"]').prop('disabled', true);
+	            }	
+// 		if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
+// 		$("#f-export").find('button[data-action="export-cre-dc-tt"]').prop('disabled', false);
+// 	}else{
+// 		$("#f-export").find('button[data-action="export-cre-dc-tt"]').prop('disabled', true);
+// 	}
 	});
 	
 	
@@ -1160,12 +1171,19 @@ $(function(){
 			$('#divSubContent').show();$('#divMainContent').hide();
 			submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 			break;
-		case 'export-cre-dc-tt':
+		case 'export-cre-dc':
 			idx = $(checkRows[0].closest("tr")).index();
 			rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 			objData['_id'] = rowData['_id'];
 			$('#divSubContent').show();$('#divMainContent').hide();
-			submitFormRenderArea(ROOT_PATH + '/main/export-cre/init-dc-tt', objData, $('#divSubContent'));
+			submitFormRenderArea(ROOT_PATH + '/main/export-cre/init-dc', objData, $('#divSubContent'));
+			break;
+		case 'export-cre-tt':
+			idx = $(checkRows[0].closest("tr")).index();
+			rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+			objData['_id'] = rowData['_id'];
+			$('#divSubContent').show();$('#divMainContent').hide();
+			submitFormRenderArea(ROOT_PATH + '/main/export-cre/init-tt', objData, $('#divSubContent'));
 			break;
 		case 'export-cre':
 			$('#divSubContent').show();$('#divMainContent').hide();

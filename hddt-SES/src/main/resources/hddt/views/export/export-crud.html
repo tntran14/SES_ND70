@@ -274,6 +274,7 @@
 								<div class="col-12 p-t-0">
 									<span class="fw-800 text-danger fs-i fs-12" th:text="${_notice}"></span>
 								</div>
+								<input type="hidden" name="_tchdon" th:value="${_tchdon}">
 								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}" >
 							</div>
 						</div>
@@ -1590,7 +1591,7 @@ function getDataToSave(){
 	dataPost['hinh-thuc-thanh-toan'] = $('#f-export-crud').find('#hinh-thuc-thanh-toan').val();
 	dataPost['hinh-thuc-thanh-toan-text'] = $('#f-export-crud').find('#hinh-thuc-thanh-toan').find('option:selected').text();
 	dataPost['ngay-lap'] = $('#f-export-crud').find('#ngay-lap').val();
-	
+    dataPost['_tchdon'] = $('#f-export-crud').find('input[name="_tchdon"]').length == 0? '': $('#f-export-crud').find('input[name="_tchdon"]').val();
 	dataPost['kh-mst'] = $('#f-export-crud').find('#kh-mst').val();
 	dataPost['kh-ho-ten-ng-xuat'] = $('#f-export-crud').find('#kh-ho-ten-ng-xuat').val();
 	
