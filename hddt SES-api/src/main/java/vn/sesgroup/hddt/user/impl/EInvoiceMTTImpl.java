@@ -145,6 +145,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		String actionCode = header.getActionCode();
 		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
 		String _id_tt_dc = commons.getTextJsonNode(jsonData.at("/_id_tt_dc")).replaceAll("\\s", "");
+        String _tchdon = commons.getTextJsonNode(jsonData.at("/_tchdon")).trim().replaceAll("\\s+", " ");
 		String mauSoHdon = commons.getTextJsonNode(jsonData.at("/MauSoHdon")).replaceAll("\\s", "");
 
 		String loaiHoaDon = commons.getTextJsonNode(jsonData.at("/LoaiHoaDon")).replaceAll("\\s", "");
@@ -288,7 +289,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 										new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.COMPLETE,
 												Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)))
 								.append("MCCQT", new Document("$exists", true))
-								.append("HDSS.TCTBao", new Document("$in", Arrays.asList("2", "3")))),
+//								.append("HDSS.TCTBao", new Document("$in", Arrays.asList("2", "3")))
+								),
 								new Document("$project",
 										new Document("TT_DC", "$EInvoiceDetail.TTChung").append("HDSS", 1))))
 						.append("as", "EInvoiceTTDC")));
@@ -400,8 +402,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			if (docEInvoiceTTDC != null) {
 				elementTmp = doc.createElement("TTHDLQuan");
-				elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon",
-						"3".equals(docEInvoiceTTDC.getEmbedded(Arrays.asList("HDSS", "TCTBao"), "")) ? "1" : "2"));
+                elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon", _tchdon));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "LHDCLQuan", "1"));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "KHMSHDCLQuan",
 						docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "KHMSHDon"), "")));
@@ -731,9 +732,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			docTTHDLQuan = null;
 			if (docEInvoiceTTDC != null) {
 				docTTHDLQuan = new Document("_id", _id_tt_dc)
-						.append("TCHDon",
-								"3".equals(docEInvoiceTTDC.getEmbedded(Arrays.asList("HDSS", "TCTBao"), "")) ? "1"
-										: "2")
+                        .append("TCHDon", _tchdon)
 						.append("LHDCLQuan", "1")
 						.append("KHMSHDCLQuan", docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "KHMSHDon"), ""))
 						.append("KHHDCLQuan", docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "KHHDon"), ""))
@@ -810,16 +809,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			options.returnDocument(ReturnDocument.AFTER);
 
 			if (docEInvoiceTTDC != null) {
-				if ("3".equals(docEInvoiceTTDC.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""))) {
-
+	            if ("1".equals(_tchdon)) {
 					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
 					collection.findOneAndUpdate(docFind1,
 							new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);
 					mongoClient.close();
 
-				} else if ("2".equals(docEInvoiceTTDC.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""))) {
-
+                } else if ("2".equals(_tchdon)) {
 					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
 					collection.findOneAndUpdate(docFind1,
@@ -1890,9 +1887,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			docTTHDLQuan = null;
 			if (docEInvoiceTTDC != null) {
 				docTTHDLQuan = new Document("_id", _id_tt_dc)
-						.append("TCHDon",
-								"3".equals(docEInvoiceTTDC.getEmbedded(Arrays.asList("HDSS", "TCTBao"), "")) ? "1"
-										: "2")
+						.append("TCHDon", docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "TCHDon"), ""))
 						.append("LHDCLQuan", "1")
 						.append("KHMSHDCLQuan", docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "KHMSHDon"), ""))
 						.append("KHHDCLQuan", docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "KHHDon"), ""))
@@ -1993,6 +1988,29 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+            
+            docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
+                    Document.class);
+            if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
+                options = new FindOneAndUpdateOptions();
+                options.upsert(false);
+                options.maxTime(5000, TimeUnit.MILLISECONDS);
+                options.returnDocument(ReturnDocument.AFTER);
+                ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
+                Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+                        .append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
+                                Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
+
+                mongoClient = cfg.mongoClient();
+                collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+
+                collection.findOneAndUpdate(find,
+                        new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
+                        options);
+
+                mongoClient.close();
+            }
+			
 			String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "");
 
 			int SHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
