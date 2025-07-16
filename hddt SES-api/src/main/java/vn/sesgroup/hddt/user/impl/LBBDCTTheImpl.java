@@ -38,6 +38,7 @@ import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -1039,7 +1040,10 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		Document docTmp = null;
 		try (MongoClient mongoClient = cfg.mongoClient()) {
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
-			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();	
+			 MongoCursor<Document> cursor = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			 if (cursor.hasNext()) {
+				 docTmp = cursor.next();
+			 }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
