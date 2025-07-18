@@ -202,7 +202,7 @@ public class TKChungTuCRUDController extends AbstractController {
 		req.setAttribute("nLap", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 		req.setAttribute("mst", ii.getTaxCode());
 
-		req.setAttribute("optPThuc", "HTGDLieu_CTTDT");
+		req.setAttribute("optPThuc", "HTGDLieu_TNCN");
 		req.setAttribute("LHDSDung_HDGTGT", true);
 		req.setAttribute("TCCNPHanh", true);
 
