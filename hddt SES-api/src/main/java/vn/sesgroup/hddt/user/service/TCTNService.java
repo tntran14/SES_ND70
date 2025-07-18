@@ -76,11 +76,8 @@ public class TCTNService {
 		
 		Element elementContent = doc.createElement("TTChung");
 		
-		if(MLTDiep.equals("100")) {
-			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBan1));
-		}else {
-			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBan));
-		}
+		elementContent.appendChild(commons.createElementWithValue(doc, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBanV1));
+
 
 		elementContent.appendChild(commons.createElementWithValue(doc, "MNGui", SystemParams.MSTTCGP));
 		elementContent.appendChild(commons.createElementWithValue(doc, "MNNhan", SystemParams.MSTDVTN));
