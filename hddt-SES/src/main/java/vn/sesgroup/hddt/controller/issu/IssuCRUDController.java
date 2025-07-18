@@ -262,6 +262,7 @@ public class IssuCRUDController extends AbstractController{
 			, CurrentUserProfile cup) throws Exception{
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);	
+			_id = commons.getParameterFromRequest(req, "_id");
 			t = commons.getParameterFromRequest(req, "t");
 			n = commons.getParameterFromRequest(req, "n");
 			a = commons.getParameterFromRequest(req, "a");
@@ -476,6 +477,7 @@ public class IssuCRUDController extends AbstractController{
 		dtoRes = new BaseDTO(req);
 		Msg msg = dtoRes.createMsg(cup, actionCode);
 		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("_id", _id);
 		hData.put("TaxCode", t);
 		hData.put("Name", n);
 		hData.put("Address", a);

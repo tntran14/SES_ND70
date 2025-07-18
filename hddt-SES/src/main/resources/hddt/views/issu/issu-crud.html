@@ -31,7 +31,7 @@
 									<div class="custom-field m-b-16">
 										<div class="c-f__wrapper">
 											<input class="form-control form-control-sm c-f__textbox"
-												type="text" autocomplete="off" th:path="${TaxCode}"th:disabled="${'EDIT' == _action_}"
+												type="text" autocomplete="off" th:path="${TaxCode}"
 												th:readonly="${!_isedit_}" id="t" name="t"
 												th:value="${TaxCode}" required="true" />
 											<div class="input-group-append">
@@ -397,6 +397,7 @@
 
 						</div>
 					</div>
+					<input type="hidden" name="_id" th:value="${_id}" >
 				</form>
 				
 				<script type="text/javascript">
@@ -585,6 +586,7 @@
 
 		function getDataToSave(){
 			var dataPost = {};
+			dataPost['_id'] = $('#f-issu-crud').find('input[name="_id"]').val();
 			dataPost['t'] = $('#f-issu-crud').find('#t').val();	
 			dataPost['n'] = $('#f-issu-crud').find('#n').val();
 			dataPost['a'] = $('#f-issu-crud').find('#a').val();

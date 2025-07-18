@@ -30,8 +30,10 @@ import com.api.message.MsgPage;
 import com.api.message.MsgRsp;
 import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -210,6 +212,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		}
 		String agentId   = "61a328076f5d4d9a6bed2dfa";
 		String actionCode = header.getActionCode();
+		String _id = commons.getTextJsonNode(jsonData.at("/_id"));
 		String t = commons.getTextJsonNode(jsonData.at("/TaxCode")).trim().replaceAll("\\s+", "").replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
 		String n = commons.getTextJsonNode(jsonData.at("/Name"));
 		String a = commons.getTextJsonNode(jsonData.at("/Address"));
@@ -824,9 +827,10 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		case Constants.MSG_ACTION_CODE.MODIFY:
 			objectId = null;
 			objectIdUser = null;
-
+			ObjectId objectIdIssuer = null;
 			try {
 				objectId = new ObjectId(header.getIssuerId());
+				objectIdIssuer = new ObjectId(_id);
 			}catch(Exception ex) {}
 			try {
 				objectIdUser = new ObjectId(header.getUserId());
@@ -884,14 +888,14 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 				);
 				pipeline.add(new Document("$unwind", new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
 					
-			docFind = new Document("TaxCode", t).append("IsDelete", new Document("$ne", true));
+			docFind = new Document("_id", objectIdIssuer).append("IsDelete", new Document("$ne", true));
 			pipeline.add(
 				new Document("$lookup", 
 					new Document("from", "Issuer")
 					.append("pipeline", 
 						Arrays.asList(
 							new Document("$match", docFind),
-							new Document("$project", new Document("_id", 1))
+							new Document("$project", new Document("_id", 1).append("TaxCode", 1))
 						)
 					)
 					.append("as", "Issuer")
@@ -925,6 +929,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			}
 			
 
+			String oldTaxCode = docTmp.getEmbedded(Arrays.asList("Issuer","TaxCode"),"");
 			int abc2 = commons.stringToInteger(acti);
 			if(abc2 == 1) {
 				quyen = true;
@@ -940,45 +945,76 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			Object tt  =  docTmp.get("DMTinhThanhInfo");
 			Object th  =  docTmp.get("DMChiCucThueInfo");
 				
-			mongoClient = cfg.mongoClient();
-		    collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
-		    collection.findOneAndUpdate(docFind,
-		    		new Document("$set", 
-							new Document("TaxCode", t)
-							.append("agentId", agentId)
-							.append("Name", n)
-							.append("Address", a)
-							.append("Phone", p)
-							.append("Fax", f)
-							.append("Email", e)
-							.append("Website", w)			
-							.append("TinhThanhInfo", tt)
-							.append("ChiCucThueInfo", th)
-							.append("MainUser", boss)
-							.append("Position", cv)
-							.append("IsActive", quyen)
-							.append("BankAccount", 
-									new Document("AccountNumber",ac)
-										.append("AccountName", an)
-										.append("BankName", bn)
-								)
-							.append("ContactUser", 
-									new Document("NameUser",ng)
-										.append("PhoneUser", png)
-										.append("EmailUser", eng)
-										.append("EmailUserLh", englh)
-								)
-							.append("InfoUpdated", 
-									new Document("UpdatedDate", LocalDateTime.now())
-										.append("UpdatedUserID", header.getUserId())
-										.append("UpdatedUserName", header.getUserName())
-										.append("UpdatedUserFullName", header.getUserFullName())
-								)
-						),
-					options
-				); 
-		      mongoClient.close();
-			
+			try (MongoClient mongoClient1 = cfg.mongoClient()) {
+			    ClientSession session = mongoClient1.startSession();
+			    session.startTransaction();
+			    try {
+			        MongoDatabase database = mongoClient1.getDatabase(cfg.dbName);
+
+			        // 1. Update Issuer
+			        MongoCollection<Document> issuerCollection = database.getCollection("Issuer");
+			        docFind = new Document("_id", objectIdIssuer)
+			                .append("IsDelete", new Document("$ne", true));
+
+			        issuerCollection.updateOne(session, docFind,
+			            new Document("$set",
+			                new Document("TaxCode", t)
+			                    .append("agentId", agentId)
+			                    .append("Name", n)
+			                    .append("Address", a)
+			                    .append("Phone", p)
+			                    .append("Fax", f)
+			                    .append("Email", e)
+			                    .append("Website", w)
+			                    .append("TinhThanhInfo", tt)
+			                    .append("ChiCucThueInfo", th)
+			                    .append("MainUser", boss)
+			                    .append("Position", cv)
+			                    .append("IsActive", quyen)
+			                    .append("BankAccount",
+			                        new Document("AccountNumber", ac)
+			                            .append("AccountName", an)
+			                            .append("BankName", bn))
+			                    .append("ContactUser",
+			                        new Document("NameUser", ng)
+			                            .append("PhoneUser", png)
+			                            .append("EmailUser", eng)
+			                            .append("EmailUserLh", englh))
+			                    .append("InfoUpdated",
+			                        new Document("UpdatedDate", LocalDateTime.now())
+			                            .append("UpdatedUserID", header.getUserId())
+			                            .append("UpdatedUserName", header.getUserName())
+			                            .append("UpdatedUserFullName", header.getUserFullName())
+			                )
+			            )
+			        );
+
+			        // 2. Update DMDepot
+			        MongoCollection<Document> depotCollection = database.getCollection("DMDepot");
+			        docFind = new Document("TaxCode", oldTaxCode).append("IsDelete", false);
+			        depotCollection.updateOne(session, docFind,
+			                new Document("$set", new Document("TaxCode", t)));
+
+			        // 3. Update Contract
+			        MongoCollection<Document> contractCollection = database.getCollection("Contract");
+			        docFind = new Document("NMUA.TaxCode", oldTaxCode).append("IsDelete", false);
+			        contractCollection.updateMany(session, docFind,
+			                new Document("$set", new Document("NMUA.TaxCode", t)));
+
+			        // Commit transaction
+			        session.commitTransaction();
+
+			    } catch (Exception ex) {
+			        session.abortTransaction();
+			        System.out.println("Error when update tax code, Transaction aborted: " + ex.getMessage());
+			    } finally {
+			        session.close();
+			    }
+
+			} catch (Exception e2) {
+			}
+
+		      	
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
 			rsp.setResponseStatus(responseStatus);				
 			return rsp;		

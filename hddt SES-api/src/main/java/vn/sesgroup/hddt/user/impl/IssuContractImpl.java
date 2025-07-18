@@ -282,38 +282,7 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 //////////////////////////////////////////////////////////////////////////////////////
-		case Constants.MSG_ACTION_CODE.ACTIVE:
-//			objectId = null;
-//			try {
-//				objectId = new ObjectId(_id);
-//			} catch (Exception ex) {
-//			}
-//			/* KIEM TRA THONG TIN HOPDONG CO TON TAI KHONG */
-//			docFind = new Document("_id", objectId);
-//			docTmp = null;
-//			cursor = mongoTemplate.getCollection("Contract").find(docFind);
-//			iter = cursor.iterator();
-//			if (iter.hasNext()) {
-//				docTmp = iter.next();
-//			}
-//			if (null == docTmp) {
-//				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn.");
-//				rsp.setResponseStatus(responseStatus);
-//				return rsp;
-//			}
-//
-//			options = new FindOneAndUpdateOptions();
-//			options.upsert(false);
-//			options.maxTime(5000, TimeUnit.MILLISECONDS);
-//			options.returnDocument(ReturnDocument.AFTER);
-//
-//			mongoTemplate.getCollection("Contract").findOneAndUpdate(docFind,
-//					new Document("$set", new Document("IsActive", true).append("InfoDeleted",
-//							new Document("DeletedDate", LocalDateTime.now()).append("DeletedUserID", header.getUserId())
-//									.append("DeletedUserName", header.getUserName())
-//									.append("DeletedUserFullName", header.getUserFullName()))),
-//					options);
-			
+		case Constants.MSG_ACTION_CODE.ACTIVE:		
 			objectIds = new ArrayList<ObjectId>();
 			try {
 				if (!jsonData.at("/ids").isMissingNode()) {
