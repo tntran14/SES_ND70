@@ -117,9 +117,21 @@ public class ChangeMTDiepImpl extends AbstractDAO implements ChangeMTDiepDAO {
 				docMatchDate.append("$lt", dateTo);
 		}
 
-		Document docMatch = new Document("IssuerId", header.getIssuerId()).append("IsDelete",
-				new Document("$ne", true)).append("EInvoiceStatus",
-						"PROCESSING");
+		Document baseCondition = new Document("IssuerId", header.getIssuerId())
+		        .append("IsDelete", new Document("$ne", true));
+
+		List<Document> orConditions = Arrays.asList(
+		        new Document("EInvoiceStatus", "PROCESSING"),
+		        new Document("$and", Arrays.asList(
+		                new Document("EInvoiceStatus", "ERROR_CQT"),
+		                new Document("LDo.MLoi", 1002)
+		        ))
+		);
+
+		Document docMatch = new Document("$and", Arrays.asList(
+		        baseCondition,
+		        new Document("$or", orConditions)
+		));
 		if (!"".equals(mauSoHdon))
 			docMatch.append("EInvoiceDetail.TTChung.MauSoHD", commons.regexEscapeForMongoQuery(mauSoHdon));
 		if (!"".equals(soHoaDon))
