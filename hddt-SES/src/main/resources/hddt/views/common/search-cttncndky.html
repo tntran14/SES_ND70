@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+	
+<div class="modal-header container-fluid">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-search" name="f-search" method="post" enctype="multipart/form-data" >
+			<div class="row"  >
+				<div class="col-sm-12">
+					<div class="row p-r-0 p-l-0">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="so-chung-tu" name="so-chung-tu" value="" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số chứng từ</label></legend></fieldset>
+									</div>
+								</div>
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox "type="text" id="nv-mst" name="nv-mst" value="" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>MST nhân viên</label></legend></fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>Từ ngày </label></legend>
+										</fieldset>
+									</div>
+								</div>
+								<div class="col-12 custom-field m-b-16">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+										<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="row">
+								<div class="col-12">
+									<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button">
+										<i class="mdi mdi-file-find"></i> <span class="d-none d-md-inline">Tìm kiếm</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row m-b-5 m-t-7" >
+						<div class="col-12 has-min-height-grid">
+							<div id="grid" ></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer p-t-10 p-b-5">
+	<div class="button-group text-right">
+		<button type="button" data-action="select" class="btn btn-sm btn-primary" ><i class="mdi mdi-check-bold"> </i> Chọn</button>
+		<button type="button" class="btn btn-sm btn-outline-secondary " data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>
+	</div>
+</div>
+<script type="text/javascript">
+	var _gridMainSearch = $('#f-search').find('#grid');
+	$(function(){
+		if($('#f-search').find('#from-date').length > 0)
+			dateInputFormat($('#f-search').find('#from-date'));
+		if($('#f-search').find('#to-date').length > 0)
+			dateInputFormat($('#f-search').find('#to-date'));
+		
+		_gridMainSearch.kendoGrid({
+			dataSource: new kendo.data.DataSource({
+				transport: {
+					read: {
+						type: 'POST',
+						url: ROOT_PATH + '/common/list-cttncn-signed',
+	                    dataType: 'json',
+	                    data: function(){return getDataSearchPopup();},
+	                    beforeSend: function(req){
+	                    	initAjaxJsonGridRequest(req);
+	                	},
+					}
+				},
+				requestEnd: function (e) {
+	               	if (e.type === "read" && e.response) {
+	               		if(e.response.errorCode == 0){
+	               		}else{
+	               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
+	               		}
+	               	}
+	           	},
+	            schema: {
+					data: "rows",
+	                total: "total",
+	                model: {
+						fields: {
+						}
+					}
+				},
+				pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+				serverPaging: true,
+				serverSorting: true,
+	           	serverFiltering: true,
+	           	change: function(e) {
+	            },
+			}),
+			selectable: false, scrollable: true, 
+	 		sortable: {mode: "single", allowUnsort: true},
+			sortable: true,
+//	 		filterable: { mode: "row"},
+			filterable: false, resizable: true,
+			serverSorting: false,
+//			height: kendoGridHeight,
+			pageable: {
+				refresh: true,
+				pageSizes: true,
+				buttonCount: KENDOUI_BUTTONCOUNT,
+				messages: {
+					itemsPerPage: kendoGridMessages.itemsPerPage,
+					previous: kendoGridMessages.previous,
+					next: kendoGridMessages.next,
+					refresh: kendoGridMessages.refresh,
+					last: kendoGridMessages.last,
+					first: kendoGridMessages.first,
+					empty: kendoGridMessages.empty,
+					display: kendoGridMessages.display
+				},
+				pageSizes: KENDOUI_PAGESIZES,
+				numeric: true
+			},
+			dataBinding: function () {
+	            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+	        },
+			columns: [
+				{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+	  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+	  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
+	  			},
+	  			{field: 'isCheck', title: '', width: '40px', encoded: false, headerTemplate: '<input type="checkbox" class="Check-All checkbox-in-grid"/>',
+	  				attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false, 
+	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+	  				, template:'<input type="checkbox" class="Check-Item checkbox-in-grid"/>'
+	  			},
+
+				{field: 'SCTu', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số chứng từ</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+	  			{field: 'KHCTu', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ký hiệu chứng từ</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				{field: 'MSCTu', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số chứng từ</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				
+	  			{field: 'NLap', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày lập</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				{field: 'Code', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã nhân viên</a>',
+					attributes: {'class': 'table-cell text-left'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				{field: 'MST', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				{field: 'Name', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Họ và tên</a>',
+					attributes: {'class': 'table-cell text-left'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				},
+				{field: 'CCCD', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số CCCD</a>',
+					attributes: {'class': 'table-cell text-center'}, sortable: false, 
+					headerAttributes: {'class': 'table-header-cell text-center'},
+				}
+			]
+		});
+		
+		_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').undelegate('input[type="checkbox"].Check-All', 'click');
+		_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').delegate('input[type="checkbox"].Check-All', 'click', function(e){
+			var $obj = $(this);
+			var isCheck = $obj.prop('checked');
+			
+			_gridMainSearch.find('div.k-grid-content tbody input[type="checkbox"].Check-Item').prop('checked', isCheck);
+			var arrRow = _gridMainSearch.find('table[role="grid"]').find('tbody tr').find("input[type='checkbox'].Check-Item");
+			if(isCheck){
+				_gridMainSearch.find('table[role="grid"]').find('tbody tr').addClass("k-state-selected")
+			}else{
+				_gridMainSearch.find('table[role="grid"]').find('tbody tr').removeClass("k-state-selected")
+			}
+		});
+		
+		_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"].Check-Item', 'click');
+		_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').delegate('input[type="checkbox"].Check-Item', 'click', function(e){
+			var $obj = $(this);
+			var isCheck = $obj.prop('checked');
+			if(isCheck){
+				$obj.closest("tr").addClass("k-state-selected");
+			}else{
+				$obj.closest("tr").removeClass("k-state-selected");
+			}
+			_gridMainSearch.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMainSearch.find('tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+		});
+		
+		$("#f-search").find('button[data-action]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			var dataAction = $(this).data('action');
+			
+			switch (dataAction) {
+			case 'search':
+				_gridMainSearch.data("kendoGrid").dataSource.page(1);
+				break;
+
+			default:
+				break;
+			}
+		});
+		
+		$('div.modal-footer').find('button[data-action="select"]').click(function (event) {
+			event.preventDefault();/*event.stopPropagation();*/
+			
+			var arrayDataSelect = [];
+			var rowData = null;
+			var checkRows = _gridMainSearch.find(' tbody tr input[type="checkbox"]:checked');
+			checkRows.each(function(i, v) {
+				rowData = _gridMainSearch.data("kendoGrid").dataItem(_gridMainSearch.find(' tbody tr').eq($(checkRows[i].closest("tr")).index()));
+				arrayDataSelect.push(rowData);
+			});
+			if(callback) callback(arrayDataSelect);
+			$('#f-search').closest("div.modal").modal("hide");
+			$('#f-search').closest("div.modal").find('.modal-content').empty();
+		});
+		
+	});
+
+	function getDataSearchPopup(){
+		var dataPost = {};
+		dataPost['so-chung-tu'] = $('#f-search #so-chung-tu').val() == null? '': $('#f-search #so-chung-tu').val();
+		dataPost['from-date'] = $('#f-search #from-date').val() == null? '': $('#f-search #from-date').val();
+		dataPost['to-date'] = $('#f-search #to-date').val() == null? '': $('#f-search #to-date').val();
+		dataPost['nv-mst'] = $('#f-search #nv-mst').val() == null? '': $('#f-search #nv-mst').val();
+		return dataPost;
+	}
+</script>
+</html>

@@ -28,6 +28,7 @@ public interface CommonDAO {
 	public FileInfo einvoice1Xml(JSONRoot jsonRoot)throws Exception;
 	public FileInfo printEinvoice1All(JSONRoot jsonRoot)throws Exception;
 	public FileInfo print04(JSONRoot jsonRoot)throws Exception;
+	public FileInfo print04CTDT(JSONRoot jsonRoot)throws Exception;
 	public FileInfo viewpdftncn(JSONRoot jsonRoot)throws Exception;
 	public FileInfo viewpdfcttncn(JSONRoot jsonRoot)throws Exception;
 	public FileInfo getXml(JSONRoot jsonRoot)throws Exception;

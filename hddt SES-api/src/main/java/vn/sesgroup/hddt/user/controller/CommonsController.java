@@ -273,6 +273,19 @@ public class CommonsController {
 		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
 				.body(SerializationUtils.serialize(fileInfo));
 	}
+	
+	@RequestMapping(value = "//print04-ctdt", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	public ResponseEntity<?> print04CTDT(@RequestBody JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = dao.print04CTDT(jsonRoot);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "print04.pdf");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
 
 	// Print PXKDL
 	@RequestMapping(value = "/print-agent", method = RequestMethod.POST, consumes = {

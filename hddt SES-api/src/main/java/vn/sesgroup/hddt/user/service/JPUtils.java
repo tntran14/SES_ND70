@@ -5599,4 +5599,91 @@ else {
 				exporter.exportReport();
 				return out;
 			}
+			
+			public ByteArrayOutputStream print04CTDT(File fileJP, Document doc) throws Exception {
+				Map<String, Object> reportParams = new HashMap();
+				List<HashMap<String, Object>> arrayData = new ArrayList();
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				
+				Node nodeDLTBao = (Node) xPath.evaluate("/TBao/DLTBao", doc, XPathConstants.NODE);
+				String ltbao = "";
+				if (nodeDLTBao != null) {
+					String cqtqly = commons.getTextFromNodeXML((Element) xPath.evaluate("TCQT", nodeDLTBao, XPathConstants.NODE));
+			        String ttchuc = commons.getTextFromNodeXML((Element) xPath.evaluate("TNNT", nodeDLTBao, XPathConstants.NODE));
+			        String msthue = commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeDLTBao, XPathConstants.NODE));
+			        String loai = commons.getTextFromNodeXML((Element) xPath.evaluate("Loai", nodeDLTBao, XPathConstants.NODE));
+			        
+			        reportParams.put("CQTQLy", cqtqly);
+			        reportParams.put("TTChuc", ttchuc);
+			        reportParams.put("MSThue", msthue);
+			        String NLap = commons.getTextFromNodeXML((Element) xPath.evaluate("NTBao", nodeDLTBao, XPathConstants.NODE));
+					if (NLap !=null) {
+						LocalDate date = LocalDate.parse(NLap);
+				        int day = date.getDayOfMonth();
+				        int month = date.getMonthValue();
+				        int year = date.getYear();
+				        reportParams.put("Day", String.valueOf(day));
+				        reportParams.put("Month", String.valueOf(month));
+				        reportParams.put("Year", String.valueOf(year));
+					}
+					ltbao = Constants.MAP_LOAITB_CTTNCNSS.get(loai);
+				}
+				
+				HashMap<String, Object> hItem = null;
+				NodeList nodeCTus = (NodeList) xPath.evaluate("/TBao/DLTBao/DSCTu/CTu", doc, XPathConstants.NODESET);
+				for (int i = 0; i < nodeCTus.getLength(); i++) {
+				 Node nodeCTu = nodeCTus.item(i);
+					hItem = new HashMap();
+					hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeCTu, XPathConstants.NODE)));
+					hItem.put("KHMSCTu", commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSCTu", nodeCTu, XPathConstants.NODE)));
+					hItem.put("KHCTu", commons.getTextFromNodeXML((Element) xPath.evaluate("KHCTu", nodeCTu, XPathConstants.NODE)));
+					hItem.put("SCTu", commons.getTextFromNodeXML((Element) xPath.evaluate("SCTu", nodeCTu, XPathConstants.NODE)));
+			        String nlap = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeCTu, XPathConstants.NODE));
+					hItem.put("NLCTu", commons.convertLocalDateTimeStringToString(nlap, "yyyy-MM-dd",
+							Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					hItem.put("LCTu", "Chứng từ điện tử khấu trừ thuế TNCN theo Nghị định 70");
+					hItem.put("LoaiTB", ltbao);
+					hItem.put("LDo", commons.getTextFromNodeXML((Element) xPath.evaluate("LDo", nodeCTu, XPathConstants.NODE)));
+					arrayData.add(hItem);
+				}
+				
+				
+				Node nodeDSCKS = (Node) xPath.evaluate("/TBao/DSCKS/NNT", doc, XPathConstants.NODE);
+				Node nodeSignature = null;
+				if (null != nodeDSCKS)
+					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
+				if(null == nodeSignature) {
+					reportParams.put("SignDesc", "Chưa ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+				} else {
+					reportParams.put("SignDesc", "Đã ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
+					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
+					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
+					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
+					LocalDateTime dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					reportParams.put("SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
+					reportParams.put("SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+				}
+				
+				JRDataSource jds = new JRBeanCollectionDataSource(arrayData);
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				JasperReport jr =  null;
+				JasperPrint jp = null;
+				try {
+					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
+					jp = JasperFillManager.fillReport(jr, reportParams, jds);
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				Exporter exporter = new JRPdfExporter();
+				exporter.setExporterInput(new SimpleExporterInput(jp));
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+				
+				SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+				configuration.setCreatingBatchModeBookmarks(true);
+				exporter.setConfiguration(configuration);
+				exporter.exportReport();
+				return out;
+			}
 }

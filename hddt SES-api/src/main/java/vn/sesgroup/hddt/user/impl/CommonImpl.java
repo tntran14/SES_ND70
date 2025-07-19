@@ -5943,4 +5943,51 @@ try {
 
 			return fileInfo;
 		}
+
+		@Override
+		public FileInfo print04CTDT(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+			Msg msg = jsonRoot.getMsg();
+			Object objData = msg.getObjData();
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+				String _id = this.commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+				ObjectId objectId = null;
+
+				try {
+					objectId = new ObjectId(_id);
+				} catch (Exception e) {
+				}
+
+				List<Document> pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$match",
+						(new Document("_id", objectId)).append("IsDelete", new Document("$ne", true))));
+				Document docTmp = null;
+				Iterable<Document> cursor = this.mongoTemplate.getCollection("CTTNCNhanSS").aggregate(pipeline)
+						.allowDiskUse(true);
+				Iterator<Document> iter = cursor.iterator();
+				if (iter.hasNext()) {
+					docTmp = (Document) iter.next();
+				}
+
+				String fileName = _id + "_signed.xml";
+				String dir = (String) docTmp.get("Dir", "");
+				File file = new File(dir, fileName);
+				if (file.exists() && file.isFile()) {
+					org.w3c.dom.Document doc = this.commons.fileToDocument(file);
+					String fileNameJP = "04SS-CTDT.jrxml";
+					File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+					ByteArrayOutputStream baosPDF = null;
+					baosPDF = this.jpUtils.print04CTDT(fileJP, doc);
+					fileInfo.setFileName("print04-ctdt.pdf");
+					fileInfo.setContentFile(baosPDF.toByteArray());
+					return fileInfo;
+				} else {
+					return new FileInfo();
+				}
+			} else {
+				return new FileInfo();
+			}
+		}
 }

@@ -1073,7 +1073,76 @@ public class CommonController extends AbstractController{
 			}
 		}
 	
-	
+		@RequestMapping(value = { "/common/print04-ctdt/{_id}" }, method = {
+				RequestMethod.POST, RequestMethod.GET })
+		public void print04CTDT(Locale locale, HttpServletRequest req, HttpServletResponse resp, HttpSession session,
+				@PathVariable(value = "_id") String _id) throws Exception {
+			PrintWriter writer = null;
+			_id = _id.replaceAll("\\s", "");
+			if ("".equals(_id) || null == _id) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Không tìm thấy thông tin mẫu chứng từ sai sót.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+			BaseDTO dto = new BaseDTO();
+
+			dto = new BaseDTO(req);
+			Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
+			HashMap<String, Object> hData = new HashMap<>();
+			hData.put("_id", _id);
+
+			msg.setObjData(hData);
+			JSONRoot root = new JSONRoot(msg);
+
+			FileInfo fileInfo = restAPI.callAPIGetFileInfo("/commons/print04-ctdt", cup.getLoginRes().getToken(),
+					HttpMethod.POST, root);
+			if (null == fileInfo || null == fileInfo.getContentFile()) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Xem mẫu chứng từ sai sót không thành công.");
+				writer.flush();
+				writer.close();
+				return;
+			}
+
+			String type = "application/pdf";
+			InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
+			resp.setHeader("Content-Type", type);
+
+			resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+			resp.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+			resp.setHeader("Expires", "0"); // Proxies.
+
+			int bufferSize = 1024;
+			resp.setContentType(type);
+			final byte[] buffer = new byte[bufferSize];
+			int bytesRead = 0;
+			OutputStream out = null;
+			try {
+				out = resp.getOutputStream();
+				long totalWritten = 0;
+				while ((bytesRead = inputStream.read(buffer)) > 0) {
+					out.write(buffer, 0, bytesRead);
+					totalWritten += bytesRead;
+					if (totalWritten >= buffer.length) {
+						out.flush();
+					}
+				}
+			} finally {
+				tryToCloseStream(out);
+				tryToCloseStream(inputStream);
+			}
+
+		}
 	
 	@RequestMapping(
 			value = {"/common/print04/{_id}", "/common/print04-convert/{_id}"}

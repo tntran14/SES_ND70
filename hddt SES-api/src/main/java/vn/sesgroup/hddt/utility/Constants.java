@@ -104,6 +104,12 @@ public class Constants {
 		
 	};
 	
+	public static final HashMap<String, String> MAP_CTTNCN_TCTBAO = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = 1L;
+		{put("1", "Thay thế");}
+		{put("2", "Điều chỉnh");}
+	};
+	
 	public static final class TEMPLATE_FILE_NAME {
 		public static final String IMG_SIGNATURE_INVALID = "signature-invalid.png";
 		public static final String IMG_SIGNATURE_VALID = "signature-valid.png";
@@ -180,9 +186,16 @@ public class Constants {
 		{put("5", "Hóa đơn theo nghị định số 123/2020/NĐ-CP");}
 		{put("6", "Hóa đơn Phiếu xuất kho(Kiêm vận chuyển nội bộ - Hàng gửi bán đại lý điện tử");}
 	};
+	
 	public static final LinkedHashMap<String, String> MAP_LOAITB_HDSS = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("1", "Thông báo của NNT");}
+		{put("2", "Giải trình của NNT theo thông báo của CQT");}
+	};
+	
+	public static final LinkedHashMap<String, String> MAP_LOAITB_CTTNCNSS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("1", "NNT thông báo");}
 		{put("2", "Giải trình của NNT theo thông báo của CQT");}
 	};
 }
