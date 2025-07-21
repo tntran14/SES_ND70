@@ -83,7 +83,7 @@ public class TBHDSSotSendMailController extends AbstractController{
 		msg.setObjData(hData);
 		String cqt = "";
 		String ms="";
-		String tctb = "";
+//		String tctb = "";
 		String shd = "";
 		String lido ="";
 		JSONRoot root = new JSONRoot(msg);
@@ -97,7 +97,7 @@ public class TBHDSSotSendMailController extends AbstractController{
 					hItem = new LinkedHashMap<String, String>();
 					 cqt =  commons.getTextJsonNode(o.at("/MCQTCap"));
 					 ms =  commons.getTextJsonNode(o.at("/KHMSHDon")) +commons.getTextJsonNode(o.at("/KHHDon"));
-					 tctb =  commons.getTextJsonNode(o.at("/TCTBao"));
+//					 tctb =  commons.getTextJsonNode(o.at("/TCTBao"));
 					 shd =  commons.getTextJsonNode(o.at("/SHDon"));
 					 lido =  commons.getTextJsonNode(o.at("/LDo"));
 					
@@ -162,13 +162,13 @@ public class TBHDSSotSendMailController extends AbstractController{
 				_tmp += commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").doubleValue());
 		
 			LocalDate ngay = commons.convertStringToLocalDate(LocalDate.now().toString(), "yyyy-MM-dd");
-			TCTBao = commons.getTextJsonNode(jsonData.at("/HDSS/TCTBao"));
-			 tctb = Constants.MAP_HDSS_TCTBAO.get(tctb);
+//			TCTBao = commons.getTextJsonNode(jsonData.at("/HDSS/TCTBao"));
+//			 tctb = Constants.MAP_HDSS_TCTBAO.get(tctb);
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + shd + "</span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + ms + "</span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+cqt +" </span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Thời gian: "+ngay+"</span></p>\n");
+//			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
+			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Thời gian: "+ngay+"</span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
 			sb.append("<hr style='margin: 5px 0 5px 0;'>");
 			sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");

@@ -291,15 +291,7 @@ public class TBHDSSotCRUDController extends AbstractController{
 		}
 	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	private void inquiry(CurrentUserProfile cup, Locale locale, HttpServletRequest req, HttpSession session, String _id , String action) throws Exception{
 		if("".equals(_id)) {
 			errorCode = "NOT FOUND";
@@ -367,10 +359,10 @@ public class TBHDSSotCRUDController extends AbstractController{
 					hItem.put("MCQTCap", commons.getTextJsonNode(o.at("/MCQTCap")));
 					if("SIGN".equals(action) || "DETAIL".equals(action)) {
 						hItem.put("LADHDDT", Constants.MAP_HDSS_LOAI_AD_HDDT.get(commons.getTextJsonNode(o.at("/LADHDDT"))));
-						hItem.put("TCTBao", Constants.MAP_HDSS_TCTBAO.get(commons.getTextJsonNode(o.at("/TCTBao"))));	
+//						hItem.put("TCTBao", Constants.MAP_HDSS_TCTBAO.get(commons.getTextJsonNode(o.at("/TCTBao"))));	
 					}else {
 						hItem.put("LADHDDT", commons.getTextJsonNode(o.at("/LADHDDT")));
-						hItem.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
+//						hItem.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
 					}
 					
 					
@@ -515,7 +507,7 @@ public class TBHDSSotCRUDController extends AbstractController{
 		while(count < jsonNodeTmp.size() && check) {
 			jsonNode = jsonNodeTmp.get(count);
 			if("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap")))
-				|| "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
+//				|| "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
 				|| "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll("\\s+", " "))
 			) {
 				check = false;
@@ -586,7 +578,7 @@ public class TBHDSSotCRUDController extends AbstractController{
 		while(count < jsonNodeTmp.size() && check) {
 			jsonNode = jsonNodeTmp.get(count);
 			if("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap")))
-				|| "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
+//				|| "|1|2|3|4|".indexOf("|" + commons.getTextJsonNode(jsonNode.at("/TCTBao")) + "|") == -1
 				|| "".equals(commons.getTextJsonNode(jsonNode.at("/LDo")).trim().replaceAll("\\s+", " "))
 			) {
 				check = false;

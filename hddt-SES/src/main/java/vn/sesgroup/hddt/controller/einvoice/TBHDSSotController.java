@@ -176,12 +176,12 @@ public class TBHDSSotController extends AbstractController{
 				rows = jsonData.at("/rows");
 				for(JsonNode row: rows) {
 					hItem = new HashMap<String, String>();
-					for(JsonNode o: row.at("/DSHDon")) {
+//					for(JsonNode o: row.at("/DSHDon")) {
+//						
+//						tctb = commons.getTextJsonNode(o.at("/TCTBao"));
+//						}
 						
-						tctb = commons.getTextJsonNode(o.at("/TCTBao"));
-						}
-						
-					hItem.put("TChat", Constants.MAP_HDSS_TCTBAO.get(tctb));
+//					hItem.put("TChat", Constants.MAP_HDSS_TCTBAO.get(tctb));
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
 					hItem.put("Status", commons.getTextJsonNode(row.at("/Status")));
 					hItem.put("StatusDesc", Constants.MAP_HDSS_STATUS.get(commons.getTextJsonNode(row.at("/Status"))));
