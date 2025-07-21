@@ -250,7 +250,10 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				boolean isThayThe = false;
 				String check_status = docTmp.get("EInvoiceStatus", "");
 				if (check_status.equals("REPLACED")) {
-					isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+					isThayThe = true;
+				}
+				if (check_status.equals("ADJUSTED")) {
+					isDieuChinh = true;
 				}
 
 				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");

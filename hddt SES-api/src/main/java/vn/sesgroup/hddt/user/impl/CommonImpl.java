@@ -659,12 +659,16 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				return new FileInfo();
 			}
 
-			boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+			boolean isDieuChinh = false;
 			boolean isThayThe = false;
 			String check_status = docTmp.get("EInvoiceStatus", "");
 			if (check_status.equals("REPLACED")) {
-				isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+				isThayThe = true;
 			}
+			if (check_status.equals("ADJUSTED")) {
+				isDieuChinh = true;
+			}
+
 			String ParamUSD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "ParamUSD"), "");
 			String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
 			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
@@ -1727,7 +1731,13 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 
 			boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
 			boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
-
+			String check_status = docTmp.get("EInvoiceStatus", "");
+			if (check_status.equals("REPLACED")) {
+				isThayThe = true;
+			}
+			if (check_status.equals("ADJUSTED")) {
+				isDieuChinh = true;
+			}
 			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 			String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
 			String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"), "");
@@ -2100,7 +2110,13 @@ try {
 
 		boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
 		boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
-
+		String check_status = docTmp.get("EInvoiceStatus", "");
+		if (check_status.equals("REPLACED")) {
+			isThayThe = true;
+		}
+		if (check_status.equals("ADJUSTED")) {
+			isDieuChinh = true;
+		}
 		String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 		String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
 		String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"), "");
@@ -2240,11 +2256,14 @@ try {
 			return new FileInfo();
 		}
 
-		boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+		boolean isDieuChinh = false;
 		boolean isThayThe = false;
 		String check_status = docTmp.get("EInvoiceStatus", "");
 		if (check_status.equals("REPLACED")) {
-			isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+			isThayThe = true;
+		}
+		if (check_status.equals("ADJUSTED")) {
+			isDieuChinh = true;
 		}
 
 		String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
@@ -2999,6 +3018,13 @@ try {
 				String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
 				boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
 				boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+				String check_status = docTmp.get("EInvoiceStatus", "");
+				if (check_status.equals("REPLACED")) {
+					isThayThe = true;
+				}
+				if (check_status.equals("ADJUSTED")) {
+					isDieuChinh = true;
+				}
 				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
 				String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
@@ -3800,6 +3826,13 @@ try {
 
 			boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
 			boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+			String check_status = docTmp.get("EInvoiceStatus", "");
+			if (check_status.equals("REPLACED")) {
+				isThayThe = true;
+			}
+			if (check_status.equals("ADJUSTED")) {
+				isDieuChinh = true;
+			}
 			String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
 			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 			String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
