@@ -253,7 +253,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 					elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(commons.getTextJsonNode(o.at("/SHDon")))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", NgayHDon));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", commons.getTextJsonNode(o.at("/TCTBao"))));
+//					elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", commons.getTextJsonNode(o.at("/TCTBao"))));
 					elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", commons.getTextJsonNode(o.at("/LDo"))));
 					
 					elementSubContent.appendChild(elementTmp);
@@ -266,7 +266,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 					hItem02.put("SHDon", String.valueOf(commons.getTextJsonNode(o.at("/SHDon"))));
 					hItem02.put("Ngay", NgayHDon);
 					hItem02.put("LADHDDT", "1");
-					hItem02.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
+//					hItem02.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
 					hItem02.put("LDo", commons.getTextJsonNode(o.at("/LDo")));
 					
 					listDSHDon.add(hItem02);
@@ -477,7 +477,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				elementTmp.appendChild(commons.createElementWithValue(doc, "SHDon", String.valueOf(commons.getTextJsonNode(o.at("/SHDon")))));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "Ngay", NgayHDon));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "LADHDDT", "1"));
-				elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", commons.getTextJsonNode(o.at("/TCTBao"))));
+//				elementTmp.appendChild(commons.createElementWithValue(doc, "TCTBao", commons.getTextJsonNode(o.at("/TCTBao"))));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "LDo", commons.getTextJsonNode(o.at("/LDo"))));
 				
 				elementSubContent.appendChild(elementTmp);
@@ -490,7 +490,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				hItem02.put("SHDon", String.valueOf(commons.getTextJsonNode(o.at("/SHDon"))));
 				hItem02.put("Ngay", NgayHDon);
 				hItem02.put("LADHDDT", "1");
-				hItem02.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
+//				hItem02.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
 				hItem02.put("LDo", commons.getTextJsonNode(o.at("/LDo")));
 				
 				listDSHDon.add(hItem02);
@@ -504,6 +504,33 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 			if(!isSaveFile) {
 				throw new Exception("Lưu dữ liệu không thành công.");
 			}
+			
+			docUpsert = new Document("IssuerId", header.getIssuerId())
+					.append("PBan", SystemParams.VERSION_XML)
+					.append("MSo", "04/SS-HĐĐT")
+					.append("Ten", "Thông báo hóa đơn điện tử có sai sót")
+					.append("Loai", loaiThongBao)
+					.append("MCQT", docTmp.getEmbedded(Arrays.asList("ChiCucThueInfo", "code"), ""))
+						.append("TCQT", docTmp.getEmbedded(Arrays.asList("ChiCucThueInfo", "name"), ""))
+						.append("TNNT", docTmp.get("Name", ""))
+						.append("MST", docTmp.get("TaxCode", ""))
+						.append("DDanh", docTmp.getEmbedded(Arrays.asList("TinhThanhInfo", "name"), ""))
+						.append("NTBao", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd"))
+						.append("NTBaoDate", LocalDate.now())
+						.append("DSHDon", listDSHDon)
+						.append("Dir", pathDir)
+						.append("FileNameXML", fileNameXML)
+						.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+						.append("Status", Constants.INVOICE_STATUS.CREATED)
+						.append("IsDelete", false)
+						.append("TinhThanhInfo", docTmp.get("TinhThanhInfo"))
+						.append("ChiCucThueInfo", docTmp.get("ChiCucThueInfo"))	
+						.append("InfoUpdated", 
+								new Document("UpdatedDate", LocalDateTime.now())
+								.append("UpdatedUserID", header.getUserId())
+								.append("UpdatedUserName", header.getUserName())
+								.append("UpdatedUserFullName", header.getUserFullName())
+								);
 			if("2".equals(loaiThongBao)) {
 				docUpsert.append("So", soTBcuaCQT);
 				docUpsert.append("NTBCCQT", commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(ngayTBcuaCQT, Constants.FORMAT_DATE.FORMAT_DATE_WEB), "yyyy-MM-dd"));
@@ -519,36 +546,8 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 			mongoClient = cfg.mongoClient();
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceHDSSTBN");
 			collection.findOneAndUpdate(docFind,
-				  new Document("$set",
-						  new Document("IssuerId", header.getIssuerId())
-							.append("PBan", SystemParams.VERSION_XML)
-							.append("MSo", "04/SS-HĐĐT")
-							.append("Ten", "Thông báo hóa đơn điện tử có sai sót")
-							.append("Loai", loaiThongBao)
-							.append("MCQT", docTmp.getEmbedded(Arrays.asList("ChiCucThueInfo", "code"), ""))
-								.append("TCQT", docTmp.getEmbedded(Arrays.asList("ChiCucThueInfo", "name"), ""))
-								.append("TNNT", docTmp.get("Name", ""))
-								.append("MST", docTmp.get("TaxCode", ""))
-								.append("DDanh", docTmp.getEmbedded(Arrays.asList("TinhThanhInfo", "name"), ""))
-								.append("NTBao", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd"))
-								.append("NTBaoDate", LocalDate.now())
-								.append("DSHDon", listDSHDon)
-								.append("Dir", pathDir)
-								.append("FileNameXML", fileNameXML)
-								.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
-								.append("Status", Constants.INVOICE_STATUS.CREATED)
-								.append("IsDelete", false)
-								.append("TinhThanhInfo", docTmp.get("TinhThanhInfo"))
-								.append("ChiCucThueInfo", docTmp.get("ChiCucThueInfo"))	
-								.append("InfoUpdated", 
-										new Document("UpdatedDate", LocalDateTime.now())
-										.append("UpdatedUserID", header.getUserId())
-										.append("UpdatedUserName", header.getUserName())
-										.append("UpdatedUserFullName", header.getUserFullName())
-										)
-									), 
-									options
-								);	 
+										new Document("$set", docUpsert), 
+										options);	 
 			  mongoClient.close();
 				
 			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -1329,11 +1328,8 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 				/*CAP NHAT LAI TRANG THAI CAC HD LIEN QUAN*/
 				
 				if(TTTNCCQT.equals("1")) {
-				String TCTBao = "";
 				
-				for(Document doc: docTmp.getList("DSHDon", Document.class)) {
-					TCTBao = doc.get("TCTBao", "");
-								
+				for(Document doc: docTmp.getList("DSHDon", Document.class)) {		
 					String KHMSHDon = doc.get("KHMSHDon", "");
 					String KHHDon = doc.get("KHHDon", "");
 					String Ngay = doc.get("Ngay", "");
@@ -1342,7 +1338,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 											
 					Document insertHD = new Document("IssuerId", header.getIssuerId())
 							.append("SignStatusCode", "SIDED")
-							.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
+							.append("EInvoiceStatus", "COMPLETE")
 							.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 									.append("KHHDon", KHHDon)
 									.append("NLap", date)
@@ -1350,9 +1346,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 									))
 							.append("IsDelete", false)
 							.append("MCCQT", doc.get("MCQTCap", ""))
-							.append("HDSS", new Document("TCTBao", TCTBao)
-									.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
-									.append("LDo", doc.get("LDo", "")))
+							.append("HDSS", new Document("LDo", doc.get("LDo", "")))
 							.append("InfoCreated", 
 									new Document("CreateDate", LocalDateTime.now())
 									.append("CreateUserID", header.getUserId())
@@ -1464,12 +1458,12 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 		
 		//MA 301--------------------------------
 		else if("301".equals(CQT_MLTDiep)){	
+			String maLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MLoi", nodeTDiep, XPathConstants.NODE));
+			String moTaLoi = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/KHLKhac/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
 			
-			if(TTTNCCQT.equals("1")){			
-			String TCTBao = "";
+			if (maLoi == null || maLoi.equals("")) {
 			
 			for(Document doc: docTmp.getList("DSHDon", Document.class)) {
-				TCTBao = doc.get("TCTBao", "");
 		
 				String KHMSHDon = doc.get("KHMSHDon", "");
 				String KHHDon = doc.get("KHHDon", "");
@@ -1480,7 +1474,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 										
 				Document insertHD = new Document("IssuerId", header.getIssuerId())
 						.append("SignStatusCode", "SIDED")
-						.append("EInvoiceStatus", Constants.MAP_EInvoiceStatus_TBN.get(TCTBao))
+						.append("EInvoiceStatus", "COMPLETE")
 						.append("EInvoiceDetail", new Document("TTChung", new Document("KHMSHDon", KHMSHDon)
 								.append("KHHDon", KHHDon)
 								.append("NLap", date)
@@ -1488,9 +1482,7 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 								))
 						.append("IsDelete", false)
 						.append("MCCQT", doc.get("MCQTCap", ""))
-						.append("HDSS", new Document("TCTBao", TCTBao)
-								.append("TCTBaoDesc", Constants.MAP_HDSS_TCTBAO.get(TCTBao))
-								.append("LDo", doc.get("LDo", "")))
+						.append("HDSS", new Document("LDo", doc.get("LDo", "")))
 						.append("InfoCreated", 
 								new Document("CreateDate", LocalDateTime.now())
 								.append("CreateUserID", header.getUserId())
@@ -1532,8 +1524,8 @@ public class TBHDSSotTBNImpl extends AbstractDAO implements TBHDSSotTBNDAO{
 		} else /* if(TTTNCCQT.equals("2")) */{
 			
 			hItem = new HashMap<String, String>();
-			hItem.put("MLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MLoi", nodeTDiep, XPathConstants.NODE)));
-			hItem.put("MTLoi", commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/DSHDon/HDon/DSLDKTNhan/LDo/MTa", nodeTDiep, XPathConstants.NODE)));
+			hItem.put("MLoi", maLoi);
+			hItem.put("MTLoi", moTaLoi);
 			DSLoi.add(hItem);
 		
 		/*CAP NHAT TRANG THAI COMPLETE - TRANG THAI CQT*/
