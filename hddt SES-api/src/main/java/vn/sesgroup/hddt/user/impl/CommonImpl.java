@@ -5037,6 +5037,13 @@ try {
 
 			boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
 			boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+            String check_status = docTmp.get("EInvoiceStatus", "");
+            if (check_status.equals("REPLACED")) {
+                isThayThe = true;
+            }
+            if (check_status.equals("ADJUSTED")) {
+                isDieuChinh = true;
+            }
 			String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
 			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 			String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
