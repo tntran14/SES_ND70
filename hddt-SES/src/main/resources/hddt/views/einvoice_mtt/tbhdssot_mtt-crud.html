@@ -239,10 +239,10 @@
 					attributes: {'class': 'table-cell text-left'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("LADHDDT", data) #'
 				},
-				{field: 'TCTBao', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tính chất<br>thông báo</a>',
-					attributes: {'class': 'table-cell text-left'}, headerAttributes: {'class': 'table-header-cell text-center'},
-					template: '#= window.setTemplateForGrid("TCTBao", data) #'
-				},
+// 				{field: 'TCTBao', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tính chất<br>thông báo</a>',
+// 					attributes: {'class': 'table-cell text-left'}, headerAttributes: {'class': 'table-header-cell text-center'},
+// 					template: '#= window.setTemplateForGrid("TCTBao", data) #'
+// 				},
 				{field: 'LDo', title: '', width: '230px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Lý do</a>',
 					attributes: {'class': 'table-cell text-left'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("LDo", data) #'
@@ -638,15 +638,15 @@
 		case 'LDo':
 			text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm" >';
 			break;
-		case 'TCTBao':
-			text += '<select class="input-grid form-control form-control-sm"  name="' + key + '" style="height: 100%;" >';
-			text += '<option value="" ></option>';
-			$.each(objTCTBao, function(k, v){
-				if('|2|3|4|'.indexOf(k) != -1)
-					text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + '>' + v + '</option>';
-			});
-			text += '</select>';
-			break;
+// 		case 'TCTBao':
+// 			text += '<select class="input-grid form-control form-control-sm"  name="' + key + '" style="height: 100%;" >';
+// 			text += '<option value="" ></option>';
+// 			$.each(objTCTBao, function(k, v){
+// 				if('|2|3|4|'.indexOf(k) != -1)
+// 					text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + '>' + v + '</option>';
+// 			});
+// 			text += '</select>';
+// 			break;
 		case 'LADHDDT':
 			if('' == _valTmp) _valTmp = '1';
 			
@@ -678,7 +678,7 @@
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 		jQuery.each(objDataJson, function(index, item) {
 			obj = {'MCQTCap': item['MCQTCap']};
-			obj['TCTBao'] = undefined == item['TCTBao']? '': item['TCTBao']
+// 			obj['TCTBao'] = undefined == item['TCTBao']? '': item['TCTBao']
 			obj['LDo'] = undefined == item['LDo']? '': item['LDo'];
 			arrRows.push(obj);
 		});

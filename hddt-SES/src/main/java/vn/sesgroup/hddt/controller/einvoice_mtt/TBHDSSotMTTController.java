@@ -179,12 +179,12 @@ public class TBHDSSotMTTController extends AbstractController{
 				rows = jsonData.at("/rows");
 				for(JsonNode row: rows) {
 					hItem = new HashMap<String, String>();
-					for(JsonNode o: row.at("/DSHDon")) {
-						
-						tctb = commons.getTextJsonNode(o.at("/TCTBao"));
-						}
-						
-					hItem.put("TChat", Constants.MAP_HDSS_TCTBAO.get(tctb));
+//					for(JsonNode o: row.at("/DSHDon")) {
+//						
+//						tctb = commons.getTextJsonNode(o.at("/TCTBao"));
+//						}
+//						
+//					hItem.put("TChat", Constants.MAP_HDSS_TCTBAO.get(tctb));
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
 					hItem.put("Status", commons.getTextJsonNode(row.at("/Status")));
 					hItem.put("StatusDesc", Constants.MAP_HDSS_STATUS.get(commons.getTextJsonNode(row.at("/Status"))));
@@ -204,8 +204,7 @@ public class TBHDSSotMTTController extends AbstractController{
 					if(!row.at("/DSLoi").isMissingNode()) {
 						sb.setLength(0);
 						for(JsonNode o: row.at("/DSLoi")) {
-							sb.append("-").append(commons.getTextJsonNode(o.at("/MTLoi")));
-								
+							sb.append(commons.getTextJsonNode(o.at("/MTLoi")));
 						}
 						hItem.put("DSLoi", sb.toString());			
 					
