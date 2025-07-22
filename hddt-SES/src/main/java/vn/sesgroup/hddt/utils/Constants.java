@@ -161,6 +161,12 @@ public class Constants {
 		{put("103", "Đã chấp nhận");}
 	};
 	
+	public static final HashMap<String, String> MAP_TKHAICT_STATUS_CQT = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("110", "Đã tiếp nhận");}
+		{put("111", "Đã chấp nhận");}
+	};
+	
 	public static final LinkedHashMap<String, String> MAP_LOAITB_HDSS = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = -4829089663504096703L;
 		{put("1", "Thông báo của NNT");}
