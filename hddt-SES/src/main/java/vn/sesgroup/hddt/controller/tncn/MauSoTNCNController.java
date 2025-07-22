@@ -104,6 +104,10 @@ public class MauSoTNCNController extends AbstractController {
 					hItem.put("KyHieu", commons.getTextJsonNode(row.at("/KyHieu")));
 					hItem.put("SoLuong", commons.getTextJsonNode(row.at("/SoLuong")));	
 					hItem.put("LoGo", commons.getTextJsonNode(row.at("/LoGo")));	
+					hItem.put("Nam", commons.getTextJsonNode(row.at("/Nam")));	
+					hItem.put("TuSo", commons.getTextJsonNode(row.at("/TuSo")));	
+					hItem.put("DenSo", commons.getTextJsonNode(row.at("/DenSo")));	
+					hItem.put("ConLai", commons.getTextJsonNode(row.at("/ConLai")));	
 					hItem.put("IsActive", Constants.MAP_STATUS.get(commons.getTextJsonNode(row.at("/IsActive"))));	
 					grid.getRows().add(hItem);
 				}

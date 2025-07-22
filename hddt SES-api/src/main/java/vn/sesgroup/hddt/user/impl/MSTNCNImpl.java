@@ -147,7 +147,8 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 			
 						pipeline.add(new Document("$lookup",
 					new Document("from", "DMMSTNCN")
-							.append("pipeline", Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId()).append("KyHieu", macty))))
+							.append("pipeline", Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId()).append("KyHieu", macty)
+									.append("Nam", yearCreated))))
 							.append("as", "DMTemplatesInfo")));
 						new Document("$project", new Document("_id", 1));
 			pipeline.add(new Document("$unwind",
@@ -500,8 +501,8 @@ options);
 		
 		Document docMatch = new Document("IssuerId", header.getIssuerId());
 		
-		Document fillter = new Document("_id", 1).append("KyHieu", 1).append("SoLuong", 1)
-				.append("LoGo", 1).append("IsDelete", 1).append("IsActive", 1);
+		Document fillter = new Document("_id", 1).append("KyHieu", 1).append("SoLuong", 1).append("Nam", 1)
+				.append("TuSo", 1).append("DenSo", 1).append("ConLai", 1).append("LoGo", 1).append("IsDelete", 1).append("IsActive", 1);
 		
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));
@@ -553,6 +554,10 @@ options);
 				hItem.put("KyHieu", doc.get("KyHieu"));
 				hItem.put("SoLuong", doc.get("SoLuong"));
 				hItem.put("LoGo", doc.get("LoGo"));
+				hItem.put("Nam", doc.get("Nam"));
+				hItem.put("TuSo", doc.get("TuSo"));
+				hItem.put("DenSo", doc.get("DenSo"));
+				hItem.put("ConLai", doc.get("ConLai"));
 				boolean checkdelete = (boolean) doc.get("IsDelete");
 				if( checkdelete == true) {
 					hItem.put("IsActive","DELETE");
