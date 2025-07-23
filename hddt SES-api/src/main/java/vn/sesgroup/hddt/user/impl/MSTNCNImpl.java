@@ -148,7 +148,7 @@ public class MSTNCNImpl extends AbstractDAO implements MSTNCNDao {
 						pipeline.add(new Document("$lookup",
 					new Document("from", "DMMSTNCN")
 							.append("pipeline", Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId()).append("KyHieu", macty)
-									.append("Nam", yearCreated))))
+									.append("Nam", yearCreated).append("IsDelete", false))))
 							.append("as", "DMTemplatesInfo")));
 						new Document("$project", new Document("_id", 1));
 			pipeline.add(new Document("$unwind",
