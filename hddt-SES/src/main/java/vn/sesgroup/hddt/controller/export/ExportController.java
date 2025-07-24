@@ -243,6 +243,56 @@ public class ExportController extends AbstractController{
 						hItem.put("CQT_Date", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/CQT_Date").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
 								);
 					}
+					
+					String note = "";
+					String tchdon = null;
+					String shdon = null;
+					String mskh = null;
+					if (!row.at("/EInvoiceDetail/TTChung/TTHDLQuan").isMissingNode()) {
+						tchdon = commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon"));
+						shdon = commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan"));
+						mskh = commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan"))
+								+ commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan"));
+						note = String.format("%s cho hóa đơn số %s, %s, %s", 
+								tchdon.equals("1")?"Thay thế":"Điều chỉnh",
+								shdon,
+								mskh,
+								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+								);
+					}
+					String status = commons.getTextJsonNode(row.at("/EInvoiceStatus"));
+					if (status.equals("REPLACED") && !row.at("/ReplacedBy").isMissingNode()) {
+						if (!note.isEmpty()) 
+							note += "</br>";
+						shdon = commons.getTextJsonNode(row.at("/ReplacedBy/SHDCLQuan"));
+						mskh = commons.getTextJsonNode(row.at("/ReplacedBy/KHMSHDCLQuan"))
+								+ commons.getTextJsonNode(row.at("/ReplacedBy/KHHDCLQuan"));
+						note += String.format("Bị hóa đơn số %s, %s, %s Thay thế",
+								shdon, 
+								mskh,
+								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(
+										commons.getTextJsonNode(
+												row.at("/ReplacedBy/NLHDCLQuan")),
+										"yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					} else if (status.equals("ADJUSTED") && !row.at("/AdjustedBy").isMissingNode()) {
+						JsonNode replecedBy	= row.at("/AdjustedBy");
+						for(JsonNode by: replecedBy) {
+							if (!note.isEmpty()) 
+								note+="</br>";
+							shdon = commons.getTextJsonNode(by.at("/SHDCLQuan"));
+							mskh = commons.getTextJsonNode(by.at("/KHMSHDCLQuan"))
+									+ commons.getTextJsonNode(by.at("/KHHDCLQuan"));
+							note += String.format("Bị hóa đơn số %s, %s, %s Điều chỉnh", 
+									shdon, 
+									mskh,
+									commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(
+											commons.getTextJsonNode(
+													by.at("/NLHDCLQuan")),
+											"yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						}
+					}
+					hItem.put("Note", note);
+					
 					grid.getRows().add(hItem);
 				}
 			}
