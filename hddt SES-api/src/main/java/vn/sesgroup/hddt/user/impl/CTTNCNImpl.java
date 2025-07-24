@@ -3653,8 +3653,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
-			if (!docTmp.getEmbedded(Arrays.asList("DMMSTNCN","Nam"), "").equals(nam)) {
-				responseStatus = new MspResponseStatus(9999, "Năm (Thời điểm trả thu nhập) không trùng mẫu số ký hiệu TNCN.");
+			if (!docTmp.getEmbedded(Arrays.asList("DMMSTNCN","Nam"), "").equals(String.valueOf(LocalDate.now().getYear()))) {
+				responseStatus = new MspResponseStatus(9999, "Năm của mẫu số ký hiệu TNCN không trùng với năm hiện tại.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
@@ -3891,8 +3891,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				return rsp;
 			}
 			
-			if (!docTmp.getEmbedded(Arrays.asList("DMMSTNCN","Nam"), "").equals(nam)) {
-				responseStatus = new MspResponseStatus(9999, "Năm (Thời điểm trả thu nhập) không trùng mẫu số ký hiệu TNCN.");
+			if (!docTmp.getEmbedded(Arrays.asList("DMMSTNCN","Nam"), "").equals(String.valueOf(LocalDate.now().getYear()))) {
+				responseStatus = new MspResponseStatus(9999, "Năm của mẫu số ký hiệu TNCN không trùng với năm hiện tại.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
