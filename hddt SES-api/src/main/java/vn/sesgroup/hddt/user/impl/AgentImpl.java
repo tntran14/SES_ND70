@@ -726,23 +726,23 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			options.maxTime(5000, TimeUnit.MILLISECONDS);
 			options.returnDocument(ReturnDocument.AFTER);
 
-			if (docEInvoiceTTDC != null) {
-                if ("1".equals(_tchdon)) {
-					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-					collection.findOneAndUpdate(docFind1,
-							new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);
-					mongoClient.close();
-
-                } else if ("2".equals(_tchdon)) {
-					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-					collection.findOneAndUpdate(docFind1,
-							new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
-					mongoClient.close();
-
-				}
-			}
+//			if (docEInvoiceTTDC != null) {
+//                if ("1".equals(_tchdon)) {
+//					mongoClient = cfg.mongoClient();
+//					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+//					collection.findOneAndUpdate(docFind1,
+//							new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);
+//					mongoClient.close();
+//
+//                } else if ("2".equals(_tchdon)) {
+//					mongoClient = cfg.mongoClient();
+//					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+//					collection.findOneAndUpdate(docFind1,
+//							new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
+//					mongoClient.close();
+//
+//				}
+//			}
 			// KIEM TRA XEM KHACH HANG DA CO TRONG DANH SACH QUAN LY
 			if (!khMst.equals("")) {
 				if (docTmp.get("DSNMua") == null) {
@@ -2152,27 +2152,27 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			}
 			
             
-            docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
-                    Document.class);
-            if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
-                options = new FindOneAndUpdateOptions();
-                options.upsert(false);
-                options.maxTime(5000, TimeUnit.MILLISECONDS);
-                options.returnDocument(ReturnDocument.AFTER);
-                ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
-                Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-                        .append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
-                                Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
-
-                mongoClient = cfg.mongoClient();
-                collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-
-                collection.findOneAndUpdate(find,
-                        new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
-                        options);
-
-                mongoClient.close();
-            }
+//            docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
+//                    Document.class);
+//            if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
+//                options = new FindOneAndUpdateOptions();
+//                options.upsert(false);
+//                options.maxTime(5000, TimeUnit.MILLISECONDS);
+//                options.returnDocument(ReturnDocument.AFTER);
+//                ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
+//                Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+//                        .append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
+//                                Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
+//
+//                mongoClient = cfg.mongoClient();
+//                collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+//
+//                collection.findOneAndUpdate(find,
+//                        new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
+//                        options);
+//
+//                mongoClient.close();
+//            }
 			
 			String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "");
 
@@ -2550,7 +2550,9 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				.append("SendCQT_Date", 1)
 				.append("InfoCreated", 1)
 				.append("CQT_Date", 1)
-				.append("EInvoiceDetail", 1);
+				.append("EInvoiceDetail", 1)
+				.append("ReplacedBy", 1)
+                .append("AdjustedBy", 1);
 		
 		if (!mstban.equals("") && !mstmua.equals("")) {
 			pipeline = null;
@@ -2667,6 +2669,8 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				hItem.put("HDSS", doc.get("HDSS"));
 				hItem.put("SendCQT_Date", doc.get("SendCQT_Date"));
 				hItem.put("CQT_Date", doc.get("CQT_Date"));
+				hItem.put("ReplacedBy", doc.get("ReplacedBy"));
+                hItem.put("AdjustedBy", doc.get("AdjustedBy"));
 				rowsReturn.add(hItem);
 			}
 		}
@@ -3575,7 +3579,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
 
@@ -3605,6 +3608,60 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						.append("MTDTChieu", MTDTChieu).append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 				options);
 		mongoClient2.close();
+		
+		String iddc = "";
+		try {
+			iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), "");
+		} catch (Exception e) {
+			iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), ObjectId.class)
+					.toString();
+		}
+
+		if (!iddc.equals("")) {
+			ObjectId objectIddc = null;
+			try {
+				objectIddc = new ObjectId(iddc);
+			} catch (Exception e) {
+			}
+			ObjectId byId =  docTmp.getEmbedded(Arrays.asList("_id"), ObjectId.class);
+			Document docTTHDLQuan = new Document("_id", byId != null ? byId.toHexString():"")
+					.append("TCHDon", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""))
+					.append("LHDCLQuan", "1")
+					.append("KHMSHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), ""))
+					.append("KHHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+					.append("SHDCLQuan",
+							String.valueOf(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)))
+					.append("NLHDCLQuan", commons.convertLocalDateTimeToString(
+							commons.convertDateToLocalDateTime(
+									docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+							"yyyy-MM-dd"))
+					.append("GChu", "");
+			
+			Document docFind1 = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+					.append("_id", objectIddc).append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
+					.append("EInvoiceStatus", new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.COMPLETE,
+							Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
+
+			try (MongoClient mongoClientt = cfg.mongoClient()) {
+				collection = mongoClientt.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+				if ("1".equals(
+						docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""))) {
+					collection.findOneAndUpdate(docFind1,
+							new Document("$set",
+									new Document("EInvoiceStatus", "REPLACED").append("ReplacedBy", docTTHDLQuan)),
+							options);
+
+				} else if ("2".equals(
+						docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""))) {
+					collection.findOneAndUpdate(docFind1,
+							new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
+					collection.findOneAndUpdate(docFind1,
+							new Document("$push", new Document("AdjustedBy", docTTHDLQuan)), options);
+
+				}
+			} catch (Exception e) {
+			}
+		}
 
 		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
 		rsp.setResponseStatus(responseStatus);
