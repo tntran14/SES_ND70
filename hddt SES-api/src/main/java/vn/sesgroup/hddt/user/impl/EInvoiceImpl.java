@@ -954,24 +954,24 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			options.maxTime(5000, TimeUnit.MILLISECONDS);
 			options.returnDocument(ReturnDocument.AFTER);
 
-			if (docEInvoiceTTDC != null) {
-				if ("1".equals(_tchdon)) {
-
-					 mongoClient = cfg.mongoClient();
-					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-					collection.findOneAndUpdate(docFind1,
-							new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);		
-					mongoClient.close();
-					
-				} else if ("2".equals(_tchdon)) {
-					 mongoClient = cfg.mongoClient();
-					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-					collection.findOneAndUpdate(docFind1,
-							new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
-					mongoClient.close();
-					
-				}
-			}
+//			if (docEInvoiceTTDC != null) {
+//				if ("1".equals(_tchdon)) {
+//
+//					 mongoClient = cfg.mongoClient();
+//					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+//					collection.findOneAndUpdate(docFind1,
+//							new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);		
+//					mongoClient.close();
+//					
+//				} else if ("2".equals(_tchdon)) {
+//					 mongoClient = cfg.mongoClient();
+//					 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+//					collection.findOneAndUpdate(docFind1,
+//							new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
+//					mongoClient.close();
+//					
+//				}
+//			}
 
 			// END REPLACE, ADJUSTED
 			// KIEM TRA XEM KHACH HANG DA CO TRONG DANH SACH QUAN LY
@@ -2787,28 +2787,28 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				return rsp;
 			}
 
-			docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
-					Document.class);
-			if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
-				options = new FindOneAndUpdateOptions();
-				options.upsert(false);
-				options.maxTime(5000, TimeUnit.MILLISECONDS);
-				options.returnDocument(ReturnDocument.AFTER);
-				ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
-				Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-						.append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
-								Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
-
-				mongoClient = cfg.mongoClient();
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-
-				Document dooo = collection.find(find).allowDiskUse(true).iterator().next();
-				collection.findOneAndUpdate(find,
-						new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
-						options);
-
-				mongoClient.close();
-			}
+//			docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
+//					Document.class);
+//			if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
+//				options = new FindOneAndUpdateOptions();
+//				options.upsert(false);
+//				options.maxTime(5000, TimeUnit.MILLISECONDS);
+//				options.returnDocument(ReturnDocument.AFTER);
+//				ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
+//				Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+//						.append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
+//								Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
+//
+//				mongoClient = cfg.mongoClient();
+//				collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+//
+//				Document dooo = collection.find(find).allowDiskUse(true).iterator().next();
+//				collection.findOneAndUpdate(find,
+//						new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
+//						options);
+//
+//				mongoClient.close();
+//			}
 
 
 			String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "");
@@ -3382,7 +3382,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 		Document fillter = new Document("_id", 1).append("EInvoiceStatus", 1).append("SignStatusCode", 1)
 				.append("MCCQT", 1).append("MTDiep", 1).append("MTDTChieu", 1).append("LDo", 1).append("HDSS", 1)
-				.append("SendCQT_Date", 1).append("InfoCreated", 1).append("CQT_Date", 1).append("EInvoiceDetail", 1);
+				.append("SendCQT_Date", 1).append("InfoCreated", 1).append("CQT_Date", 1).append("EInvoiceDetail", 1)
+				.append("ReplacedBy", 1).append("AdjustedBy", 1);
 
 		if (!mstban.equals("") && !mstmua.equals("")) {
 			pipeline = null;
@@ -3491,6 +3492,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				hItem.put("HDSS", doc.get("HDSS"));
 				hItem.put("SendCQT_Date", doc.get("SendCQT_Date"));
 				hItem.put("CQT_Date", doc.get("CQT_Date"));
+				hItem.put("ReplacedBy", doc.get("ReplacedBy"));
+				hItem.put("AdjustedBy", doc.get("AdjustedBy"));
 				rowsReturn.add(hItem);
 			}
 		}
@@ -4557,33 +4560,33 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		
 		
 
-		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-	    		+ "Get mccqttracuuthongdiep - MaMTDiep: "+MTDiep+" MCCQT: "+(MCCQT == null || MCCQT.trim().isEmpty() ? "_Rong_":MCCQT)
-	    		+" CQT_MLTDiep: "+CQT_MLTDiep+" MTDTChieu: " + MTDTChieu);
-		
-		
-		
-		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
-		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-		    
-		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-		    
-		    
-			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}  else {
-		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
-		    
-		    
-		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
-		    
-		    
-		}
+//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+//	    		+ "Get mccqttracuuthongdiep - MaMTDiep: "+MTDiep+" MCCQT: "+(MCCQT == null || MCCQT.trim().isEmpty() ? "_Rong_":MCCQT)
+//	    		+" CQT_MLTDiep: "+CQT_MLTDiep+" MTDTChieu: " + MTDTChieu);
+//		
+//		
+//		
+//		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
+//		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+//		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
+//		    
+//		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+//		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
+//		    
+//		    
+//			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;
+//		}  else {
+//		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+//		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+//		    
+//		    
+//		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
+//		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
+//		    
+//		    
+//		}
 
 		String dir = docTmp.get("Dir", "");
 		String fileName = _id + "_" + MCCQT + ".xml";
@@ -4616,12 +4619,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 				options);
 		mongoClient2.close();
-		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
-		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete "+MCCQT);
-		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
-
-		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete ");
-		log.info("MCCQT: "+MCCQT + " MTDTChieu: "+MTDTChieu);
+//		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
+//		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete "+MCCQT);
+//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
+//
+//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete ");
+//		log.info("MCCQT: "+MCCQT + " MTDTChieu: "+MTDTChieu);
 		String iddc = "";
 		try {
 			iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), "");
@@ -4636,7 +4639,20 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				objectIddc = new ObjectId(iddc);
 			} catch (Exception e) {
 			}
-
+			ObjectId byId =  docTmp.getEmbedded(Arrays.asList("_id"), ObjectId.class);
+			Document docTTHDLQuan = new Document("_id", byId != null ? byId.toHexString():"")
+					.append("TCHDon", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""))
+					.append("LHDCLQuan", "1")
+					.append("KHMSHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), ""))
+					.append("KHHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+					.append("SHDCLQuan",
+							String.valueOf(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)))
+					.append("NLHDCLQuan", commons.convertLocalDateTimeToString(
+							commons.convertDateToLocalDateTime(
+									docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+							"yyyy-MM-dd"))
+					.append("GChu", "");
+			
 			Document docFind1 = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
 					.append("_id", objectIddc).append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
 					.append("EInvoiceStatus", new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.COMPLETE,
@@ -4650,7 +4666,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				 mongoClient2 = cfg.mongoClient();
 				 collection = mongoClient2.getDatabase(cfg.dbName).getCollection("EInvoice");
 				collection.findOneAndUpdate(docFind1,
-						new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);
+						new Document("$set", new Document("EInvoiceStatus", "REPLACED").append("ReplacedBy", docTTHDLQuan)), options);
 				mongoClient2.close();
 				
 				
@@ -4660,6 +4676,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				 collection = mongoClient3.getDatabase(cfg.dbName).getCollection("EInvoice");
 				collection.findOneAndUpdate(docFind1,
 						new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);
+				collection.findOneAndUpdate(docFind1,
+			            new Document("$push", new Document("AdjustedBy", docTTHDLQuan)), options);
 				mongoClient3.close();
 			}
 		}
