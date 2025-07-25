@@ -1743,7 +1743,6 @@ public class EInvoiceImpl1 extends AbstractDAO implements EInvoiceDAO1 {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMaKhachHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCDan));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SHChieu", khSoHoChieu));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", khHoTenNguoiMua));

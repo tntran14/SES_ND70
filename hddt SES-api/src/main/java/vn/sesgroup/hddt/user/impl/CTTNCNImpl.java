@@ -3774,19 +3774,22 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					.append("SecureKey", secureKey).append("MTDiep", MTDiep).append("TCTu", tctu)
 					.append("MSCTu", msctu)
 					.append("KHCTu", khctu)
-					.append("NLap", LocalDate.now())
-					.append("TTCTLQuan",
-							new Document("TCCTu", _tcctu)
-							.append("_id", _id_tt_dc)
-							.append("LHCTLQuan", "1")
-							.append("KHMSCTCLQuan", docCTuTTDC.getEmbedded(Arrays.asList("MSCTu"), ""))
-							.append("KHCTCLQuan", docCTuTTDC.getEmbedded(Arrays.asList("KHCTu"), ""))
-							.append("SCTCLQuan", String.valueOf(docCTuTTDC.getEmbedded(Arrays.asList("SCTu"), 0)))
-							.append("NLCTCLQuan", commons.convertLocalDateTimeToString(
-									commons.convertDateToLocalDateTime(
-											docCTuTTDC.getEmbedded(Arrays.asList("NLap"), Date.class)),
-									"yyyy-MM-dd")))
-					.append("TCTTNhap",
+					.append("NLap", LocalDate.now());
+			if (docCTuTTDC != null) {
+				docInsert.append("TTCTLQuan",
+						new Document("TCCTu", _tcctu).append("_id", _id_tt_dc).append("LHCTLQuan", "1")
+								.append("KHMSCTCLQuan", docCTuTTDC.getEmbedded(Arrays.asList("MSCTu"), ""))
+								.append("KHCTCLQuan", docCTuTTDC.getEmbedded(Arrays.asList("KHCTu"), ""))
+								.append("SCTCLQuan", String.valueOf(docCTuTTDC.getEmbedded(Arrays.asList("SCTu"), 0)))
+								.append("NLCTCLQuan",
+										commons.convertLocalDateTimeToString(
+												commons.convertDateToLocalDateTime(
+														docCTuTTDC.getEmbedded(Arrays.asList("NLap"), Date.class)),
+												"yyyy-MM-dd")));
+
+			}
+
+				docInsert.append("TCTTNhap",
 							new Document("Ten", docTmp.getEmbedded(Arrays.asList("Name"), ""))
 									.append("MST", docTmp.getEmbedded(Arrays.asList("TaxCode"), ""))
 									.append("DChi", docTmp.getEmbedded(Arrays.asList("Address"), ""))
