@@ -469,7 +469,11 @@ else {
 				SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
 				reportParams.put("SignName", null == signTypeInfo? "": signTypeInfo.getName());
 				try {
-					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					if (signingTime.endsWith("Z")) {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("SignDate", commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}catch(Exception e) {}
 				reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());

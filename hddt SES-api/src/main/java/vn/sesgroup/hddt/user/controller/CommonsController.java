@@ -274,7 +274,7 @@ public class CommonsController {
 				.body(SerializationUtils.serialize(fileInfo));
 	}
 	
-	@RequestMapping(value = "//print04-ctdt", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+	@RequestMapping(value = "/print04-ctdt", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
 			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
 	public ResponseEntity<?> print04CTDT(@RequestBody JSONRoot jsonRoot) throws Exception {
 		FileInfo fileInfo = dao.print04CTDT(jsonRoot);

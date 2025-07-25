@@ -541,7 +541,11 @@ else {
 				SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
 				reportParams.put("SignName", null == signTypeInfo? "": signTypeInfo.getName());
 				try {
-					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					if (signingTime.endsWith("Z")) {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("SignDate", commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}catch(Exception e) {}
 				reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -1249,7 +1253,11 @@ else {
 				SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
 				reportParams.put("SignName", null == signTypeInfo? "": signTypeInfo.getName());
 				try {
-					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					if (signingTime.endsWith("Z")) {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("SignDate", commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}catch(Exception e) {}
 				reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -2474,7 +2482,11 @@ else {
 					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
 					reportParams.put("SignName", null == signTypeInfo? "": signTypeInfo.getName());
 					try {
-						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+						if (signingTime.endsWith("Z")) {
+							ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+						} else {
+							ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+						}
 						reportParams.put("SignDate", commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					}catch(Exception e) {}
 					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -3138,7 +3150,11 @@ else {
 			SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
 			reportParams.put("SignName", null == signTypeInfo? "": signTypeInfo.getName());
 			try {
-				ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+				if (signingTime.endsWith("Z")) {
+					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+				} else {
+					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+				}
 				reportParams.put("SignDate", commons.convertLocalDateTimeToString(ldt, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			}catch(Exception e) {}
 			reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -5445,7 +5461,12 @@ else {
 					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
 					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
 					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
-					LocalDateTime dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("NM_SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
 					reportParams.put("NM_SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}
@@ -5504,7 +5525,11 @@ else {
 					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate(
 							"Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime",
 							nodeSignature, XPathConstants.NODE));
-					ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					if (signingTime.endsWith("Z")) {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						ldt = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("IsSigned", true);
 					reportParams.put("SignDesc", "Đã ký");
 					reportParams.put("SignDate",
@@ -5661,7 +5686,12 @@ else {
 					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
 					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
 					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
-					LocalDateTime dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
 					reportParams.put("SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}
