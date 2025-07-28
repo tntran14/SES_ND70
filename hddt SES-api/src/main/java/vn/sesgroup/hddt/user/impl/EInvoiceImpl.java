@@ -10000,6 +10000,20 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					objectIddc = new ObjectId(iddc);
 				} catch (Exception e) {
 				}
+	            ObjectId byId =  docTmp.getEmbedded(Arrays.asList("_id"), ObjectId.class);
+	            Document docTTHDLQuan = new Document("_id", byId != null ? byId.toHexString():"")
+	                    .append("TCHDon", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""))
+	                    .append("LHDCLQuan", "1")
+	                    .append("KHMSHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung","KHMSHDon"), ""))
+	                    .append("KHHDCLQuan", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+	                    .append("SHDCLQuan",
+	                            String.valueOf(docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0)))
+	                    .append("NLHDCLQuan", commons.convertLocalDateTimeToString(
+	                            commons.convertDateToLocalDateTime(
+	                                    docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+	                            "yyyy-MM-dd"))
+	                    .append("GChu", "");
+	            
 
 				Document docFind1 = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
 						.append("_id", objectIddc).append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
@@ -10016,7 +10030,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					 mongoClient = cfg.mongoClient();
 						collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
 						collection.findOneAndUpdate(docFind1,
-								new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);		
+//								new Document("$set", new Document("EInvoiceStatus", "REPLACED")), options);		
+		                        new Document("$set", new Document("EInvoiceStatus", "REPLACED").append("ReplacedBy", docTTHDLQuan)), options);
 						mongoClient.close();
 						
 						
@@ -10027,6 +10042,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						collection = mongoClient2.getDatabase(cfg.dbName).getCollection("EInvoice");
 						collection.findOneAndUpdate(docFind1,
 								new Document("$set", new Document("EInvoiceStatus", "ADJUSTED")), options);	
+		                collection.findOneAndUpdate(docFind1,
+		                        new Document("$push", new Document("AdjustedBy", docTTHDLQuan)), options);
 						mongoClient2.close();
 						
 				}
