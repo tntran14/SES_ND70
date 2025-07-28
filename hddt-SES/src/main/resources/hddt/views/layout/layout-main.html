@@ -409,7 +409,7 @@
 							<li>
 							<a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file-check-outline" ></i><span class="hide-menu">Đăng ký hóa đơn78</span></a>
 							<ul aria-expanded="false" class="collapse">
-								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkhai|'): false}" ><a th:href="@{/main/tkhai/init}">Danh sách tờ khai 01 - Thông tư 78</a></li>
+<!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkhai|'): false}" ><a th:href="@{/main/tkhai/init}">Danh sách tờ khai 01 - Thông tư 78</a></li> -->
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkhai|'): false}" ><a th:href="@{/main/tkhaiV1/init}">Danh sách tờ khai 01 - NĐ 70</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tkctu|'): false}" ><a th:href="@{/main/tkctu/init}">Danh sách tờ khai chứng từ - NĐ 70</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd|'): false}" ><a th:href="@{/main/mauhd/init}">Mẫu hóa đơn</a></li>
