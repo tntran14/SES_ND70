@@ -4566,18 +4566,19 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 //		
 //		
 //		
-//		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
+		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
 //		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 //		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
 //		    
 //		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 //		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-//		    
-//		    
-//			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
-//			rsp.setResponseStatus(responseStatus);
-//			return rsp;
-//		}  else {
+		    
+		    
+			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}  
+//		else {
 //		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
 //		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
 //		    
