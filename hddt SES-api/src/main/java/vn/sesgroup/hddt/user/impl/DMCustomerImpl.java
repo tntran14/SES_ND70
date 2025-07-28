@@ -280,37 +280,37 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 					new Document("$unwind", new Document("path", "$ConfigEmail").append("preserveNullAndEmptyArrays", true))
 				);	
 		
-			pipeline.add(
-				new Document("$lookup", 
-					new Document("from", "DMCustomer")
-					.append("let", new Document("vIssuerId", new Document("$toString", "$_id")))
-					.append("pipeline", 
-						Arrays.asList(
-							new Document("$match", 
-								new Document("$expr", 
-									new Document("$and", 
-										Arrays.asList(
-											new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
-											new Document("$ne", Arrays.asList("$IsDelete", true)),
-											new Document("$or", 
-												Arrays.asList(
-													new Document("$eq", Arrays.asList("$TaxCode", commons.regexEscapeForMongoQuery(taxCode))),
-													new Document("$eq", Arrays.asList("$CustomerCode", commons.regexEscapeForMongoQuery(customerCode)))
-												)
-											)
-										)
-									)
-									
-								)
-							),
-							new Document("$project", new Document("_id", 1)),
-							new Document("$limit", 1)
-						)
-					)
-					.append("as", "DMCustomer")
-				)
-			);
-			pipeline.add(new Document("$unwind", new Document("path", "$DMCustomer").append("preserveNullAndEmptyArrays", true)));
+//			pipeline.add(
+//				new Document("$lookup", 
+//					new Document("from", "DMCustomer")
+//					.append("let", new Document("vIssuerId", new Document("$toString", "$_id")))
+//					.append("pipeline", 
+//						Arrays.asList(
+//							new Document("$match", 
+//								new Document("$expr", 
+//									new Document("$and", 
+//										Arrays.asList(
+//											new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
+//											new Document("$ne", Arrays.asList("$IsDelete", true)),
+//											new Document("$or", 
+//												Arrays.asList(
+//													new Document("$eq", Arrays.asList("$TaxCode", commons.regexEscapeForMongoQuery(taxCode))),
+//													new Document("$eq", Arrays.asList("$CustomerCode", commons.regexEscapeForMongoQuery(customerCode)))
+//												)
+//											)
+//										)
+//									)
+//									
+//								)
+//							),
+//							new Document("$project", new Document("_id", 1)),
+//							new Document("$limit", 1)
+//						)
+//					)
+//					.append("as", "DMCustomer")
+//				)
+//			);
+//			pipeline.add(new Document("$unwind", new Document("path", "$DMCustomer").append("preserveNullAndEmptyArrays", true)));
 			pipeline.add(
 					new Document("$lookup", 
 						new Document("from", "PramLink")
@@ -352,11 +352,11 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 					mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("UserName"), ""));
 			}
 		
-			if(docTmp.get("DMCustomer") != null) {
-				responseStatus = new MspResponseStatus(9999, "MST hoặc Mã khách hàng đã tồn tại trong hệ thống.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
-			}
+//			if(docTmp.get("DMCustomer") != null) {
+//				responseStatus = new MspResponseStatus(9999, "MST hoặc Mã khách hàng đã tồn tại trong hệ thống.");
+//				rsp.setResponseStatus(responseStatus);
+//				return rsp;
+//			}
 		
 			
 			
