@@ -110,8 +110,8 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 			listMCCQT.add(commons.getTextJsonNode(o.at("/MCQTCap")));
 			
 			hItem = new HashMap<String, String>();
-			hItem.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
-//			hItem.put("LDo", commons.getTextJsonNode(o.at("/LDo")));
+//			hItem.put("TCTBao", commons.getTextJsonNode(o.at("/TCTBao")));
+			hItem.put("LDo", commons.getTextJsonNode(o.at("/LDo")));
 			hEInvoice.put(commons.getTextJsonNode(o.at("/MCQTCap")), hItem);
 		}
 		List<Object> listDSHDon = new ArrayList<Object>();
