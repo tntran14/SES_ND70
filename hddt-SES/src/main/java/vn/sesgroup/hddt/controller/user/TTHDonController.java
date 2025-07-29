@@ -162,13 +162,17 @@ public class TTHDonController extends AbstractController{
 					hItem = new HashMap<String, String>();
 					
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
-					
+					hItem.put("EInvoiceNumber", 
+							"".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))? "":
+							commons.formatNumberBillInvoice(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))
+						);
+
+						hItem.put("NLap", 
+							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
+						);
 					hItem.put("SignStatusCode", commons.getTextJsonNode(row.at("/SignStatusCode")));
 					hItem.put("SignStatusDesc", Constants.MAP_EINVOICE_SIGN_STATUS.get(commons.getTextJsonNode(row.at("/SignStatusCode"))));
-					
 					hItem.put("EInvoiceStatus", commons.getTextJsonNode(row.at("/EInvoiceStatus")));
-					hItem.put("MCCQT", commons.getTextJsonNode(row.at("/MCCQT")));
-					
 					String status = commons.getTextJsonNode(row.at("/EInvoiceStatus"));
 					String sign = commons.getTextJsonNode(row.at("/SignStatusCode"));
 					if(status.equals("PENDING") && sign.equals("SIGNED")) {
@@ -179,59 +183,13 @@ public class TTHDonController extends AbstractController{
 						hItem.put("StatusDesc", Constants.MAP_EINVOICE_STATUS.get(commons.getTextJsonNode(row.at("/EInvoiceStatus"))));
 						
 					}
-				
-					
-					hItem.put("CQTMTLoi", commons.getTextJsonNode(row.at("/LDo/MTLoi")));
-					hItem.put("MaHD", commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/MaHD")));
 					hItem.put("MauSoHD", 
-						commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHMSHDon")) + commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHHDon"))
-					);
-					hItem.put("EInvoiceNumber", 
-						"".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))? "":
-						commons.formatNumberBillInvoice(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))
-					);
-					
-					
-					
-					hItem.put("NLap", 
-						commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-					);
-					
-//					hItem.put("NLap", 
-//							commons.convertLongToLocalDateTime(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-//						);
-					
-					
+							commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHMSHDon")) + commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHHDon"))
+						);
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));
 					hItem.put("CompanyName", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
-					hItem.put("TgTTTBSo", 
-						row.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode()? "":
-						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue())
-					);
-					hItem.put("TgTCThue", 
-						row.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode()? "":
-						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue())
-					);
-					hItem.put("TgTThue", 
-						row.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
-						commons.formatNumberReal(row.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
-					);
-					hItem.put("HVTNMHang", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
-					hItem.put("UserCreated", commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName")));
-					hItem.put("HDSS_TCTBao", commons.getTextJsonNode(row.at("/HDSS/TCTBao")));
 					hItem.put("MTDiep", commons.getTextJsonNode(row.at("/MTDiep")));
 					hItem.put("MTDTChieu", commons.getTextJsonNode(row.at("/MTDTChieu")));
-					String SendCQT_Date = row.at("/SendCQT_Date").toString();
-					String CQT_Date = row.at("/CQT_Date").toString();
-					if(!SendCQT_Date.equals("")) {
-						hItem.put("SendCQT_Date", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/SendCQT_Date").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-								);
-					}
-					if(!CQT_Date.equals("")) {
-						hItem.put("CQT_Date", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/CQT_Date").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-								);
-					}
-					
 					grid.getRows().add(hItem);
 				}
 			}

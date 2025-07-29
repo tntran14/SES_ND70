@@ -135,6 +135,7 @@ $(function(){
 
 	
 	_gridMain.kendoGrid({
+		autoBind: false,
 		dataSource: new kendo.data.DataSource({
 			transport: {
 				read: {
@@ -232,6 +233,18 @@ $(function(){
   				attributes: {'class': 'table-cell text-center'}, sortable: false, 
   				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
   			},
+  			{field: 'EInvoiceNumber', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày phát hành</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
+			{field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
+				attributes: {'class': 'table-cell text-center'}, sortable: false, 
+				headerAttributes: {'class': 'table-header-cell text-center'},
+			},
 			{field: 'StatusDesc', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
@@ -241,43 +254,15 @@ $(function(){
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
-		
-			{field: 'MCCQT', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+			{field: 'CompanyName', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
 				attributes: {'class': 'table-cell text-left'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'CQTMTLoi', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Lỗi từ CQT</a>',
-				attributes: {'class': 'table-cell text-left'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
-				attributes: {'class': 'table-cell text-center'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'ExportNumber', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
-				attributes: {'class': 'table-cell text-center'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'NLap', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày phát hành</a>',
-				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
 			{field: 'TaxCode', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
 				attributes: {'class': 'table-cell text-left'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
-			{field: 'CompanyName', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên đơn vị</a>',
-				attributes: {'class': 'table-cell text-left'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'TgTTTBSo', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
-				attributes: {'class': 'table-cell text-right'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'TgTCThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
-				attributes: {'class': 'table-cell text-right'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},	
+		
 			{field: 'MTDiep', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã thông điệp</a>',
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
@@ -286,19 +271,6 @@ $(function(){
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
 			},
-			{field: 'UserCreated', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
-				attributes: {'class': 'table-cell text-left'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'SendCQT_Date', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày gửi mã hóa đơn</a>',
-				attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			{field: 'CQT_Date', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày cấp mã hóa đơn</a>',
-				attributes: {'class': 'table-cell text-left text-nowrap'}, sortable: false, 
-				headerAttributes: {'class': 'table-header-cell text-center'},
-			},
-			
     	],
 		dataBound: function(e) {
 //			_gridMain.find('div table tbody tr td').each(function(idx, obj){
@@ -463,7 +435,7 @@ $(function(){
 										if(res) {
 											if(res.errorCode == 0) {
 												alertDLSuccess("Thay đổi trạng thái thành công.", function(){});		
-												location.reload();
+												_gridMain.data("kendoGrid").dataSource.page(1);
 											}else{
 												alertDLSuccess(createObjectError(res).html(), function(){});
 											}
