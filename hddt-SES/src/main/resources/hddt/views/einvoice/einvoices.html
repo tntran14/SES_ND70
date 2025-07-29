@@ -650,11 +650,10 @@
 																				success:function(res) {
 																					hideLoading();
 																					if(res) {
-																						if(res.errorCode == 0) {
-																							_gridMain.data("kendoGrid").dataSource.read();
-																						}else{
+																						if(res.errorCode != 0) {
 																							alertDLSuccess(createObjectError(res).html(), function(){});
 																						}
+																						_gridMain.data("kendoGrid").dataSource.read();
 																					}else{
 																						alertDLSuccess('unknown error!!!', function(){});
 																						hideLoading();
@@ -665,9 +664,6 @@
 																		            hideLoading();
 																		        }
 																			});
-																	
-																		
-																
 																}else{
 																	alertDLSuccess(createObjectError(res).html(), function(){});
 																}
@@ -682,6 +678,7 @@
 												        }
 													});
 												}else{
+													_gridMain.data("kendoGrid").dataSource.read();
 													alertDLSuccess(createObjectError(res).html(), function(){});
 												}
 											}else{

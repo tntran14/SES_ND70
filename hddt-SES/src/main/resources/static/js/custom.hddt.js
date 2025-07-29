@@ -14,7 +14,8 @@ var _gridSub01 = null;
 var _gridSub02 = null;
 
 var objVAT = {'0': '0%', '5': '5%', '7': '10%x70%', '8': '8%', '10': '10%', '-1': 'KCT', '-2': 'KKKNT'};
-var objFeature = {'1':'HH, DV', '2':'KM', '3':'CK', '4':'Ghi chú'};
+var objFeature = {'1':'HH, DV', '2':'KM', '3':'CK', '4':'Ghi chú', '5':'Hàng hóa đặc trưng'};
+var objLHHDTrung = {'1':'Hàng hóa là xe ô tô, xe mô tô', '2':'Dịch vụ vận chuyển', '3':'Dịch vụ vận chuyển trên nền tảng số, TMĐT'};
 var objTCTBao = {'0': 'Mới', '1': 'Hủy', '2': 'Điều chỉnh', '3': 'Thay thế', '4': 'Giải trình', '5': 'Sai sót do tổng hợp'};
 var objLADHDDT = {'1': 'Theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP'};
 var objLCTDT = {'1': 'Chứng từ điện tử khấu trừ thuế TNCN theo Nghị định 70'};

@@ -560,15 +560,32 @@ public class EInvoiceCRUDController extends AbstractController{
 							);
 							break;
 						}
-						if("DETAIL".equals(action))
+						String lhhdtrung = commons.getTextJsonNode(o.at("/TTHHDTrung"));
+						if("DETAIL".equals(action)) {
 							hItem.put("Feature", Constants.MAP_PRD_FEATURE.get(commons.getTextJsonNode(o.at("/Feature"))));
-						else
+							hItem.put("LHHDTrung", Constants.MAP_PRD_LHHDTrung.get(lhhdtrung));
+						}
+						else {
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("LHHDTrung", lhhdtrung);
+						}
 						
+						if ("1".equals(lhhdtrung)) {
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+						}
+						if ("2".equals(lhhdtrung)) {
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+						}
+						if ("3".equals(lhhdtrung)) {
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
+						}
 						prds.add(hItem);
 					}
 				}
-
 				req.setAttribute("DSHHDVu", commons.encodeStringBase64(Json.serializer().toString(prds)));
 				loaiTienTt = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/DVTTe"));
 				req.setAttribute("DVTTe", loaiTienTt);
@@ -907,12 +924,33 @@ public class EInvoiceCRUDController extends AbstractController{
 				break;
 			}
 			count++;
-//			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
-//				dto.setErrorCode(999);
-//				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
-//						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu: , . : ; / ( ) [ ] { } -");
-//				return dto;
-//			}
+			
+			if ("5".equals(commons.getTextJsonNode(jsonNode.at("/Feature")))) {
+				String lhddt = commons.getTextJsonNode(jsonNode.at("/LHHDTrung"));
+				if ("1".equals(lhddt) && (commons.getTextJsonNode(jsonNode.at("/SKhung")).trim().equals("") || commons.getTextJsonNode(jsonNode.at("/SMay")).trim().equals(""))) {
+					dto.setErrorCode(999);
+					dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+							+ ".</br> Vui lòng nhập số khung, số máy khi chọn loại hàng hóa đặc trưng là xe ô tô, xe mô tô.");
+					return dto;
+				}
+				if ("2".equals(lhddt) && commons.getTextJsonNode(jsonNode.at("/BKSPTVChuyen")).trim().equals("")) {
+					dto.setErrorCode(999);
+					dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+							+ ".</br> Vui lòng nhập số khung, số máy khi chọn loại hàng hóa đặc trưng là dịch vụ vận chuyển");
+					return dto;
+				}
+				if ("3".equals(lhddt) && 
+						(commons.getTextJsonNode(jsonNode.at("/TNGHang")).trim().equals("") || 
+								commons.getTextJsonNode(jsonNode.at("/DCNGHang")).trim().equals("") ||
+						commons.getTextJsonNode(jsonNode.at("/MSTNGHang")).trim().equals("") || 
+						commons.getTextJsonNode(jsonNode.at("/MDDNGHang")).trim().equals(""))
+						) {
+					dto.setErrorCode(999);
+					dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+							+ ".</br> Vui lòng nhập Tên, Địa chỉ, MST, Số định danh người gửi hàng khi chọn loại hàng hóa đặc trưng là Dịch vụ vận chuyển trên nền tảng số, TMĐT.");
+					return dto;
+				}
+			}
 
 		}
 		if(!check) {

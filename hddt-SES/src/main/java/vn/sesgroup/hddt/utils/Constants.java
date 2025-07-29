@@ -200,6 +200,13 @@ public class Constants {
 		{put("2", "KM");}
 		{put("3", "CK");}
 		{put("4", "Ghi chú");}
+		{put("5", "Hàng hóa đặc trưng");}
+	};
+	public static final HashMap<String, String> MAP_PRD_LHHDTrung = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = 1L;
+		{put("1", "Hàng hóa là xe ô tô, xe mô tô");}
+		{put("2", "Dịch vụ vận chuyển");}
+		{put("3", "Dịch vụ vận chuyển trên nền tảng số, TMĐT");}
 	};
 	
 	public static final HashMap<String, String> MAP_TKHAI_HTHUC = new LinkedHashMap<String, String>(){
