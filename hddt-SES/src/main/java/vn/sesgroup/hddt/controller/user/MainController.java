@@ -487,9 +487,15 @@ public class MainController extends AbstractController {
 					}
 				}
 			}
-
 			// END LAY MAU SAC CAC NUT
-
+			root = new JSONRoot();
+			rsp = restAPI.callAPINormal("/commons/getNotification", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			rspStatus = rsp.getResponseStatus();
+			if (rspStatus.getErrorCode() == 0) {
+				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				request.setAttribute("NotificationActivated", commons.getTextJsonNode(jsonData.at("/IsActive")));
+				request.setAttribute("NotificationContent", commons.getTextJsonNode(jsonData.at("/Noidung")));
+			}
 			request.setAttribute("transaction", transaction);
 			request.setAttribute("method", method);
 			request.setAttribute("UserFullPathRight", cup.getAllRights());

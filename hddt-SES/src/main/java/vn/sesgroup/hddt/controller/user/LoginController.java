@@ -290,6 +290,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("qlnvtncn|qlnvtncn-cre|qlnvtncn-edit|qlnvtncn-del|qlnvtncn-detail|");
         		sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");
         	sbRights.append("ql-footerweb|ql-footerweb-cre|ql-footerweb-edit|ql-footerweb-del|ql-footerweb-detail|ql-footerweb-active|ql-footerweb-deactive|");
+        	sbRights.append("ql-notification|ql-notification-cre|ql-notification-edit|ql-notification-del|ql-notification-detail|ql-notification-active|ql-notification-deactive|");
         	sbRights.append("ql-tinh|ql-tinh-cre|ql-tinh-edit|ql-tinh-del|ql-tinh-detail|");
         	sbRights.append("ql-tinweb|ql-tinweb-cre|ql-tinweb-edit|ql-tinweb-del|ql-tinweb-detail|ql-tinweb-active|ql-tinweb-deactive|");
         	sbRights.append("ql-ttweb|ql-ttweb-cre|ql-ttweb-edit|ql-ttweb-del|ql-ttweb-detail|");

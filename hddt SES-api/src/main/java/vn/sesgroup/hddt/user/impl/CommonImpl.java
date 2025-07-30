@@ -6030,4 +6030,48 @@ try {
 				return new FileInfo();
 			}
 		}
+
+		@Override
+		public MsgRsp getNotification() throws Exception {
+			MsgRsp rsp = new MsgRsp();
+			MspResponseStatus responseStatus = null;
+			
+			Document docTmp = null;
+			List<Document> pipeline = new ArrayList<Document>();
+
+			Document docMatch = new Document("IsDelete", false).append("IsActive", true);
+
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docMatch));
+			pipeline.add(new Document("$sort", new Document("_id", -1)));
+			pipeline.add(new Document("$limit", 1));
+			pipeline.add(new Document("$project", 
+					new Document("_id", 0)
+					.append("InfoCreated", 0)
+					.append("InfoUpdate", 0)
+					.append("InfoDeleted", 0)
+					.append("Date", 0)
+					));
+
+			MongoClient mongoClient = cfg.mongoClient();
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMNotification");
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).first();
+			} catch (Exception e) {
+
+			}
+
+			mongoClient.close();
+
+			if (null == docTmp) {
+				responseStatus = new MspResponseStatus(9999, Constants.MAP_ERROR.get(9999));
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+			rsp.setObjData(docTmp);
+			return rsp;
+		}
 }

@@ -433,6 +433,8 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-footerweb|'): false}"><a th:href="@{/main/ql-footerweb/init}">Quản lý footer website</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-link|'): false}"><a th:href="@{/main/ql-link/init}">Quản lý link</a></li> 		
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|param-admin|'): false}"><a th:href="@{/main/param-admin/init}">Cấu hình tham số</a></li> 																													
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-notification|'): false}"><a th:href="@{/main/ql-notification/init}">Quản lý thông báo</a></li>
+							
 							</ul>
 						</li>			
 

@@ -508,19 +508,12 @@
 				</div>
           </div>
         </div>
-	<script>
-	const thongBao = `📢 THÔNG BÁO CẬP NHẬT TÊN TỈNH/THÀNH PHỐ TỪ NGÀY 01/07/2025 <br><br>
-		Theo quy định mới có hiệu lực từ ngày 01/07/2025, một số tỉnh, thành phố trên cả nước đã được đổi tên hoặc điều chỉnh địa giới hành chính theo nghị quyết của Quốc hội.<br><br>
-		👉 Quý khách vui lòng cập nhật lại thông tin người dùng trong hồ sơ để tránh lỗi tiếp nhận trong quá trình ký hóa đơn. <br><br>
-		📝 Chi tiết hướng dẫn tại link: <a href="https://hoadon78.sesgroup.vn/hddt/main/hdsduser/68625f1aca237a23d89f19ca" target="_blank" rel="noopener noreferrer">Xem hướng dẫn tại đây</a>`;
-
-    alertDLSuccess(
-			thongBao,
-			function myFunction() {
-				window.open("https://hoadon78.sesgroup.vn/hddt/main/hdsduser/68625f1aca237a23d89f19ca", "_blank");
-				}
-		
-			);
+	<script th:inline="javascript">
+	const active  = /*[[${NotificationActivated}]]*/ "fasle"; 
+	const message = `[(${NotificationContent})]`;
+   	if (active == "true") {
+	    alertDLSuccess(message, function myFunction() {});
+	}
   	</script>
 	</th:block>
 </body>
