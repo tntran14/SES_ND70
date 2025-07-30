@@ -453,18 +453,9 @@ String FileName =   docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"),
 		
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));
-		pipeline.add(
-				new Document("$sort", 
-					new Document("_id", -1)
-				)
-			);
-		
-		pipeline.add(
-				new Document("$project", 
-					new Document("_id", -1).append("loaihd_ma", 1).append("Code", 1).append("Name", 1).append("Images", 1).append("FileName", 1)
-					.append("Images", 1).append("PhanLoai", 1).append("DanhSach", 1).append("DacTinhPhoi", 1).append("MoTa", 1).append("GhiChu", 1).append("IsActive", 1).append("InfoCreated", 1)
-				)
-			);
+		pipeline.add(new Document("$sort", new Document("_id", -1)));
+		pipeline.add(new Document("$project", 
+					new Document("_id", 1).append("Code", 1).append("Name", 1).append("DanhSach", 1).append("FileName", 1)));
 
 		pipeline.addAll(createFacetForSearchNotSort(page));
 		
@@ -567,21 +558,9 @@ String FileName =   docTmp.getEmbedded(Arrays.asList("DMTemplates", "FileName"),
 
 				
 				hItem.put("_id", objectId.toString());
-				hItem.put("loaihd_ma", doc.get("loaihd_ma", ""));
 				hItem.put("Code", doc.get("Code", ""));
 				hItem.put("Name", doc.get("Name", ""));
-				hItem.put("Images", doc.get("Images", ""));				
-				hItem.put("FileName", doc.get("FileName", ""));
-				hItem.put("Images", doc.get("Images"));
-				hItem.put("PhanLoai", doc.get("PhanLoai", ""));
-				
-				hItem.put("DanhSach", taxcode);
-				
-				hItem.put("DacTinhPhoi", doc.get("DacTinhPhoi", ""));
-				hItem.put("MoTa", doc.get("MoTa", ""));
-				hItem.put("GhiChu", doc.get("GhiChu", ""));
-				hItem.put("IsActive", doc.get("IsActive"));
-				hItem.put("InfoCreated", doc.get("InfoCreated"));				
+				hItem.put("DanhSach", taxcode);		
 				rowsReturn.add(hItem);
 			}
 		}

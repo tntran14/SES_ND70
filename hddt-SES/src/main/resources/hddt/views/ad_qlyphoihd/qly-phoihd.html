@@ -170,12 +170,12 @@
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 							},
-				  			{field: 'func', title: '', width: '120px', encoded: false
-				  				, headerTemplate: '&nbsp;'
-								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
-								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-							, template: '#= window.setTemplateForGridMAIN("func", data) #'
-							},
+// 				  			{field: 'func', title: '', width: '120px', encoded: false
+// 				  				, headerTemplate: '&nbsp;'
+// 								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
+// 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+// 							, template: '#= window.setTemplateForGridMAIN("func", data) #'
+// 							},
 							{field: 'Code', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã phôi</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
@@ -185,27 +185,27 @@
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 					
-							{field: 'PhanLoai', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Phân loại</a>',
-								attributes: {'class': 'table-cell text-left'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							},
-							{field: 'DacTinh', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đặc tính phôi</a>',
-								attributes: {'class': 'table-cell text-left'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							},
-							{field: 'MoTa', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mô tả</a>',
-								attributes: {'class': 'table-cell text-left'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							},
+// 							{field: 'PhanLoai', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Phân loại</a>',
+// 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+// 								headerAttributes: {'class': 'table-header-cell text-center'},
+// 							},
+// 							{field: 'DacTinh', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đặc tính phôi</a>',
+// 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+// 								headerAttributes: {'class': 'table-header-cell text-center'},
+// 							},
+// 							{field: 'MoTa', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mô tả</a>',
+// 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+// 								headerAttributes: {'class': 'table-header-cell text-center'},
+// 							},
 							{field: 'DanhSach', width: '350px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Danh sách khách hàng sử dụng</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 						
-							{field: 'GhiChu', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ghi chú</a>',
-								attributes: {'class': 'table-cell text-left'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							},
+// 							{field: 'GhiChu', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ghi chú</a>',
+// 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+// 								headerAttributes: {'class': 'table-header-cell text-center'},
+// 							},
 						
 				    	],
 						dataBound: function(e) {
@@ -488,18 +488,18 @@
 					var text = '';
 					
 					switch (key) {
-					case 'func':
-						text += '<i title="Tải file" class="mdi mdi-download fs-25 text-success c-pointer" data-sub-action="download" ></i>';	
-							text += '<i title="Xem ảnh" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="view" ></i>';						
-							if('Chưa Hoạt động' == acti){
-								text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';						
+// 					case 'func':
+// 						text += '<i title="Tải file" class="mdi mdi-download fs-25 text-success c-pointer" data-sub-action="download" ></i>';	
+// 							text += '<i title="Xem ảnh" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="view" ></i>';						
+// 							if('Chưa Hoạt động' == acti){
+// 								text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';						
 								
-								text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';		
-							}
-							else{
-								text += '<i title="Hủy kích hoạt" class="mdi mdi-close-circle fs-25 text-blue123 c-pointer" data-sub-action="deactive" ></i>';						
-							}
-						break;
+// 								text += '<i title="Xóa" class="mdi mdi-close-box fs-25 text-danger c-pointer" data-sub-action="delete" ></i>';		
+// 							}
+// 							else{
+// 								text += '<i title="Hủy kích hoạt" class="mdi mdi-close-circle fs-25 text-blue123 c-pointer" data-sub-action="deactive" ></i>';						
+// 							}
+// 						break;
 					case 'StatusDesc':
 						if('DELETED' == data['EInvoiceStatus']){
 							text = '<div style="background: red;color: white;">' + data['StatusDesc'] + '</div>';

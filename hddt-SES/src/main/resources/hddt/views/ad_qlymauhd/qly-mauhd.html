@@ -47,7 +47,7 @@
 											<div class="c-f__wrapper">
 												<input class="form-control form-control-sm c-f__textbox" type="text" id="nso" name="nso"  autocomplete="off"/>
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Tên mẫu số</label></legend>
+													<legend class="c-f__legend"><label>Tên mẫu</label></legend>
 												</fieldset>
 											</div>
 										</div>
@@ -188,13 +188,13 @@
 				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
 				  			},
-				  			{field: 'isCheck', title: '', width: '60px', encoded: false
+				  			{field: 'isCheck', title: '', width: '30px', encoded: false
 								, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
 								, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 							},
-				  			{field: 'func', title: '', width: '50px', encoded: false
+				  			{field: 'func', title: '', width: '65px', encoded: false
 				  				, headerTemplate: '&nbsp;'
 								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
@@ -240,7 +240,24 @@
 								var objData = {};
 								var objURL = {};
 								switch (subAction) {
+								case 'download':		
+									var objData = null;
+									var ids = null;
+									ids = [];
+									
+									    rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									    ids.push(rowData['_id']);
 								
+									objData =  encodeObjJsonBase64UTF8(ids);
+						          	window.open(ROOT_PATH + '/common/downLoadFile/' + objData,'_blank');
+						              break;
+								case 'view':
+									var objData = {}; 
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									objData['_id'] = rowData['_id'];
+						              showPopupWithURLAndData(ROOT_PATH + '/main/qly-phoihd-view/viewimg', objData, true, function(e){
+						              });
+						              break;
 								case 'delete':
 								case 'deactive':
 								case 'active':					
@@ -481,6 +498,8 @@
 					
 					switch (key) {
 					case 'func':
+						text += '<i title="Tải file" class="mdi mdi-download fs-25 text-success c-pointer" data-sub-action="download" ></i>';	
+						text += '<i title="Xem ảnh" class="mdi mdi-eye fs-25 text-info c-pointer" data-sub-action="view" ></i>';
 						if('Chưa Hoạt động' == acti){
 							text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';						
 							

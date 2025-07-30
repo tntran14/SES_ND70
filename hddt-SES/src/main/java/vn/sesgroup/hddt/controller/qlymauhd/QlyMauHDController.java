@@ -96,7 +96,7 @@ public class QlyMauHDController extends AbstractController {
 	
 	@RequestMapping(value = "/init", method = { RequestMethod.POST, RequestMethod.GET })
 	public String init(Locale locale, Principal principal, HttpServletRequest req) throws Exception {
-		req.setAttribute("_header_","Danh sách mẫu hóa đơn");
+		req.setAttribute("_header_","Quản lý phôi hóa đơn");
 		req.setAttribute("map_status", Constants.MAP_STATUS);
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		LoadParameter(cup, locale, req, null);

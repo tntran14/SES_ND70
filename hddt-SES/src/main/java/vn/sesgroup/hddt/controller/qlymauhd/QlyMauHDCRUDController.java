@@ -126,24 +126,24 @@ public class QlyMauHDCRUDController extends AbstractController{
 		errorDesc = "";
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		_id = commons.getParameterFromRequest(req, "_id");
-		String header = "Thêm mới mẫu hóa đơn";
+		String header = "Thêm mới phôi hóa đơn";
 		String action = "CREATE";
 		boolean isEdit = false;
 		
 		
 		switch (transaction) {
 		case "qly-mauhd-cre":
-			header = "Thêm mới mẫu hóa đơn";
+			header = "Thêm mới phôi hóa đơn";
 			action = "CREATE";
 			isEdit = true;
 			break;
 		case "qly-mauhd-edit":
-			header = "Thay đổi thông tin mẫu hóa đơn";
+			header = "Thay đổi thông tin phôi hóa đơn";
 			action = "EDIT";
 			isEdit = true;
 			break;
 		case "qly-mauhd-detail":
-			header = "Chi tiết mẫu hóa đơn";
+			header = "Chi tiết phôi hóa đơn";
 			action = "DETAIL";
 			isEdit = false;
 			break;
@@ -167,7 +167,7 @@ public class QlyMauHDCRUDController extends AbstractController{
 	private void inquiry(CurrentUserProfile cup, Locale locale, HttpServletRequest req, HttpSession session, String action) throws Exception{
 		if("".equals(_id)) {
 			errorCode = "NOT FOUND";
-			errorDesc = "Không tìm thấy thông tin mẫu hóa đơn.";
+			errorDesc = "Không tìm thấy thông tin phôi hóa đơn.";
 			return;
 		}
 		BaseDTO baseDTO = new BaseDTO(req);
@@ -231,13 +231,13 @@ public class QlyMauHDCRUDController extends AbstractController{
 		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
 		
 		BaseDTO dto = new BaseDTO();
-		String messageConfirm = "Bạn có muốn mẫu hóa đơn?";
+		String messageConfirm = "Bạn có muốn phôi hóa đơn?";
 		switch (transaction) {
 		case "qly-mauhd-cre":
-			messageConfirm = "Bạn có muốn thêm mới mẫu hóa đơn không?";
+			messageConfirm = "Bạn có muốn thêm phôi mẫu hóa đơn không?";
 			break;
 		case "qly-mauhd-edit":
-			messageConfirm = "Bạn có muốn thay đổi thông tin mẫu hóa đơn không?";
+			messageConfirm = "Bạn có muốn thay đổi thông tin phôi hóa đơn không?";
 			break;
 		default:
 			dto = new BaseDTO();

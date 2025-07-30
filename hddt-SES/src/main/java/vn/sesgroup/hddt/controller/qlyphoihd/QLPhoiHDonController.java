@@ -95,7 +95,7 @@ public class QLPhoiHDonController extends AbstractController {
 	
 	@RequestMapping(value = "/init", method = { RequestMethod.POST, RequestMethod.GET })
 	public String init(Locale locale, Principal principal, HttpServletRequest req) throws Exception {
-		req.setAttribute("_header_","Danh sách phôi hóa đơn");
+		req.setAttribute("_header_","Thống kê Khách hàng sử dụng Phôi hóa đơn");
 		req.setAttribute("map_status", Constants.MAP_STATUS);
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		LoadParameter(cup, locale, req, null);
@@ -170,19 +170,9 @@ public class QLPhoiHDonController extends AbstractController {
 				for(JsonNode row: rows) {
 					hItem = new HashMap<String, String>();
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
-					hItem.put("loaihd_ma", Constants.MAP_HD.get(commons.getTextJsonNode(row.at("/loaihd_ma"))));
 					hItem.put("Code", commons.getTextJsonNode(row.at("/Code")));
 					hItem.put("Name", commons.getTextJsonNode(row.at("/Name")));
-					hItem.put("Images", commons.getTextJsonNode(row.at("/Images")));
-					
 					hItem.put("DanhSach", commons.getTextJsonNode(row.at("/DanhSach")));
-					hItem.put("PhanLoai", commons.getTextJsonNode(row.at("/PhanLoai")));
-					hItem.put("DacTinhPhoi", commons.getTextJsonNode(row.at("/DacTinhPhoi")));
-					hItem.put("MoTa", commons.getTextJsonNode(row.at("/MoTa")));
-					hItem.put("GhiChu", commons.getTextJsonNode(row.at("/GhiChu")));
-					
-					hItem.put("FileName", commons.getTextJsonNode(row.at("/FileName")));
-					hItem.put("IsActive", Constants.MAP_STATUS.get(commons.getTextJsonNode(row.at("/IsActive"))));
 					grid.getRows().add(hItem);
 				}
 			}
