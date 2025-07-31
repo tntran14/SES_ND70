@@ -740,7 +740,8 @@ function FormatCurrency(obj, curr) {
 	var nFinal = number.value();
 	
 	if (curr == 'VND' || curr == "JPY" || curr == "CCC") {
-		nFinal = Math.round(nFinal);
+		nFinal = nFinal < 0 ? -Math.round(-nFinal) : Math.round(nFinal);
+//		nFinal = Math.round(nFinal);
 		obj.value = numeral(nFinal).format('#,###');
 	}else{
 		obj.value = numeral(nFinal).format('#,###.000');
