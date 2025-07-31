@@ -54,6 +54,7 @@ public class ConfigParamController extends AbstractController{
 	private String namecd;
 	private String footermail;
 	private String tax_invoice;
+	private String payment_invoice;
 
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
 		try {
@@ -67,11 +68,14 @@ public class ConfigParamController extends AbstractController{
 			MsgParams msgParams = new MsgParams();
 						
 			msgParam = new MsgParam();
+			msgParam.setId("param01");
+			msgParam.setParam("DMPaymentType");
+			msgParams.getParams().add(msgParam);
+			
+			msgParam = new MsgParam();
 			msgParam.setId("param05");
 			msgParam.setParam("TaxInvoice");
 			msgParams.getParams().add(msgParam);
-			
-			
 			/*END: DANH SACH THAM SO*/
 			msg.setObjData(msgParams);
 			
@@ -79,34 +83,33 @@ public class ConfigParamController extends AbstractController{
 			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 			MspResponseStatus rspStatus = rsp.getResponseStatus();
 			
-			
-			if(rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
+			if (rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
 				LinkedHashMap<String, String> hItem = null;
-				LinkedHashMap<String, String> hItem1 = null;
-				ArrayList<HashMap<String, String>> rows = null;
-				ArrayList<HashMap<String, String>> rows1 = null;
-				
-			
+
 				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-				
-				String TaxInvoice = "";
+
 				String defaultTaxAdmin = "";
 				String _taxInvoice = "";
-				//boolean check_tax = false;
-				if(null != jsonData.at("/param05") && jsonData.at("/param05") instanceof ArrayNode) {
-				//	rows = new ArrayList<HashMap<String,String>>();
+				// boolean check_tax = false;
+				if (null != jsonData.at("/param05") && jsonData.at("/param05") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param05")) {
-						defaultTaxAdmin =  commons.getTextJsonNode(o.at("/DefaultAdmin"));
-						if(defaultTaxAdmin.equals("true")) {
+					for (JsonNode o : jsonData.at("/param05")) {
+						defaultTaxAdmin = commons.getTextJsonNode(o.at("/DefaultAdmin"));
+						if (defaultTaxAdmin.equals("true")) {
 							_taxInvoice = commons.getTextJsonNode(o.at("/Code"));
 						}
 						hItem.put(commons.getTextJsonNode(o.get("Code")), commons.getTextJsonNode(o.get("Name")));
-				//		rows.add(hItem);
-				}		
+					}
 					req.setAttribute("map_tax_invoice", hItem);
 				}
-				
+				if (null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
+					hItem = new LinkedHashMap<String, String>();
+					for (JsonNode o : jsonData.at("/param01")) {
+						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
+					}
+					req.setAttribute("map_paymenttype", hItem);
+				}
+
 				req.setAttribute("DefaultTaxAdmin", _taxInvoice);
 			}
 			
@@ -137,64 +140,61 @@ public class ConfigParamController extends AbstractController{
 			req.setAttribute("VND", commons.getTextJsonNode(jsonData.at("/VND")));
 			req.setAttribute("USD", commons.getTextJsonNode(jsonData.at("/USD")));
 			
-			
 			String check_tax = commons.getTextJsonNode(jsonData.at("/TaxInvoice"));
-			
-			if(!check_tax.equals("")) {
+			if (!check_tax.equals("")) {
 				req.setAttribute("DefaultTaxAdmin", check_tax);
 			}
 			
+			String check_payment = commons.getTextJsonNode(jsonData.at("/PaymentInvoice"));
+			if (!check_payment.equals("")) {
+				req.setAttribute("DefaultPayment", check_payment);
+			}
 			
-			String shd = jsonData.at("/viewshd").toString();	
+			String shd = jsonData.at("/viewshd").toString();
 			String viewmoney = jsonData.at("/viewmoney").toString();
 			String mail = jsonData.at("/footermail").toString();
-		
+
 			int index1 = shd.charAt(1);
-			char check =(char) index1;
-			String s=String.valueOf(check);  
-		
+			char check = (char) index1;
+			String s = String.valueOf(check);
+			if (s.equals("Y")) {
+				req.setAttribute("CheckSHD", true);
 
-				if(s.equals("Y")) {
-					req.setAttribute("CheckSHD", true);
-			
-				}
-				else {
-					req.setAttribute("CheckSHD", false);
-				
-				}
-				//FOOTER MAIL
-				if(!mail.equals("")) {
-					int index2 = mail.charAt(1);
-					char check2 =	(char) index2;
+			} else {
+				req.setAttribute("CheckSHD", false);
 
-					String s2=String.valueOf(check2);  
-						if(s2.equals("Y")) {
-							req.setAttribute("CheckMail", true);
-					
-						}
-						else {
-							req.setAttribute("CheckMail", false);
-						
-						}
-				}	
-				//view money
-				if(!viewmoney.equals("")) {
-					int index2 = viewmoney.charAt(1);
-					char check2 =	(char) index2;
-
-					String s2=String.valueOf(check2);  
-						if(s2.equals("Y")) {
-							req.setAttribute("ViewMoney", true);
-					
-						}
-						else {
-							req.setAttribute("ViewMoney", false);
-						
-						}
-				}	
-				
 			}
-			return "system/config-param";
+			// FOOTER MAIL
+			if (!mail.equals("")) {
+				int index2 = mail.charAt(1);
+				char check2 = (char) index2;
+
+				String s2 = String.valueOf(check2);
+				if (s2.equals("Y")) {
+					req.setAttribute("CheckMail", true);
+
+				} else {
+					req.setAttribute("CheckMail", false);
+
+				}
+			}
+			// view money
+			if (!viewmoney.equals("")) {
+				int index2 = viewmoney.charAt(1);
+				char check2 = (char) index2;
+
+				String s2 = String.valueOf(check2);
+				if (s2.equals("Y")) {
+					req.setAttribute("ViewMoney", true);
+
+				} else {
+					req.setAttribute("ViewMoney", false);
+
+				}
+			}
+
+		}
+		return "system/config-param";
 	}
 
 	public BaseDTO checkDataToAccept(HttpServletRequest req, HttpSession session, String transaction
@@ -209,7 +209,7 @@ public class ConfigParamController extends AbstractController{
 		namecd = commons.getParameterFromRequest(req, "namecd");
 		footermail = commons.getParameterFromRequest(req, "footermail");
 		tax_invoice = commons.getParameterFromRequest(req, "tax_invoice");
-				
+		payment_invoice = commons.getParameterFromRequest(req, "payment_invoice");	
 		
 		if(!commons.checkStringIsInt(VND)) {
 			dto.setErrorCode(1);
@@ -307,6 +307,7 @@ public class ConfigParamController extends AbstractController{
 		hData.put("namecd", namecd);
 		hData.put("footermail", footermail);
 		hData.put("TaxInvoice", tax_invoice);
+		hData.put("PaymentInvoice", payment_invoice);
 		
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);

@@ -58,6 +58,7 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 		String namecd = commons.getTextJsonNode(jsonData.at("/namecd"));
 		String footermail = commons.getTextJsonNode(jsonData.at("/footermail"));		
 		String tax_invoice = commons.getTextJsonNode(jsonData.at("/TaxInvoice"));
+		String payment_invoice = commons.getTextJsonNode(jsonData.at("/PaymentInvoice"));
 		
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -94,7 +95,9 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 				.append("viewshd",viewshd)
 				.append("viewmoney",viewmoney)
 			.append("NameCD",namecd)
-			.append("TaxInvoice", tax_invoice);
+			.append("TaxInvoice", tax_invoice)
+			.append("PaymentInvoice", payment_invoice)
+			;
 		
 		
 			mongoClient = cfg.mongoClient();
@@ -116,6 +119,7 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 					.append("viewmoney",viewmoney)
 					.append("NameCD",namecd)
 					.append("TaxInvoice", tax_invoice)
+					.append("PaymentInvoice", payment_invoice)
 					;
 		
 			

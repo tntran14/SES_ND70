@@ -216,10 +216,12 @@ public class EInvoiceCRUDController extends AbstractController{
 						req.setAttribute("viewmoney", commons.getTextJsonNode(o.get("viewmoney")));
 						req.setAttribute("userconfig_vnd", commons.getTextJsonNode(o.get("VND")));
 						req.setAttribute("userconfig_usd", commons.getTextJsonNode(o.get("USD")));
+						req.setAttribute("HTTToanCode", commons.getTextJsonNode(o.get("PaymentInvoice")));
 					}
 				}else {
 					req.setAttribute("userconfig_vnd", "2");
 					req.setAttribute("userconfig_usd", "2");
+					req.setAttribute("HTTToanCode", "3");
 				}
 				
 				String TaxInvoice = "";
@@ -366,6 +368,9 @@ public class EInvoiceCRUDController extends AbstractController{
 			break;
 		}
 		
+		if("|einvoice-cre|einvoice-copy|einvoice-edit|".indexOf(transaction) != -1)
+			LoadParameter(cup, locale, req, action);
+		
 		if("|einvoice-edit|einvoice-copy|einvoice-detail|einvoice-sign|".indexOf(transaction) != -1
 				|| "init-dc".equals(method) || "init-tt".equals(method))
 			inquiry(cup, locale, req, session, _id, action, transaction, method);
@@ -377,9 +382,6 @@ public class EInvoiceCRUDController extends AbstractController{
 		req.setAttribute("_action_", action);
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
-		
-		if("|einvoice-cre|einvoice-copy|einvoice-edit|".indexOf(transaction) != -1)
-			LoadParameter(cup, locale, req, action);
 		req.setAttribute("Param", Param);
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);

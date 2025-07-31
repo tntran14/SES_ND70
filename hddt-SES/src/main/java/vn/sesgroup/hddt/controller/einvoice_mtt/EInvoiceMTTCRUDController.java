@@ -229,6 +229,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 //					hItem.put(commons.getTextJsonNode(o.get("VND")), commons.getTextJsonNode(o.get("USD")));	
 						req.setAttribute("userconfig_vnd", commons.getTextJsonNode(o.get("VND")));
 						req.setAttribute("userconfig_usd", commons.getTextJsonNode(o.get("USD")));
+						req.setAttribute("HTTToanCode", commons.getTextJsonNode(o.get("PaymentInvoice")));
 						String check_Tax = commons.getTextJsonNode(o.get("TaxInvoice"));
 						if(check_Tax.equals("")) {
 							req.setAttribute("DefaultTaxAdmin", _taxInvoice);
@@ -240,6 +241,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 					req.setAttribute("userconfig_vnd", "2");
 					req.setAttribute("userconfig_usd", "2");
 					req.setAttribute("DefaultTaxAdmin", _taxInvoice);
+					req.setAttribute("HTTToanCode", "3");
 				}
 				
 				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {

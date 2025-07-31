@@ -152,6 +152,11 @@ public class EInvoiceCRUDController1 extends AbstractController{
 			msgParam.setParam("DMTaxRate");
 			msgParams.getParams().add(msgParam);
 			
+			msgParam = new MsgParam();
+			msgParam.setId("param05");
+			msgParam.setParam("UserConFig");
+			msgParams.getParams().add(msgParam);
+			
 			/*END: DANH SACH THAM SO*/
 			msg.setObjData(msgParams);
 			
@@ -196,6 +201,15 @@ public class EInvoiceCRUDController1 extends AbstractController{
 						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
 					}
 					req.setAttribute("map_DMPTax", hItem);
+				}
+				
+				if(null != jsonData.at("/param05") && jsonData.at("/param05") instanceof ArrayNode) {
+					hItem = new LinkedHashMap<String, String>();
+					for(JsonNode o: jsonData.at("/param05")) {
+						req.setAttribute("HTTToanCode", commons.getTextJsonNode(o.get("PaymentInvoice")));
+					}
+				}else {
+					req.setAttribute("HTTToanCode", "3");
 				}
 			}
 			
@@ -273,6 +287,8 @@ public class EInvoiceCRUDController1 extends AbstractController{
 		default:
 			break;
 		}
+		if("|einvoice1-cre|einvoice1-edit|einvoice1-copy|".indexOf(transaction) != -1)
+			LoadParameter(cup, locale, req, action);
 		
 		if("|einvoice1-edit|einvoice1-detail|einvoice1-copy|einvoice1-sign|".indexOf(transaction) != -1 || "init-dc".equals(method)|| "init-tt".equals(method))
 			inquiry(cup, locale, req, session, _id, action, transaction, method);
@@ -285,9 +301,6 @@ public class EInvoiceCRUDController1 extends AbstractController{
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
 		
-		if("|einvoice1-cre|einvoice1-edit|einvoice1-copy|".indexOf(transaction) != -1)
-			LoadParameter(cup, locale, req, action);
-
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
 		

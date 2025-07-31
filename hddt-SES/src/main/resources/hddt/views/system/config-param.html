@@ -140,6 +140,20 @@
 												</select>											
 											</div>
 										</div>
+										<div class="row m-b-14">
+											<div class="col-md-6">
+												<label>Phương thức thanh toán mặc định</label>
+											</div>
+											<div class="col-md-3">											
+												<select id="payment_invoice" name="payment_invoice" class=" form-control form-control-sm  " >
+													<option value=""></option>
+													<th:block th:if="${map_paymenttype != null}">
+													<option th:each="entry : ${map_paymenttype.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${DefaultPayment == entry.key}" > </option>
+													</th:block>
+												</select>											
+											</div>
+										</div>
 
 										<div class="b b-b m-b-16"></div>
 										<div class="input-group-sm p-b-sm p-r">
@@ -303,6 +317,7 @@
 							dataPost['namecd'] = $('#f-config-param').find('#namecd').val();
 							dataPost['usd'] = $('#f-config-param').find('#usd').val();
 							dataPost['tax_invoice'] = $('#f-config-param').find('#tax_invoice').val();
+							dataPost['payment_invoice'] = $('#f-config-param').find('#payment_invoice').val();
 							_tmp = $('#f-config-param').find(
 									'input[type="checkbox"][name="view-shd"]')
 									.prop('checked') ? 'Y' : 'N';													
