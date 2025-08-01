@@ -4313,7 +4313,6 @@ try {
 		FileInfo fileInfo = new FileInfo();
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
-		MsgPage page = msg.getMsgPage();
 		Object objData = msg.getObjData();
 		JsonNode jsonData = null;
 		if (objData != null) {
@@ -4334,20 +4333,20 @@ try {
 			} catch (Exception var28) {
 			}
 
-			List<Document> pipeline = new ArrayList();
+			List<Document> pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match",
 					(new Document("_id", objectId)).append("IsDelete", new Document("$ne", true))));
-			pipeline.add(
-					new Document("$lookup",
-							(new Document("from", "Issuer"))
-									.append("pipeline",
-											Arrays.asList(
-													new Document("$match",
-															(new Document("_id", objectIdIssu)).append("IsDelete",
-																	new Document("$ne", true)))))
-									.append("as", "Issuer")));
-			pipeline.add(new Document("$unwind",
-					(new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
+//			pipeline.add(
+//					new Document("$lookup",
+//							(new Document("from", "Issuer"))
+//									.append("pipeline",
+//											Arrays.asList(
+//													new Document("$match",
+//															(new Document("_id", objectIdIssu)).append("IsDelete",
+//																	new Document("$ne", true)))))
+//									.append("as", "Issuer")));
+//			pipeline.add(new Document("$unwind",
+//					(new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
 			Document docTmp = null;
 			Iterable<Document> cursor = this.mongoTemplate.getCollection("EInvoiceHDSS").aggregate(pipeline)
 					.allowDiskUse(true);
@@ -4357,28 +4356,16 @@ try {
 			}
 
 			String MTDiep = docTmp.get("MTDiep", "");
-			String ImgLogo = "";
-			String ImgBackground = "";
-			String fileName = _id + "_" + MTDiep + ".xml";
+//			String fileName = _id + "_" + MTDiep + ".xml";
+			String fileName = "688ae33895f24f2b4b4f2677_0315382923202507311030333789F2F213CDCB9497F804.xml";
 			String dir = (String) docTmp.get("Dir", "");
 			File file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
 				org.w3c.dom.Document doc = this.commons.fileToDocument(file);
 				String fileNameJP = "Mau-TB-01-TB-SSĐT.jrxml";
-				int numberRowInPage = 5;
-				int numberRowInPageMultiPage = 15;
-				int numberCharsInRow = 50;
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 				ByteArrayOutputStream baosPDF = null;
-				baosPDF = this.jpUtils.viewPdfTiepnhan(fileJP, doc, docTmp, numberRowInPage, numberRowInPageMultiPage,
-						numberCharsInRow,
-						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-								(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo)
-								.toString(),
-						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-								(String) docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground)
-								.toString(),
-						"Y".equals(isConvert));
+				baosPDF = this.jpUtils.viewPdfTiepnhanV1(fileJP, doc, docTmp.get("TNNT",""), docTmp.get("MST",""));
 				fileInfo.setFileName("Mau-TB-01-TB-SSĐT.pdf");
 				fileInfo.setContentFile(baosPDF.toByteArray());
 				return fileInfo;

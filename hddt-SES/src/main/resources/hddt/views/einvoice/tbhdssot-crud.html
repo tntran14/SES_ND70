@@ -409,12 +409,31 @@
 				objDataSend = {};
 				showPopupWithURLAndData(ROOT_PATH + '/common/show-search-dshddky', objDataSend, false, function(e){
 					if($.type(e) == 'array'){
-						var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+// 						var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 						
-						/*
-						 * LAY DANH SACH ID HD DA TON TAI; 
-						 * CHI ADD ID MOI
-						 * */
+// 						/*
+// 						 * LAY DANH SACH ID HD DA TON TAI; 
+// 						 * CHI ADD ID MOI
+// 						 * */
+// 						var ids = [];
+// 						$.each(objDataJson, function(index, value) {
+// 							ids.push(value['_id']);
+// 						});
+						
+// 						var item = null;
+// 						$.each(e, function(index, value) {
+// 							if(ids.indexOf(value['_id']) == -1){
+// 								item = {};
+// 								item['_id'] = value['_id'];
+// 								item['MSHDon'] = value['MauSoHD'];
+// 								item['SHDon'] = value['EInvoiceNumber'];
+// 								item['Ngay'] = value['NLap'];
+// 								item['MCQTCap'] = value['MCCQT'];
+// 								objDataJson.push(item);
+// 							}
+// 						});
+// 						_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+						var objDataJson = [];
 						var ids = [];
 						$.each(objDataJson, function(index, value) {
 							ids.push(value['_id']);

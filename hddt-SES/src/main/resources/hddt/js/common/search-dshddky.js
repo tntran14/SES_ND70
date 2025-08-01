@@ -72,11 +72,16 @@ $(function(){
   				attributes: {'class': 'table-cell text-center'}, sortable: false, 
   				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
   			},
-  			{field: 'isCheck', title: '', width: '40px', encoded: false, headerTemplate: '<input type="checkbox" class="Check-All checkbox-in-grid"/>',
-  				attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false, 
-  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-  				, template:'<input type="checkbox" class="Check-Item checkbox-in-grid"/>'
-  			},
+//  			{field: 'isCheck', title: '', width: '40px', encoded: false, headerTemplate: '<input type="checkbox" class="Check-All checkbox-in-grid"/>',
+//  				attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false, 
+//  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+//  				, template:'<input type="checkbox" class="Check-Item checkbox-in-grid"/>'
+//  			},
+			{field: 'isCheck', title: '', width: '40px', encoded: false, headerTemplate: '',
+	  				attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false, 
+	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+	  				, template:'<input type="radio" name="CheckItemRadio" class="Check-Item-Radio checkbox-in-grid"/>'
+	  		},
   			{field: 'MauSoHD', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số HĐ</a>',
 				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				headerAttributes: {'class': 'table-header-cell text-center'},
@@ -124,13 +129,26 @@ $(function(){
 		]
 	});
 	
-	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').undelegate('input[type="checkbox"].Check-All', 'click');
-	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').delegate('input[type="checkbox"].Check-All', 'click', function(e){
+//	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').undelegate('input[type="checkbox"].Check-All', 'click');
+//	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').delegate('input[type="checkbox"].Check-All', 'click', function(e){
+//		var $obj = $(this);
+//		var isCheck = $obj.prop('checked');
+//		
+//		_gridMainSearch.find('div.k-grid-content tbody input[type="checkbox"].Check-Item').prop('checked', isCheck);
+//		var arrRow = _gridMainSearch.find('table[role="grid"]').find('tbody tr').find("input[type='checkbox'].Check-Item");
+//		if(isCheck){
+//			_gridMainSearch.find('table[role="grid"]').find('tbody tr').addClass("k-state-selected")
+//		}else{
+//			_gridMainSearch.find('table[role="grid"]').find('tbody tr').removeClass("k-state-selected")
+//		}
+//	});
+	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').undelegate('input[type="radio"].Check-Item-Radio', 'click');
+	_gridMainSearch.find('table[role="grid"]').find('thead[role="rowgroup"]').delegate('input[type="radio"].Check-Item-Radio', 'click', function(e){
 		var $obj = $(this);
 		var isCheck = $obj.prop('checked');
 		
-		_gridMainSearch.find('div.k-grid-content tbody input[type="checkbox"].Check-Item').prop('checked', isCheck);
-		var arrRow = _gridMainSearch.find('table[role="grid"]').find('tbody tr').find("input[type='checkbox'].Check-Item");
+		_gridMainSearch.find('div.k-grid-content tbody input[type="radio"].Check-Item-Radio').prop('checked', isCheck);
+		var arrRow = _gridMainSearch.find('table[role="grid"]').find('tbody tr').find("input[type='radio'].Check-Item-Radio");
 		if(isCheck){
 			_gridMainSearch.find('table[role="grid"]').find('tbody tr').addClass("k-state-selected")
 		}else{
@@ -138,8 +156,19 @@ $(function(){
 		}
 	});
 	
-	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"].Check-Item', 'click');
-	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').delegate('input[type="checkbox"].Check-Item', 'click', function(e){
+//	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"].Check-Item', 'click');
+//	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').delegate('input[type="checkbox"].Check-Item', 'click', function(e){
+//		var $obj = $(this);
+//		var isCheck = $obj.prop('checked');
+//		if(isCheck){
+//			$obj.closest("tr").addClass("k-state-selected");
+//		}else{
+//			$obj.closest("tr").removeClass("k-state-selected");
+//		}
+//		_gridMainSearch.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMainSearch.find('tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+//	});
+	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').undelegate('input[type="radio"].Check-Item-Radio', 'click');
+	_gridMainSearch.find('table[role="grid"]').find('tbody[role="rowgroup"]').delegate('input[type="radio"].Check-Item-Radio', 'click', function(e){
 		var $obj = $(this);
 		var isCheck = $obj.prop('checked');
 		if(isCheck){
@@ -147,7 +176,7 @@ $(function(){
 		}else{
 			$obj.closest("tr").removeClass("k-state-selected");
 		}
-		_gridMainSearch.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMainSearch.find('tbody tr input[type="checkbox"]:not(:checked)').length == 0);
+		_gridMainSearch.find('table[role="grid"]').find('thead input[type="radio"]').prop('checked', _gridMainSearch.find('tbody tr input[type="radio"]:not(:checked)').length == 0);
 	});
 	
 	$("#f-search").find('button[data-action]').click(function (event) {
@@ -169,11 +198,17 @@ $(function(){
 		
 		var arrayDataSelect = [];
 		var rowData = null;
-		var checkRows = _gridMainSearch.find(' tbody tr input[type="checkbox"]:checked');
-		checkRows.each(function(i, v) {
-			rowData = _gridMainSearch.data("kendoGrid").dataItem(_gridMainSearch.find(' tbody tr').eq($(checkRows[i].closest("tr")).index()));
-			arrayDataSelect.push(rowData);
-		});
+//		var checkRows = _gridMainSearch.find(' tbody tr input[type="checkbox"]:checked');
+//		checkRows.each(function(i, v) {
+//			rowData = _gridMainSearch.data("kendoGrid").dataItem(_gridMainSearch.find(' tbody tr').eq($(checkRows[i].closest("tr")).index()));
+//			arrayDataSelect.push(rowData);
+//		});
+		var checkRows = _gridMainSearch.find(' tbody tr input[type="radio"]:checked');
+		if (checkRows.length > 0) {
+				    var selectedRow = checkRows.closest("tr");
+				    var rowData = _gridMainSearch.data("kendoGrid").dataItem(selectedRow);
+				    arrayDataSelect.push(rowData);
+				  }
 		if(callback) callback(arrayDataSelect);
 		$('#f-search').closest("div.modal").modal("hide");
 		$('#f-search').closest("div.modal").find('.modal-content').empty();

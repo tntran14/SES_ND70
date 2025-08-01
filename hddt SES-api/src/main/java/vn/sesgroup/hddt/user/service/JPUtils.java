@@ -5704,8 +5704,100 @@ else {
 					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
 					jp = JasperFillManager.fillReport(jr, reportParams, jds);
 				} catch (Exception e) {
+				}
+				Exporter exporter = new JRPdfExporter();
+				exporter.setExporterInput(new SimpleExporterInput(jp));
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+				
+				SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+				configuration.setCreatingBatchModeBookmarks(true);
+				exporter.setConfiguration(configuration);
+				exporter.exportReport();
+				return out;
+			}
+			
+			public ByteArrayOutputStream viewPdfTiepnhanV1(File fileJP, Document doc, String tenNNT, String maSoThueNNT) throws Exception {
+				Map<String, Object> reportParams = new HashMap();
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				
+				NodeList TDiepNodes = (NodeList) xPath.evaluate("/KetQuaTraCuu/DuLieu/TDiep", doc, XPathConstants.NODESET);
+				
+				Node TDiepNode = null;
+				for (int i = 0; i < TDiepNodes.getLength(); i++) {
+					Node tempNode = TDiepNodes.item(i);
+					String MLTDiep = commons.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", tempNode, XPathConstants.NODE));
+					if ("301".equals(MLTDiep)) {
+						TDiepNode = tempNode;
+						break;
+					}
+				}
+				
+				if (null == TDiepNode)
+					return null;
+				
+				Node TBaoNode = (Node) xPath.evaluate("DLieu/TBao", TDiepNode, XPathConstants.NODE);
+				
+				reportParams.put("TCQTCTren", commons.getTextFromNodeXML((Element) xPath.evaluate("DLTBao/TCQTCTren", TBaoNode, XPathConstants.NODE)));
+				reportParams.put("TCQThue", commons.getTextFromNodeXML((Element) xPath.evaluate("DLTBao/TCQT", TBaoNode, XPathConstants.NODE)));
+				reportParams.put("STBao", commons.getTextFromNodeXML((Element) xPath.evaluate("STBao/So", TBaoNode, XPathConstants.NODE)));
+				reportParams.put("DDanh", commons.getTextFromNodeXML((Element) xPath.evaluate("DLTBao/DDanh", TBaoNode, XPathConstants.NODE)));
+
+				String ngayThongBao = commons.getTextFromNodeXML((Element) xPath.evaluate("DLTBao/NTBNNT", TBaoNode, XPathConstants.NODE));
+				if (ngayThongBao != null) {
+					LocalDate date = LocalDate.parse(ngayThongBao);
+			        int day = date.getDayOfMonth();
+			        int month = date.getMonthValue();
+			        int year = date.getYear();
+			        reportParams.put("Ngay", String.valueOf(day));
+			        reportParams.put("Thang", String.valueOf(month));
+			        reportParams.put("Nam", String.valueOf(year));
+				}
+				String ngayNhanThongBao = commons.getTextFromNodeXML((Element) xPath.evaluate("DLTBao/TGNhan", TBaoNode, XPathConstants.NODE));
+				if (ngayThongBao != null) {
+					LocalDate date = LocalDate.parse(ngayNhanThongBao);
+			        int day = date.getDayOfMonth();
+			        int month = date.getMonthValue();
+			        int year = date.getYear();
+			        reportParams.put("TBNgay", String.valueOf(day));
+			        reportParams.put("TBThang", String.valueOf(month));
+			        reportParams.put("TBNam", String.valueOf(year));
+				}
+				 reportParams.put("MSThue",maSoThueNNT);
+			     reportParams.put("NNThue", tenNNT);
+
+				Node nodeDSCKS = (Node) xPath.evaluate("DLieu/TBao/DSCKS/CQT", TDiepNode, XPathConstants.NODE);
+				Node nodeSignature = null;
+				if (null != nodeDSCKS)
+					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
+				if(null == nodeSignature) {
+					reportParams.put("SignDesc", "Chưa ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+				} else {
+					reportParams.put("SignDesc", "Đã ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
+					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
+					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
+					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
+					reportParams.put("SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
+					reportParams.put("SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+				}
+				
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				JasperReport jr =  null;
+				JasperPrint jp = null;
+				try {
+					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
+					jp = JasperFillManager.fillReport(jr, reportParams, new JREmptyDataSource());
+				} catch (Exception e) {
 					System.out.println(e);
 				}
+				
 				Exporter exporter = new JRPdfExporter();
 				exporter.setExporterInput(new SimpleExporterInput(jp));
 				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
