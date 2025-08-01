@@ -4523,6 +4523,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				hItem.put("TTNCNKTru", doc.get("TTNCNKTru"));
 				hItem.put("InfoCreated", doc.get("InfoCreated"));
 				hItem.put("LDo", doc.get("LDo"));
+				hItem.put("MTDiep", doc.get("MTDiep"));
 				rowsReturn.add(hItem);
 			}
 		}

@@ -104,6 +104,7 @@ public class ChungTuControllerV1 extends AbstractController {
 							Constants.MAP_EINVOICE_SIGN_STATUS.get(commons.getTextJsonNode(row.at("/SignStatus"))));
 					hItem.put("StatusCode", commons.getTextJsonNode(row.at("/Status")));
 					hItem.put("SignStatusCode", commons.getTextJsonNode(row.at("/SignStatus")));
+					hItem.put("MTDiep", commons.getTextJsonNode(row.at("/MTDiep")));
 					hItem.put("NLap",
 							commons.convertLocalDateTimeToString(
 									commons.convertLongToLocalDate(row.at("/NLap").asLong()),
