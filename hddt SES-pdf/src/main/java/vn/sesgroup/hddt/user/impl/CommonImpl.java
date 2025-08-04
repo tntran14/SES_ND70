@@ -111,11 +111,14 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
 			// Sắp xếp lại danh sách dataList theo thứ tự số number
 			Collections.sort(listpool, (d1, d2) -> Integer.compare(d2.getNumber(), d1.getNumber()));
+			
 			List<String> listFileNamePdfFinalAll = listpool.stream().map(PoolData::getString)
 					.collect(Collectors.toList());
+			String listInvoiceNumber = listpool.stream()
+				    .map(p -> String.valueOf(p.getNumber()))
+				    .collect(Collectors.joining(", "));
 			// Đóng ExecutorService và đợi tất cả các nhiệm vụ con hoàn thành
 			executorService.shutdown();
-//			executorService.shutdown();
 			executorService.awaitTermination(2_000, TimeUnit.MILLISECONDS);
 			completableFutures.clear();
 			listpool.clear();
@@ -125,6 +128,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			} else {
 				ByteArrayOutputStream out = commons.doMergeMultiPdf(listFileNamePdfFinalAll);
 				fileInfo.setContentFile(out.toByteArray());
+				fileInfo.setFileName(listInvoiceNumber);
 				//giai phong
 				out.flush();
 				out.close();

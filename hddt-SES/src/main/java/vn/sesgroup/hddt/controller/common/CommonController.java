@@ -1431,13 +1431,14 @@ public class CommonController extends AbstractController{
 	            writer.flush();
 	            return;
 	        }
-
+	        String fileName = "EInvoice "+ fileInfo.getFileName()+".pdf";
 	        String type = "application/pdf";
 	        InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
 	        resp.setHeader("Content-Type", type);
 	        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 	        resp.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 	        resp.setHeader("Expires", "0"); // Proxies.
+	        resp.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 	        int bufferSize = 1024;
 	        resp.setContentType(type);
 	        final byte[] buffer = new byte[bufferSize];
