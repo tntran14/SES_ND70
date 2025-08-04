@@ -5443,7 +5443,12 @@ else {
 					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
 					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
 					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
-					LocalDateTime dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
 					reportParams.put("SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
 					reportParams.put("SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}

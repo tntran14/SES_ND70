@@ -411,6 +411,26 @@
      <!-- ============================================================== -->
     <!-- End Wrapper -->
     <!-- ============================================================== --> 
+    <script>
+		$.datetimepicker.setLocale('vi');
+		ROOT_PATH = '[[${#httpServletRequest.getContextPath()}]]';
+		_csrf_value = '[[${_csrf.token}]]';
+		_csrf_name = '[[${_csrf.parameterName}]]';
+
+		$(function() {
+			// Set height mobile
+			var cardHeight = function() {
+				var topOffset = 80
+				var height = (window.innerHeight > 0 ? window.innerHeight
+						: this.screen.height) - 1;
+				height = height - topOffset;
+				$('.card-wrapper__ses').css('min-height', height + 'px');
+			}
+			$(window).ready(cardHeight);
+			$(window).on('resize', cardHeight);
+			// End set height mobile
+		});
+	</script>
 </body>
 		
 </html>
