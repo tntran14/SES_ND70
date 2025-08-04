@@ -927,6 +927,13 @@ public class EInvoiceCRUDController extends AbstractController{
 			}
 			count++;
 			
+			if(commons.getTextJsonNode(jsonNode.at("/ProductName")).length() > 500) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
+						+ ".</br> Tên hàng hóa không vượt quá 500 ký tự.");
+				return dto;
+			}
+			
 			if ("5".equals(commons.getTextJsonNode(jsonNode.at("/Feature")))) {
 				String lhddt = commons.getTextJsonNode(jsonNode.at("/LHHDTrung"));
 				if ("1".equals(lhddt) && (commons.getTextJsonNode(jsonNode.at("/SKhung")).trim().equals("") || commons.getTextJsonNode(jsonNode.at("/SMay")).trim().equals(""))) {

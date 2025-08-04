@@ -515,6 +515,12 @@ public class TBHDSSotMTTCRUDController extends AbstractController{
 				break;	
 			}
 			count++;
+			if(commons.getTextJsonNode(jsonNode.at("/LDo")).length() > 255) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại hóa đơn STT: " + count
+						+ ".</br> Lý do không vượt quá 255 ký tự.");
+				return dto;
+			}
 		}
 		if(!check) {
 			dto.setErrorCode(999);
