@@ -429,6 +429,7 @@ public class IssuContractCRUDController extends AbstractController {
 		req.setAttribute("_action_", action);
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
+		req.setAttribute("HTTToanCode", "1");
 		LoadParameter(cup, locale, req, action);
 		inquiry(cup, locale, req, session, action);
 		if (!"".equals(errorDesc))
