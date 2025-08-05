@@ -409,7 +409,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauhd_update_admin|'): false}"><a th:href="@{/main/mauhd_update_admin/init}">Quản lý danh sách lệch SHĐ</a></li>	
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|sl-access-users|'): false}"><a th:href="@{/main/sl-access-users/init}">Số lượng khách hàng truy cập</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Thống kê SL HĐ còn lại theo mẫu số</a></li>
-								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/tax-code-search-statistics/init}">Thống kê SL lượt tìm kiếm MST</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tax-code-search-statistics|'): false}"><a th:href="@{/main/tax-code-search-statistics/init}">Thống kê SL lượt tìm kiếm MST</a></li>
 							</ul>
 						</li>
 						<li class="nav-small-cap">PARAM</li>
@@ -452,7 +452,7 @@
 						<li><a class="has-arrow" href="/" aria-expanded="false"><i class="mdi mdi-security"></i><span class="hide-menu">Phân quyền </span></a>
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|createUserAdmin|'): false}"><a th:href="@{/main/createUserAdmin/init}">Tạo tài khoản người dùng</a></li>
-								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'roleManagerAdmin|'): false}"><a th:href="@{/main/roleManagerAdmin/init}">Phân quyền tài khoản người dùng</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|roleManagerAdmin|'): false}"><a th:href="@{/main/roleManagerAdmin/init}">Phân quyền tài khoản người dùng</a></li>
 							</ul>
 						</li>
 						<!--  -->

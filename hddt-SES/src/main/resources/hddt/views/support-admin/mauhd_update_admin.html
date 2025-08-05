@@ -98,7 +98,7 @@
                             			<div class="button-group text-right">
                                        				
                             			
-                          			 <button type="button" title="Cập nhật số hóa đơn lệch" data-action="mauhd_update_admin-check" class="btns btns-edit__ses hover-up__ses"  >
+                          			 <button type="button" title="Cập nhật số hóa đơn lệch" data-action="mauhd_update_admin-check" class="btns btns-edit__ses hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|mauhd_update_admin-check|')}">
                             					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Cập nhật số hóa đơn lệch</span>
                             		</button>  
                             				

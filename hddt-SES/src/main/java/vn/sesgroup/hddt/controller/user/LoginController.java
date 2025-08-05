@@ -214,62 +214,62 @@ public class LoginController extends AbstractController{
 						sbRights.append(s).append("|");	
 					}					
 				}
-				sbRights.append("einvoice-history|einvoice-change|einvoice-deleteAll|einvoice-send-cqt|einvoice-send-mail|einvoice-send-emailauto|viewmail|einvoice_check_mst|einvoice_save_nmua|einvoice-sendAll-emailauto|");
-	        	sbRights.append("einvoice1-history|einvoice1-change|einvoice1-send-emailauto|einvoice1-send-cqt|einvoice1-send-mail|einvoice1_check_mst|einvoice1_save_nmua|");
-	        	sbRights.append("agent-history|agent-change|agent-send-emailauto|agent-send-cqt|agent-send-mail|agent_check_mst|agent_save_nmua|agent-deleteAll|");
-	        	sbRights.append("export-history|export-change|export-send-emailauto|export-send-cqt|export-send-mail|export_save_nmua|export-deleteAll|");       	
-	        	sbRights.append("issu-del|issu-detail|issu-send-cqt|issu-send-mail|");
-	        	sbRights.append("issu-contract-delete|issu-contract-active|issu-contract-deactive|");
-
-	        	sbRights.append("hdsduser-detail|");
-	        	sbRights.append("mauhd-del|mauhd-active|mauhd-deactive|");
-	        	sbRights.append("mstncn-del|");
-	        	
-	        	sbRights.append("tbhdssot-del|");        	
-	        	sbRights.append("tbhdssot_mtt-del|");
-	        	
-	        	sbRights.append("ql-footerweb-del|ql-footerweb-active|ql-footerweb-deactive|");
-				
-	        	sbRights.append("ql-tinh-del|");
-	        	sbRights.append("ql-tinweb-del|ql-tinweb-active|ql-tinweb-deactive|");
-	        	sbRights.append("ql-ttweb-del|");
-	        	sbRights.append("ql-cqt-del|");
-	        	sbRights.append("ql-mstk-del|");
-	        	sbRights.append("ql-httk-del|");
-	        	sbRights.append("ql-lhd-del|");
-	        	
-	        	sbRights.append("tktncn-excel|tktncn-pdf|");
-	        	sbRights.append("hdsd-del|hdsd-delete|hdsd-active|hdsd-deactive|");
-	        	sbRights.append("qly-mauhd-del|qly-mauhd-active|qly-mauhd-deactive|");  
-	        	sbRights.append("qly-mauct|qly-mauct-cre|qly-mauct-edit|qly-mauct-del|qly-mauct-detail|qly-mauct-active|qly-mauct-deactive|");  
-	    	
-	        	sbRights.append("config-email-mailjet|");
-	        	sbRights.append("tbhdssot-history|");
-	        	sbRights.append("tbhdssot-send-cqt|tbhdssot-send-mail|tbhdssot_mtt-del|");
-	        	
-	         	sbRights.append("tbhdssot_mtt-history|");
-	        	sbRights.append("tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
-	        	
-	        	sbRights.append("changeprofile|viewprofile|");   
-	        	sbRights.append("changepass|");
-	        	
-	        	sbRights.append("changepassAdmin|");
-	 	        
-	        	sbRights.append("qly-phoihd-active|qly-phoihd-deactive|qly-phoihd-del|qly-phoihd-view|");
-	        	
-	        	sbRights.append("color-del|");
-	         	sbRights.append("session_key_check|session_key_del|");       	      	
-	         	
-	           	sbRights.append("mauhd_admin-edit|mauhd_admin-check|");
-	           	
-	         	sbRights.append("dm-lhd|dm-lhd-cre|dm-lhd-detail|dm-lhd-edit|dm-lhd-del|");
-	         	
-	         	sbRights.append("mauso-expires-active|mauso-expires-deactive|");
-	         	
-	        	sbRights.append("issu-contract-expires-active|issu-contract-expires-deactive|");
-	        	
-	        	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
-	        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-send-cqtAll|einvoice_mtt-sendAll-email-auto|");
+//				sbRights.append("einvoice-history|einvoice-change|einvoice-deleteAll|einvoice-send-cqt|einvoice-send-mail|einvoice-send-emailauto|viewmail|einvoice_check_mst|einvoice_save_nmua|einvoice-sendAll-emailauto|");
+//	        	sbRights.append("einvoice1-history|einvoice1-change|einvoice1-send-emailauto|einvoice1-send-cqt|einvoice1-send-mail|einvoice1_check_mst|einvoice1_save_nmua|");
+//	        	sbRights.append("agent-history|agent-change|agent-send-emailauto|agent-send-cqt|agent-send-mail|agent_check_mst|agent_save_nmua|agent-deleteAll|");
+//	        	sbRights.append("export-history|export-change|export-send-emailauto|export-send-cqt|export-send-mail|export_save_nmua|export-deleteAll|");       	
+//	        	sbRights.append("issu-del|issu-detail|issu-send-cqt|issu-send-mail|");
+//	        	sbRights.append("issu-contract-delete|issu-contract-active|issu-contract-deactive|");
+//
+//	        	sbRights.append("hdsduser-detail|");
+//	        	sbRights.append("mauhd-del|mauhd-active|mauhd-deactive|");
+//	        	sbRights.append("mstncn-del|");
+//	        	
+//	        	sbRights.append("tbhdssot-del|");        	
+//	        	sbRights.append("tbhdssot_mtt-del|");
+//	        	
+//	        	sbRights.append("ql-footerweb-del|ql-footerweb-active|ql-footerweb-deactive|");
+//				
+//	        	sbRights.append("ql-tinh-del|");
+//	        	sbRights.append("ql-tinweb-del|ql-tinweb-active|ql-tinweb-deactive|");
+//	        	sbRights.append("ql-ttweb-del|");
+//	        	sbRights.append("ql-cqt-del|");
+//	        	sbRights.append("ql-mstk-del|");
+//	        	sbRights.append("ql-httk-del|");
+//	        	sbRights.append("ql-lhd-del|");
+//	        	
+//	        	sbRights.append("tktncn-excel|tktncn-pdf|");
+//	        	sbRights.append("hdsd-del|hdsd-delete|hdsd-active|hdsd-deactive|");
+//	        	sbRights.append("qly-mauhd-del|qly-mauhd-active|qly-mauhd-deactive|");  
+//	        	sbRights.append("qly-mauct|qly-mauct-cre|qly-mauct-edit|qly-mauct-del|qly-mauct-detail|qly-mauct-active|qly-mauct-deactive|");  
+//	    	
+//	        	sbRights.append("config-email-mailjet|");
+//	        	sbRights.append("tbhdssot-history|");
+//	        	sbRights.append("tbhdssot-send-cqt|tbhdssot-send-mail|tbhdssot_mtt-del|");
+//	        	
+//	         	sbRights.append("tbhdssot_mtt-history|");
+//	        	sbRights.append("tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
+//	        	
+//	        	sbRights.append("changeprofile|viewprofile|");   
+//	        	sbRights.append("changepass|");
+//	        	
+//	        	sbRights.append("changepassAdmin|");
+//	 	        
+//	        	sbRights.append("qly-phoihd-active|qly-phoihd-deactive|qly-phoihd-del|qly-phoihd-view|");
+//	        	
+//	        	sbRights.append("color-del|");
+//	         	sbRights.append("session_key_check|session_key_del|");       	      	
+//	         	
+//	           	sbRights.append("mauhd_admin-edit|mauhd_admin-check|");
+//	           	
+//	         	sbRights.append("dm-lhd|dm-lhd-cre|dm-lhd-detail|dm-lhd-edit|dm-lhd-del|");
+//	         	
+//	         	sbRights.append("mauso-expires-active|mauso-expires-deactive|");
+//	         	
+//	        	sbRights.append("issu-contract-expires-active|issu-contract-expires-deactive|");
+//	        	
+//	        	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
+//	        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-send-cqtAll|einvoice_mtt-sendAll-email-auto|");
 
 			}else {
         	

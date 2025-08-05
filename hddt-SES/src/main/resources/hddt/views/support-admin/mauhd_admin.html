@@ -66,7 +66,7 @@
                             			<div class="button-group text-right">
                                        				
                             			
-                            		 <button type="button" title="Cập nhật mẫu số" data-action="mauhd_admin-check" class="btns btns-edit__ses hover-up__ses"  >
+                            		 <button type="button" title="Cập nhật mẫu số" data-action="mauhd_admin-check" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|mauhd_admin-edit|')}" >
                             					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Cập nhật mẫu số</span>
                             				</button>  
                             				

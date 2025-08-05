@@ -81,9 +81,9 @@
 										<div class="button-group text-right">
 
 											<button type="button" title="Xuất danh sách excel"
-												data-action="ca_invoice-export"
+												data-action="tax-code-search-statistics-export"
 												class="btns btns-export__ses hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|ca_invoice-export|')}">
+												th:if="${#strings.contains(UserFullPathRight,'|tax-code-search-statistics-export|')}">
 												<i class="mdi mdi-microsoft-excel"> </i><span
 													class="d-none d-md-inline"> Xuất danh sách excel</span>
 											</button>
@@ -327,7 +327,7 @@
 											var dataAction = $(this).data('action');
 											var objData = {};
 											switch (dataAction) {
-											case 'ca_invoice-export':
+											case 'tax-code-search-statistics-export':
 												objData = getDataSearch();
 												$
 														.ajax({
