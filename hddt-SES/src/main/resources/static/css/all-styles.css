@@ -1603,7 +1603,7 @@ input.ovrr__checkbox {
   font-size: 16px;
   line-height: 1.5;
   font-weight: 600;
-  color: red;
+  color:  var(--progress-color);
 }
 .chart-group__number {
   font-size: 16px;
