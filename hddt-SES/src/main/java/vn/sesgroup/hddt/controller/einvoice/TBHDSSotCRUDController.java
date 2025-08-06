@@ -166,22 +166,22 @@ public class TBHDSSotCRUDController extends AbstractController{
 		
 		switch (transaction) {
 		case "tbhdssot-cre":
-			header = "Tạo thông báo hóa đơn sai sót";
+			header = "Tạo thông báo hóa đơn sai sót giải trình";
 			action = "CREATE";
 			isEdit = true;
 			break;
 		case "tbhdssot-edit":
-			header = "Thay đổi thông báo HĐ sai sót";
+			header = "Thay đổi thông báo HĐ sai sót giải trình";
 			action = "EDIT";
 			isEdit = true;
 			break;
 		case "tbhdssot-detail":
-			header = "Chi tiết thông báo HĐ sai sót";
+			header = "Chi tiết thông báo HĐ sai sót giải trình";
 			action = "DETAIL";
 			isEdit = false;
 			break;
 		case "tbhdssot-sign":
-			header = "Ký thông báo HĐ sai sót";
+			header = "Ký thông báo HĐ sai sót giải trình";
 			action = "SIGN";
 			isEdit = false;
 			break;
