@@ -6,19 +6,33 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
+import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.api.message.JSONRoot;
 import com.api.message.Msg;
@@ -35,6 +49,7 @@ import com.mongodb.client.model.ReturnDocument;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
+import vn.sesgroup.hddt.dto.SignTypeInfo;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.LBBDCTTheClientSideDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
@@ -172,7 +187,6 @@ public class LBBDCTTheClientSideImpl extends AbstractDAO implements LBBDCTTheCli
 
 		/* DOC NOI DUNG XML DA KY */
 		org.w3c.dom.Document xmlDoc = commons.inputStreamToDocument(is, true);
-
 		ObjectId objectId = null;
 		try {
 			objectId = new ObjectId(_id);
@@ -222,7 +236,64 @@ public class LBBDCTTheClientSideImpl extends AbstractDAO implements LBBDCTTheCli
 					options);
 		} catch (Exception e) {
 		}
+		
+		org.w3c.dom.Document doc = commons.fileToDocument(new File(dir, fileName), false);
 
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node nodeDSCKS = (Node) xPath.evaluate("/BBDCTThe/DSCKS/NNT", doc, XPathConstants.NODE);
+		Node nodeSignature = null;
+		if (null != nodeDSCKS)
+			nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
+		if (null != nodeSignature) {
+			String x509Certificate = commons.getTextFromNodeXML(
+					(Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
+			byte[] certBytes = Base64.getDecoder().decode(x509Certificate);
+			java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509");
+			java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) cf
+					.generateCertificate(new java.io.ByteArrayInputStream(certBytes));
+
+			String serialNumber = cert.getSerialNumber().toString(16);
+			docFind = new Document("SerialNumber", serialNumber);
+			Document existDoc = null;
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+						.getCollection("ClientSignatureInfo");
+				existDoc = collection.find(docFind).first();
+			} catch (Exception e) {
+			}
+
+			if (existDoc == null) {
+				String version = String.valueOf(cert.getVersion());
+				String sigAlgName = cert.getSigAlgName();
+				String issuerDN = cert.getIssuerDN().toString();
+				String subjectDN = cert.getSubjectDN().toString();
+				LocalDate validFrom = commons.dateToLocalDate(cert.getNotBefore());
+				LocalDate validTo = commons.dateToLocalDate(cert.getNotAfter());
+
+				Document docInsert = new Document("SerialNumber", serialNumber)
+										.append("Version", version)
+										.append("SigAlgName", sigAlgName)
+										.append("IssuerDN", issuerDN)
+										.append("SubjectDN", subjectDN)
+										.append("ValidFrom", validFrom)
+										.append("ValidTo", validTo)
+										.append("ClientOf", 
+												new Document("UserID", docTmp.getEmbedded(Arrays.asList("InfoCreated", "CreateUserID"),""))
+												.append("UserName",  docTmp.getEmbedded(Arrays.asList("InfoCreated", "CreateUserName"),""))
+												.append("UserFullName",  docTmp.getEmbedded(Arrays.asList("InfoCreated", "CreateUserFullName"),""))
+												)
+										.append("InfoCreated", new Document("CreateDate", LocalDateTime.now()));
+
+				try (MongoClient mongoClient = cfg.mongoClient()) {
+					MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName)
+							.getCollection("ClientSignatureInfo");
+					collection.insertOne(docInsert);
+				} catch (Exception e) {
+				}
+
+			}
+		}
+		
 		responseStatus = new MspResponseStatus(0, Constants.MAP_ERROR.get(0));
 		rsp.setResponseStatus(responseStatus);
 		return rsp;

@@ -371,7 +371,7 @@ public class LoginController extends AbstractController{
          	sbRights.append("mauso-expires|mauso-expires-export|mauso-expires-active|mauso-expires-deactive|");
          	
          	sbRights.append("tax-code-search-statistics|tax-code-search-statistics-export|");
-        	
+         	sbRights.append("client-signature-info|client-signature-info-export|");
            	sbRights.append("khxhd|khxhd-export|");
            	
            	sbRights.append("ql-user-check|qlUserCheckAdminCre|qlUserCheckAdminDetail|qlUserCheckAdminEdit|qlUserCheckAdminActive|qlUserCheckAdminDeActive|qlUserCheckAdminResetPassword|qlUserCheckAdminDelete|");

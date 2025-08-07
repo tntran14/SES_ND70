@@ -410,6 +410,8 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|sl-access-users|'): false}"><a th:href="@{/main/sl-access-users/init}">Số lượng khách hàng truy cập</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Thống kê SL HĐ còn lại theo mẫu số</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tax-code-search-statistics|'): false}"><a th:href="@{/main/tax-code-search-statistics/init}">Thống kê SL lượt tìm kiếm MST</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|client-signature-info|'): false}"><a th:href="@{/main/client-signature-info/init}">Thống kê thông tin chữ ký số của KH</a></li>
+							
 							</ul>
 						</li>
 						<li class="nav-small-cap">PARAM</li>
