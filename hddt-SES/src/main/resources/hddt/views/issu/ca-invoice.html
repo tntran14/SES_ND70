@@ -125,6 +125,7 @@
 					dateInputFormat($('#f-ca-invoice').find('#to-date'));
 					dateInputFormat($('#f-ca-invoice').find('#from-date'));
 					_gridMain.kendoGrid({
+						autoBind: false,
 						dataSource: new kendo.data.DataSource({
 							transport: {
 								read: {

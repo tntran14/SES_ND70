@@ -113,6 +113,7 @@
 					dateInputFormat($('#f-send-mail-hd').find('#from-date'));
 					dateInputFormat($('#f-send-mail-hd').find('#to-date'));
 					_gridMain.kendoGrid({
+						autoBind: false,
 						dataSource: new kendo.data.DataSource({
 							transport: {
 								read: {
