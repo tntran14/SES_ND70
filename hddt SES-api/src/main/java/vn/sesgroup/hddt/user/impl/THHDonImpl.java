@@ -106,6 +106,12 @@ public class THHDonImpl extends AbstractDAO implements THHDonDAO {
 		pipeline.add(new Document("$match", docMSKH));
 		pipeline.add(new Document("$unionWith",  new Document("coll", "DMMSTNCN")
 				 .append("pipeline", Arrays.asList(
+						 new Document("$match", docMSKH),
+				            new Document("$addFields", 
+				                new Document("NamPhatHanh", 
+				                    new Document("$toInt", "$Nam")
+				                )
+				            ),
 				            new Document("$match", docMSKH),
 				            new Document("$project", new Document("_id", 1)
 				            		.append("KyHieu", 1)
@@ -117,6 +123,7 @@ public class THHDonImpl extends AbstractDAO implements THHDonDAO {
 				    				.append("ConLai", 1)
 				    				.append("Status", 1)
 				    				.append("SHDTH", 1)
+				    				.append("NamPhatHanh", 1) 
 				            		)
 						 		)
 						 )
@@ -129,9 +136,12 @@ public class THHDonImpl extends AbstractDAO implements THHDonDAO {
 				.append("KyHieu", 1)
 				.append("MauSo", 1)
 				.append("ChungTu", 1)
+				.append("NamPhatHanh", 1)
 				));	
 		
-		pipeline.addAll(createFacetForSearchNotSort(page));
+		page.setFieldSort("NamPhatHanh");
+		page.setTypeSort(-1);
+		pipeline.addAll(createFacetForSearch(page));
 		
 		Iterator<Document> iter1 = null;
 		
