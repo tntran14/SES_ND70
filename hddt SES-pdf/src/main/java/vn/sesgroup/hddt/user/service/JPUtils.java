@@ -547,7 +547,10 @@ else {
 						if(!"".equals(hanSD)){
 							hItem.put("HanSD", commons.getTextFromNodeXML((Element) xPath.evaluate("HanSD", nodeTmp, XPathConstants.NODE)));
 						}
-						
+						String LHHDTrung = commons.getTextFromNodeXML((Element) xPath.evaluate("TTHHDTrung/TTin/LHHDTrung", nodeTmp, XPathConstants.NODE));
+						if(LHHDTrung.equals("2")) {
+							hItem.put("BKSPTVChuyen", commons.getTextFromNodeXML((Element) xPath.evaluate("TTHHDTrung/TTin/DLieu", nodeTmp, XPathConstants.NODE)));
+						}
 						hItem.put("DVTinh", commons.getTextFromNodeXML((Element) xPath.evaluate("DVTinh", nodeTmp, XPathConstants.NODE)));
 						hItem.put("SLuong",
 							commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("SLuong", nodeTmp, XPathConstants.NODE)))
@@ -652,6 +655,10 @@ else {
 						}
 						if(!"".equals(hanSD)){
 							hItem.put("HanSD", commons.getTextFromNodeXML((Element) xPath.evaluate("HanSD", nodeTmp, XPathConstants.NODE)));
+						}
+						String LHHDTrung = commons.getTextFromNodeXML((Element) xPath.evaluate("TTHHDTrung/TTin/LHHDTrung", nodeTmp, XPathConstants.NODE));
+						if(LHHDTrung.equals("2")) {
+							hItem.put("BKSPTVChuyen", commons.getTextFromNodeXML((Element) xPath.evaluate("TTHHDTrung/TTin/DLieu", nodeTmp, XPathConstants.NODE)));
 						}
 						hItem.put("DVTinh", commons.getTextFromNodeXML((Element) xPath.evaluate("DVTinh", nodeTmp, XPathConstants.NODE)));
 						hItem.put("SLuong",

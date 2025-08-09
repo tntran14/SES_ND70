@@ -378,7 +378,7 @@
 						<li><a class="has-arrow" aria-expanded="false"><i
 								class="mdi mdi-content-paste"></i><span class="hide-menu">Quản lý phôi hóa đơn </span></a>
 							<ul aria-expanded="false" class="collapse">
-								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qly-mauhd|'): false}"><a th:href="@{/main/qly-mauhd/init}">Quản lí Phôi hóa đơn</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qly-mauhd|'): false}"><a th:href="@{/main/qly-mauhd/init}">Quản lý Phôi hóa đơn</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-phoihd|'): false}"><a th:href="@{/main/ql-phoihd/init}">Thống kê KH sử dụng Phôi hóa đơn</a></li>
 <!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Quản lý mẫu số hóa đơn KH</a></li> -->
 								
