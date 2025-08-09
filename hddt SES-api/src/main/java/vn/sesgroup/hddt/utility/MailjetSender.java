@@ -2,6 +2,7 @@ package vn.sesgroup.hddt.utility;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -190,6 +191,38 @@ public class MailjetSender {
 
 		} catch (Exception e) {
 			return status;
+		}
+		return status;
+	}
+
+	public boolean sendMailJetSimple(MailConfig mailConfig, String title, String content, String mailReceiver,
+			boolean isHtmlFormat) throws MailjetException, MailjetSocketTimeoutException {
+
+		boolean status = false;
+		try {
+			String[] mailArray = mailReceiver.split(",");
+			List<String> listMail = Arrays.asList(mailArray);
+
+			for (String toEmail : listMail) {
+				MailjetClient client = new MailjetClient(mailConfig.getEmailAddress(), mailConfig.getEmailPassword(),
+						new ClientOptions("v3.1"));
+
+				MailjetRequest request = new MailjetRequest(Emailv31.resource).property(Emailv31.MESSAGES,
+						new JSONArray().put(new JSONObject()
+								.put(Emailv31.Message.FROM,
+										new JSONObject().put("Email", mailConfig.getSmtpServer()).put("Name",
+												mailConfig.getNameSend()))
+								.put(Emailv31.Message.TO, new JSONArray().put(new JSONObject().put("Email", toEmail)))
+								.put(Emailv31.Message.SUBJECT, title)
+								.put(isHtmlFormat ? Emailv31.Message.HTMLPART : Emailv31.Message.TEXTPART, content)));
+
+				MailjetResponse response = client.post(request);
+				System.out.println(response.getStatus());
+				System.out.println(response.getData());
+			}
+			status = true;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return status;
 	}

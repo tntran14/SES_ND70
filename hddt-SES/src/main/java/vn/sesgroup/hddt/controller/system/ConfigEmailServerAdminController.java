@@ -53,6 +53,7 @@ public class ConfigEmailServerAdminController extends AbstractController{
 	private String smtpPort;
 	private String emailAddress;
 	private String emailPassword;
+	private String mail;
 	
 	@RequestMapping(value = "/init", method = {RequestMethod.POST, RequestMethod.GET})
 	public String init(Locale locale, Principal principal, HttpServletRequest req
@@ -106,6 +107,16 @@ public class ConfigEmailServerAdminController extends AbstractController{
 			req.setAttribute("EmailAddress", commons.getTextJsonNode(jsonData.at("/EmailAddress")));
 			
 			req.setAttribute("_id", commons.getTextJsonNode(jsonData.at("/IssuerId")));
+			String mailJet = commons.getTextJsonNode(jsonData.at("/MailJet"));
+			
+			if(mailJet.equals("Y")) {
+				req.setAttribute("MailJet", true);
+				req.setAttribute("Mail", false);
+			}
+			else {
+				req.setAttribute("MailJet", false);
+				req.setAttribute("Mail", true);
+			}
 		}
 	}
 	
@@ -122,27 +133,30 @@ public class ConfigEmailServerAdminController extends AbstractController{
 		smtpPort = commons.getParameterFromRequest(req, "smtp-port").replaceAll("\\s", "");
 		emailAddress = commons.getParameterFromRequest(req, "email-address").replaceAll("\\s", "").toLowerCase();
 		emailPassword = commons.getParameterFromRequest(req, "email-password");
-		
-		if("".equals(smtpServer)) {
-			dto.setErrorCode(1);
-			dto.getErrorMessages().add("Vui lòng nhập vào địa chỉ SMTP Server.");
+		mail = commons.getParameterFromRequest(req, "mail");
+
+		if ("Y".equals(mail)) {
+
+			if ("".equals(smtpServer)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập vào địa chỉ SMTP Server.");
+			}
+			if ("".equals(smtpPort) || !commons.checkStringIsInt(smtpPort) || commons.stringToInteger(smtpPort) <= 0) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng kiểm tra lại Port SMTP Server.");
+			}
+			if ("".equals(emailAddress)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập vào địa chỉ email gửi.");
+			} else if (!commons.isValidEmailAddress(emailAddress)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Địa chỉ email gửi không đúng định dạng.");
+			}
+			if ("".equals(_id) && "".equals(emailPassword)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập vào mật khẩu email gửi.");
+			}
 		}
-		if("".equals(smtpPort) || !commons.checkStringIsInt(smtpPort) || commons.stringToInteger(smtpPort) <= 0) {
-			dto.setErrorCode(1);
-			dto.getErrorMessages().add("Vui lòng kiểm tra lại Port SMTP Server.");
-		}
-		if("".equals(emailAddress)) {
-			dto.setErrorCode(1);
-			dto.getErrorMessages().add("Vui lòng nhập vào địa chỉ email gửi.");
-		}else if(!commons.isValidEmailAddress(emailAddress)) {
-			dto.setErrorCode(1);
-			dto.getErrorMessages().add("Địa chỉ email gửi không đúng định dạng.");
-		}
-		if("".equals(_id) && "".equals(emailPassword)) {
-			dto.setErrorCode(1);
-			dto.getErrorMessages().add("Vui lòng nhập vào mật khẩu email gửi.");
-		}
-		
 		return dto;
 	}
 	
@@ -218,7 +232,7 @@ public class ConfigEmailServerAdminController extends AbstractController{
 		hData.put("SmtpPort", smtpPort);
 		hData.put("EmailAddress", emailAddress);
 		hData.put("EmailPassword", emailPassword);
-		
+		hData.put("Mail", mail);
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/config-email-server-admin/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);

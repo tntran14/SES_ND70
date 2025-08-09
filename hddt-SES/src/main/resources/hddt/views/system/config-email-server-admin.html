@@ -19,6 +19,50 @@
 								<div class="col-sm-12 offset-md-2 col-md-8 b-a m-b-sm background-frame-brown ">
 
 									<!-- box-header -->
+									<fieldset class="form-group row">
+										 <div class="row col-md-12 col-sm-12">	
+										 <div class="col-sm-3">	    
+										 <legend class="col-form-label float-sm-left pt-0">Cấu hình gửi Mail</legend>
+										 </div>									 									
+									<div class="col-sm-9">
+									<div class="d-flex align-items-center">
+                                		<div>
+		                                  <label
+		                                    class="custom-control custom-radio d-inline-block m-r-10 m-b-0"
+		                                  >
+		                                    <input
+		                                      name="reset-by"
+		                                      type="radio"
+		                                      value="email-normal"
+		                                      class="custom-control-input"
+		                                      th:checked="${Mail != null && Mail }"
+		                                    />
+			                                    <span class="custom-control-label p-t-5"
+			                                      >Email server thông thường</span
+			                                    >
+                                	  </label>
+                                </div>
+                                <div class="m-l-40">
+                                  <label
+                                    class="custom-control custom-radio d-inline-block m-r-10 m-b-0"
+                                  >
+                                    <input
+                                      name="reset-by"
+                                      type="radio"
+                                      value="email-service"
+                                      class="custom-control-input"
+                                      th:checked="${MailJet != null && MailJet }"
+                                    />
+                                    <span class="custom-control-label p-t-5"
+                                      >MailJet</span
+                                    >
+                                  </label>
+                                </div>
+                              </div>										   										 										  
+							</div>
+							</div>
+								</fieldset>
+								<div class="email-normal"> 
 									<div class="input-group-sm row">
 										<label class="col-5 col-sm-3 form-control-label"  >Gửi mail tự động</label>
 										<div class="col-7 col-sm-9">
@@ -76,6 +120,7 @@
 										<label>Mật khẩu email người bán hàng hóa, dịch vụ</label>
 										<input type="password" class="form-control form-control-sm" id="email-password" name="email-password" autocomplete="new-password" />
 									</div>
+									</div>
 									<div class="input-group-sm p-b-sm p-r-xs">
 										<div class="text-md-left text-sm-left text-left" ></div>
 										<div class="text-md-right text-sm-right text-right">
@@ -96,6 +141,25 @@
 				</script>
 				<!-- <script th:src="@{/static/function/system/config-email-server.js(v=1.0) }"></script> -->
 				<script type="text/javascript">
+				var check_mail = '[[${MailJet}]]';	
+				if(check_mail === "true"){
+					 $('#f-config-email-server')
+			          .find('div.email-normal')
+			          .addClass('hide')			      
+				}
+				 $('#f-config-email-server')
+			        .find('input[type="radio"][name="reset-by"]')
+			        .change(function (event) {
+			          showHideResetBy($(this).val())
+			        })
+			      function showHideResetBy(val) {
+			        $('#f-config-email-server')
+			          .find('div.email-normal, div.email-service')
+			          .addClass('hide')
+			        $('#f-config-email-server')
+			          .find('div.' + val)
+			          .removeClass('hide')
+			      }
 				$(function(){
 					inputFilterInteger($('#f-config-email-server').find('#smtp-port'))
 					
@@ -194,7 +258,10 @@
 					dataPost['smtp-port'] = $('#f-config-email-server').find('#smtp-port').val();
 					dataPost['email-address'] = $('#f-config-email-server').find('#email-address').val();
 					dataPost['email-password'] = $('#f-config-email-server').find('#email-password').val();
-					
+					_tmp1 = $('#f-config-email-server').find(
+					'input[type="radio"][name="reset-by"]')
+					.prop('checked') ? 'Y' : 'N';		
+					dataPost['mail'] = _tmp1;
 					return dataPost;
 				}
 				</script>

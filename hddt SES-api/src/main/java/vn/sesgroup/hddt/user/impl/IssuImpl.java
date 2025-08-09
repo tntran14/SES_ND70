@@ -45,6 +45,7 @@ import vn.sesgroup.hddt.user.service.TCTNService;
 import vn.sesgroup.hddt.utility.Constants;
 import vn.sesgroup.hddt.utility.Json;
 import vn.sesgroup.hddt.utility.MailUtils;
+import vn.sesgroup.hddt.utility.MailjetSender;
 
 @Repository
 @Transactional
@@ -73,6 +74,8 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 	
 	@Value("${spring.data.mongodb.password}")
 	private String password;
+	
+	private MailjetSender mailJet = new MailjetSender();
 
 	@Override
 	public MsgRsp list(JSONRoot jsonRoot) throws Exception {
@@ -279,7 +282,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 									)
 								),
 								new Document("$project", new Document("_id", 1).append("SmtpServer", 1).append("SmtpPort", 1).append("EmailAddress", 1)
-										.append("EmailPassword", 1).append("AutoSend", 1).append("SSL", 1).append("TLS", 1)
+										.append("EmailPassword", 1).append("AutoSend", 1).append("SSL", 1).append("TLS", 1).append("MailJet", 1)
 										)
 							)	
 						)
@@ -289,6 +292,14 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 				pipeline.add(
 					new Document("$unwind", new Document("path", "$ConfigEmailAdmin").append("preserveNullAndEmptyArrays", true))
 				);	
+				
+				pipeline.add(new Document("$lookup",
+						new Document("from", "ConfigMailJet")
+								.append("pipeline", Arrays.asList(new Document("$match", new Document("IsActive", true))))
+								.append("as", "ConfigMailJet")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$ConfigMailJet").append("preserveNullAndEmptyArrays", true)));
+				
 				pipeline.add(
 						new Document("$lookup", 
 							new Document("from", "PramLink")
@@ -499,8 +510,9 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			
 	if(docUpsertUser != null)	
 	{
+	String mail_Jet = docTmp.getEmbedded(Arrays.asList("ConfigEmailAdmin", "MailJet"), "");
 	MailConfig mailConfig = new MailConfig(docTmp.get("ConfigEmailAdmin", Document.class));
-	mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("UserName"), ""));
+	mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("Name"), ""));
 	String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkLogin"), "");
 	/*THUC HIEN GUI MAIL*/
 	String _title = header.getUserFullName() + " Thông báo phát hành tài khoản";
@@ -520,12 +532,25 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 	sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
 	sb.append("<hr style='margin: 5px 0 5px 0;'>");
 	sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ CÔNG TY VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-	 _content = sb.toString();
-	
-	
-	
-	boolean boo = mailUtils.sendMail(mailConfig, _title, _content, englh, null, null, true);
-	try {	
+	_content = sb.toString();
+
+	boolean boo = false;
+	if (mail_Jet.equals("Y") && !mail_Jet.equals("")) {
+		//
+		String ApiKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "ApiKey"), "");
+		String SecretKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "SecretKey"), "");
+		String EmailAddress = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "EmailAddress"), "");
+		mailConfig.setEmailAddress(ApiKey);
+		mailConfig.setEmailPassword(SecretKey);
+		mailConfig.setSmtpServer(EmailAddress);
+
+		boo = mailJet.sendMailJetSimple(mailConfig, _title, _content, englh, true);
+
+	} else {
+		boo = mailUtils.sendMail(mailConfig, _title, _content, englh, null, null, true);
+	}
+
+	try {
 		mongoClient = cfg.mongoClient();
 		collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmail");
 		collection.insertOne(new Document("IssuerId", header.getIssuerId())
@@ -624,7 +649,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 									)
 								),
 								new Document("$project", new Document("_id", 1).append("SmtpServer", 1).append("SmtpPort", 1).append("EmailAddress", 1)
-										.append("EmailPassword", 1).append("AutoSend", 1).append("SSL", 1).append("TLS", 1)
+										.append("EmailPassword", 1).append("AutoSend", 1).append("SSL", 1).append("TLS", 1).append("MailJet", 1)
 										)
 							)	
 						)
@@ -635,7 +660,13 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 					new Document("$unwind", new Document("path", "$ConfigEmailAdmin").append("preserveNullAndEmptyArrays", true))
 				);	
 		
-
+			pipeline.add(new Document("$lookup",
+						new Document("from", "ConfigMailJet")
+								.append("pipeline", Arrays.asList(new Document("$match", new Document("IsActive", true))))
+								.append("as", "ConfigMailJet")));
+			pipeline.add(new Document("$unwind",
+						new Document("path", "$ConfigMailJet").append("preserveNullAndEmptyArrays", true)));
+			
 			docFind = new Document("TaxCode", t).append("IsDelete", new Document("$ne", true));
 			pipeline.add(
 				new Document("$lookup", 
@@ -730,8 +761,9 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		      
 			//GUI MAI			
 			//GHI LOG
+		    String mail_Jet = docTmp.getEmbedded(Arrays.asList("ConfigEmailAdmin", "MailJet"), ""); 
 			MailConfig mailConfig = new MailConfig(docTmp.get("ConfigEmailAdmin", Document.class));
-			mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("UserName"), ""));
+			mailConfig.setNameSend(docTmp.getEmbedded(Arrays.asList("Name"), ""));
 			
 			/*THUC HIEN GUI MAIL*/
 			String _title = header.getUserFullName() + " Thông báo phát hành tài khoản";
@@ -751,11 +783,23 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
 			sb.append("<hr style='margin: 5px 0 5px 0;'>");
 			sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ CÔNG TY VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
-			 _content = sb.toString();
-			
-			
-			
-			boolean boo = mailUtils.sendMail(mailConfig, _title, _content, englh, null, null, true);
+			_content = sb.toString();
+
+			boolean boo = false;
+			if (mail_Jet.equals("Y") && !mail_Jet.equals("")) {
+				//
+				String ApiKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "ApiKey"), "");
+				String SecretKey = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "SecretKey"), "");
+				String EmailAddress = docTmp.getEmbedded(Arrays.asList("ConfigMailJet", "EmailAddress"), "");
+				mailConfig.setEmailAddress(ApiKey);
+				mailConfig.setEmailPassword(SecretKey);
+				mailConfig.setSmtpServer(EmailAddress);
+
+				boo = mailJet.sendMailJetSimple(mailConfig, _title, _content, englh, true);
+
+			} else {
+				boo = mailUtils.sendMail(mailConfig, _title, _content, englh, null, null, true);
+			}
 			try {
 			
 				mongoClient = cfg.mongoClient();

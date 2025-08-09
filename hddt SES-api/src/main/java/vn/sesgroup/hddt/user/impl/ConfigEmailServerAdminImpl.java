@@ -58,6 +58,7 @@ public class ConfigEmailServerAdminImpl extends AbstractDAO implements ConfigEma
 		String smtpPort = commons.getTextJsonNode(jsonData.at("/SmtpPort")).replaceAll("\\s", "");
 		String emailAddress = commons.getTextJsonNode(jsonData.at("/EmailAddress")).replaceAll("\\s", "");
 		String emailPassword = commons.getTextJsonNode(jsonData.at("/EmailPassword"));
+		String mail = commons.getTextJsonNode(jsonData.at("/Mail"));
 		
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -93,6 +94,8 @@ public class ConfigEmailServerAdminImpl extends AbstractDAO implements ConfigEma
 				.append("AutoSend", "Y".equals(checkAutoSend))
 				.append("SSL", "Y".equals(checkSSL))
 				.append("TLS", "Y".equals(checkTLS))
+				.append("Mail", mail)
+				.append("MailJet", mail.equals("Y") ? "N" : "Y")
 				.append("InfoCreated", 
 					new Document("CreateDate", LocalDateTime.now())
 					.append("CreateUserID", header.getUserId())
@@ -117,6 +120,8 @@ public class ConfigEmailServerAdminImpl extends AbstractDAO implements ConfigEma
 				.append("AutoSend", "Y".equals(checkAutoSend))
 				.append("SSL", "Y".equals(checkSSL))
 				.append("TLS", "Y".equals(checkTLS))
+				.append("Mail", mail)
+				.append("MailJet", mail.equals("Y") ? "N" : "Y")
 				.append("InfoUpdated", 
 					new Document("UpdatedDate", LocalDateTime.now())
 						.append("UpdatedUserID", header.getUserId())
