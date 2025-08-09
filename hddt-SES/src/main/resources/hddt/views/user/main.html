@@ -405,8 +405,15 @@
 		<script th:inline="javascript">
 	const active  = /*[[${NotificationActivated}]]*/ "fasle"; 
 	const message = `[(${NotificationContent})]`;
-   	if (active == "true") {
-	    alertDLSuccess(message, function myFunction() {});
+	const mshdExpire = `[(${MSHDAboutToExpire})]`;
+   	if (active == "true" || mshdExpire != '') {
+   		const ms = mshdExpire != '' ? 
+   				'Thông báo <br> Quý khách có các mẫu hóa đơn sắp hết số lượng:<br>' + mshdExpire + 'Quý khách vui lòng liên hệ bộ phận tư vấn để mua thêm số lượng để tránh gián đoạn khi hết số lượng!<br> Trân trọng!' 
+   				+ (message!='' ? '<br>-------------------------------------------------------------------------------------------<br>' + message:'')
+   				: 
+   				message;
+
+	    alertDLSuccess(ms, function myFunction() {});
 	}
   	</script>
 	</th:block>

@@ -240,6 +240,7 @@ public class MainController extends AbstractController {
 			int DD = 0;
 			int PercentCL = 0;
 			int PercentDD = 0;
+			String mshdAboutToExpire = "" ;
 			if (!jsonData.at("/DMMauSoKyHieu").isMissingNode()) {
 				rows = jsonData.at("/DMMauSoKyHieu");
 				rowsMSKH = new ArrayList<HashMap<String, Object>>();
@@ -332,6 +333,7 @@ public class MainController extends AbstractController {
 				rowsBH = new ArrayList<HashMap<String, Object>>();
 				rowsPXKNB = new ArrayList<HashMap<String, Object>>();
 				rowsPXKDL = new ArrayList<HashMap<String, Object>>();
+				
 
 				for (HashMap<String, Object> hashMap : rowsMSKH) {
 					hTmp = new HashMap<String, Object>();
@@ -342,6 +344,9 @@ public class MainController extends AbstractController {
 					String DD_ = hashMap.get("DD").toString();
 					String MSHD_ = hashMap.get("MSHD").toString();
 					String PERCENT_CL_ = hashMap.get("PERCENT_CL").toString();
+					if (Integer.parseInt(PERCENT_CL_) <= 30 && Integer.parseInt(PERCENT_CL_) > 0) {
+						mshdAboutToExpire += "Mẫu " + MSHD_ +": số lượng còn lại "+CL_+" số <br>";
+					}
 					String PERCENT_DD_ = hashMap.get("PERCENT_DD").toString();
 
 					String LoaiHD_ = hashMap.get("LoaiHD").toString();
@@ -371,7 +376,7 @@ public class MainController extends AbstractController {
 				request.setAttribute("MauSoBH", rowsBH);
 				request.setAttribute("MauSoPXK", rowsPXKNB);
 				request.setAttribute("MauSoPXKDL", rowsPXKDL);
-
+				
 				/* END GET DATA ADD LIST ARRAY INVOICE TYPE */
 			}
 
@@ -400,6 +405,9 @@ public class MainController extends AbstractController {
 						PercentCL = (CL * 100) / SL;
 						PercentDD = 100 - PercentCL;
 					}
+					if (PercentCL <= 30 && PercentCL > 0) {
+						mshdAboutToExpire += "Mẫu " + mstn +": số lượng còn lại "+CL+" số <br>";
+					}
 					hTmp = new HashMap<String, Object>();
 					hTmp.put("MSTNCN", mstn);
 					hTmp.put("SL", SL);
@@ -414,7 +422,7 @@ public class MainController extends AbstractController {
 				}
 				request.setAttribute("MauSoTNCN", rowsTNCN);
 			}
-			
+			request.setAttribute("MSHDAboutToExpire", mshdAboutToExpire);
 			
 			// LAY MAU SAC CAC NUT 
 
