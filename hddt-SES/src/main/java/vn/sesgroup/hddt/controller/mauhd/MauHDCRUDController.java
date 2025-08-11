@@ -1,6 +1,7 @@
 package vn.sesgroup.hddt.controller.mauhd;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -647,9 +648,13 @@ public class MauHDCRUDController extends AbstractController{
 						throw new IllegalArgumentException("File không phải là ảnh hợp lệ");
 					}
 					BufferedImage transparentImage = new BufferedImage(originalImage.getWidth(),
-							originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+							originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 					Graphics2D g2d = transparentImage.createGraphics();
+					
+					g2d.setColor(Color.WHITE);
+					g2d.fillRect(0, 0, transparentImage.getWidth(), transparentImage.getHeight());
+					
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
 					g2d.drawImage(originalImage, 0, 0, null);
 					g2d.dispose();
