@@ -63,8 +63,6 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 	private String emailcc;
 	private String department;
 	private String cccd;
-	private String cccddate;
-	private String cccdaddress;
 	private String qt;
 	private String cutru;
 	private String _token;
@@ -89,6 +87,7 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 			header = "Thêm mới nhân viên";
 			action = "CREATE";
 			req.setAttribute("QuocTich", "VIỆT NAM");
+			req.setAttribute("optHTHDon", "0");
 			isEdit = true;
 			break;
 		case "qlnvtncn-detail":
@@ -141,9 +140,7 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 			req.setAttribute("Phone", commons.getTextJsonNode(jsonData.at("/Phone")));
 			req.setAttribute("Address", commons.getTextJsonNode(jsonData.at("/Address")));
 			req.setAttribute("CCCD", commons.getTextJsonNode(jsonData.at("/CMND-CCCD/CCCD")));
-			req.setAttribute("CCCDDATE", commons.getTextJsonNode(jsonData.at("/CMND-CCCD/CCCDDATE")));
-			req.setAttribute("CCCDADDRESS", commons.getTextJsonNode(jsonData.at("/CMND-CCCD/CCCDADDRESS")));
-			req.setAttribute("QuocTich", commons.getTextJsonNode(jsonData.at("/CMND-CCCD/QuocTich")));
+			req.setAttribute("DCTDTu", commons.getTextJsonNode(jsonData.at("/Email")));
 			req.setAttribute("QuocTich", commons.getTextJsonNode(jsonData.at("/CMND-CCCD/QuocTich")));
 			req.setAttribute("optHTHDon", commons.getTextJsonNode(jsonData.at("/CuTru")));
 			req.setAttribute("Department", commons.getTextJsonNode(jsonData.at("/Department")));
@@ -166,8 +163,7 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		department = commons.getParameterFromRequest(req, "department").trim().replaceAll("\\s+", " ");
 		phone = commons.getParameterFromRequest(req, "phone").trim().replaceAll("\\s+", " ");
 		cccd = commons.getParameterFromRequest(req, "cccd").trim().replaceAll("\\s+", " ");
-		cccddate = commons.getParameterFromRequest(req, "cccddate").trim().replaceAll("\\s+", " ");
-		cccdaddress = commons.getParameterFromRequest(req, "cccdaddress").trim().replaceAll("\\s+", " ");
+		email = commons.getParameterFromRequest(req, "dctdtu").trim().replaceAll("\\s+", " ");
 		qt = commons.getParameterFromRequest(req, "qt").trim().replaceAll("\\s+", " ");
 		cutru = commons.getParameterFromRequest(req, "cutru").trim().replaceAll("\\s+", " ");
 		
@@ -183,19 +179,15 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		
 			if("".equals(name)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng điền đầy đủ thông tin CMND-CCCD.");
+				dto.getErrorMessages().add("Vui lòng điền Tên nhân viên.");
 			}	
 			if("".equals(cccd)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng điền đầy đủ thông tin CMND-CCCD.");
+				dto.getErrorMessages().add("Vui lòng điền thông tin CCCD.");
 			}	
-			if("".equals(cccddate)) {
+			if("".equals(phone)) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng điền đầy đủ thông tin CMND-CCCD.");
-			}	
-			if("".equals(cccdaddress)) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng điền đầy đủ thông tin CMND-CCCD.");
+				dto.getErrorMessages().add("Vui lòng điền Số điện thoại.");
 			}	
 			if("".equals(address)) {
 				dto.setErrorCode(1);
@@ -329,8 +321,7 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 			hData.put("Phone", phone);
 			hData.put("Department", department);
 			hData.put("CCCD", cccd);
-			hData.put("CCCDDTE", cccddate);
-			hData.put("CCCDADDRESS", cccdaddress);
+			hData.put("Email", email);
 			hData.put("QuocTich", qt);
 			hData.put("CuTru", cutru);
 			break;
@@ -389,26 +380,35 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		String messageConfirm = "Bạn có muốn thêm mới hóa đơn không?";
 		
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-		dto = checkDataToAccept(req, session, transaction, cup);
-		if(0 != dto.getErrorCode()) {
-			dto.setErrorCode(999);
-			dto.setResponseData(Constants.MAP_ERROR.get(999));
-			return dto;
-		}
 		taxCode = commons.getParameterFromRequest(req, "taxcode").replaceAll("\\s", "").toUpperCase();
 		code = commons.getParameterFromRequest(req, "code").replaceAll("\\s", "").toUpperCase();
 		name = commons.getParameterFromRequest(req, "name");
-		address = commons.getParameterFromRequest(req, "address").trim().replaceAll("\\s+", " ");
-		department = commons.getParameterFromRequest(req, "department").trim().replaceAll("\\s+", " ");
-		phone = commons.getParameterFromRequest(req, "phone").trim().replaceAll("\\s+", " ");
-		email = commons.getParameterFromRequest(req, "email").trim().replaceAll("\\s+", " ");
-		emailcc = commons.getParameterFromRequest(req, "emailcc").trim().replaceAll("\\s+", " ");
-		cccd = commons.getParameterFromRequest(req, "cccd").trim().replaceAll("\\s+", " ");
-		cccddate = commons.getParameterFromRequest(req, "cccddate").trim().replaceAll("\\s+", " ");
-		cccdaddress = commons.getParameterFromRequest(req, "cccdaddress").trim().replaceAll("\\s+", " ");
-		qt = commons.getParameterFromRequest(req, "qt").trim().replaceAll("\\s+", " ");
-		cutru = commons.getParameterFromRequest(req, "cutru").trim().replaceAll("\\s+", " ");
-
+		address = commons.getParameterFromRequest(req, "dchi").trim().replaceAll("\\s+", " ");
+		phone = commons.getParameterFromRequest(req, "sdthoai").trim().replaceAll("\\s+", " ");
+		email = commons.getParameterFromRequest(req, "dctdtu").trim().replaceAll("\\s+", " ");
+		emailcc = commons.getParameterFromRequest(req, "dctdtucc").trim().replaceAll("\\s+", " ");
+		cccd = commons.getParameterFromRequest(req, "cccdan").trim().replaceAll("\\s+", " ");
+		qt = commons.getParameterFromRequest(req, "qtich").trim().replaceAll("\\s+", " ");
+		cutru = commons.getParameterFromRequest(req, "optHTHDon").trim().replaceAll("\\s+", " ");
+		if("".equals(name)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng điền Tên nhân viên.");
+		}	
+		if("".equals(cccd)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng điền thông tin CCCD.");
+		}	
+		if("".equals(phone)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng điền Số điện thoại.");
+		}	
+		if("".equals(address)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng nhập vào địa chỉ nhân viên.");
+		}	
+		if (dto.getErrorMessages().size() > 0) {
+			return dto;
+		}
 
 		BaseDTO baseDTO = new BaseDTO(req);
 		Msg msg = baseDTO.createMsg(cup,  Constants.MSG_ACTION_CODE.CREATED);
@@ -420,10 +420,7 @@ public class QLNhanVienTNCNCRUDController extends AbstractController{
 		hData.put("Phone", phone);
 		hData.put("Email", email);
 		hData.put("EmailCC", emailcc);
-		hData.put("Department", department);
 		hData.put("CCCD", cccd);
-		hData.put("CCCDDTE", cccddate);
-		hData.put("CCCDADDRESS", cccdaddress);
 		hData.put("QuocTich", qt);
 		hData.put("CuTru", cutru);
 		msg.setObjData(hData);

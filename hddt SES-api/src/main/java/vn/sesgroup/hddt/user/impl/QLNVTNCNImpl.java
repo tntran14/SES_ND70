@@ -149,7 +149,6 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 				hItem.put("Name", doc.get("Name"));
 				hItem.put("Phone", doc.get("Phone"));
 				hItem.put("Email", doc.get("Email"));
-				hItem.put("EmailCC", doc.get("EmailCC"));
 				hItem.put("Date", doc.get("Date"));
 				hItem.put("CMND-CCCD", doc.get("CMND-CCCD"));
 				hItem.put("Address", doc.get("Address"));
@@ -189,12 +188,9 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 		String name = commons.getTextJsonNode(jsonData.at("/Name"));
 		String phone = commons.getTextJsonNode(jsonData.at("/Phone")).trim().replaceAll("\\s+", " ");
 		String email = commons.getTextJsonNode(jsonData.at("/Email")).trim().replaceAll("\\s+", " ");
-		String emailcc = commons.getTextJsonNode(jsonData.at("/EmailCC")).trim().replaceAll("\\s+", " ");
 		String address = commons.getTextJsonNode(jsonData.at("/Address")).trim().replaceAll("\\s+", " ");
 		String department = commons.getTextJsonNode(jsonData.at("/Department")).trim().replaceAll("\\s+", " ");
 		String cccd = commons.getTextJsonNode(jsonData.at("/CCCD")).trim().replaceAll("\\s+", " ");
-		String cccddate = commons.getTextJsonNode(jsonData.at("/CCCDDTE")).trim().replaceAll("\\s+", " ");
-		String cccdaddress = commons.getTextJsonNode(jsonData.at("/CCCDADDRESS")).trim().replaceAll("\\s+", " ");
 		String qt = commons.getTextJsonNode(jsonData.at("/QuocTich")).trim().replaceAll("\\s+", " ");
 		String cutru = commons.getTextJsonNode(jsonData.at("/CuTru")).trim().replaceAll("\\s+", " ");
 	
@@ -285,14 +281,11 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 					.append("Name", name)
 					.append("Phone", phone)
 					.append("Email", email)
-					.append("EmailCC", emailcc)
 					.append("Address", address)
 					.append("Department", department)
 					.append("CuTru", cutru)				
 					.append("CMND-CCCD",
 							new Document("CCCD", cccd)
-							.append("CCCDDATE", cccddate)
-							.append("CCCDADDRESS", cccdaddress)
 							.append("QuocTich", qt))
 					
 					.append("IsActive", true)
@@ -361,13 +354,13 @@ public class QLNVTNCNImpl extends AbstractDAO implements QLNVTNCNDAO{
 						new Document("TaxCode", taxCode)
 						.append("Code", code)
 						.append("Name", name)
+						.append("Phone", phone)
+						.append("Email", email)
 						.append("Address", address)
 						.append("Department", department)
 						.append("CuTru", cutru)	
 						.append("CMND-CCCD",
 								new Document("CCCD", cccd)
-								.append("CCCDDATE", cccddate)
-								.append("CCCDADDRESS", cccdaddress)
 								.append("QuocTich", qt))
 						.append("IsActive", true)
 						.append("IsDelete", false)
