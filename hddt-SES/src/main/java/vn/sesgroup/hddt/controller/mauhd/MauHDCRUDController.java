@@ -1,5 +1,10 @@
 package vn.sesgroup.hddt.controller.mauhd;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -533,7 +539,7 @@ public class MauHDCRUDController extends AbstractController{
 					}
 					
 					fileName =fileNameOriginal;
-					if(saveUploadFiles(multiFile, fileName, DIR_TEMPORARY_STORE_FILES )) {
+					if(saveUploadFiles(multiFile, fileName, DIR_TEMPORARY_STORE_FILES, "backgroundFile".equals(keyFileName.toString()))) {
 						if("logoFile".equals(keyFileName.toString()))
 						{
 							session.setAttribute("FILE_NAME_LOGO", fileName);
@@ -632,18 +638,54 @@ public class MauHDCRUDController extends AbstractController{
 		return dto;
 	}
 
-	private boolean saveUploadFiles(MultipartFile multiFile, String fileNameTarget, String dir) {
-		try {
-			if(!multiFile.isEmpty()) {
-				byte[] bytes = multiFile.getBytes();
-	            Path path = Paths.get(dir + fileNameTarget);
-	            Files.write(path, bytes);
-	            return true;
+	private boolean saveUploadFiles(MultipartFile multiFile, String fileNameTarget, String dir, boolean isBackground) {
+		if (isBackground) {
+			try {
+				if (!multiFile.isEmpty()) {
+					BufferedImage originalImage = ImageIO.read(multiFile.getInputStream());
+					if (originalImage == null) {
+						throw new IllegalArgumentException("File không phải là ảnh hợp lệ");
+					}
+					BufferedImage transparentImage = new BufferedImage(originalImage.getWidth(),
+							originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+					Graphics2D g2d = transparentImage.createGraphics();
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+					g2d.drawImage(originalImage, 0, 0, null);
+					g2d.dispose();
+
+					Path path = Paths.get(dir + fileNameTarget);
+					String extension = getFileExtension(fileNameTarget);
+					if (extension == null || extension.isEmpty()) {
+						extension = "png";
+					}
+					ImageIO.write(transparentImage, extension, path.toFile());
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}catch(Exception e) {
-			e.printStackTrace();
+		} else {
+			try {
+				if (!multiFile.isEmpty()) {
+					byte[] bytes = multiFile.getBytes();
+					Path path = Paths.get(dir + fileNameTarget);
+					Files.write(path, bytes);
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
+	}
+
+	private String getFileExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+			return fileName.substring(dotIndex + 1).toLowerCase();
+		}
+		return "";
 	}
 
 	@RequestMapping(value = "/download-image", method = RequestMethod.GET)
