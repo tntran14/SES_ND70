@@ -252,18 +252,18 @@ public class MauHDImpl extends AbstractDAO implements MauHDtDao {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
-		if(logo == "") {
-			logo = 	docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu","Templates", "ImgLogo"), "");
-		}
-			if(nen == "") {
-				nen = 	docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu","Templates", "ImgBackground"), "");
-					}
-			if(qa == "") {
-				qa = 	docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu","Templates", "ImgQA"), "");
-					}
-			if(vien == "") {
-				vien = 	docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu","Templates", "ImgVien"), "");
-					}
+//			if (logo == "") {
+//				logo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
+//			}
+//			if (nen == "") {
+//				nen = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"), "");
+//			}
+//			if (qa == "") {
+//				qa = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgQA"), "");
+//			}
+//			if (vien == "") {
+//				vien = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgVien"), "");
+//			}
 			
 			String KHMSHDonfindu =   docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "");
 			String KHHDonfindu =   docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "");
