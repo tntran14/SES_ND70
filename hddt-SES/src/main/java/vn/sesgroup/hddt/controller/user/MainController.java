@@ -250,7 +250,7 @@ public class MainController extends AbstractController {
 					String KHHDon = commons.getTextJsonNode(row.at("/KHHDon"));
 					String SoLuongs = commons.getTextJsonNode(row.at("/SoLuong"));
 					String ConLais = commons.getTextJsonNode(row.at("/ConLai"));
-
+					String namPhatHanh = commons.getTextJsonNode(row.at("/NamPhatHanh"));
 					String LoaiHD = "";
 					char index1 = KHHDon.charAt(3);
 					String check6 = Character.toString(index1);
@@ -311,6 +311,7 @@ public class MainController extends AbstractController {
 						hTmp.put("PERCENT_CL", PercentCL);
 						hTmp.put("PERCENT_DD", PercentDD);
 						hTmp.put("LoaiHD", LoaiHD);
+						hTmp.put("NamPhatHanh", namPhatHanh);
 						rowsMSKH.add(hTmp);
 
 						dem++;
@@ -333,8 +334,7 @@ public class MainController extends AbstractController {
 				rowsBH = new ArrayList<HashMap<String, Object>>();
 				rowsPXKNB = new ArrayList<HashMap<String, Object>>();
 				rowsPXKDL = new ArrayList<HashMap<String, Object>>();
-				
-
+				int currentYear = LocalDate.now().getYear();
 				for (HashMap<String, Object> hashMap : rowsMSKH) {
 					hTmp = new HashMap<String, Object>();
 
@@ -344,7 +344,10 @@ public class MainController extends AbstractController {
 					String DD_ = hashMap.get("DD").toString();
 					String MSHD_ = hashMap.get("MSHD").toString();
 					String PERCENT_CL_ = hashMap.get("PERCENT_CL").toString();
-					if (Integer.parseInt(PERCENT_CL_) <= 30 && Integer.parseInt(PERCENT_CL_) > 0) {
+					
+					if (Integer.parseInt(PERCENT_CL_) <= 30 && 
+							Integer.parseInt(hashMap.get("NamPhatHanh").toString()) == currentYear
+							) {
 						mshdAboutToExpire += "Mẫu " + MSHD_ +": số lượng còn lại "+CL_+" số <br>";
 					}
 					String PERCENT_DD_ = hashMap.get("PERCENT_DD").toString();
@@ -385,6 +388,7 @@ public class MainController extends AbstractController {
 			if (!jsonData.at("/DMMSTNCN").isMissingNode()) {
 				rows = jsonData.at("/DMMSTNCN");
 				rowsMSKH = new ArrayList<HashMap<String, Object>>();
+				int currentYear = LocalDate.now().getYear();
 				for (JsonNode row : rows) {
 					String mstn = commons.getTextJsonNode(row.at("/KyHieu")) + "/"
 							+ commons.getTextJsonNode(row.at("/MauSo")) + "/"
@@ -405,7 +409,8 @@ public class MainController extends AbstractController {
 						PercentCL = (CL * 100) / SL;
 						PercentDD = 100 - PercentCL;
 					}
-					if (PercentCL <= 30 && PercentCL > 0) {
+					String nam	= commons.getTextJsonNode(row.at("/Nam"));
+					if (PercentCL <= 30 && Integer.parseInt(commons.getTextJsonNode(row.at("/Nam"))) == currentYear) {
 						mshdAboutToExpire += "Mẫu " + mstn +": số lượng còn lại "+CL+" số <br>";
 					}
 					hTmp = new HashMap<String, Object>();
