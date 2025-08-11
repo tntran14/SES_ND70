@@ -1712,10 +1712,7 @@ public class CommonController extends AbstractController{
 					hItem.put("Code", commons.getTextJsonNode(row.at("/Code")));
 					hItem.put("Department", commons.getTextJsonNode(row.at("/Department")));
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/TaxCode")));
-					
 					hItem.put("CCCD", commons.getTextJsonNode(row.at("/CMND-CCCD/CCCD")));
-					hItem.put("CCCDDATE", commons.getTextJsonNode(row.at("/CMND-CCCD/CCCDDATE")));
-					hItem.put("CCCDADDRESS", commons.getTextJsonNode(row.at("/CMND-CCCD/CCCDADDRESS")));
 					hItem.put("QuocTich", commons.getTextJsonNode(row.at("/CMND-CCCD/QuocTich")));
 					hItem.put("CuTru", commons.getTextJsonNode(row.at("/CuTru")));
 					
