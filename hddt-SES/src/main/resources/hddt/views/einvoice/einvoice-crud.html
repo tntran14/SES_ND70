@@ -714,7 +714,6 @@
 				var gridTemp = e.sender;
 				var dataItems = gridTemp.dataSource.view();
 				dataItems.forEach(function (item, index) {
-					console.log("Dòng " + index + ": ", item);
 					var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + index + ')');
 					if (item['Feature'] == 'Hàng hóa đặc trưng' || item['Feature'] == '5') {
 						$("#f-einvoice-crud").find("#grid").data("kendoGrid").showColumn(15);

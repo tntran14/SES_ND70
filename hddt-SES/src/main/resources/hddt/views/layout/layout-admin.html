@@ -313,6 +313,16 @@
 					<!-- ============================================================== -->
 					<!-- ============================================================== -->
 					<!-- User profile and search -->
+					<div class="col-xs-4 info-company"
+							style="float: left; padding-right: 15px; padding-bottom: 0px;">
+							<div
+								style="color: #425cfb; font-family: &amp; amp; #39; Times New Roman&amp;amp; #39; , Times , serif; font-weight: bold; font-size: 14px;">
+								MST:<span style="color: #ff2112"> [[${TAXCODE}]] </span>
+							</div>
+							<div
+								style="color: #425cfb; font-family: &amp; amp; #39; Times New Roman&amp;amp; #39; , Times , serif; font-weight: bold; font-size: 14px;">
+								[[${COMPANYNAME}]]</div>
+						</div>
 					<!-- ============================================================== -->
 					<ul class="navbar-nav my-lg-0">
 						<!-- ============================================================== -->
@@ -380,8 +390,8 @@
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|qly-mauhd|'): false}"><a th:href="@{/main/qly-mauhd/init}">Quản lý Phôi hóa đơn</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-phoihd|'): false}"><a th:href="@{/main/ql-phoihd/init}">Thống kê KH sử dụng Phôi hóa đơn</a></li>
-<!-- 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|mauso-expires|'): false}"><a th:href="@{/main/mauso-expires/init}">Quản lý mẫu số hóa đơn KH</a></li> -->
-								
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|ql-mauhdadmin|'): false}"><a th:href="@{/main/ql-mauhdadmin/init}">Quản lý mẫu số hóa đơn của KH</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|phsl-mauhdadmin|'): false}"><a th:href="@{/main/phsl-mauhdadmin/init}">Phát hành SL mẫu số hóa đơn của KH</a></li>
 							</ul>
 						</li>
 						
