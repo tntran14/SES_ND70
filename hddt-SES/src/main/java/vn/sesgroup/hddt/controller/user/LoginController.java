@@ -331,7 +331,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("tthdon|tthdon-edit|");
         	sbRights.append("thhd|thhd-edit|thhd-active|");
         	sbRights.append("ql-phoihd|qly-phoihd-edit|qly-phoihd-detail|qly-phoihd-active|qly-phoihd-deactive|qly-phoihd-del|qly-phoihd-view|");
-        	sbRights.append("ql-mauhdadmin|ql-mauhdadmin-cre|ql-mauhdv-edit|ql-mauhdadmin-detail|ql-mauhdadmin-active|ql-mauhdadmin-deactive|ql-mauhdadmin-del|ql-mauhdadmin-view|");
+        	sbRights.append("ql-mauhdadmin|ql-mauhdadmin-cre|ql-mauhdadmin-edit|ql-mauhdadmin-detail|ql-mauhdadmin-active|ql-mauhdadmin-deactive|ql-mauhdadmin-del|ql-mauhdadmin-view|");
         	sbRights.append("phsl-mauhdadmin|phsl-mauhdadmin-cre|phsl-mauhdadmin-edit|phsl-mauhdadmin-detail|");	
         	sbRights.append("change_color|color-cre|color-detail|color-edit|color-active|color-del|");
         	sbRights.append("role_api|set_api_active|set_api_deactive|");

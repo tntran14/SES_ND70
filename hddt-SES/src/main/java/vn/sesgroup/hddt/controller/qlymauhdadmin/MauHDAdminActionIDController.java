@@ -74,13 +74,13 @@ public class MauHDAdminActionIDController extends AbstractController{
 		BaseDTO dto = new BaseDTO();
 		String messageConfirm = "Bạn có muốn xóa hóa đơn này không?";
 		switch (transaction) {
-		case "ql-mauhduser-del":
+		case "ql-mauhdadmin-del":
 			messageConfirm = "Bạn có muốn xóa hóa đơn này không?";
 			break;
-		case "ql-mauhduser-active":
+		case "ql-mauhdadmin-active":
 			messageConfirm = "Bạn có muốn kích hoạt hợp đồng không?";
 			break;
-		case "ql-mauhduser-deactive":
+		case "ql-mauhdadmin-deactive":
 			messageConfirm = "Bạn có muốn chặn hợp đồng này không?";
 			break;
 		default:
@@ -136,13 +136,13 @@ public class MauHDAdminActionIDController extends AbstractController{
 		}
 		String actionCode = Constants.MSG_ACTION_CODE.DELETE;
 		switch (transaction) {
-		case "ql-mauhduser-del":
+		case "ql-mauhdadmin-del":
 			actionCode = Constants.MSG_ACTION_CODE.DELETE;
 			break;
-		case "ql-mauhduser-active":
+		case "ql-mauhdadmin-active":
 			actionCode = Constants.MSG_ACTION_CODE.ACTIVE;
 			break;
-		case "ql-mauhduser-deactive":
+		case "ql-mauhdadmin-deactive":
 			actionCode = Constants.MSG_ACTION_CODE.DEACTIVE;
 			break;
 		default:
@@ -159,18 +159,18 @@ public class MauHDAdminActionIDController extends AbstractController{
 		msg.setObjData(hData);
 		
 		JSONRoot root = new JSONRoot(msg);
-		MsgRsp rsp = restAPI.callAPINormal("/ql-mauhduser/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MsgRsp rsp = restAPI.callAPINormal("/ql-mauhdadmin/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		if(rspStatus.getErrorCode() == 0) {
 			dtoRes.setErrorCode(0);
 			switch (transaction) {
-			case "ql-mauhduser-del":
+			case "ql-mauhdadmin-del":
 				dtoRes.setResponseData("Xóa thông tin hóa đơn thành công.");
 				break;
-			case "ql-mauhduser-active":
+			case "ql-mauhdadmin-active":
 				dtoRes.setResponseData("Kích hoạt thành công.");
 				break;
-			case "ql-mauhduser-deactive":
+			case "ql-mauhdadmin-deactive":
 				dtoRes.setResponseData("Chặn thành công.");
 				break;
 		
