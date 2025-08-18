@@ -114,12 +114,12 @@
                       
 				</form>
 				<script type="text/javascript">
-				_gridMain = $('#f-issu').find('#grid');
+				var _gridIssue = $('#f-issu').find('#grid');
 				</script>
 				
 				<script type="text/javascript">
 				$(function(){
-					_gridMain.kendoGrid({
+					_gridIssue.kendoGrid({
 						autoBind: false,
 						dataSource: new kendo.data.DataSource({
 							transport: {
@@ -218,8 +218,8 @@
 							
 							$("#f-issu").find('button[data-action="issu-detail"],button[data-action="issu-contract-cre"], button[data-action="issu-edit"]').prop('disabled', true);
 							
-							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
-							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
+							_gridIssue.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
+							_gridIssue.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
 								e.preventDefault();/*e.stopPropagation();*/
 								
 								var $obj = $(this);
@@ -234,7 +234,7 @@
 								switch (subAction) {
 				
 								case 'refresh':
-									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									rowData = _gridIssue.data("kendoGrid").dataItem($tr);
 									objData['_id'] = rowData['_id'];
 									$.ajax({
 										type: "POST",
@@ -249,7 +249,7 @@
 											hideLoading();
 											if(res) {
 												if(res.errorCode == 0) {
-													_gridMain.data("kendoGrid").dataSource.read();
+													_gridIssue.data("kendoGrid").dataSource.read();
 												}else{
 													alertDLSuccess(createObjectError(res).html(), function(){});
 												}
@@ -274,7 +274,7 @@
 										objURL['exec'] = ROOT_PATH + '/main/issu-send-cqt/exec-data';
 									}
 									
-									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									rowData = _gridIssue.data("kendoGrid").dataItem($tr);
 									objData['_id'] = rowData['_id'];
 									$.ajax({
 										type: "POST",
@@ -311,7 +311,7 @@
 																	hideLoading();
 																	if(res) {
 																		if(res.errorCode == 0) {
-																			_gridMain.data("kendoGrid").dataSource.read();
+																			_gridIssue.data("kendoGrid").dataSource.read();
 																		}else{
 																			alertDLSuccess(createObjectError(res).html(), function(){});
 																		}
@@ -351,8 +351,8 @@
 						}
 					});
 					
-					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
-					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
+					_gridIssue.find('table[role="grid"]').find('tbody').undelegate('tr', 'click');
+					_gridIssue.find('table[role="grid"]').find('tbody').delegate('tr', 'click', function(e){
 						$("#f-issu").find('button[data-action="issu-detail"]').prop('disabled', false);		
 						$("#f-issu").find('button[data-action="issu-edit"]').prop('disabled', false);	
 						$("#f-issu").find('button[data-action="issu-contract-cre"]').prop('disabled', false);	
@@ -368,7 +368,7 @@
 						var rowData = null;
 						var actionCheck = '|issu-edit|issu-contract-cre|issu-detail|';
 						
-						var entityGrid = _gridMain.data("kendoGrid");
+						var entityGrid = _gridIssue.data("kendoGrid");
 						var selectedItem = entityGrid.dataItem(entityGrid.select());
 						if(actionCheck.indexOf('|' + dataAction + '|') != -1 && selectedItem == null){
 							alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
@@ -393,13 +393,13 @@
 							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 							break;
 						case 'search':
-							_gridMain.data("kendoGrid").dataSource.page(1);
+							_gridIssue.data("kendoGrid").dataSource.page(1);
 							break;
 						case 'issu-sign---':
 							ids = [];
 							checkRows.each(function(i, v) {
 							    idx = $(checkRows[i].closest("tr")).index();
-							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    rowData = _gridIssue.data("kendoGrid").dataItem(_gridIssue.find(' tbody tr').eq(idx));
 							    ids.push(rowData['_id']);
 							});
 							
@@ -593,7 +593,7 @@
 				}
 
 				function disableEnabledAllButton(){
-					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
+					var checkRows = _gridIssue.find(' tbody tr input[type="checkbox"]:checked');
 					$("#f-issu").find('button[data-action="issu-sign"]').prop('disabled', checkRows.length == 0);
 					}
 

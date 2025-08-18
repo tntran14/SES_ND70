@@ -136,7 +136,13 @@
 									type: 'POST',
 									url: ROOT_PATH + '/main/issu-contract/search',
 				                    dataType: 'json',
-				                    data: function(){return getDataSearch();},
+				                    data: function(){
+				                    	var dataPost = {};
+				    					dataPost['mst'] = $('#f-issu-contract #mst').val() == null? '': $('#f-issu-contract #mst').val();
+				    					dataPost['shd'] = $('#f-issu-contract #shd').val() == null? '': $('#f-issu-contract #shd').val();
+				    					dataPost['acti'] = $('#f-issu-contract #acti').val() == null? '': $('#f-issu-contract #acti').val();
+				                    	return dataPost;
+				                    	},
 				                    beforeSend: function(req){
 				                    	initAjaxJsonGridRequest(req);
 				                	},
@@ -201,23 +207,20 @@
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 							},
-				  		/* 	{field: 'func', title: '', width: '50px', encoded: false
-				  				, headerTemplate: '&nbsp;'
-								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
-								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-							, template: '#= window.setTemplateForGridMAIN("func", data) #'
-							}, */
-							{field: 'SHDon', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hợp đồng</a>',
-								attributes: {'class': 'table-cell text-center'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							},
 							{field: 'TaxCode', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
 								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
-					
 							{field: 'Name', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên khách hàng</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'SHDon', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số hợp đồng</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
+								headerAttributes: {'class': 'table-header-cell text-center'},
+							},
+							{field: 'NKy', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày ký</a>',
+								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 							{field: 'SLHDon', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng hóa đơn</a>',
@@ -229,11 +232,6 @@
 								attributes: {'class': 'table-cell text-center'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
-/* 
-							{field: 'IsActive', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng Thái</a>',
-								attributes: {'class': 'table-cell text-left'}, sortable: false, 
-								headerAttributes: {'class': 'table-header-cell text-center'},
-							}, */
 							{field: 'UserCreated', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người lập</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
@@ -527,7 +525,7 @@
 							});
 							break;
 						case 'search':
-							_gridMain.data("kendoGrid").dataSource.page(1);
+                            _gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						
 						default:

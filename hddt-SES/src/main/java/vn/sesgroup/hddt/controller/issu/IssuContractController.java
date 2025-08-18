@@ -129,9 +129,13 @@ public class IssuContractController extends AbstractController {
 					}else {
 						StatusDesc = "Chưa kích hoạt";
 					}
-					
+
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
 					hItem.put("SHDon", commons.getTextJsonNode(row.at("/Contract/SHDon")));
+					hItem.put("NKy",
+							commons.convertLocalDateTimeToString(
+									commons.convertLongToLocalDate(jsonData.at("/Contract/NgayKy").asLong()),
+									Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/NMUA/TaxCode")));
 					hItem.put("Name", commons.getTextJsonNode(row.at("/NMUA/Name")));
 					hItem.put("SLHDon", commons.getTextJsonNode(row.at("/Contract/SLHDon")));

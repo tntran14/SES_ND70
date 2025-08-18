@@ -168,14 +168,8 @@ $(function(){
 			break;
 		
 		case 'back':
-			location.reload();
 			$('#divMainContent').show();
 			$('#divSubContent').hide(function(){$(this).empty();});
-			try{
-				
-				if($('#f-issu-contract').find('#grid').length > 0)
-					$('#f-issu-contract').find('#grid').data("kendoGrid").dataSource.read();
-			}catch(err){}
 			break;
 	
 		case 'accept':
@@ -213,9 +207,15 @@ $(function(){
 										hideLoading();
 										if(res) {
 											if(res.errorCode == 0) {
-												//window.location.href='/hddt/main/issu-contract/init';
-												$('#f-issu-contract-crud').find('button[data-action="back"]').trigger('click');
-												location.reload();
+												var taxcode = $('#f-issu-contract-crud').find('#t').val();
+													$('#divMainContent').show();
+													$('#divSubContent').hide(function(){$(this).empty();});
+                                                $('#f-issu-contract-crud').find('button[data-action="back"]').trigger('click');
+												try{
+													$('#f-issu-contract #mst').val(taxcode);
+													$('#f-issu-contract').find('#grid').data("kendoGrid").dataSource.page(1);
+
+												}catch(err){}
 											}else{
 												alertDLSuccess(createObjectError(res).html(), function(){});
 											}
@@ -593,23 +593,23 @@ function getDataToSave(){
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-										
-						<input type="hidden" id="cv" th:value="${Position}" >
-							<input type="hidden" id="e" th:value="${Email}" >
-								<input type="hidden" id="w" th:value="${Website}" >
-									<input type="hidden" id="ac" th:value="${AccountNumber}" >
-										<input type="hidden" id="an" th:value="${AccountName}" >
-											<input type="hidden" id="bn" th:value="${BankName}" >
-				
-													
-									<input class="form-control form-control-sm c-f__textbox"
-													type="text" autocomplete="off" id="t" name="t" 
-													th:value="${TaxCode}" readonly  />
-													
-										
-													
-											<fieldset aria-hidden="true" class="c-f__set">
-											
+
+												<input type="hidden" id="cv" th:value="${Position}">
+												<input type="hidden" id="e" th:value="${Email}"> <input
+													type="hidden" id="w" th:value="${Website}"> <input
+													type="hidden" id="ac" th:value="${AccountNumber}">
+												<input type="hidden" id="an" th:value="${AccountName}">
+												<input type="hidden" id="bn" th:value="${BankName}">
+
+
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" autocomplete="off" id="t" name="t"
+													th:value="${TaxCode}" readonly />
+
+
+
+												<fieldset aria-hidden="true" class="c-f__set">
+
 													<legend class="c-f__legend">
 														<label>Mã số thuế</label>
 													</legend>
