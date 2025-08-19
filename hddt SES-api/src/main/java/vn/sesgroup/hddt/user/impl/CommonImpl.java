@@ -5459,11 +5459,6 @@ try {
 			MspResponseStatus responseStatus = null;
 
 			ObjectId objectId = null;
-			Document docTmp = null;
-			Document docTmp1 = null;
-			Document docTmp2 = null;
-			Document docTmp3 = null;
-			Document docTmp4 = null;
 			Iterable<Document> cursor = null;
 			Iterable<Document> cursor1 = null;
 			Iterable<Document> cursor2 = null;
@@ -5474,6 +5469,7 @@ try {
 			Iterator<Document> iter2 = null;
 			Iterator<Document> iter3 = null;
 			Iterator<Document> iter4 = null;
+			List<Document> docsTmp = new ArrayList<Document>();
 			List<Document> pipeline = new ArrayList<Document>();
 
 			LocalDate dateFrom = null;
@@ -5526,7 +5522,7 @@ try {
 
 			pipeline.add(new Document("$sort",
 					new Document("EInvoiceDetail.TTChung.MauSoHD", -1).append("SHDon", -1).append("_id", -1)));
-			pipeline.addAll(createFacetForSearchNotSort(page));
+//			pipeline.addAll(createFacetForSearchNotSort(page));
 
 			cursor = mongoTemplate.getCollection("EInvoice").aggregate(pipeline).allowDiskUse(true);
 			cursor1 = mongoTemplate.getCollection("EInvoicePXK").aggregate(pipeline).allowDiskUse(true);
@@ -5538,34 +5534,28 @@ try {
 			iter2 = cursor2.iterator();
 			iter3 = cursor3.iterator();
 			iter4 = cursor4.iterator();
-			if (iter.hasNext()) {
-				docTmp = iter.next();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
 			}
-			if (iter1.hasNext()) {
-				docTmp1 = iter1.next();
+			while (iter1.hasNext()) {
+				docsTmp.add(iter1.next());
 			}
-			if (iter2.hasNext()) {
-				docTmp2 = iter2.next();
+			while (iter2.hasNext()) {
+				docsTmp.add(iter2.next());
 			}
-			if (iter3.hasNext()) {
-				docTmp3 = iter3.next();
+			while (iter3.hasNext()) {
+				docsTmp.add(iter3.next());
 			}
-			if (iter4.hasNext()) {
-				docTmp4 = iter4.next();
+			while (iter4.hasNext()) {
+				docsTmp.add(iter4.next());
 			}
 			rsp = new MsgRsp(header);
 			responseStatus = null;
 			ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
 			HashMap<String, Object> hItem = null;
-			if (null != docTmp) {
-				page.setTotalRows(docTmp.getInteger("total", 0));
-				rsp.setMsgPage(page);
-				List<Document> rows = null;
-				if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
-					rows = docTmp.getList("data", Document.class);
-				}
-				if (null != rows) {
-					for (Document doc : rows) {
+			int totalRows = docsTmp.size();
+			if (docsTmp.size() > 0) {
+					for (Document doc : docsTmp) {
 						objectId = (ObjectId) doc.get("_id");
 
 						hItem = new HashMap<String, Object>();
@@ -5576,102 +5566,27 @@ try {
 						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
 						rowsReturn.add(hItem);
 					}
-				}
 			}
-			if (null != docTmp1) {
-				page.setTotalRows(docTmp1.getInteger("total", 0));
-				rsp.setMsgPage(page);
-				List<Document> rows1 = null;
-				if (docTmp1.get("data") != null && docTmp1.get("data") instanceof List) {
-					rows1 = docTmp1.getList("data", Document.class);
-				}
-
-				if (null != rows1) {
-					for (Document doc : rows1) {
-						objectId = (ObjectId) doc.get("_id");
-
-						hItem = new HashMap<String, Object>();
-						hItem.put("_id", objectId.toString());
-						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
-						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
-						hItem.put("MCCQT", doc.get("MCCQT"));
-						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
-						rowsReturn.add(hItem);
-					}
-				}
-			}
-			if (null != docTmp2) {
-				page.setTotalRows(docTmp2.getInteger("total", 0));
-				rsp.setMsgPage(page);
-				List<Document> rows1 = null;
-				if (docTmp2.get("data") != null && docTmp2.get("data") instanceof List) {
-					rows1 = docTmp2.getList("data", Document.class);
-				}
-
-				if (null != rows1) {
-					for (Document doc : rows1) {
-						objectId = (ObjectId) doc.get("_id");
-
-						hItem = new HashMap<String, Object>();
-						hItem.put("_id", objectId.toString());
-						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
-						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
-						hItem.put("MCCQT", doc.get("MCCQT"));
-						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
-						rowsReturn.add(hItem);
-					}
-				}
-			}
-			if (null != docTmp3) {
-				page.setTotalRows(docTmp3.getInteger("total", 0));
-				rsp.setMsgPage(page);
-				List<Document> rows1 = null;
-				if (docTmp3.get("data") != null && docTmp3.get("data") instanceof List) {
-					rows1 = docTmp3.getList("data", Document.class);
-				}
-
-				if (null != rows1) {
-					for (Document doc : rows1) {
-						objectId = (ObjectId) doc.get("_id");
-
-						hItem = new HashMap<String, Object>();
-						hItem.put("_id", objectId.toString());
-						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
-						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
-						hItem.put("MCCQT", doc.get("MCCQT"));
-						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
-						rowsReturn.add(hItem);
-					}
-				}
-			}
-			if (null != docTmp4) {
-				page.setTotalRows(docTmp4.getInteger("total", 0));
-				rsp.setMsgPage(page);
-				List<Document> rows1 = null;
-				if (docTmp4.get("data") != null && docTmp4.get("data") instanceof List) {
-					rows1 = docTmp4.getList("data", Document.class);
-				}
-
-				if (null != rows1) {
-					for (Document doc : rows1) {
-						objectId = (ObjectId) doc.get("_id");
-
-						hItem = new HashMap<String, Object>();
-						hItem.put("_id", objectId.toString());
-						hItem.put("EInvoiceStatus", doc.get("EInvoiceStatus"));
-						hItem.put("SignStatusCode", doc.get("SignStatusCode"));
-						hItem.put("MCCQT", doc.get("MCCQT"));
-
-						hItem.put("EInvoiceDetail", doc.get("EInvoiceDetail"));
-						rowsReturn.add(hItem);
-					}
-				}
-			}
+	
+			page.setTotalRows(totalRows);
+			rsp.setMsgPage(page);
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
 			rsp.setResponseStatus(responseStatus);
+			
+			int pageNo = page.getPageNo();     
+			int pageSize = page.getSize();
 
+			// Calculate start and end indexes
+			int fromIndex = (pageNo - 1) * pageSize;
+			int toIndex = Math.min(fromIndex + pageSize, totalRows);
+			
+			List<HashMap<String, Object>> results = new ArrayList<>();
+			if (fromIndex < totalRows) {
+				results = rowsReturn.subList(fromIndex, toIndex);
+			}
+			
 			HashMap<String, Object> mapDataR = new HashMap<String, Object>();
-			mapDataR.put("rows", rowsReturn);
+			mapDataR.put("rows", results);
 			rsp.setObjData(mapDataR);
 			return rsp;
 		}
