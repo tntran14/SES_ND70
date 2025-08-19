@@ -299,15 +299,15 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			validateRequired(dto, nm_dc, "Vui lòng nhập địa chỉ người mua.");
 			validateRequired(dto, nm_dd, "Vui lòng nhập đại diện người mua.");
 			validateRequired(dto, nm_cv, "Vui lòng nhập chức vụ người mua.");
-			validateRequired(dto, nm_email_send, "Vui lòng nhập email gửi.");
+//			validateRequired(dto, nm_email_send, "Vui lòng nhập email gửi.");
 
 			validateRequired(dto, loaibb, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, sbban, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, nlap, "Vui lòng chọn ngày lập biên bản.");
 			validateRequired(dto, ldo, "Vui lòng nhập lý do.");
-			validateRequired(dto, ndsai, "Vui lòng nhập nội trước khi điều chỉnh/thay thế.");
-			validateRequired(dto, nddung, "Vui lòng nhập nội dung đúng.");
-			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung hai bên thống nhất điều chỉnh/thay thế.");
+//			validateRequired(dto, ndsai, "Vui lòng nhập nội trước khi điều chỉnh/thay thế.");
+//			validateRequired(dto, nddung, "Vui lòng nhập nội dung đúng.");
+//			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung hai bên thống nhất điều chỉnh/thay thế.");
 			break;
 		default:
 			break;
