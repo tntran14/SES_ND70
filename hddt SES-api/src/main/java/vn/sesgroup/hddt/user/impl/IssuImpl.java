@@ -363,44 +363,64 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			);
 			pipeline.add(new Document("$unwind", new Document("path", "$DMChiCucThueInfo").append("preserveNullAndEmptyArrays", true)));
 			
+			pipeline.add(new Document("$unwind", new Document("path", "$DMTinhThanhInfo").append("preserveNullAndEmptyArrays", true)));
+			pipeline.add(
+				new Document("$lookup", 
+					new Document("from", "Issuer")
+					.append("pipeline", 
+						Arrays.asList(
+							new Document("$match", 
+									new Document("IsDelete", new Document("$ne", true))
+									.append("TaxCode", t)
+									),
+							new Document("$project", new Document("_id", 1).append("TaxCode", 1))
+						)
+					)
+					.append("as", "IssuerInfo")
+				)
+			);
+			pipeline.add(new Document("$unwind", new Document("path", "$IssuerInfo").append("preserveNullAndEmptyArrays", true)));
+			
 			MongoClient mongoClient = cfg.mongoClient();
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
-			      try {
-			        docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();    
-			      } catch (Exception ex) {
-			        
-			      }
-			        
-			 mongoClient.close();
-			
+			try {
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception ex) {
+
+			}
+
+			mongoClient.close();
 			
 			if(null == docTmp) {
 				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			
 			if(docTmp.get("ConfigEmailAdmin") == null) {
 				responseStatus = new MspResponseStatus(9999, "Chưa cấu hình Mail server.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			
 			if(docTmp.get("UserInfo") == null) {
 				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			
 			if(docTmp.get("DMTinhThanhInfo") == null || docTmp.get("DMChiCucThueInfo") == null) {
 				responseStatus = new MspResponseStatus(9999, "Vui lòng kiểm tra lại tỉnh/thành phố và cơ quan thuế.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
-			if(t.length()<10 || t.length()>14) {
-				responseStatus = new MspResponseStatus(9999, "Mã số thuế có độ dài tối đa là 14 ký tự và ít nhất là 10 ký tự. Không có các ký tự đặt biệt và chữ cái. Vui lòng kiểm tra lại.");
+			
+			if(docTmp.get("IssuerInfo") != null) {
+				responseStatus = new MspResponseStatus(9999, "Mã số thuế đã tồn tại trong hệ thống. Vui lòng kiểm tra lại.");
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
 
-			
 //			taxCode = docTmp.getString("TaxCode");
 			int abc = commons.stringToInteger(acti);
 			if(abc == 1) {
