@@ -1474,7 +1474,7 @@
 			dblTotal = dblQuantity * dblPrice;
 			
 			$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
-			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+// 			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
 			
 			break;
 		case 'Total':
@@ -1524,7 +1524,7 @@
 		
 		dblAmount = dblTotal+ 0;
 		$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
-		FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
+// 		FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 		
 		/*LAY THONG TIN UPDATE LAI DATASOURCE*/
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();

@@ -1517,9 +1517,9 @@
 				if(dblVATRate < 0) dblVATRate = 0;
 				if(dblVATRate == 1) dblVATRate = 0;			
 				dblVATAmount = dblTotal * dblVATRate / 100;
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
-				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
+// 				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+// 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
 				break;
 				}
 			else{		
@@ -1574,7 +1574,7 @@
 //			$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4));
 			if(loai_tien_tt=="VND"){	
 				//$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
 				//FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);	
 				break;
 			}
@@ -1640,8 +1640,8 @@
 		dblAmount = dblTotal + dblVATAmount;
 		
 		if(loai_tien_tt=="VND"){
-			$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
-			FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
+			$tr.find('input[name="Amount"]').val(dblAmount.toFixed(VND_))
+// 			FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 		}else{
 			FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 			$tr.find('input[name="Amount"]').val(dblAmount.toFixed(USD_))		
@@ -1758,16 +1758,15 @@
 			FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 			
 		
-			if(sumAmountAfterTax < 0) {
-  if(viewmoney === 'Y') {
-  	$('#f-einvoice-crud').find('#tien-bang-chu').val("Điều chỉnh âm "+readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4))), loai_tien_tt);	
-  }
-  else {
-		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4)), loai_tien_tt);	
+	if(sumAmountAfterTax < 0) {
+		  if(viewmoney === 'Y') {
+		  	$('#f-einvoice-crud').find('#tien-bang-chu').val("Điều chỉnh âm "+readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));	
+		  } else {
+				$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));	
+			}
+	} else {
+		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));	
 	}
-} else {
-	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4)), loai_tien_tt);	
-}
 
 		
 			calcTienQuyDoi();

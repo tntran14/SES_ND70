@@ -1076,9 +1076,9 @@
 				if(dblVATRate < 0) dblVATRate = 0;
 				if(dblVATRate == 1) dblVATRate = 0;			
 				dblVATAmount = dblTotal * dblVATRate / 100;
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
-				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
+// 				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+// 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
 				break;
 				}
 			if(loai_tien_tt=="USD"){		
@@ -1102,11 +1102,11 @@
 			if(dblVATRate == 1) dblVATRate = 0;
 			dblVATAmount = dblTotal * dblVATRate / 100;
 			if(loai_tien_tt=="VND"){	
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(USD_))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
 				break;
 			}
 			if(loai_tien_tt=="USD"){	
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(USD_))
 				break;
 			}
 
@@ -1191,7 +1191,7 @@
 		
 		
 		$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
-		FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
+// 		FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 		
 		/*LAY THONG TIN UPDATE LAI DATASOURCE*/
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
