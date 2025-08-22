@@ -7239,7 +7239,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				}
 
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 26);
+				int lastColumn = Math.max(row1.getLastCellNum(), 34);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -7392,23 +7392,16 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							dshhdVu.setVATRate(eInvoiceExcelFormList.get(k).getThueSuat());
 							dshhdVu.setVATAmount(eInvoiceExcelFormList.get(k).getTienThue());
 							dshhdVu.setAmount(Tongtien);
-							String TinhChat = eInvoiceExcelFormList.get(k).getTinhChat();
-							switch (TinhChat) {
-							case "1":
-								dshhdVu.setFeature("1");
-								break;
-							case "2":
-								dshhdVu.setFeature("2");
-								break;
-							case "3":
-								dshhdVu.setFeature("3");
-								break;
-							case "4":
-								dshhdVu.setFeature("4");
-								break;
-							default:
-								break;
-							}
+							dshhdVu.setFeature(eInvoiceExcelFormList.get(k).getTinhChat());
+							dshhdVu.setLHHDTrung(eInvoiceExcelFormList.get(k).getLHHDTrung());
+							dshhdVu.setSKhung(eInvoiceExcelFormList.get(k).getSKhung());
+							dshhdVu.setSMay(eInvoiceExcelFormList.get(k).getSMay());
+							dshhdVu.setBKSPTVChuyen(eInvoiceExcelFormList.get(k).getBKSPTVChuyen());
+							dshhdVu.setTNGHang(eInvoiceExcelFormList.get(k).getTNGHang());
+							dshhdVu.setDCNGHang(eInvoiceExcelFormList.get(k).getDCNGHang());
+							dshhdVu.setMSTNGHang(eInvoiceExcelFormList.get(k).getMSTNGHang());
+							dshhdVu.setMDDNGHang(eInvoiceExcelFormList.get(k).getMDDNGHang());
+							
 							dshhdVuList.add(dshhdVu);
 							HashMap<String, Object> hItem1 = null;
 							hItem1 = new LinkedHashMap<String, Object>();
@@ -7425,6 +7418,14 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							hItem1.put("VATAmount", dshhdVu.getVATAmount());
 							hItem1.put("Amount", dshhdVu.getAmount());
 							hItem1.put("Feature", dshhdVu.getFeature());
+							hItem1.put("TTHHDTrung", dshhdVu.getLHHDTrung());
+							hItem1.put("SKhung", dshhdVu.getSKhung());
+							hItem1.put("SMay", dshhdVu.getSMay());
+							hItem1.put("BKSPTVChuyen", dshhdVu.getBKSPTVChuyen());
+							hItem1.put("TNGHang", dshhdVu.getTNGHang());
+							hItem1.put("DCNGHang", dshhdVu.getDCNGHang());
+							hItem1.put("MSTNGHang", dshhdVu.getMSTNGHang());
+							hItem1.put("MDDNGHang", dshhdVu.getMDDNGHang());
 							listHHDVu.add(hItem1);
 							stt++;
 							Tongtien = 0.0;
@@ -7696,7 +7697,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								}
 								if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
 										|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))
-										|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+										|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))
+										|| "5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
 									mapAmount.compute(tmp, (k, v) -> {
 										return (v == null ? commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
 												* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
@@ -7762,7 +7764,63 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 													.replaceAll(",", "")));
 									elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
 								}
-
+								
+								if ("5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+									Element elementTTin = null;
+									String lhhdtrung = commons.getTextJsonNode(h.at("/TTHHDTrung"));
+									if ("1".equals(lhhdtrung)) {
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SKhung"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/SKhung"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SMay"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/SMay"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+									}
+									if ("2".equals(lhhdtrung)) {
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/BKSPTVChuyen"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+									}
+									if ("3".equals(lhhdtrung)) {
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "TNGHang"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/TNGHang"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "DCNGHang"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/DCNGHang"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MSTNGHang"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/MSTNGHang"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MDDNGHang"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+												commons.getTextJsonNode(h.at("/MDDNGHang"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+									}
+									
+									elementSubTmp.appendChild(elementTTHHDTrung);
+								}
+								
 								elementSubTmp01 = doc.createElement("TTKhac");
 								elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
 										commons.formatNumberReal(commons.getTextJsonNode(h.at("/VATAmount")))
@@ -7919,23 +7977,15 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							dshhdVu.setVATRate(eInvoiceExcelFormList.get(k).getThueSuat());
 							dshhdVu.setVATAmount(eInvoiceExcelFormList.get(k).getTienThue());
 							dshhdVu.setAmount(Tongtien);
-							String TinhChat = eInvoiceExcelFormList.get(k).getTinhChat();
-							switch (TinhChat) {
-							case "1":
-								dshhdVu.setFeature("1");
-								break;
-							case "2":
-								dshhdVu.setFeature("2");
-								break;
-							case "3":
-								dshhdVu.setFeature("3");
-								break;
-							case "4":
-								dshhdVu.setFeature("4");
-								break;
-							default:
-								break;
-							}
+							dshhdVu.setFeature(eInvoiceExcelFormList.get(k).getTinhChat());
+							dshhdVu.setLHHDTrung(eInvoiceExcelFormList.get(k).getLHHDTrung());
+							dshhdVu.setSKhung(eInvoiceExcelFormList.get(k).getSKhung());
+							dshhdVu.setSMay(eInvoiceExcelFormList.get(k).getSMay());
+							dshhdVu.setBKSPTVChuyen(eInvoiceExcelFormList.get(k).getBKSPTVChuyen());
+							dshhdVu.setTNGHang(eInvoiceExcelFormList.get(k).getTNGHang());
+							dshhdVu.setDCNGHang(eInvoiceExcelFormList.get(k).getDCNGHang());
+							dshhdVu.setMSTNGHang(eInvoiceExcelFormList.get(k).getMSTNGHang());
+							dshhdVu.setMDDNGHang(eInvoiceExcelFormList.get(k).getMDDNGHang());
 							dshhdVuList.add(dshhdVu);
 							List<Object> listHHDVus = new ArrayList<Object>();
 							HashMap<String, Object> hItem1 = null;
@@ -7953,6 +8003,14 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							hItem1.put("VATAmount", dshhdVu.getVATAmount());
 							hItem1.put("Amount", dshhdVu.getAmount());
 							hItem1.put("Feature", dshhdVu.getFeature());
+							hItem1.put("TTHHDTrung", dshhdVu.getLHHDTrung());
+							hItem1.put("SKhung", dshhdVu.getSKhung());
+							hItem1.put("SMay", dshhdVu.getSMay());
+							hItem1.put("BKSPTVChuyen", dshhdVu.getBKSPTVChuyen());
+							hItem1.put("TNGHang", dshhdVu.getTNGHang());
+							hItem1.put("DCNGHang", dshhdVu.getDCNGHang());
+							hItem1.put("MSTNGHang", dshhdVu.getMSTNGHang());
+							hItem1.put("MDDNGHang", dshhdVu.getMDDNGHang());
 							listHHDVus.add(hItem1);
 
 							String TTTien = "";
@@ -8211,7 +8269,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									}
 									if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
 											|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))
-											|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+											|| "4".equals(commons.getTextJsonNode(h.at("/Feature")))
+											|| "5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
 										mapAmount.compute(tmp, (f, v) -> {
 											return (v == null ? commons
 													.ToNumber(commons.getTextJsonNode(h.at("/Total")))
@@ -8275,6 +8334,62 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 										elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 												commons.formatNumberReal(thtien).replaceAll(",", "")));
 										elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
+									}
+									
+									if ("5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+										Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+										Element elementTTin = null;
+										String lhhdtrung = commons.getTextJsonNode(h.at("/TTHHDTrung"));
+										if ("1".equals(lhhdtrung)) {
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SKhung"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/SKhung"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SMay"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/SMay"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+										}
+										if ("2".equals(lhhdtrung)) {
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/BKSPTVChuyen"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+										}
+										if ("3".equals(lhhdtrung)) {
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "TNGHang"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/TNGHang"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "DCNGHang"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/DCNGHang"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MSTNGHang"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/MSTNGHang"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+											elementTTin = doc.createElement("TTin");
+											elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MDDNGHang"));
+											elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+													commons.getTextJsonNode(h.at("/MDDNGHang"))));
+											elementTTHHDTrung.appendChild(elementTTin);
+										}
+										
+										elementSubTmp.appendChild(elementTTHHDTrung);
 									}
 
 									elementSubTmp01 = doc.createElement("TTKhac");
@@ -8888,6 +9003,131 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				break;
 			}
 		}
+		
+		// Loai hang hoa dac trung
+		Cell lhhdtrung = cells.get(26);
+		if (lhhdtrung != null) {
+			switch (lhhdtrung.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setLHHDTrung(lhhdtrung.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setLHHDTrung((NumberToTextConverter.toText(lhhdtrung.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// SKhung
+		Cell skhung = cells.get(27);
+		if (skhung != null) {
+			switch (skhung.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setSKhung(skhung.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setSKhung((NumberToTextConverter.toText(skhung.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// SMay
+		Cell smay = cells.get(28);
+		if (smay != null) {
+			switch (smay.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setSMay(smay.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setSMay((NumberToTextConverter.toText(smay.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+			
+		// BKSPTVChuyen
+		Cell bksptvchuyen = cells.get(29);
+		if (bksptvchuyen != null) {
+			switch (bksptvchuyen.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setBKSPTVChuyen(bksptvchuyen.getStringCellValue());
+				break;
+			case NUMERIC:
+				eInvoiceExcelForm.setBKSPTVChuyen((NumberToTextConverter.toText(bksptvchuyen.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// TNGHang
+		Cell tnghang = cells.get(30);
+		if (tnghang != null) {
+			switch (tnghang.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setTNGHang(tnghang.getStringCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// DCNGHang
+		Cell dcnghang = cells.get(31);
+		if (dcnghang != null) {
+			switch (dcnghang.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setDCNGHang(dcnghang.getStringCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// MSTNGHang
+		Cell mstnghang = cells.get(32);
+		if (mstnghang != null) {
+			switch (mstnghang.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setMSTNGHang(mstnghang.getStringCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// MDDNGHang
+		Cell mddnghang = cells.get(33);
+		if (mddnghang != null) {
+			switch (mddnghang.getCellType()) {
+			case STRING:
+				eInvoiceExcelForm.setMDDNGHang(mddnghang.getStringCellValue());
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
 		// Tra ve danh sach
 		return eInvoiceExcelForm;
 	}

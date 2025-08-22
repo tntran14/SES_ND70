@@ -35,6 +35,14 @@ public class EInvoiceExcelForm {
 	private Double TTDCTGTGT;
 	private String TTBangChu;
 	private String MaKH;
+	private String LHHDTrung;
+	private String SKhung;
+	private String SMay;
+	private String BKSPTVChuyen;
+	private String TNGHang;
+	private String DCNGHang;
+	private String MSTNGHang;
+	private String MDDNGHang;
 
 	public EInvoiceExcelForm() {
 		super();
@@ -415,6 +423,70 @@ public class EInvoiceExcelForm {
 
 	public void setSoHoChieu(String soHoChieu) {
 		SoHoChieu = soHoChieu;
+	}
+
+	public String getLHHDTrung() {
+		return LHHDTrung;
+	}
+
+	public void setLHHDTrung(String tTHHDTrung) {
+		LHHDTrung = tTHHDTrung;
+	}
+
+	public String getSKhung() {
+		return SKhung;
+	}
+
+	public void setSKhung(String sKhung) {
+		SKhung = sKhung;
+	}
+
+	public String getSMay() {
+		return SMay;
+	}
+
+	public void setSMay(String sMay) {
+		SMay = sMay;
+	}
+
+	public String getBKSPTVChuyen() {
+		return BKSPTVChuyen;
+	}
+
+	public void setBKSPTVChuyen(String bKSPTVChuyen) {
+		BKSPTVChuyen = bKSPTVChuyen;
+	}
+
+	public String getTNGHang() {
+		return TNGHang;
+	}
+
+	public void setTNGHang(String tNGHang) {
+		TNGHang = tNGHang;
+	}
+
+	public String getDCNGHang() {
+		return DCNGHang;
+	}
+
+	public void setDCNGHang(String dCNGHang) {
+		DCNGHang = dCNGHang;
+	}
+
+	public String getMSTNGHang() {
+		return MSTNGHang;
+	}
+
+	public void setMSTNGHang(String mSTNGHang) {
+		MSTNGHang = mSTNGHang;
+	}
+
+	public String getMDDNGHang() {
+		return MDDNGHang;
+	}
+
+	public void setMDDNGHang(String mDDNGHang) {
+		MDDNGHang = mDDNGHang;
 	}
 
 	@Override
