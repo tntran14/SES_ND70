@@ -2,14 +2,19 @@ package vn.sesgroup.hddt.user.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,6 +22,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.mail.MessagingException;
 
@@ -30,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.api.message.JSONRoot;
 import com.api.message.Msg;
 import com.api.message.MsgHeader;
+import com.api.message.MsgPage;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import vn.sesgroup.hddt.dto.FileInfo;
@@ -535,6 +543,226 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			} catch (Exception e) {
 
 			}
+		}
+	}
+
+	@Override
+	public FileInfo printEinvoiceAll1(JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = new FileInfo();
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		ByteArrayOutputStream baosPDF = null;
+		List<String> listFileNamePdfFinal = new ArrayList<>();
+		HashMap<String, String> hItem = null;
+		ArrayList<HashMap<String, String>> arrayInfoInvoice = new ArrayList<>();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		File file_zip = null;
+		Object objData = msg.getObjData();
+		JsonNode jsonData = null;
+
+		try {
+			String _id = "";
+			String _token = "";
+			String isConvert = "";
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+				_token = commons.getTextJsonNode(jsonData.at("/_token")).replaceAll("\\s", "");
+				isConvert = commons.getTextJsonNode(jsonData.at("/IsConvert")).replaceAll("\\s", "");
+			}
+
+			ObjectId id__ = new ObjectId(_token);
+			Document findTmp = new Document("_id", id__).append("IsDelete", false);
+			Iterable<Document> cursor1 = mongoTemplate.getCollection("EInvoiceTmp").find(findTmp);
+			Iterator<Document> iter1 = cursor1.iterator();
+			Document docTmp1 = null;
+			if (iter1.hasNext()) {
+				docTmp1 = iter1.next();
+			}
+			if (docTmp1 == null) {
+				return new FileInfo();
+			}
+			List<Object> rows = null;
+			rows = docTmp1.getList("Arrays", Object.class);
+			for (Object _idIntoArray : rows) {
+				_id = _idIntoArray.toString();
+				ObjectId objectId = null;
+				try {
+					objectId = new ObjectId(_id);
+				} catch (Exception e) {
+				}
+
+				Document docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId)
+						.append("IsDelete", new Document("$ne", true));
+				List<Document> pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$match", docFind));
+				pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+						.append("let",
+								new Document("vIssuerId", "$IssuerId").append("vMauSoHD",
+										"$EInvoiceDetail.TTChung.MauSoHD"))
+						.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr", new Document(
+								"$and",
+								Arrays.asList(new Document("$eq", Arrays.asList("$$vIssuerId", "$IssuerId")),
+										new Document("$eq",
+												Arrays.asList(new Document("$toString", "$_id"), "$$vMauSoHD"))))))))
+						.append("as", "DMMauSoKyHieu")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+				pipeline.add(new Document("$lookup",
+						new Document("from", "UserConFig")
+								.append("pipeline",
+										Arrays.asList(new Document("$match",
+												new Document("viewshd", "Y").append("IssuerId", header.getIssuerId()))))
+								.append("as", "UserConFig")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
+				pipeline.add(new Document("$lookup",
+						new Document("from", "PramLink")
+								.append("pipeline",
+										Arrays.asList(new Document("$match",
+												new Document("$expr", new Document("IsDelete", false)))))
+								.append("as", "PramLink")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
+				Document docTmp = null;
+				Iterable<Document> cursor = mongoTemplate.getCollection("EInvoice").aggregate(pipeline)
+						.allowDiskUse(true);
+				Iterator<Document> iter = cursor.iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+				if (null == docTmp || docTmp.get("DMMauSoKyHieu") == null) {
+					return new FileInfo();
+				}
+				String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+				boolean isDieuChinh = "2".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+				boolean isThayThe = "3".equals(docTmp.getEmbedded(Arrays.asList("HDSS", "TCTBao"), ""));
+				String check_status = docTmp.get("EInvoiceStatus", "");
+				if (check_status.equals("REPLACED")) {
+					isThayThe = true;
+				}
+				if (check_status.equals("ADJUSTED")) {
+					isDieuChinh = true;
+				}
+				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
+				String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
+				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
+				String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"),
+						"");
+				String ImgQA = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgQA"), "");
+				String ImgVien = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgVien"), "");
+
+				String mskh = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+						+ docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+				Integer shd = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+
+				String dir = docTmp.get("Dir", "");
+				String signStatusCode = docTmp.get("SignStatusCode", "");
+				String eInvoiceStatus = docTmp.get("EInvoiceStatus", "");
+				String MCCQT = docTmp.get("MCCQT", "");
+				String fileName = _id + ".xml";
+				if ("SIGNED".equals(signStatusCode) && !"".equals(MCCQT)) {
+					fileName = _id + "_" + MCCQT + ".xml";
+				} else {
+					if ("SIGNED".equals(signStatusCode)) {
+						fileName = _id + "_signed.xml";
+					}
+				}
+
+				File file = new File(dir, fileName);
+				if (!file.exists() || !file.isFile()) {
+					return new FileInfo();
+				}
+
+				org.w3c.dom.Document doc = commons.fileToDocument(file);
+				/* TEST REPORT TO PDF */
+				String fileNameJP = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "FileName"), "");
+				int numberRowInPage = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "RowsInPage"), 20);
+				int numberRowInPageMultiPage = docTmp
+						.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "RowInPageMultiPage"), 26);
+				int numberCharsInRow = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "CharsInRow"),
+						50);
+				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, CheckView, numberRowInPage, numberRowInPageMultiPage,
+						numberCharsInRow, MST, link,
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgQA).toString(),
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien).toString(),
+						"Y".equals(isConvert), Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe,
+						isDieuChinh);
+
+				if (null != baosPDF) {
+					file = new File(dir, docTmp.get("_id") + "_final.pdf");
+					try (OutputStream fileOuputStream = new FileOutputStream(file)) {
+						baosPDF.writeTo(fileOuputStream);
+						listFileNamePdfFinal.add(file.getAbsolutePath());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				String namepdf = mskh + "_" + shd + ".pdf";
+				File tam = new File(dir, namepdf);
+				copyFileUsingStream(file, tam);
+
+				hItem = new HashMap<>();
+				hItem.put("UrlFile", tam.getAbsolutePath());
+				arrayInfoInvoice.add(hItem);
+
+			}
+			if (listFileNamePdfFinal.size() == 0) {
+				return fileInfo;
+			} else {
+
+				/* NEN DANH SACH FILE XML */
+				FileInputStream fis = null;
+				int length;
+				byte[] buffer = new byte[1024];
+				bos = new ByteArrayOutputStream();
+				ZipOutputStream zout = new ZipOutputStream(bos);
+				for (int i = 0; i < arrayInfoInvoice.size(); i++) {
+					hItem = arrayInfoInvoice.get(i);
+					file_zip = new File(hItem.get("UrlFile"));
+					fis = new FileInputStream(file_zip);
+					zout.putNextEntry(new ZipEntry(file_zip.getName()));
+					while ((length = fis.read(buffer)) > 0)
+						zout.write(buffer, 0, length);
+
+					zout.closeEntry();
+					fis.close();
+
+				}
+				zout.close();
+				fileInfo.setFileName("EINVOICE.zip");
+				fileInfo.setContentFile(bos.toByteArray());
+
+				DateTimeFormatter format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+				LocalDateTime time_dem = LocalDateTime.now();
+				String time = time_dem.format(format_time);
+				String name_company = removeAccent(header.getUserFullName());
+				System.out.println(time + " " + name_company + " vua xuat PDF hang loat hoa don GTGT.");
+				return fileInfo;
+			}
+
+		} catch (NullPointerException | MessagingException | UnsupportedEncodingException e) {
+			return new FileInfo();
+		}
+	}
+
+	private void copyFileUsingStream(File file, File tam) throws IOException {
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = new FileInputStream(file);
+			os = new FileOutputStream(tam);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = is.read(buffer)) > 0) {
+				os.write(buffer, 0, length);
+			}
+		} finally {
+			is.close();
+			os.close();
 		}
 	}
 }

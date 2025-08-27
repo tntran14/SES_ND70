@@ -221,6 +221,15 @@
 										   <i class="mdi mdi-file-pdf"> </i
 											  ><span class="d-none d-md-inline">Xuất PDF hàng hoạt</span>
 										   </button>
+										    <button
+											  type="button"
+											  title="Xuất PDF hàng loạt"
+											  data-action="einvoice-pdfAll1"
+											  class="btns send_mail_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice-pdfAll|')}"  
+											  >
+										   <i class="mdi mdi-file-pdf"> </i
+											  ><span class="d-none d-md-inline">Xuất PDF hàng hoạt riêng lẻ</span>
+										   </button>
 										   <button
 											  type="button"
 											  title="Xuất PDF chuyển đổi hàng loạt"
@@ -840,6 +849,7 @@
 						
 						if('Đã phát hành' == rowData['StatusDesc'] || 'Đã thay thế' == rowData['StatusDesc'] || 'Đã điều chỉnh' == rowData['StatusDesc'] || 'Đã xóa bỏ' == rowData['StatusDesc']){
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfAll"]').prop('disabled', false);
+				              $("#f-einvoices").find('button[data-action="einvoice-pdfAll1"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfCD"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-xml"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-sendMailAll"]').prop('disabled', false);
@@ -847,6 +857,7 @@
 				              $("#f-einvoices").find('button[data-action="einvoice-cre-tt"]').prop('disabled', false);
 				            }else{
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfAll"]').prop('disabled', true);
+				              $("#f-einvoices").find('button[data-action="einvoice-pdfAll1"]').prop('disabled', true);
 				              $("#f-einvoices").find('button[data-action="einvoice-pdfCD"]').prop('disabled', true);
 				              $("#f-einvoices").find('button[data-action="einvoice-xml"]').prop('disabled', false);
 				              $("#f-einvoices").find('button[data-action="einvoice-sendMailAll"]').prop('disabled', true);
@@ -856,6 +867,7 @@
 						
 						if('Đã xóa bỏ' == rowData['StatusDesc']){
 						    $("#f-einvoices").find('button[data-action="einvoice-pdfAll"]').prop('disabled', true);
+						    $("#f-einvoices").find('button[data-action="einvoice-pdfAll1"]').prop('disabled', true);
 						    $("#f-einvoices").find('button[data-action="einvoice-pdfCD"]').prop('disabled', true);
 				              $("#f-einvoices").find('button[data-action="einvoice-xml"]').prop('disabled', true);
 				          	$("#f-einvoices").find('button[data-action="einvoice-edit"]').prop('disabled', true);
@@ -937,7 +949,7 @@
 							var signDate = '';
 						//////////////////////////////
 						var rowData = null;
-						var actionCheck = '|einvoice-edit|einvoice-copy|einvoice-delete|einvoice-delete_|einvoice-pdfAll|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice-sign|einvoice-detail|einvoice-refreshAll|einvoice-send-cqt|';
+						var actionCheck = '|einvoice-edit|einvoice-copy|einvoice-delete|einvoice-delete_|einvoice-pdfAll|einvoice-pdfAll1|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice-sign|einvoice-detail|einvoice-refreshAll|einvoice-send-cqt|';
 						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 						var ids = null;
 						var idx = -1;
@@ -2295,6 +2307,52 @@
 						        }
 							});
 							break;
+						case 'einvoice-pdfAll1':
+							var objData = null;
+							var ids = null;
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							
+							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var idData = responseData['ID'];										
+											  window.open(ROOT_PATH + '/common/print-einvoiceAll1/' + idData,'_blank');
+											  
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+								            hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
+							break;
 						case 'einvoice-pdfCD':
 							var objData = null;
 							var ids = null;
@@ -2785,6 +2843,7 @@
 			
 					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 					$("#f-einvoices").find('button[data-action="einvoice-pdfAll"]').prop('disabled', checkRows.length == 0);
+					$("#f-einvoices").find('button[data-action="einvoice-pdfAll1"]').prop('disabled', checkRows.length == 0);
 					$('#f-einvoices').find('button[data-action="einvoice-delete"]').prop('disabled', checkRows.length == 0);
 					$('#f-einvoices').find('button[data-action="einvoice-delete_"]').prop('disabled', checkRows.length == 0);
 				}
