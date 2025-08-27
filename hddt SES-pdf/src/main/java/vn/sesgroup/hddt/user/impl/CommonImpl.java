@@ -311,7 +311,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgQA).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien).toString(),
 						"Y".equals(isConvert), Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe,
-						isDieuChinh);
+						isDieuChinh, Constants.INVOICE_STATUS.ERROR_CQT.equals(eInvoiceStatus));
 
 				// baosPDF = jpUtils.createFinalInvoicetest(fileJP,
 				// docTmp,"Y".equals(isConvert));
@@ -689,7 +689,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgQA).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien).toString(),
 						"Y".equals(isConvert), Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe,
-						isDieuChinh);
+						isDieuChinh, Constants.INVOICE_STATUS.ERROR_CQT.equals(eInvoiceStatus));
 
 				if (null != baosPDF) {
 					file = new File(dir, docTmp.get("_id") + "_final.pdf");

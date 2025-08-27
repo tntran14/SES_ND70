@@ -61,6 +61,7 @@ public class JPUtils {
 			, String MST,String link, String ParamUSD, String pathLogo, String pathBackground,String pathQA, String pathVien
 			, boolean isConvert, boolean isDeleted
 			, boolean isThayThe, boolean isDieuChinh
+			, boolean isError
 		) throws Exception{
 			Map<String, Object> reportParams = new HashMap<String, Object>();
 			 String Checknamecd = "";
@@ -556,6 +557,8 @@ else {
 			reportParams.put("UrlImageInvDieuChinh", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_INV_DIEUCHINH).toString());
 			reportParams.put("IsThayThe", isThayThe);
 			reportParams.put("IsDieuChinh", isDieuChinh);
+			reportParams.put("IsError", isError);
+			reportParams.put("UrlImageInvError", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_INV_ERROR).toString());
 			List<HashMap<String, Object>> arrayData = new ArrayList<>();
 			HashMap<String, Object> hItem = null;
 			

@@ -109,6 +109,7 @@ public class Constants {
 		public static final String IMG_SIGNATURE_VALID = "signature-valid.png";
 		public static final String IMG_INV_DELETED = "img-inv-deleted-no-bg.png";
 		public static final String IMG_INV_THAYTHE = "inv-bi-thay-th.png";
+		public static final String IMG_INV_ERROR = "img-inv-error.png";
 		public static final String IMG_INV_DIEUCHINH = "inv-bi-dieu-chinh.png";
 		
 		public static final String EXCEL_TKDSHD_CTIET = "thong-ke-chi-tiet-danh-sach-hoa-don.xlsx";

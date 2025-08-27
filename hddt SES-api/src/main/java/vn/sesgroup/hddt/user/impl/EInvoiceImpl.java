@@ -5110,7 +5110,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgQA).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien).toString(), false,
-						Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe, isDieuChinh);
+						Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe, isDieuChinh, false);
 				/* LUU TAP TIN PDF */
 				if (null != baosPDF) {
 					try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {

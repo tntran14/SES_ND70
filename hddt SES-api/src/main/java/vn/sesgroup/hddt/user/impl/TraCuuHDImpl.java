@@ -464,7 +464,7 @@ db.getCollection('EInvoice').aggregate([
 					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien ).toString(),
 
 					"Y".equals(isconvert), Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus),
-					isThayThe, isDieuChinh
+					isThayThe, isDieuChinh, false
 				);
 			
 			fileInfo.setFileName("EInvoice.pdf");
