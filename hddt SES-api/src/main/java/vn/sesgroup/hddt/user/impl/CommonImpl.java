@@ -5978,4 +5978,45 @@ try {
 			rsp.setObjData(docTmp);
 			return rsp;
 		}
+
+		@Override
+		public FileInfo downLoadTemplate(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+			File file_zip = null;
+			Msg msg = jsonRoot.getMsg();
+			Object objData = msg.getObjData();
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+			}
+			String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
+
+			ObjectId objectId = null;
+			try {
+				objectId = new ObjectId(_id);
+			} catch (Exception e) {
+			}
+
+			Document docFind = new Document("_id", objectId).append("IsDelete", new Document("$ne", true));
+			Document docTmp = null;
+			Iterable<Document> cursor = mongoTemplate.getCollection("DMMauSoKyHieu").find(docFind);
+			Iterator<Document> iter = cursor.iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+
+			if (null == docTmp) {
+				return new FileInfo();
+			}
+			String fileName = docTmp.getEmbedded(Arrays.asList("Templates","FileName"), "");
+
+			File file = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileName);
+			File tam = new File(SystemParams.DIR_TEMPORARY, fileName);
+			copyFileUsingStream(file, tam);
+
+			file_zip = new File(tam.getAbsolutePath());
+			fileInfo.setContentFile(Files.readAllBytes(file_zip.toPath()));
+			fileInfo.setFileName(fileName);
+			return fileInfo;
+		}
 }

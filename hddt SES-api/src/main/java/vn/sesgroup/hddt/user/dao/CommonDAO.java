@@ -36,6 +36,7 @@ public interface CommonDAO {
 
 	
 	public FileInfo downLoadFile(JSONRoot jsonRoot)throws Exception;
+	public FileInfo downLoadTemplate(JSONRoot jsonRoot)throws Exception;
 	public FileInfo getXmlThue(JSONRoot jsonRoot)throws Exception;
 	public MsgRsp getFullRightAdmin(JSONRoot jsonRoot) throws Exception;
 	

@@ -224,7 +224,7 @@
 										{
 											field : 'func',
 											title : '',
-											width : '40px',
+											width : '60px',
 											encoded : false,
 											headerTemplate : '&nbsp;',
 											attributes : {
@@ -350,6 +350,10 @@
 														var objURL = {};
 
 														switch (subAction) {
+														case 'download':		
+															rowData = _gridMain.data("kendoGrid").dataItem($tr);
+												          	window.open(ROOT_PATH + '/common/downLoadTemplate/' + rowData['_id'],'_blank');
+												              break;
 														case 'viewpdf':
 															rowData = _gridMain
 																	.data(
@@ -771,6 +775,7 @@
 
 					switch (key) {
 					case 'func':
+						text += '<i title="Tải file" class="mdi mdi-download fs-25 text-success c-pointer" data-sub-action="download" ></i>';	
 						if ('Chưa Hoạt động' == acti) {
 							text += '<i title="Kích hoạt" class="mdi mdi-checkbox-marked-circle-outline fs-25 text-blue123 c-pointer" data-sub-action="active" ></i>';
 
