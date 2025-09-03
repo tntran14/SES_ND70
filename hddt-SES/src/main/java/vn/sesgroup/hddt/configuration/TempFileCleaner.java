@@ -9,14 +9,14 @@ import vn.sesgroup.hddt.utils.SystemParams;
 
 @Component
 public class TempFileCleaner {
-	@Scheduled(fixedRate = 3600000)
+	@Scheduled(cron = "0 0 2 * * ?")
 	public void cleanOldFiles() {
 		File folder = new File(SystemParams.DIR_TMP_SAVE_FILES);
 		File[] files = folder.listFiles();
 		if (files != null) {
 			for (File f : files) {
 				long diff = System.currentTimeMillis() - f.lastModified();
-				if (diff > 60 * 60 * 1000) {
+				if (diff > 24 * 60 * 60 * 1000) {
 					f.delete();
 //                    boolean deleted = f.delete();
 //                    if (deleted) {
