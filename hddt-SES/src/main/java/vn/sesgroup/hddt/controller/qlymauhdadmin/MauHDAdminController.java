@@ -43,6 +43,7 @@ public class MauHDAdminController extends AbstractController {
 	private String _id;
 	private String mst;
 	private String mausohd;
+	private String tenkh;
 
 
 	@RequestMapping(value = "/init", method = { RequestMethod.POST, RequestMethod.GET })
@@ -57,6 +58,7 @@ public class MauHDAdminController extends AbstractController {
 		dto.setErrorCode(0);
 		mst = commons.getParameterFromRequest(req, "mst").replaceAll("\\s", "");
 		mausohd = commons.getParameterFromRequest(req, "mausohd").replaceAll("\\s", "");
+		tenkh = commons.getParameterFromRequest(req, "tenkh").replaceAll("\\s", "");
 		return dto;
 	}
 	@RequestMapping(value = "/search",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
@@ -80,6 +82,7 @@ public class MauHDAdminController extends AbstractController {
 	
 		hData.put("MSTKH", mst);
 		hData.put("MauSoHD", mausohd);
+		hData.put("TenKH", tenkh);
 		msg.setObjData(hData);
 		
 		JSONRoot root = new JSONRoot(msg);

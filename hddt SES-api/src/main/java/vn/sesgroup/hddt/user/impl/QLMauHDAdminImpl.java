@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -559,12 +560,14 @@ public class QLMauHDAdminImpl extends AbstractDAO implements QLMauHDAdminDao {
 
 		String mstkh = "";
 		String mausohd = "";
+		String tenkh = "";
 		String issuerId = "";
 		JsonNode jsonData = null;
 		if (objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
 			mstkh = commons.getTextJsonNode(jsonData.at("/MSTKH")).replaceAll("\\s", "");
 			mausohd = commons.getTextJsonNode(jsonData.at("/MauSoHD")).replaceAll("\\s", "");
+			tenkh = commons.getTextJsonNode(jsonData.at("/TenKH")).replaceAll("\\s", "");
 		}
 
 		MsgRsp rsp = new MsgRsp(header);
@@ -622,6 +625,15 @@ public class QLMauHDAdminImpl extends AbstractDAO implements QLMauHDAdminDao {
 
 		pipeline.add(new Document("$unwind",
 				new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+		
+		if (!"".equals(tenkh)) {
+		    String patternText = ".*" + commons.regexEscapeForMongoQuery(tenkh) + ".*";
+		    Pattern regex = Pattern.compile(patternText, Pattern.CASE_INSENSITIVE);
+		    pipeline.add(new Document("$match",
+		            new Document("Issuer.Name", regex)
+		    ));
+		}
+		
 		pipeline.add(
 				new Document("$sort", 
 					new Document("_id", -1)
