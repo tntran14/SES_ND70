@@ -1608,7 +1608,7 @@ else {
 
 	
 	public ByteArrayOutputStream viewpdf(File fileJP, org.bson.Document docTmp, int numberRowInPage,
-			int numberRowInPageMultiPage, int numberCharsInRow, String pathLogo, String pathBackground,String pathQA, String pathVien, boolean isConvert) throws Exception{
+			String pathLogo, String pathBackground,String pathQA, String pathVien) throws Exception{
 			Map<String, Object> reportParams = new HashMap<String, Object>();
 			
 			/*KIEM TRA FILE LOG & BACKGROUND CO TON TAI KHONG*/
@@ -1635,12 +1635,6 @@ else {
 			else
 				reportParams.put("URL_IMG_FRAME", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, IMAGE_FILENAME_BLANK).toString());
 		
-			
-			
-			
-			reportParams.put("IsConvert", isConvert);
-
-
 			reportParams.put("KHHDon", docTmp.getEmbedded(Arrays.asList( "KHMSHDon"), "") + docTmp.getEmbedded(Arrays.asList( "KHHDon"), "")
 						);
 		

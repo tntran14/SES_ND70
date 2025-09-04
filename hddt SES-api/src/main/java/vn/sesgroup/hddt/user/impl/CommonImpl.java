@@ -1803,7 +1803,6 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
-		MsgPage page = msg.getMsgPage();
 
 		Object objData = msg.getObjData();
 
@@ -1815,7 +1814,6 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 		}
 
 		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
-		String isConvert = commons.getTextJsonNode(jsonData.at("/IsConvert")).replaceAll("\\s", "");
 		ObjectId objectId = null;
 		try {
 			objectId = new ObjectId(_id);
@@ -1856,32 +1854,26 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 		/* TEST REPORT TO PDF */
 		String fileNameJP = docTmp.getEmbedded(Arrays.asList("Templates", "FileName"), "");
 		int numberRowInPage = docTmp.getEmbedded(Arrays.asList("Templates", "RowsInPage"), 20);
-		int numberRowInPageMultiPage = docTmp.getEmbedded(Arrays.asList("Templates", "RowInPageMultiPage"), 26);
-		int numberCharsInRow = docTmp.getEmbedded(Arrays.asList("Templates", "CharsInRow"), 50);
-
 		File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 
 		ByteArrayOutputStream baosPDF = null;
-try {
-	baosPDF = jpUtils.viewpdf(fileJP, docTmp, numberRowInPage, numberRowInPageMultiPage, numberCharsInRow,
-			Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-					docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(),
-			Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-					docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
-			Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-					docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgQA).toString(),
-			Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
-					docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgVien).toString(),
-			"Y".equals(isConvert));
-	fileInfo.setFileName("Viewpdf.pdf");
-	fileInfo.setContentFile(baosPDF.toByteArray());
-	return fileInfo;
-} catch (Exception e) {
-	return new FileInfo();
-}
-	
+		try {
+			baosPDF = jpUtils.viewpdf(fileJP, docTmp, numberRowInPage,
+					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+							docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString(),
+					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+							docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgBackground).toString(),
+					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+							docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgQA).toString(),
+					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images",
+							docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgVien).toString());
+			fileInfo.setFileName("Viewpdf.pdf");
+			fileInfo.setContentFile(baosPDF.toByteArray());
+			return fileInfo;
+		} catch (Exception e) {
+			return new FileInfo();
+		}
 
-	
 	}
 
 	@Override
