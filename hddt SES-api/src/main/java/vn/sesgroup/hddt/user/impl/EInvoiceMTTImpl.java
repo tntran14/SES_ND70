@@ -441,17 +441,15 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 			elementSubTmp = doc.createElement("TTKhac");
 
-			if (!docTmp.get("NameEN", "").equals("")) {
-				elementSubTmp
-						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
-			}
+//			if (!docTmp.get("NameEN", "").equals("")) {
+//				elementSubTmp
+//						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+//			}
 			elementTmp.appendChild(elementSubTmp);
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			if (docTmp.get("BankAccountExt") != null && docTmp.getList("BankAccountExt", Document.class).size() > 0) {
 				intTmp = 1;
-//							elementTmp = doc.createElement("TTKhac");
-//							elementSubTmp = doc.createElement("TTKhac");
 				for (Document oo : docTmp.getList("BankAccountExt", Document.class)) {
 					elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string",
 							oo.get("AccountNumber", "")));
