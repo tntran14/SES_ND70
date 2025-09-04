@@ -6011,4 +6011,169 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			fileInfo.setFileName(fileName);
 			return fileInfo;
 		}
+
+		@Override
+		public FileInfo einvoiceMTTXml(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+			ArrayList<HashMap<String, String>> arrayInfoInvoice = new ArrayList<>();
+			HashMap<String, String> hItem = null;
+			File file_zip = null;
+			String fileName = "";
+			Msg msg = jsonRoot.getMsg();
+			MsgHeader header = msg.getMsgHeader();
+			Object objData = msg.getObjData();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			JsonNode jsonData = null;
+			try {
+
+				if (objData != null) {
+					jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+				}
+				String _id = "";
+				String _token = commons.getTextJsonNode(jsonData.at("/_token")).replaceAll("\\s", "");
+
+				ObjectId id__ = new ObjectId(_token);
+
+				Document findTmp = new Document("_id", id__).append("IsDelete", false);
+				Iterable<Document> cursor1 = mongoTemplate.getCollection("EInvoiceTmp").find(findTmp);
+				Iterator<Document> iter1 = cursor1.iterator();
+				Document docTmp1 = null;
+				if (iter1.hasNext()) {
+					docTmp1 = iter1.next();
+				}
+
+				if (docTmp1 == null) {
+					return new FileInfo();
+				}
+
+				List<Object> rows = null;
+				rows = docTmp1.getList("Arrays", Object.class);
+
+				for (Object _idIntoArray : rows) {
+
+					_id = _idIntoArray.toString();
+
+					ObjectId objectId = null;
+					try {
+						objectId = new ObjectId(_id);
+					} catch (Exception e) {
+					}
+
+					Document docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId)
+							.append("IsDelete", new Document("$ne", true));
+					List<Document> pipeline = new ArrayList<Document>();
+					pipeline.add(new Document("$match", docFind));
+					pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+							.append("let",
+									new Document("vIssuerId", "$IssuerId").append("vMauSoHD",
+											"$EInvoiceDetail.TTChung.MauSoHD"))
+							.append("pipeline",
+									Arrays.asList(new Document("$match",
+											new Document("$expr", new Document("$and", Arrays.asList(
+													new Document("$eq", Arrays.asList("$$vIssuerId", "$IssuerId")),
+													new Document("$eq",
+															Arrays.asList(new Document("$toString", "$_id"),
+																	"$$vMauSoHD"))))))))
+							.append("as", "DMMauSoKyHieu")));
+					pipeline.add(new Document("$unwind",
+							new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+
+					Document docTmp = null;
+					Iterable<Document> cursor = mongoTemplate.getCollection("EInvoiceMTT").aggregate(pipeline)
+							.allowDiskUse(true);
+					Iterator<Document> iter = cursor.iterator();
+					if (iter.hasNext()) {
+						docTmp = iter.next();
+					}
+					if (null == docTmp) {
+						docFind = new Document("_id", objectId).append("IsDelete", new Document("$ne", true));
+						pipeline = new ArrayList<Document>();
+						pipeline.add(new Document("$match", docFind));
+						pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
+								.append("let",
+										new Document("vIssuerId", "$IssuerId").append("vMauSoHD",
+												"$EInvoiceDetail.TTChung.MauSoHD"))
+								.append("pipeline",
+										Arrays.asList(new Document("$match",
+												new Document("$expr", new Document("$and", Arrays.asList(
+														new Document("$eq", Arrays.asList("$$vIssuerId", "$IssuerId")),
+														new Document("$eq",
+																Arrays.asList(new Document("$toString", "$_id"),
+																		"$$vMauSoHD"))))))))
+								.append("as", "DMMauSoKyHieu")));
+						pipeline.add(new Document("$unwind",
+								new Document("path", "$DMMauSoKyHieu").append("preserveNullAndEmptyArrays", true)));
+
+						docTmp = null;
+						cursor = mongoTemplate.getCollection("EInvoiceMTT").aggregate(pipeline).allowDiskUse(true);
+						iter = cursor.iterator();
+						if (iter.hasNext()) {
+							docTmp = iter.next();
+						}
+					}
+					if (null == docTmp || docTmp.get("DMMauSoKyHieu") == null) {
+						return new FileInfo();
+					}
+					String mskh = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+							+ docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+					Integer shd = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+					String namexml = mskh + "_" + shd + ".xml";
+
+					String dir = docTmp.get("Dir", "");
+					String signStatusCode = docTmp.get("SignStatusCode", "");
+					String eInvoiceStatus = docTmp.get("EInvoiceStatus", "");
+					fileName = _id + ".xml";
+
+					if ("SIGNED".equals(signStatusCode)) {
+						fileName = _id + "_signed.xml";
+					} else if ("PENDING".equals(eInvoiceStatus)) {
+						fileName = _id + "_pending.xml";
+					}
+
+					File file = new File(dir, fileName);
+					File tam = new File(dir, namexml);
+					copyFileUsingStream(file, tam);
+
+					hItem = new HashMap<>();
+					hItem.put("UrlFile", tam.getAbsolutePath());
+					arrayInfoInvoice.add(hItem);
+				}
+				if (arrayInfoInvoice.size() == 0) {
+					return fileInfo;
+				}
+				if (arrayInfoInvoice.size() == 1) {
+					hItem = arrayInfoInvoice.get(0);
+					file_zip = new File(hItem.get("UrlFile"));
+					fileInfo.setContentFile(Files.readAllBytes(file_zip.toPath()));
+					fileInfo.setFileName(fileName);
+					return fileInfo;
+				} else {
+					/* NEN DANH SACH FILE XML */
+					FileInputStream fis = null;
+					int length;
+					byte[] buffer = new byte[1024];
+					bos = new ByteArrayOutputStream();
+					ZipOutputStream zout = new ZipOutputStream(bos);
+					for (int i = 0; i < arrayInfoInvoice.size(); i++) {
+						hItem = arrayInfoInvoice.get(i);
+						file_zip = new File(hItem.get("UrlFile"));
+						fis = new FileInputStream(file_zip);
+						zout.putNextEntry(new ZipEntry(file_zip.getName()));
+						while ((length = fis.read(buffer)) > 0)
+							zout.write(buffer, 0, length);
+
+						zout.closeEntry();
+						fis.close();
+
+					}
+					zout.close();
+					fileInfo.setFileName("EINVOICE.zip");
+					fileInfo.setContentFile(bos.toByteArray());
+				}
+				return fileInfo;
+
+			} catch (NullPointerException | UnsupportedEncodingException e) {
+				return new FileInfo();
+			}
+		}
 }

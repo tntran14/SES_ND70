@@ -69,5 +69,6 @@ public interface CommonDAO {
 	public MsgRsp listCTTNCNSigned(JSONRoot jsonRoot) throws Exception;
 	public FileInfo viewpdfcttncnV1(JSONRoot jsonRoot)throws Exception;
 	public MsgRsp getNotification() throws Exception;
+	public FileInfo einvoiceMTTXml(JSONRoot jsonRoot)throws Exception;
 
 }
