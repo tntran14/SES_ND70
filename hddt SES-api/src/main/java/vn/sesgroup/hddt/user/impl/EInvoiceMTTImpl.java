@@ -1014,10 +1014,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "Website", docTmp.get("Website", "")));
 
 			elementSubTmp = doc.createElement("TTKhac");
-			if (!docTmp.get("NameEN", "").equals("")) {
-				elementSubTmp
-						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
-			}
+//			if (!docTmp.get("NameEN", "").equals("")) {
+//				elementSubTmp
+//						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+//			}
 			elementTmp.appendChild(elementSubTmp);
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
@@ -1596,10 +1596,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "Website", docTmp.get("Website", "")));
 
 			elementSubTmp = doc.createElement("TTKhac");
-			if (!docTmp.get("NameEN", "").equals("")) {
-				elementSubTmp
-						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
-			}
+//			if (!docTmp.get("NameEN", "").equals("")) {
+//				elementSubTmp
+//						.appendChild(commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+//			}
 			elementTmp.appendChild(elementSubTmp);
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
