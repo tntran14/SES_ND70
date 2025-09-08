@@ -943,7 +943,7 @@ public class TKDSHDonMTTImpl extends AbstractDAO implements TKDSHDonMTTDAO{
 			row = sheet.getRow(2);
 			if(null == row) row = sheet.createRow(2);
 			cell = row.getCell(3);
-			if(cell == null) cell = row.getCell(3);
+			if(cell == null) cell = row.createCell(3);
 			cell.setCellValue("[1] Kỳ tính thuế: " + fromDate + " đến " + toDate);
 			
 			try {
