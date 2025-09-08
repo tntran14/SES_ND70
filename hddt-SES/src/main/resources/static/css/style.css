@@ -1111,8 +1111,9 @@ Buttons
 ******************/
 .btn {
   padding: 7px 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
+  font-family: 'Roboto', 'Open Sans', sans-serif;
 }
 
 .btn-group label {

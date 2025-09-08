@@ -52,46 +52,6 @@ public class PHSLMauHDAdminCRUDController extends AbstractController{
 	private String mstkh;
 	private String mausohdon;
 	private String quantity;
-
-//	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
-//		try {
-//			BaseDTO baseDTO = new BaseDTO(req);
-//			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
-//			
-//			/*DANH SACH THAM SO*/
-//			HashMap<String, String> hashConds = null;
-//			ArrayList<HashMap<String, String>> conds = null;
-//			MsgParam msgParam = null;
-//			MsgParams msgParams = new MsgParams();
-//			
-//			msgParam = new MsgParam();
-//			msgParam.setId("param02");
-//			msgParam.setParam("DMMauSoKyHieuForCreateAdmin");
-//			msgParams.getParams().add(msgParam);
-//			
-//			/*END: DANH SACH THAM SO*/
-//			msg.setObjData(msgParams);
-//			
-//			JSONRoot root = new JSONRoot(msg);
-//			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(), HttpMethod.POST, root);
-//			MspResponseStatus rspStatus = rsp.getResponseStatus();
-//			
-//			if(rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
-//				LinkedHashMap<String, String> hItem = null;
-//				
-//				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-//				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
-//					hItem = new LinkedHashMap<String, String>();
-//					for(JsonNode o: jsonData.at("/param02")) {
-//					
-//						hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));			
-//					}
-//					req.setAttribute("map_mausokyhieu", hItem);
-//				}			
-//			}
-//			
-//		}catch(Exception e) {}
-//	}
 	
 	@RequestMapping(value = "/init", method = { RequestMethod.POST })
 	public String init(Locale locale, HttpServletRequest req, HttpSession session,
@@ -137,9 +97,6 @@ public class PHSLMauHDAdminCRUDController extends AbstractController{
 		req.setAttribute("_action_", action);
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
-
-//		if("|phsl-mauhdadmin-cre|phsl-mauhdadmin-edit|".indexOf(transaction) != -1)
-//			LoadParameter(cup, locale, req, action);
 
 		if (!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
