@@ -107,7 +107,8 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 	private String lhdsDung_HDBHTHBLai;
 	private String lhdsDung_HDTMai;
 	private String dsctsSDung;
-	
+	private String dstcgphap;
+	private String dstctnhan;
 	private String hThuc;
 	
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
@@ -373,6 +374,28 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			}
 			req.setAttribute("DSCTSSDung", Json.serializer().toString(prds));
 			
+			prds = new ArrayList<Object>();
+			if(!jsonData.at("/DSTCGPhap").isMissingNode()) {
+				for(JsonNode json: jsonData.at("/DSTCGPhap")) {
+					hItem = new LinkedHashMap<String, String>();
+					hItem.put("MSTTCGPhap", commons.getTextJsonNode(json.at("/MSTTCGPhap")));
+					hItem.put("TTCGPhap", commons.getTextJsonNode(json.at("/TTCGPhap")));
+					prds.add(hItem);
+				}
+			}
+			req.setAttribute("DSTCGPhap", commons.encodeStringBase64(Json.serializer().toString(prds)));
+			
+			prds = new ArrayList<Object>();
+			if(!jsonData.at("/DSTCTNhan").isMissingNode()) {
+				for(JsonNode json: jsonData.at("/DSTCTNhan")) {
+					hItem = new LinkedHashMap<String, String>();
+					hItem.put("MSTTCTNhan", commons.getTextJsonNode(json.at("/MSTTCTNhan")));
+					hItem.put("TTCTNhan", commons.getTextJsonNode(json.at("/TTCTNhan")));
+					prds.add(hItem);
+				}
+			}
+			req.setAttribute("DSTCTNhan", commons.encodeStringBase64(Json.serializer().toString(prds)));
+			
 			if (!action.equals("COPY")) return;
 			msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.INQUIRY);
 			root = new JSONRoot(msg);
@@ -444,6 +467,8 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 		lhdsDung_HDTMai = commons.getParameterFromRequest(req, "LHDSDung_HDTMai").replaceAll("\\s", "");
 		
 		dsctsSDung = commons.getParameterFromRequest(req, "DSCTSSDung").replaceAll("\\s", "");
+		dstcgphap = commons.getParameterFromRequest(req, "DSTCGPhap").replaceAll("\\s", "");
+		dstctnhan = commons.getParameterFromRequest(req, "DSTCTNhan").replaceAll("\\s", "");
 		hThuc = commons.getParameterFromRequest(req, "HThuc").replaceAll("\\s", "");
 		
 		switch (transaction) {
@@ -485,6 +510,16 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			if ("W10=".equals(dsctsSDung)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn chứng thư số.");
+			}
+			
+			if ("W10=".equals(dstcgphap)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập tổ chức cung cấp dịch vụ.");
+			}
+			
+			if ("W10=".equals(dstctnhan)) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng nhập tổ chức truyền nhận.");
 			}
 			
 			if ("|1|2|".indexOf("|" + hThuc + "|") == -1) {
@@ -599,9 +634,13 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			return dtoRes;
 		}
 		/*END: CHECK TOKEN*/
-		JsonNode jsonNodeTmp = null;
+		JsonNode jsonNode_dsctssdung = null;
+		JsonNode jsonNode_dstcgphap = null;
+		JsonNode jsonNode_dstctnhan = null;
 		try {
-			jsonNodeTmp = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dsctsSDung));
+			jsonNode_dsctssdung = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dsctsSDung));
+			jsonNode_dstcgphap = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dstcgphap));
+			jsonNode_dstctnhan = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dstctnhan));
 		}catch(Exception e) {
 			log.error(" >>>>> An exception occurred!", e);
 		}
@@ -656,8 +695,9 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 		hData.put("LHDSDung_HDBHTHBLai", lhdsDung_HDBHTHBLai);
 		hData.put("LHDSDung_HDTMai", lhdsDung_HDTMai);
 		
-		hData.put("DSCTSSDung", jsonNodeTmp);
-		
+		hData.put("DSCTSSDung", jsonNode_dsctssdung);
+		hData.put("DSTCGPhap", jsonNode_dstcgphap);
+		hData.put("DSTCTNhan", jsonNode_dstctnhan);
 		hData.put("HThuc", hThuc);
 		msg.setObjData(hData);
 		

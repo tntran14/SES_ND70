@@ -1811,7 +1811,8 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 		String lhdsDung_HDTMai = commons.getTextJsonNode(jsonData.at("/LHDSDung_HDTMai")).trim().replaceAll("\\s+", " ");
 		
 		List<Object> rowDSCTSSDung = new ArrayList<Object>();
-		
+		List<Object> rowDSTCGPhap = new ArrayList<Object>();
+		List<Object> rowDSTCTNhan = new ArrayList<Object>();
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
 		MspResponseStatus responseStatus = null;
@@ -2116,22 +2117,46 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 			
 			/*TO CHUC CUNG CAP DICH VU*/
 			elementTmp = doc.createElement("TTTCGP");
-			elementSubTmp = doc.createElement("TCGP");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
+			if (!jsonData.at("/DSTCGPhap").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCGPhap")) {
+					String ttcgp = commons.getTextJsonNode(data.at("/TTCGPhap"));
+					String msttcgp = commons.getTextJsonNode(data.at("/MSTTCGPhap"));
+					if (ttcgp.trim().isEmpty() || msttcgp.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCGP");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", ttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP", msttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCGPhap", msttcgp);
+					hO.put("TTCGPhap", ttcgp);
+					rowDSTCGPhap.add(hO);
+				}
+			}
 			elementSubContent.appendChild(elementTmp);
 			
 			/*TO CHUC TRUYEN NHAN*/
 			elementTmp = doc.createElement("TTTCTN");
-			elementSubTmp = doc.createElement("TCTN");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
-			elementSubContent.appendChild(elementTmp);
+			if (!jsonData.at("/DSTCTNhan").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCTNhan")) {
+					String ttctn = commons.getTextJsonNode(data.at("/TTCTNhan"));
+					String msttctn = commons.getTextJsonNode(data.at("/MSTTCTNhan"));
+					if (ttctn.trim().isEmpty() || msttctn.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCTN");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", ttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN", msttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCTNhan", msttctn);
+					hO.put("TTCTNhan", ttctn);
+					rowDSTCTNhan.add(hO);
+				}
+			}
 			
+			elementSubContent.appendChild(elementTmp);
 			
 			elementContent.appendChild(elementSubContent);
 			/*END - TAO FILE XML*/
@@ -2178,6 +2203,8 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 						.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
 				)
 				.append("DSCTSSDung", rowDSCTSSDung)
+				.append("DSTCGPhap", rowDSTCGPhap)
+				.append("DSTCTNhan", rowDSTCTNhan)
 				.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
 				.append("IsDelete", false)
 				.append("Dir", pathDir)
@@ -2450,20 +2477,45 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 			
 			/*TO CHUC CUNG CAP DICH VU*/
 			elementTmp = doc.createElement("TTTCGP");
-			elementSubTmp = doc.createElement("TCGP");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
+			if (!jsonData.at("/DSTCGPhap").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCGPhap")) {
+					String ttcgp = commons.getTextJsonNode(data.at("/TTCGPhap"));
+					String msttcgp = commons.getTextJsonNode(data.at("/MSTTCGPhap"));
+					if (ttcgp.trim().isEmpty() || msttcgp.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCGP");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", ttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP", msttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCGPhap", msttcgp);
+					hO.put("TTCGPhap", ttcgp);
+					rowDSTCGPhap.add(hO);
+				}
+			}
 			elementSubContent.appendChild(elementTmp);
 			
 			/*TO CHUC TRUYEN NHAN*/
 			elementTmp = doc.createElement("TTTCTN");
-			elementSubTmp = doc.createElement("TCTN");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
+			if (!jsonData.at("/DSTCTNhan").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCTNhan")) {
+					String ttctn = commons.getTextJsonNode(data.at("/TTCTNhan"));
+					String msttctn = commons.getTextJsonNode(data.at("/MSTTCTNhan"));
+					if (ttctn.trim().isEmpty() || msttctn.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCTN");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", ttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN", msttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCTNhan", msttctn);
+					hO.put("TTCTNhan", ttctn);
+					rowDSTCTNhan.add(hO);
+				}
+			}
+			
 			elementSubContent.appendChild(elementTmp);
 			
 			elementContent.appendChild(elementSubContent);
@@ -2512,6 +2564,8 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 						.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
 				)
 				.append("DSCTSSDung", rowDSCTSSDung)
+				.append("DSTCGPhap", rowDSTCGPhap)
+				.append("DSTCTNhan", rowDSTCTNhan)
 				.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
 				.append("IsDelete", false)
 				.append("Dir", pathDir)
@@ -2802,20 +2856,45 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 			
 			/*TO CHUC CUNG CAP DICH VU*/
 			elementTmp = doc.createElement("TTTCGP");
-			elementSubTmp = doc.createElement("TCGP");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", SystemParams.TTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP",SystemParams.MSTTCGP));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
+			if (!jsonData.at("/DSTCGPhap").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCGPhap")) {
+					String ttcgp = commons.getTextJsonNode(data.at("/TTCGPhap"));
+					String msttcgp = commons.getTextJsonNode(data.at("/MSTTCGPhap"));
+					if (ttcgp.trim().isEmpty() || msttcgp.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCGP");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCGP", ttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCGP", msttcgp));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCGPhap", msttcgp);
+					hO.put("TTCGPhap", ttcgp);
+					rowDSTCGPhap.add(hO);
+				}
+			}
 			elementSubContent.appendChild(elementTmp);
 			
 			/*TO CHUC TRUYEN NHAN*/
 			elementTmp = doc.createElement("TTTCTN");
-			elementSubTmp = doc.createElement("TCTN");
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", SystemParams.TDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN",SystemParams.MSTDVTN));
-			elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
-			elementTmp.appendChild(elementSubTmp);
+			if (!jsonData.at("/DSTCTNhan").isMissingNode()) {
+				for (JsonNode data : jsonData.at("/DSTCTNhan")) {
+					String ttctn = commons.getTextJsonNode(data.at("/TTCTNhan"));
+					String msttctn = commons.getTextJsonNode(data.at("/MSTTCTNhan"));
+					if (ttctn.trim().isEmpty() || msttctn.trim().isEmpty()) continue;
+					elementSubTmp = doc.createElement("TCTN");
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TTCTN", ttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "MSTTCTN", msttctn));
+					elementSubTmp.appendChild(commons.createElementWithValue(doc, "TNgay", commons.convertLocalDateTimeToString(LocalDate.now(), "yyyy-MM-dd")));
+					elementTmp.appendChild(elementSubTmp);
+					
+					hO = new LinkedHashMap<String, Object>();
+					hO.put("MSTTCTNhan", msttctn);
+					hO.put("TTCTNhan", ttctn);
+					rowDSTCTNhan.add(hO);
+				}
+			}
+			
 			elementSubContent.appendChild(elementTmp);
 			
 			elementContent.appendChild(elementSubContent);
@@ -2865,6 +2944,8 @@ public class TKhaiImpl extends AbstractDAO implements TKhaiDAO{
 							.append("CTu", "on".equals(lhdsDung_CTu)? "1": "0")
 					)
 					.append("DSCTSSDung", rowDSCTSSDung)
+					.append("DSTCGPhap", rowDSTCGPhap)
+					.append("DSTCTNhan", rowDSTCTNhan)
 					.append("Status", Constants.INVOICE_STATUS.TK_CREATED)
 					.append("IsDelete", false)
 					.append("Dir", pathDir)
