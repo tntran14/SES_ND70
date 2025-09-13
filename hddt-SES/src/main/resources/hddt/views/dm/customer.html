@@ -81,7 +81,7 @@
                             				<button type="button" title="Thay đổi" data-action="edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-edit|')}" th:disabled="true" >
                             					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
                             				</button>
-                            				<button type="button" title="Xóa" data-action="delete" class="btns btns-delete__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-del|')}" th:disabled="true" >
+                            				<button type="button" title="Xóa" data-action="delete" class="btns btns-delete__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-edit|')}" th:disabled="true" >
                             					<i class="mdi mdi-close-box"> </i><span class="d-none d-md-inline">Xóa</span>
                             				</button>
                             			</div>

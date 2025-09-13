@@ -18,7 +18,8 @@
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<form id="f-einvoice_mtt" name="f-einvoice_mtt" method="post" enctype="multipart/form-data" >
+				<form id="f-einvoice_mtt" name="f-einvoice_mtt" method="post"
+					enctype="multipart/form-data">
 					<div class="card">
 						<div class="card-body">
 							<div class="filter__list--erp">
@@ -26,16 +27,20 @@
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<select class="form-control form-control-sm c-f__textbox" id="mau-so-hdon" name="mau-so-hdon" >
-									
+												<select class="form-control form-control-sm c-f__textbox"
+													id="mau-so-hdon" name="mau-so-hdon">
+
 													<option value=""></option>
 													<th:block th:if="${map_mausokyhieu != null}">
 														<option th:each="entry : ${map_mausokyhieu.entrySet()}"
-															th:value="${entry.key}" th:utext="${entry.value}" > </option>
+															th:value="${entry.key}" th:utext="${entry.value}">
+														</option>
 													</th:block>
 												</select>
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Mẫu hóa đơn</label></legend>
+													<legend class="c-f__legend">
+														<label>Mẫu hóa đơn</label>
+													</legend>
 												</fieldset>
 											</div>
 										</div>
@@ -43,9 +48,13 @@
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="from-date" name="from-date"
+													th:value="${FromDate}" autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+													<legend class="c-f__legend">
+														<label>Từ ngày </label>
+													</legend>
 												</fieldset>
 											</div>
 										</div>
@@ -73,16 +82,28 @@
 									<div class="row m-b-16">
 										<div class="col-12 custom-field">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="so-hoa-don" name="so-hoa-don" value="" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số hóa đơn</label></legend></fieldset>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="so-hoa-don" name="so-hoa-don" value=""
+													autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Số hóa đơn</label>
+													</legend>
+												</fieldset>
 											</div>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="to-date" name="to-date"
+													th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Đến ngày</label>
+													</legend>
+												</fieldset>
 											</div>
 										</div>
 									</div>
@@ -91,14 +112,20 @@
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<select class=" form-control form-control-sm c-f__textbox" id="status" name="status" tabindex="-1" aria-hidden="true" >
+												<select class=" form-control form-control-sm c-f__textbox"
+													id="status" name="status" tabindex="-1" aria-hidden="true">
 													<option value=""></option>
 													<th:block th:if="${map_status_sendcqt != null}">
 														<option th:each="entry : ${map_status_sendcqt.entrySet()}"
-																th:value="${entry.key}" th:utext="${entry.value}" > </option>
+															th:value="${entry.key}" th:utext="${entry.value}">
+														</option>
 													</th:block>
 												</select>
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Kết quả gửi CQT</label></legend></fieldset>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Kết quả gửi CQT</label>
+													</legend>
+												</fieldset>
 											</div>
 										</div>
 									</div>
@@ -106,14 +133,21 @@
 										<div class="col-12">
 											<div class="custom-field m-b-16">
 												<div class="c-f__wrapper">
-													<select class=" form-control form-control-sm c-f__textbox" id="sign-status" name="sign-status" tabindex="-1" aria-hidden="true" >
+													<select class=" form-control form-control-sm c-f__textbox"
+														id="sign-status" name="sign-status" tabindex="-1"
+														aria-hidden="true">
 														<option value=""></option>
 														<th:block th:if="${map_sign_status != null}">
 															<option th:each="entry : ${map_sign_status.entrySet()}"
-																th:value="${entry.key}" th:utext="${entry.value}" > </option>
+																th:value="${entry.key}" th:utext="${entry.value}">
+															</option>
 														</th:block>
 													</select>
-													<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Trạng thái ký hóa đơn</label></legend></fieldset>
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Trạng thái ký hóa đơn</label>
+														</legend>
+													</fieldset>
 												</div>
 											</div>
 										</div>
@@ -124,58 +158,83 @@
 										<div class="col-12">
 											<div class="custom-field m-b-16">
 												<div class="c-f__wrapper">
-													<select class=" form-control form-control-sm c-f__textbox" id="email-status" name="email-status" tabindex="-1" aria-hidden="true" >
+													<select class=" form-control form-control-sm c-f__textbox"
+														id="email-status" name="email-status" tabindex="-1"
+														aria-hidden="true">
 														<option value=""></option>
 														<th:block th:if="${map_email_status != null}">
 															<option th:each="entry : ${map_email_status.entrySet()}"
-																th:value="${entry.key}" th:utext="${entry.value}" > </option>
+																th:value="${entry.key}" th:utext="${entry.value}">
+															</option>
 														</th:block>
 													</select>
-													<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Trạng thái gửi mail hóa đơn</label></legend></fieldset>
+													<fieldset aria-hidden="true" class="c-f__set">
+														<legend class="c-f__legend">
+															<label>Trạng thái gửi mail hóa đơn</label>
+														</legend>
+													</fieldset>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-12">
-										<div class="row m-b-16">
-										<div class="col-12 custom-field">
-											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="mcqt" name="mcqt" value="" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Mã CQT</label></legend></fieldset>
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" id="mcqt" name="mcqt" value=""
+															autocomplete="off" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Mã CQT</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
-										</div>
-									</div>
-									
+
 								</div>
-								
+
 								<div class="col-erp-5">
 									<div class="row">
 										<div class="col-12">
-										<div class="row m-b-16">
-										<div class="col-12 custom-field">
-											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="nban-ten" name="nban-ten" value="" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Tên khách hàng </label></legend></fieldset>
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" id="nban-ten" name="nban-ten" value=""
+															autocomplete="off" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Tên khách hàng </label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
 											</div>
-										</div>
-									</div>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-12">
-										<div class="row m-b-16">
-										<div class="col-12 custom-field">
-											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="nban-mst" name="nban-mst" value="" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Mã số thuế</label></legend></fieldset>
+											<div class="row m-b-16">
+												<div class="col-12 custom-field">
+													<div class="c-f__wrapper">
+														<input class="form-control form-control-sm c-f__textbox"
+															type="text" id="nban-mst" name="nban-mst" value=""
+															autocomplete="off" />
+														<fieldset aria-hidden="true" class="c-f__set">
+															<legend class="c-f__legend">
+																<label>Mã số thuế</label>
+															</legend>
+														</fieldset>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
-										</div>
-									</div>									
 								</div>
 								<div class="col-erp-5">
 									<div class="row">
@@ -204,8 +263,7 @@
 															data-action="deletesearch" title="Xóa Tìm kiếm"
 															type="button">
 															<i class="mdi mdi-delete"> </i><span
-																class="d-none d-md-inline">Xóa
-																tìm kiếm</span>
+																class="d-none d-md-inline">Xóa tìm kiếm</span>
 														</button>
 													</div>
 												</div>
@@ -214,74 +272,111 @@
 									</div>
 								</div>
 							</div>
-							
-							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
-							<div class="col-12">
-							<div class="row mT-0">
-								                         		
-                            		<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
-                            			<div class="button-group text-right">																
-										   
-										
-										</div>
-                            			
-                            		</div>
-                            	</div>
-                        
-						    </div>
+
+							<div class="row">
+								<div class="col-12">
+									<hr style="margin: 0 0 10px 0" />
+								</div>
+							</div>
 							<div class="col-12">
 								<div class="row mT-0">
-									
-                            		<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
-                            			<div class="button-group text-right">                            		
-                            				
-                            				<button type="button" title="Thêm mới" data-action="einvoice_mtt-cre" class="btns tmoi_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre|')}" >
-                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
-                            				</button>
-                            				
-                            				<button type="button" title="Import hóa đơn" data-action="einvoice-import-auto" class="btns import_hdon hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice-import-auto|')}" >
-										   		<i class="mdi mdi-file-excel"></i><span class="d-none d-md-inline">Import Hóa Đơn</span>
-										   	</button>
-                            			 	<button
-											  type="button"
-											  title="Xuất XML"
-											  data-action="einvoice_mtt-xml"
-											  class="btns xuat_xml hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-xml|')}"  
-											  >
-										   <i class="mdi mdi-xml"> </i
-											  ><span class="d-none d-md-inline">Xuất XML</span>
-										   </button>
-											<button  type="button"  title="Thêm mới HĐ Điều chỉnh" data-action="einvoice_mtt-cre-dc"
-											  class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dc-tt|')}" th:disabled="true" >
-										   <i class="mdi mdi-contrast"></i><span class="d-none d-md-inline">Điều chỉnh HĐ</span>
-										   </button>
-										   
-										   <button  type="button"  title="Thêm mới HĐ /Thay thế" data-action="einvoice_mtt-cre-tt"
-											  class="btns dc_tt_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dc-tt|')}" th:disabled="true" >
-										   <i class="mdi mdi-contrast"></i><span class="d-none d-md-inline">Thay thế HĐ</span>
-										   </button>
-										   
-                            				<button type="button" title="Gửi hóa đơn lên CQT hàng loạt" data-action="einvoice_mtt-send-cqtAll" class="btns tmoi_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-send-cqtAll|')}" >
-                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Gửi CQT hàng loạt</span>
-                            				</button>
-                            				<button type="button" title="Gửi mail hàng loạt" data-action="einvoice_mtt-sendAll-email-auto" class="btns coppy_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-sendAll-email-auto|')}" >
-                            					<i class="mdi mdi-email"> </i><span class="d-none d-md-inline">Gửi mail hàng loạt</span>
-                            				</button> 
-                            				<button type="button" title="Copy" data-action="einvoice_mtt-copy" class="btns coppy_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-copy|')}" >
-                            					<i class="mdi mdi-content-copy"> </i><span class="d-none d-md-inline">Copy</span>
-                            				</button> 
-                            				<button type="button" title="Chi tiết" data-action="einvoice_mtt-detail" class="btns ctiet_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-detail|')}" >
-                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
-                            				</button>
-                            				<button type="button" title="Thay đổi" data-action="einvoice_mtt-edit" class="btns tdoi_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-edit|')}"  >
-                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
-                            				</button>
-                            			<!--	<button type="button" title="Phát hành hóa đơn" data-action="einvoice_mtt-publish" class="btns ctiet_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-publish|')}" >
+
+									<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right"></div>
+
+									</div>
+								</div>
+
+							</div>
+							<div class="col-12">
+								<div class="row mT-0">
+
+									<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+											<button type="button" title="Import hóa đơn"
+												data-action="einvoice-import-auto"
+												class="btns import_hdon hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice-import-auto|')}">
+												<i class="mdi mdi-file-excel"></i><span
+													class="d-none d-md-inline">Import hóa đơn</span>
+											</button>
+											<button type="button" title="Xuất XML"
+												data-action="einvoice_mtt-xml"
+												class="btns xuat_xml hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-xml|')}">
+												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
+													XML</span>
+											</button>
+											<button type="button" title="Thêm mới HĐ Điều chỉnh"
+												data-action="einvoice_mtt-cre-dc"
+												class="btns dc_tt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dc-tt|')}"
+												th:disabled="true">
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">Điều chỉnh HĐ</span>
+											</button>
+
+											<button type="button" title="Thêm mới HĐ /Thay thế"
+												data-action="einvoice_mtt-cre-tt"
+												class="btns dc_tt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dc-tt|')}"
+												th:disabled="true">
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">Thay thế HĐ</span>
+											</button>
+
+											<button type="button" title="Gửi hóa đơn lên CQT hàng loạt"
+												data-action="einvoice_mtt-send-cqtAll"
+												class="btns tmoi_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-send-cqtAll|')}">
+												<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+													class="d-none d-md-inline">Gửi CQT hàng loạt</span>
+											</button>
+											<button type="button" title="Gửi mail hàng loạt"
+												data-action="einvoice_mtt-sendAll-email-auto"
+												class="btns coppy_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-sendAll-email-auto|')}">
+												<i class="mdi mdi-email"> </i><span
+													class="d-none d-md-inline">Gửi mail hàng loạt</span>
+											</button>
+											<button type="button" title="Thêm mới"
+												data-action="einvoice_mtt-cre"
+												class="btns tmoi_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre|')}">
+												<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+													class="d-none d-md-inline">Thêm mới</span>
+											</button>
+											<button type="button" title="Copy"
+												data-action="einvoice_mtt-copy"
+												class="btns coppy_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-copy|')}">
+												<i class="mdi mdi-content-copy"> </i><span
+													class="d-none d-md-inline">Copy</span>
+											</button>
+											<button type="button" title="Chi tiết"
+												data-action="einvoice_mtt-detail"
+												class="btns ctiet_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-detail|')}">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Chi tiết</span>
+											</button>
+											<button type="button" title="Thay đổi"
+												data-action="einvoice_mtt-edit"
+												class="btns tdoi_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-edit|')}">
+												<i class="mdi mdi-tooltip-edit"> </i><span
+													class="d-none d-md-inline">Thay đổi</span>
+											</button>
+											<!--	<button type="button" title="Phát hành hóa đơn" data-action="einvoice_mtt-publish" class="btns ctiet_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-publish|')}" >
                             					<i class="mdi mdi-publish"> </i><span class="d-none d-md-inline">Phát hành hóa đơn</span>
                             				</button>-->
-                            				<button type="button" title="Ký hóa đơn" data-action="einvoice_mtt-sign" class="btns ky_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-sign|')}"  >
-                            					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hóa đơn</span>
-                            				</button>
+											<button type="button" title="Ký hóa đơn"
+												data-action="einvoice_mtt-sign"
+												class="btns ky_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-sign|')}">
+												<i class="mdi mdi-account-check-outline"> </i><span
+													class="d-none d-md-inline">Ký hóa đơn</span>
+											</button>
 
 											<button type="button" title="Ký hàng loạt"
 												data-action="einvoice_mtt-signAll"
@@ -292,27 +387,22 @@
 											</button>
 
 										</div>
-                            		</div>
-                            	</div>
-                            </div>
-                            
-                            <div class="form-group row m-b-5 m-t-7" >
-	           					<div class="col-12 has-min-height-grid">
-	           						<div id="grid" ></div>
-	           					</div>
-	           				</div>
-							
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row m-b-5 m-t-7">
+								<div class="col-12 has-min-height-grid">
+									<div id="grid"></div>
+								</div>
+							</div>
 						</div>
 					</div>
-                      
-                      
 				</form>
-			
-				
 				<script type="text/javascript">
 				_gridMain = $('#f-einvoice_mtt').find('#grid');
 				</script>
-			<!--   <script th:src="@{/static/function/einvoice/einvoices.js(v=1.55) }"></script>  -->
+				<!--   <script th:src="@{/static/function/einvoice/einvoices.js(v=1.55) }"></script>  -->
 				<script>
 
 
@@ -2596,7 +2686,7 @@
 				</script>
 			</div>
 		</div>
-		
+
 	</th:block>
 	
 </body>

@@ -12,112 +12,162 @@
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<form id="f-tbhdssot_tbn" name="f-tbhdssot_tbn" method="post" enctype="multipart/form-data" >
+				<form id="f-tbhdssot_tbn" name="f-tbhdssot_tbn" method="post"
+					enctype="multipart/form-data">
 					<div class="card">
 						<div class="card-body">
 							<div class="filter__list--erp">
-								<div class="col-erp-5">		
-									<div class="row">							
+								<div class="col-erp-5">
+									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off"/>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="from-date" name="from-date"
+													th:value="${FromDate}" autocomplete="off" />
 												<fieldset aria-hidden="true" class="c-f__set">
-													<legend class="c-f__legend"><label>Từ ngày </label></legend>
+													<legend class="c-f__legend">
+														<label>Từ ngày </label>
+													</legend>
 												</fieldset>
 											</div>
-										</div>		
-										</div>																						
+										</div>
+									</div>
 								</div>
 								<div class="col-erp-5">
 									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày</label></legend></fieldset>
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="to-date" name="to-date"
+													th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Đến ngày</label>
+													</legend>
+												</fieldset>
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="col-erp-5">		
-										<div class="row">																			
-										<div class="col-12 custom-field m-b-16">
-											<div class="c-f__wrapper">
-												<input class="form-control form-control-sm c-f__textbox" type="text" id="so-hoa-don" name="so-hoa-don" value="" autocomplete="off" />
-												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Số hóa đơn</label></legend></fieldset>
-											</div>
-										</div>
-									</div>
-								
 								</div>
 								<div class="col-erp-5">
-								<div class="row">
+									<div class="row">
 										<div class="col-12 custom-field m-b-16">
 											<div class="c-f__wrapper">
-											<select class=" form-control form-control-sm c-f__textbox" id="status" name="status" tabindex="-1" aria-hidden="true" >
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="so-hoa-don" name="so-hoa-don" value=""
+													autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Số hóa đơn</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<select class=" form-control form-control-sm c-f__textbox"
+													id="status" name="status" tabindex="-1" aria-hidden="true">
 													<option value=""></option>
 													<th:block th:if="${map_status != null}">
 														<option th:each="entry : ${map_status.entrySet()}"
-																th:value="${entry.key}" th:utext="${entry.value}" > </option>
+															th:value="${entry.key}" th:utext="${entry.value}">
+														</option>
 													</th:block>
 												</select>
-											<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Trạng thái</label></legend></fieldset>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Trạng thái</label>
+													</legend>
+												</fieldset>
 											</div>
 										</div>
-										</div>
 									</div>
-							
-										<div class="col-erp-5">
-								<div class="row">
+								</div>
+
+								<div class="col-erp-5">
+									<div class="row">
 										<div class="col-12">
-											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none- d-md-inline">Tìm kiếm</span></button>
-										</div>
-									</div>
-									</div>
-								</div>
-							
-							</div>
-							<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
-							<div class="col-12">
-								<div class="row mT-0">
-									<div class="col-12 text-right p-r-0 p-l-0">
-										<div class="button-group text-right">
-											<button type="button" title="Thêm mới" data-action="tbhdssot_tbn-cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-cre|')}">
-	                           					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline">Thêm mới</span>
-	                           				</button>
-	                           				<button type="button" title="Chi tiết" data-action="tbhdssot_tbn-detail" class="btns btns-detail__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-detail|')}" th:disabled="true" >
-	                           					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
-	                           				</button>
-	                           				<button type="button" title="Thay đổi" data-action="tbhdssot_tbn-edit" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-edit|')}" th:disabled="true" >
-	                           					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Thay đổi</span>
-	                           				</button>
-	                           				<button type="button" title="Ký thông báo" data-action="tbhdssot_tbn-sign" class="btns btns-export__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-sign|')}" th:disabled="true" >
-	                           					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký thông báo</span>
-	                           				</button>
+											<button
+												class=" btns btns-search_auto__ses hover-up__ses w-100p"
+												data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i><span
+													class="d-none- d-md-inline">Tìm kiếm</span>
+											</button>
 										</div>
 									</div>
 								</div>
 							</div>
-							
-							<div class="form-group row m-b-5 m-t-7" >
-	           					<div class="col-12 has-min-height-grid">
-	           						<div id="grid" ></div>
-	           					</div>
-	           				</div>
-							
+
 						</div>
+						<div class="row">
+							<div class="col-12">
+								<hr style="margin: 0 0 10px 0" />
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="row mT-0">
+								<div class="col-12 text-right p-r-0 p-l-0">
+									<div class="button-group text-right">
+										<button type="button" title="Thêm mới"
+											data-action="tbhdssot_tbn-cre"
+											class="btns btns-add__ses hover-up__ses"
+											th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-cre|')}">
+											<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+												class="d-none d-md-inline">Thêm mới</span>
+										</button>
+										<button type="button" title="Chi tiết"
+											data-action="tbhdssot_tbn-detail"
+											class="btns btns-detail__ses hover-up__ses"
+											th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-detail|')}"
+											th:disabled="true">
+											<i class="mdi mdi-information-outline"> </i><span
+												class="d-none d-md-inline">Chi tiết</span>
+										</button>
+										<button type="button" title="Thay đổi"
+											data-action="tbhdssot_tbn-edit"
+											class="btns btns-edit__ses hover-up__ses"
+											th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-edit|')}"
+											th:disabled="true">
+											<i class="mdi mdi-tooltip-edit"> </i><span
+												class="d-none d-md-inline">Thay đổi</span>
+										</button>
+										<button type="button" title="Ký thông báo"
+											data-action="tbhdssot_tbn-sign"
+											class="btns btns-export__ses hover-up__ses"
+											th:if="${#strings.contains(UserFullPathRight,'|tbhdssot_tbn-sign|')}"
+											th:disabled="true">
+											<i class="mdi mdi-account-check-outline"> </i><span
+												class="d-none d-md-inline">Ký thông báo</span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group row m-b-5 m-t-7">
+							<div class="col-12 has-min-height-grid">
+								<div id="grid"></div>
+							</div>
+						</div>
+
 					</div>
-					
-				</form>
-					<style>
-				.text-red{
+			</div>
+			</form>
+			<style>
+			.text-red {
 				color: red;
-				}
-				</style>
-				<script type="text/javascript">
+			}
+			</style>
+			<script type="text/javascript">
 				_gridMain = $('#f-tbhdssot_tbn').find('#grid');
 				</script>
 			<!-- 	<script th:src="@{/static/function/einvoice/tbhdssot.js(v=1.6) }"></script> -->
-<script type="text/javascript">
+			<script type="text/javascript">
 
 $(function(){
 	dateInputFormat($('#f-tbhdssot_tbn').find('#from-date'));
@@ -786,7 +836,7 @@ function setTemplateForGridMAIN(key, data){
 
 
 </script>
-			</div>
+		</div>
 		</div>
 		
 		
