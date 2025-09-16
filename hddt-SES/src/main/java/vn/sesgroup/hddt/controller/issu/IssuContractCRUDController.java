@@ -486,19 +486,10 @@ public class IssuContractCRUDController extends AbstractController {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn hình thức thanh toán.");
 			}
-			if ("".equals(ngayky)) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng chọn ngày ký.");
-			} else if (!commons.checkLocalDate(ngayky, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
+			if (!"".equals(ngayky.trim()) && !commons.checkLocalDate(ngayky, Constants.FORMAT_DATE.FORMAT_DATE_WEB)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Ngày ký hợp đồng không đúng định dạng.");
-			} else if (commons.compareLocalDate(
-					commons.convertStringToLocalDate(ngayky, Constants.FORMAT_DATE.FORMAT_DATE_WEB),
-					LocalDate.now()) < 0) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Ngày ký hợp đồng không được nhỏ hơn ngày hiện tại.");
 			}
-
 			if (commons.ToNumber(tongTienTruocThue) < 0) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Tổng tiền trước thuế phải lớn hơn hoặc bằng 0.");
