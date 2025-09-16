@@ -584,7 +584,7 @@
 	            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
 	        },
 			columns: [
-				{field: 'STT', title: 'STT', width: '80px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				{field: 'STT', title: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
 	  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
 	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 //	  				, template: '<input type="text" name="STT" value="' + '#: ++record #' + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" style="border: none;" >',
@@ -600,11 +600,11 @@
 //					, template: '<i class="mdi mdi-close-box fs-25 text-black"></i>'
 					, template: '#= window.setTemplateForGrid("func", data) #'
 				},
-				{field: 'isCheck', title: '', width: '60px', encoded: false
-								, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+				{field: 'isCheck', title: '', width: '35px', encoded: false
+								, headerTemplate: '<label class="custom-control custom-checkbox  m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
 								, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
+								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 //				, template: '#= window.setTemplateForGrid("func_Delete", data) #'
 				},
 				{field: 'ProductName', title: '', width: '350px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên hàng hóa, dịch vụ</a>',

@@ -720,14 +720,14 @@
 	            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
 	        },
 			columns: [
-				{field: 'STT', title: 'STT', width: '80px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				{field: 'STT', title: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
 	  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
 	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 //	  				, template: '<input type="text" name="STT" value="' + '#: ++record #' + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" style="border: none;" >',
 	  				, template: '#= window.setTemplateForGrid("STT", data) #'
 	  				
 	  			},
-	  			{field: 'func', title: '', width: '60px', encoded: false, hidden: !vIsEdit
+	  			{field: 'func', title: '', width: '30px', encoded: false, hidden: !vIsEdit
 //					, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
 	  				, headerTemplate: '&nbsp;'
 					, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
