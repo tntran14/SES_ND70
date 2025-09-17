@@ -78,18 +78,8 @@
 								<div class="row mT-0">
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-											<!-- 											<button type="button" title="Xóa bỏ chứng từ" -->
-											<!-- 												data-action="cttncn-xoabo" class="btns xoa_hd hover-up__ses" -->
-											<!-- 												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xoabo|')}"> -->
-											<!-- 												<i class="mdi mdi-delete"> </i><span -->
-											<!-- 													class="d-none d-md-inline">Xóa bỏ chứng từ</span> -->
-											<!-- 											</button> -->
-											<!-- 											 <button type="button" title="Import danh sách" data-action="cttncn-import" class="btns import_hdon hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-import|')}"> -->
-											<!--                             					 <i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline">Import danh sách</span> -->
-											<!--                             				</button>  -->
-											<!--                             				<button  type="button" title="Xuất XML" data-action="cttncn-xml" class="btns xuat_xml hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-xml|')}"> -->
-											<!-- 										   			<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất XML</span> -->
-											<!-- 										   </button> -->
+											
+											                            				
 											<!-- 										   	<button  type="button" title="Xuất PDF hàng loạt" data-action="cttncn-pdfAll" class="btns in_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAll|')}"> -->
 											<!-- 										   			<i class="mdi mdi-file-pdf"> </i><span class="d-none d-md-inline">Xuất PDF hàng loạt</span> -->
 											<!-- 										   </button> -->
@@ -101,6 +91,19 @@
 											<!-- 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" > -->
 											<!-- 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span> -->
 											<!-- 											  </button>   -->
+											<button type="button" title="Import danh sách"
+												data-action="cttncn-importV1"
+												class="btns import_hdon hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-importV1|')}">
+												<i class="mdi mdi-file-excel"> </i><span
+													class="d-none d-md-inline">Import danh sách</span>
+											</button>
+											<button type="button" title="Xuất XML"
+												data-action="cttncn-xmlV1" class="btns xuat_xml hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}">
+												<i class="mdi mdi-xml"> </i><span 
+												class="d-none d-md-inline">Xuất XML</span>
+											</button>
 											<button type="button" title="Thêm mới"
 												data-action="cttncn-creV1"
 												class="btns btns-add__ses hover-up__ses"
@@ -496,7 +499,7 @@
 						var objData = {};
 						
 						var rowData = null;
-						var actionCheck = '|cttncn-detailV1|cttncn-editV1|cttncn-signV1|cttncn-deleteV1|cttncn-signAllV1|';
+						var actionCheck = '|cttncn-detailV1|cttncn-editV1|cttncn-signV1|cttncn-deleteV1|cttncn-signAllV1|cttncn-xmlV1|';
 						var grid = _gridMain.data("kendoGrid");
 						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 						var ids = null;
@@ -507,7 +510,7 @@
 						}
 						
 						switch (dataAction) {
-						case 'cttncn-xml':
+						case 'cttncn-xmlV1':
 							var objData = null;
 							var ids = null;
 							ids = [];
@@ -535,7 +538,7 @@
 										if(res.errorCode == 0) {
 											  var responseData = res.responseData;
 											  var idData = responseData['ID'];										
-											  window.open(ROOT_PATH + '/common/cttncnXml/' + idData,'_blank');
+											  window.open(ROOT_PATH + '/common/cttncnXmlV1/' + idData,'_blank');
 											  
 										}else{
 										}
@@ -550,9 +553,6 @@
 						            hideLoading();
 						        }
 							});
-							
-							/* objData =  encodeObjJsonBase64UTF8(ids);
-							window.open(ROOT_PATH + '/common/cttncnXml/' + objData,'_blank'); */
 						break;
 							
 						case 'cttncn-pdfAll':
@@ -1183,8 +1183,8 @@
 		                  });
 		                  break;	
 							
-						case 'cttncn-import':
-							showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-import/init', objData, true, function(e){
+						case 'cttncn-importV1':
+							showPopupWithURLAndData(ROOT_PATH + '/main/cttncn-importV1/init', objData, true, function(e){
 							});
 							break;
 						case 'cttncn-creV1':

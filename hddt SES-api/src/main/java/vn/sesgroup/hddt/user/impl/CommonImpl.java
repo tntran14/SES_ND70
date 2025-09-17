@@ -6176,4 +6176,127 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				return new FileInfo();
 			}
 		}
+
+		@Override
+		public FileInfo cttncnXmlV1(JSONRoot jsonRoot) throws Exception {
+			FileInfo fileInfo = new FileInfo();
+			Msg msg = jsonRoot.getMsg();
+
+			Object objData = msg.getObjData();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			JsonNode jsonData = null;
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+			}
+
+			String _token = commons.getTextJsonNode(jsonData.at("/_token")).replaceAll("\\s", "");
+
+			ObjectId objectId = new ObjectId(_token);
+
+			Document findTmp = new Document("_id", objectId).append("IsDelete", false);
+			Iterable<Document> cursor1 = mongoTemplate.getCollection("EInvoiceTmp").find(findTmp);
+			Iterator<Document> iter1 = cursor1.iterator();
+			Document docTmp1 = null;
+			if (iter1.hasNext()) {
+				docTmp1 = iter1.next();
+			}
+
+			if (docTmp1 == null) {
+				return new FileInfo();
+			}
+
+			List<Object> rows = null;
+			rows = docTmp1.getList("Arrays", Object.class);
+
+			String _id = "";
+			String fileName = "";
+			String namexml = "";
+			File file_zip = null;
+			ArrayList<HashMap<String, String>> arrayInfoInvoice = new ArrayList<>();
+			HashMap<String, String> hItem = null;
+
+			for (Object id : rows) {
+				_id = id.toString();
+				try {
+					objectId = new ObjectId(_id);
+				} catch (Exception e) {
+				}
+
+				Document docTmp = null;
+				Document docFind = new Document("_id", objectId).append("IsDelete", new Document("$ne", true));
+				List<Document> pipeline = new ArrayList<Document>();
+				pipeline.add(new Document("$match", docFind));
+
+				Iterable<Document> cursor = mongoTemplate.getCollection("CTTNCNhan").aggregate(pipeline)
+						.allowDiskUse(true);
+				Iterator<Document> iter = cursor.iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+
+				if (null == docTmp) {
+					continue;
+				}
+
+				String khctu = docTmp.get("KHCTu", "");
+				String mtdiep = docTmp.get("MTDiep", "");
+				Integer sctu = docTmp.get("SCTu", 0);
+				if (sctu == 0) {
+					namexml = khctu.replaceAll("/", "-") + "_" + mtdiep + ".xml";
+				} else {
+					namexml = khctu.replaceAll("/", "-") + "_" + sctu + ".xml";
+				}
+
+				String dir = docTmp.get("Dir", "");
+				String signStatus = docTmp.get("SignStatus", "");
+
+				fileName = _id + ".xml";
+				if ("SIGNED".equals(signStatus)) {
+					fileName = _id + "_signed.xml";
+				} else {
+					fileName = _id + ".xml";
+				}
+
+				File file = new File(dir, fileName);
+				File tam = new File(dir, namexml);
+				copyFileUsingStream(file, tam);
+
+				hItem = new HashMap<>();
+				hItem.put("UrlFile", tam.getAbsolutePath());
+				arrayInfoInvoice.add(hItem);
+			}
+
+			if (arrayInfoInvoice.size() == 0) {
+				return fileInfo;
+			}
+			if (arrayInfoInvoice.size() == 1) {
+				hItem = arrayInfoInvoice.get(0);
+				file_zip = new File(hItem.get("UrlFile"));
+				fileInfo.setContentFile(Files.readAllBytes(file_zip.toPath()));
+				fileInfo.setFileName(namexml);
+				return fileInfo;
+			} else {
+				/* NEN DANH SACH FILE XML */
+				FileInputStream fis = null;
+				int length;
+				byte[] buffer = new byte[1024];
+				bos = new ByteArrayOutputStream();
+				ZipOutputStream zout = new ZipOutputStream(bos);
+				for (int i = 0; i < arrayInfoInvoice.size(); i++) {
+					hItem = arrayInfoInvoice.get(i);
+					file_zip = new File(hItem.get("UrlFile"));
+					fis = new FileInputStream(file_zip);
+					zout.putNextEntry(new ZipEntry(file_zip.getName()));
+					while ((length = fis.read(buffer)) > 0)
+						zout.write(buffer, 0, length);
+
+					zout.closeEntry();
+					fis.close();
+				}
+				zout.close();
+				fileInfo.setFileName("ChungTu_TNCN.zip");
+				fileInfo.setContentFile(bos.toByteArray());
+			}
+			return fileInfo;
+		}
 }

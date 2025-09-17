@@ -52,7 +52,7 @@ public interface CommonDAO {
 	
 	
 	public FileInfo cttncnXml(JSONRoot jsonRoot)throws Exception;
-	
+	public FileInfo cttncnXmlV1(JSONRoot jsonRoot)throws Exception;
 	public MsgRsp saveDataToBase64(JSONRoot jsonRoot) throws Exception;
 	
 	public FileInfo printEinvoiceAllDB(JSONRoot jsonRoot)throws Exception;
