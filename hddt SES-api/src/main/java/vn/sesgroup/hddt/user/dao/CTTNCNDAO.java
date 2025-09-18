@@ -20,6 +20,8 @@ public interface CTTNCNDAO {
 	public Object signSingle(InputStream is, JSONRoot jsonRoot) throws Exception;
 
 	MsgRsp importExcel(JSONRoot jsonRoot) throws Exception;
+	
+	MsgRsp importExcelV1(JSONRoot jsonRoot) throws Exception;
 
 	public FileInfo getFileForSignAll(JSONRoot jsonRoot) throws Exception;
 

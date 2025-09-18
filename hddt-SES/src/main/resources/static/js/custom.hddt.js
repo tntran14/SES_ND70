@@ -188,7 +188,7 @@ function alertDLSuccess(msg, callback){
 	
 	alertify.alert(
 		'<b class="white text-uppercase fw-800">Thông báo </b>'
-		, msg
+		, '<div style="white-space: pre-line;">' + msg + '</div>'
 		, undefined == callback? function(e){}: callback
 	);
 }

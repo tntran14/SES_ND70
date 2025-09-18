@@ -84,6 +84,7 @@ import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.GetXMLInfoXMLDTO;
 import vn.sesgroup.hddt.dto.MailConfig;
+import vn.sesgroup.hddt.model.CTTNCNExcelForm;
 import vn.sesgroup.hddt.model.CT_TNCNExcelForm;
 import vn.sesgroup.hddt.resources.JmsParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
@@ -5276,4 +5277,396 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
 	}
+
+	@Override
+	public MsgRsp importExcelV1(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		MsgPage page = msg.getMsgPage();
+		Object objData = msg.getObjData();
+
+		MsgRsp rsp = new MsgRsp(header);
+		rsp.setMsgPage(page);
+		MspResponseStatus responseStatus = null;
+		
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+		} else {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+		
+		String dataFileName = commons.getTextJsonNode(jsonData.at("/DataFileName")).replaceAll("\\s", "");
+		String mauSoTNCN = commons.getTextJsonNode(jsonData.at("/MauSoCTu")).replaceAll("\\s", "");
+
+		ObjectId objectId = null;
+		ObjectId objectIdUser = null;
+		ObjectId mstncnId = null;
+		
+		Document docTmp = null;
+		List<Document> pipeline = null;
+		
+		try {
+			objectId = new ObjectId(header.getIssuerId());
+			objectIdUser = new ObjectId(header.getUserId());
+			mstncnId = new ObjectId(mauSoTNCN);
+		} catch (Exception e) {
+		}
+		
+		// check info Issuer
+		pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match",
+				new Document("_id", objectId).append("IsActive", true).append("IsDelete", new Document("$ne", true))));
+		
+		pipeline.add(new Document("$lookup",
+				new Document("from", "Users").append("pipeline", Arrays.asList(
+						new Document("$match",
+								new Document("IssuerId", header.getIssuerId()).append("_id", objectIdUser)
+										.append("IsActive", true).append("IsDelete", new Document("$ne", true))),
+						new Document("$project", new Document("_id", 1).append("UserName", 1).append("FullName", 1)),
+						new Document("$limit", 1)))
+				.append("as", "UserInfo")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$UserInfo").append("preserveNullAndEmptyArrays", true)));
+		
+		pipeline.add(new Document("$lookup",
+				new Document("from", "DMMSTNCN")
+						.append("pipeline",
+								Arrays.asList(new Document("$match", new Document("IssuerId", header.getIssuerId())
+										.append("IsDelete", new Document("$ne", true)).append("IsActive", true)
+										.append("_id", mstncnId))))
+						.append("as", "DMMSTNCN")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
+
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+		}
+	
+		if (null == docTmp) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		if (docTmp.get("UserInfo") == null) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin người dùng.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		if (docTmp.get("DMMSTNCN") == null) {
+			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin ký hiệu chứng từ.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+
+		// Extract data
+		Path path = Paths.get(SystemParams.DIR_TEMPORARY, header.getIssuerId(), dataFileName);
+		File file = path.toFile();
+		if (!(file.exists() && file.isFile())) {
+			responseStatus = new MspResponseStatus(9999, "Tập tin import dữ liệu không tồn tại.");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		List<CTTNCNExcelForm> ctTNCNExcelFormList = new ArrayList<>();
+		try (Workbook wb = WorkbookFactory.create(file)) {
+			Sheet sheet = wb.getSheetAt(0);
+			for (Row row : sheet) {
+				if (row.getRowNum() == 0) {
+					continue;
+				}
+				
+				Cell firstCell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (firstCell == null) {
+					break;
+				}
+				
+				List<Cell> cells = new ArrayList<Cell>();
+				int lastColumn = Math.max(row.getLastCellNum(), 19);
+
+				for (int cn = 0; cn < lastColumn; cn++) {
+					Cell c = row.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+					cells.add(c);
+				}
+				CTTNCNExcelForm ctTNCNExcelForm = extractFromCells(cells);
+				ctTNCNExcelFormList.add(ctTNCNExcelForm);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		StringBuilder errorMsg = new StringBuilder();
+		for (int i = 0; i < ctTNCNExcelFormList.size(); i++) {
+			CTTNCNExcelForm cttncnFrom = ctTNCNExcelFormList.get(i);
+			if ("".equals(cttncnFrom.getHovatennhanvien().trim())) {
+				errorMsg.append("- Họ và tên nhân viên ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getDiachi().trim())) {
+				errorMsg.append("- Địa chỉ ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			
+			if ("".equals(cttncnFrom.getCccd().trim())) {
+				errorMsg.append("- CCCD ở dòng " + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getSodienthoai().trim())) {
+				errorMsg.append("- Số điện thoại ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getCanhancutru().trim())) {
+				errorMsg.append("- Cá nhân cư trú ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if (!"01".contains(cttncnFrom.getCanhancutru().trim())) {
+				errorMsg.append("- Cá nhân cư trú ở dòng	" + (i + 1) + " không đúng định dạng.\r\n");
+			}
+			if ("".equals(cttncnFrom.getNam().trim())) {
+				errorMsg.append("- Năm ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getTuthang().trim())) {
+				errorMsg.append("- Từ tháng ở dòng " + (i + 1) + " không được để trống.\r\n");
+			} else if(cttncnFrom.getTuthang().trim().length() ==1 ) {
+				cttncnFrom.setTuthang("0" + cttncnFrom.getTuthang());
+			}
+			if ("".equals(cttncnFrom.getDenthang().trim())) {
+				errorMsg.append("- Đến tháng ở dòng " + (i + 1) + " không được để trống.\r\n");
+			}else if(cttncnFrom.getDenthang().trim().length() ==1 ) {
+				cttncnFrom.setDenthang("0" + cttncnFrom.getDenthang().trim());
+			}
+			if ("".equals(cttncnFrom.getKhoanthunhap().trim())) {
+				errorMsg.append("- Khoản thu nhập ở dòng " + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getBaohiem().trim())) {
+				errorMsg.append("- Bảo hiểm ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getKhoantuthien().trim())) {
+				errorMsg.append("- Khoản từ thiện, nhân đạo, khuyến học ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getTongthunhapchiuthue().trim())) {
+				errorMsg.append("- Tổng thu nhập chịu thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getTongthunhaptinhthue().trim())) {
+				errorMsg.append("- Tổng thu nhập tính thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+			if ("".equals(cttncnFrom.getSothue().trim())) {
+				errorMsg.append("- Số thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
+			}
+		}
+		
+		if (errorMsg.length() > 0) {
+			responseStatus = new MspResponseStatus(999,
+					"Import không thành công. \r\n" + errorMsg.toString());
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
+		// XML
+		DocumentBuilderFactory dbf = null;
+		DocumentBuilder db = null;
+		org.w3c.dom.Document doc = null;
+		Element root = null;
+		Element elementContent = null;
+		Element elementSubContent = null;
+		Element elementTmp = null;
+		boolean isSdaveFile = false;
+		
+		
+		String tctu = "Chứng từ khấu trừ thuế TNCN";
+		String msctu =  docTmp.getEmbedded(Arrays.asList("DMMSTNCN","MauSo"), "");
+		String khctu = docTmp.getEmbedded(Arrays.asList("DMMSTNCN","KyHieu"), "")+"/"+ String.valueOf(docTmp.getEmbedded(Arrays.asList("DMMSTNCN","Nam"), "")).substring(2)+docTmp.getEmbedded(Arrays.asList("DMMSTNCN","ChungTu"), "");
+	
+		
+		path = Paths.get(SystemParams.DIR_E_INVOICE_CTTNCN, docTmp.getEmbedded(Arrays.asList("TaxCode"), ""));
+
+		String pathDir = path.toString();
+		file = path.toFile();
+		if (!file.exists())
+			file.mkdirs();
+
+		for	(int i = 0; i < ctTNCNExcelFormList.size(); i++) {
+			CTTNCNExcelForm cttncnFrom = ctTNCNExcelFormList.get(i);
+			ObjectId objectIdCT = new ObjectId();
+			String fileNameXML = objectIdCT.toString() + ".xml";
+			isSdaveFile = false;
+			
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+
+			root = doc.createElement("CTu");
+			doc.appendChild(root);
+			
+			elementContent = doc.createElement("DLCTu");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+
+			/* THONG TIN CHUNG TO KHAI */
+			elementSubContent = doc.createElement("TTChung");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_TNCN));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TCTu", tctu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSCTu", msctu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHCTu", khctu));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SCTu", ""));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap", LocalDate.now().toString()));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+			elementContent.appendChild(elementSubContent);
+			
+			/* TO CHUC TRA THU NHAP */
+			elementSubContent = doc.createElement("NDCTu");
+
+			elementTmp = doc.createElement("TCTTNhap");
+			elementTmp.appendChild(
+					commons.createElementWithValue(doc, "Ten", docTmp.getEmbedded(Arrays.asList("Name"), "")));
+			elementTmp.appendChild(
+					commons.createElementWithValue(doc, "MST", docTmp.getEmbedded(Arrays.asList("TaxCode"), "")));
+			elementTmp.appendChild(
+					commons.createElementWithValue(doc, "DChi", docTmp.getEmbedded(Arrays.asList("Address"), "")));
+			elementTmp.appendChild(
+					commons.createElementWithValue(doc, "SDThoai", docTmp.getEmbedded(Arrays.asList("Phone"), "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+			elementSubContent.appendChild(elementTmp);
+
+			elementTmp = doc.createElement("NNT");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", cttncnFrom.getHovatennhanvien()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", cttncnFrom.getMstnhanvien()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", cttncnFrom.getDiachi()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "QTich", cttncnFrom.getQuoctich()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CNCTru", cttncnFrom.getCanhancutru()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", cttncnFrom.getCccd()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", cttncnFrom.getSodienthoai()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DCTDTu", cttncnFrom.getEmail()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+			elementSubContent.appendChild(elementTmp);
+
+			elementTmp = doc.createElement("TTNCNKTru");
+			elementTmp.appendChild(commons.createElementWithValue(doc, "KTNhap", cttncnFrom.getKhoanthunhap()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TThang", cttncnFrom.getTuthang()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DThang", cttncnFrom.getDenthang()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "Nam", cttncnFrom.getNam()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "BHiem", cttncnFrom.getBaohiem()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TThien", cttncnFrom.getBaohiem()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTNCThue", cttncnFrom.getTongthunhapchiuthue()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TTNTThue", cttncnFrom.getTongthunhaptinhthue()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "SThue", cttncnFrom.getSothue()));
+			elementSubContent.appendChild(elementTmp);
+
+			elementContent.appendChild(elementSubContent);
+			
+			isSdaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			if (!isSdaveFile) {
+				throw new Exception("Lưu dữ liệu không thành công.");
+			}
+			
+			String secureKey = commons.csRandomNumbericString(6);
+			String MTDiep = SystemParams.MSTTCGP
+					+ commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+
+			Document docInsert = 
+					new Document("_id", objectIdCT)
+					.append("IssuerId", header.getIssuerId())
+					.append("MauSo", mauSoTNCN)
+					.append("SecureKey", secureKey)
+					.append("MTDiep", MTDiep)
+					.append("TCTu", tctu)
+					.append("MSCTu", msctu)
+					.append("KHCTu", khctu)
+					.append("NLap", LocalDate.now())
+					.append("TCTTNhap",
+							new Document("Ten", docTmp.getEmbedded(Arrays.asList("Name"), ""))
+							.append("MST", docTmp.getEmbedded(Arrays.asList("TaxCode"), ""))
+							.append("DChi", docTmp.getEmbedded(Arrays.asList("Address"), ""))
+							.append("SDThoai", docTmp.getEmbedded(Arrays.asList("Phone"), "")))
+					.append("NNT",
+							new Document("Ten", cttncnFrom.getHovatennhanvien())
+							.append("Code", cttncnFrom.getManhanvien())
+							.append("MST", cttncnFrom.getMstnhanvien())
+							.append("DChi", cttncnFrom.getDiachi())
+							.append("QTich", cttncnFrom.getQuoctich())
+							.append("CTru", cttncnFrom.getCanhancutru())
+							.append("CCCDan", cttncnFrom.getCccd())
+							.append("SDThoai", cttncnFrom.getSodienthoai())
+							.append("DCTDTu", cttncnFrom.getEmail())
+							.append("DCTDTuCC", cttncnFrom.getEmailcc()))
+					.append("TTNCNKTru",
+							new Document("KTNhap", cttncnFrom.getKhoanthunhap())
+							.append("Nam", cttncnFrom.getNam())
+							.append("TThang", cttncnFrom.getTuthang())
+							.append("DThang", cttncnFrom.getDenthang())
+							.append("BHiem", cttncnFrom.getBaohiem())
+							.append("TThien", cttncnFrom.getKhoantuthien())
+							.append("TTNCThue", cttncnFrom.getTongthunhapchiuthue())
+							.append("TTNTThue", cttncnFrom.getTongthunhaptinhthue())
+							.append("SThue", cttncnFrom.getSothue()))
+					.append("Dir", pathDir)
+					.append("FileNameXML", fileNameXML)
+					.append("IsActive", true)
+					.append("IsDelete", false)
+					.append("SignStatus", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+					.append("Status", Constants.INVOICE_STATUS.CREATED)
+					.append("InfoCreated",
+							new Document("CreateDate", LocalDateTime.now())
+							.append("CreateUserID", header.getUserId())
+							.append("CreateUserName", header.getUserName())
+							.append("CreateUserFullName", header.getUserFullName()));
+			
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
+				collection.insertOne(docInsert);
+			} catch (Exception e) {
+			}
+		}
+		
+		responseStatus = new MspResponseStatus(0, "Thêm thông tin thàng công.");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	private CTTNCNExcelForm extractFromCells(List<Cell> cells) {
+		CTTNCNExcelForm excelFrom = CTTNCNExcelForm.builder()
+				.hovatennhanvien(getCellValueAsString(cells.get(0)))
+				.mstnhanvien(getCellValueAsString(cells.get(1)))
+				.manhanvien(getCellValueAsString(cells.get(2)))
+				.diachi(getCellValueAsString(cells.get(3)))
+				.cccd(getCellValueAsString(cells.get(4)))
+				.quoctich(getCellValueAsString(cells.get(5)))
+				.sodienthoai(getCellValueAsString(cells.get(6)))
+				.email(getCellValueAsString(cells.get(7)))
+				.emailcc(getCellValueAsString(cells.get(8)))
+				.canhancutru(getCellValueAsString(cells.get(9)))
+				.nam(getCellValueAsString(cells.get(10)))
+				.tuthang(getCellValueAsString(cells.get(11)))
+				.denthang(getCellValueAsString(cells.get(12)))
+				.khoanthunhap(getCellValueAsString(cells.get(13)))
+				.baohiem(getCellValueAsString(cells.get(14)))
+				.khoantuthien(getCellValueAsString(cells.get(15)))
+				.tongthunhapchiuthue(getCellValueAsString(cells.get(16)))
+				.tongthunhaptinhthue(getCellValueAsString(cells.get(17)))
+				.sothue(getCellValueAsString(cells.get(18)))
+				.build();
+		return excelFrom;
+	}
+	
+	private String getCellValueAsString(Cell cell) {
+	    if (cell == null) {
+	        return "";
+	    }
+	    switch (cell.getCellType()) {
+	        case STRING:
+	            return cell.getStringCellValue();
+	        case NUMERIC:
+	            double num = cell.getNumericCellValue();
+	            if (num == Math.floor(num)) {
+	                return String.valueOf((long) num);
+	            } else {
+	                return String.valueOf(num);
+	            }
+	        case FORMULA:
+	            return cell.getCellFormula();
+	        default:
+	            return "";
+	    }
+	}
+	
 }

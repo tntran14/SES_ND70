@@ -327,4 +327,17 @@ public class CTTNCNController {
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
 	}
+	
+	@RequestMapping(value = "/import-excelV1", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> importExcelV1(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.importExcelV1(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
 }
