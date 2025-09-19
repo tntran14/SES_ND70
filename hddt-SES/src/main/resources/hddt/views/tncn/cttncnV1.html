@@ -79,10 +79,6 @@
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
 											
-											                            				
-											<!-- 										   	<button  type="button" title="Xuất PDF hàng loạt" data-action="cttncn-pdfAll" class="btns in_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAll|')}"> -->
-											<!-- 										   			<i class="mdi mdi-file-pdf"> </i><span class="d-none d-md-inline">Xuất PDF hàng loạt</span> -->
-											<!-- 										   </button> -->
 											<!-- 										   <button type="button" title="Send mail all" data-action="cttncn-sendMailAll" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail|')}"  th:disabled="true"> -->
 											<!--                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Gửi mail hàng loạt</span> -->
 											<!--                             				</button> -->
@@ -91,6 +87,12 @@
 											<!-- 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" > -->
 											<!-- 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span> -->
 											<!-- 											  </button>   -->
+											<button type="button" title="Xuất PDF hàng loạt"
+												data-action="cttncn-pdfAllV1" class="btns in_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}">
+												<i class="mdi mdi-file-pdf"> </i><span
+													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
+											</button>
 											<button type="button" title="Import danh sách"
 												data-action="cttncn-importV1"
 												class="btns import_hdon hover-up__ses"
@@ -555,7 +557,7 @@
 							});
 						break;
 							
-						case 'cttncn-pdfAll':
+						case 'cttncn-pdfAllV1':
 							var objData = null;
 							var ids = null;
 							ids = [];
@@ -581,7 +583,7 @@
 										if(res.errorCode == 0) {
 											  var responseData = res.responseData;
 											  var result = responseData['ID'];
-											  window.open(ROOT_PATH + '/common/view-pdfAll-cttncn/' + result,'_blank');
+											  window.open(ROOT_PATH + '/common/view-pdfAll-cttncnV1/' + result,'_blank');
 											  
 										}else{
 											alertDLSuccess(createObjectError(res).html(), function(){});

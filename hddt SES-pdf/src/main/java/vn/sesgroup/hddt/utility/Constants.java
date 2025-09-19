@@ -111,7 +111,8 @@ public class Constants {
 		public static final String IMG_INV_THAYTHE = "inv-bi-thay-th.png";
 		public static final String IMG_INV_ERROR = "img-inv-error.png";
 		public static final String IMG_INV_DIEUCHINH = "inv-bi-dieu-chinh.png";
-		
+		public static final String IMG_CTU_THAYTHE = "ctu-bi-thay-the.png";
+		public static final String IMG_CTU_DIEUCHINH = "ctu-bi-dieu-chinh.png";
 		public static final String EXCEL_TKDSHD_CTIET = "thong-ke-chi-tiet-danh-sach-hoa-don.xlsx";
 		public static final String EXCEL_TKDSHD_GENERAL = "Report-BKHD-General.xlsx";
 		

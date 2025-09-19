@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -763,6 +764,180 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 		} finally {
 			is.close();
 			os.close();
+		}
+	}
+
+	@Override
+	public FileInfo printCttncnAllV1(JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = new FileInfo();
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		Object objData = msg.getObjData();
+		try {
+			JsonNode jsonData = null;
+			String _token = "";
+			if (objData != null) {
+				jsonData = Json.serializer().nodeFromObject(msg.getObjData());
+			}
+			if (jsonData != null) {
+				_token = commons.getTextJsonNode(jsonData.at("/_token")).replaceAll("\\s", "");
+			}
+
+			Iterable<Document> cursor = null;
+			Iterator<Document> iter = null;
+			Document docTmp = null;
+			
+			ObjectId _id = new ObjectId(_token);
+			Document findTmp = new Document("_id", _id).append("IsDelete", false);
+			cursor = mongoTemplate.getCollection("EInvoiceTmp").find(findTmp);
+			iter = cursor.iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+			if (docTmp == null) {
+				return new FileInfo();
+			}
+
+			List<Object> rows = new ArrayList<Object>();
+			rows = docTmp.getList("Arrays", Object.class);
+			
+			List<Document> pipeline = new ArrayList<Document>();
+			List<String> listFileNamePDF = new ArrayList<>();
+			String fileNamePDF = "";
+			File file_zip = null;
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			
+			for (Object id : rows) {
+				String stringId = id.toString();
+				ObjectId objectId = new ObjectId(stringId);
+				ObjectId objectIdIssu = new ObjectId(header.getIssuerId());
+				
+				pipeline.clear();
+				
+				pipeline.add(new Document("$match",
+						new Document("_id", objectId).append("IsDelete", new Document("$ne", true))));
+				pipeline.add(
+						new Document("$lookup",
+								new Document("from", "Issuer")
+										.append("pipeline",
+												Arrays.asList(
+														new Document("$match",
+																new Document("_id", objectIdIssu).append("IsDelete",
+																		new Document("$ne", true)))))
+										.append("as", "Issuer")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+
+				pipeline.add(new Document("$lookup",
+						new Document("from", "DMMSTNCN").append("let", new Document("vMauSo", "$MauSo"))
+								.append("pipeline", Arrays.asList(new Document("$match",
+										new Document("$expr",
+												new Document("$and", Arrays.asList(
+														new Document("$eq",
+																Arrays.asList("$_id",
+																		new Document("$toObjectId", "$$vMauSo"))),
+														new Document("$eq",
+																Arrays.asList("$IssuerId", objectIdIssu.toString())),
+														new Document("$eq", Arrays.asList("$IsDelete", false)),
+														new Document("$eq", Arrays.asList("$IsActive", true))))))))
+								.append("as", "DMMSTNCN")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$DMMSTNCN").append("preserveNullAndEmptyArrays", true)));
+				pipeline.add(new Document("$lookup",
+						new Document("from", "PramLink")
+								.append("pipeline",
+										Arrays.asList(new Document("$match",
+												new Document("$expr", new Document("IsDelete", false)))))
+								.append("as", "PramLink")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
+
+				docTmp = null;
+				cursor = null;
+				iter = null;
+				cursor = mongoTemplate.getCollection("CTTNCNhan").aggregate(pipeline).allowDiskUse(true);
+				iter = cursor.iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+				if (null == docTmp || docTmp.get("DMMSTNCN") == null) {
+					break;
+				}
+				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "LoGo"), "");
+				String link = docTmp.getEmbedded(Arrays.asList("PramLink", "LinkPortal"), "");
+				String msctu = docTmp.getEmbedded(Arrays.asList("MSCTu"), "");
+				String khctu = docTmp.get("KHCTu", "");
+				String mtdiep = docTmp.get("MTDiep", "");
+				int sctu = docTmp.get("SCTu", 0);
+				String fileNameJP = docTmp.getEmbedded(Arrays.asList("DMMSTNCN", "FileName"), "");
+				String dir = docTmp.get("Dir", "");
+				String signStatus = docTmp.get("SignStatus", "");
+				String pathLogo = Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN",
+						docTmp.getEmbedded(Arrays.asList("Issuer", "TaxCode"), ""), ImgLogo).toString();
+				String fileName = stringId + ".xml";
+				if ("SIGNED".equals(signStatus)) {
+					fileName = stringId + "_signed.xml";
+				}
+
+				File file = new File(dir, fileName);
+				if (!file.exists() || !file.isFile()) {
+					break;
+				}
+
+				org.w3c.dom.Document doc = commons.fileToDocument(file);
+				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
+
+				ByteArrayOutputStream baosPDF = null;
+				baosPDF = jpUtils.viewpdfcttncnV1(fileJP, doc, docTmp, pathLogo, khctu, msctu, link, false);
+
+				if (null != baosPDF) {
+					if (sctu == 0) {
+						fileNamePDF = khctu.replaceAll("/", "-") + "_" + mtdiep + ".pdf";
+					} else {
+						fileNamePDF = khctu.replaceAll("/", "-") + "_" + sctu + ".pdf";
+					}
+
+					file = new File(dir, fileNamePDF);
+					try (OutputStream fileOuputStream = new FileOutputStream(file)) {
+						baosPDF.writeTo(fileOuputStream);
+						listFileNamePDF.add(file.getAbsolutePath());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (listFileNamePDF.size() == 0) {
+				return fileInfo;
+			}
+			if (listFileNamePDF.size() == 1) {
+				file_zip = new File(listFileNamePDF.get(0));
+				fileInfo.setContentFile(Files.readAllBytes(file_zip.toPath()));
+				fileInfo.setFileName(fileNamePDF);
+				return fileInfo;
+			} else {
+
+				byte[] buffer = new byte[1024];
+				bos = new ByteArrayOutputStream();
+				ZipOutputStream zout = new ZipOutputStream(bos);
+				for (String fileName : listFileNamePDF) {
+					File fileZip = new File(fileName);
+					try (FileInputStream fis = new FileInputStream(fileZip)) {
+						zout.putNextEntry(new ZipEntry(fileZip.getName()));
+						int length;
+						while ((length = fis.read(buffer)) > 0) {
+							zout.write(buffer, 0, length);
+						}
+						zout.closeEntry();
+					}
+				}
+				zout.close();
+				fileInfo.setFileName("ChungTu_TNCN.zip");
+				fileInfo.setContentFile(bos.toByteArray());
+				return fileInfo;
+			}
+
+		} catch (Exception e) {
+			return new FileInfo();
 		}
 	}
 }

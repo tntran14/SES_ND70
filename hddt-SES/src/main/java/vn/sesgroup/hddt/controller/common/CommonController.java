@@ -110,7 +110,6 @@ public class CommonController extends AbstractController{
 	private List<String> ids = null;
 	
 	@RequestMapping(value = "/common/get-mau-so",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	@ResponseBody
 	public List<?> loai_hd(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestParam(name = "loai_hd", defaultValue = "", required = true) String loai_hd) throws Exception{
 		List<Object> rows = new ArrayList<Object>();
@@ -1070,6 +1069,83 @@ public class CommonController extends AbstractController{
 				writer = resp.getWriter();
 				writer.write("Không tìm thấy thông tin chứng từ. Vui lòng thử lại!!!");
 				writer.flush();
+			}
+		}
+		
+		@RequestMapping(value = { "/common/view-pdfAll-cttncnV1/{_id}"}, method = {
+				RequestMethod.POST, RequestMethod.GET })
+		public void viewPDFAllCTTNCNV1(Locale locale, HttpServletRequest req, HttpServletResponse resp,
+				HttpSession session, @PathVariable(value = "_id") String _id) throws Exception {
+			PrintWriter writer = null;
+			FileInfo fileInfo = null;
+
+			try {
+				_id = _id.replaceAll("\\s", "");
+				if ("".equals(_id) || null == _id) {
+					resp.setContentType("text/html; charset=utf-8");
+					resp.setCharacterEncoding("UTF-8");
+					resp.setHeader("success", "yes");
+					writer = resp.getWriter();
+					writer.write("Không tìm thấy thông tin chứng từ.");
+					writer.flush();
+					return;
+				}
+
+				CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+				BaseDTO dto = new BaseDTO();
+				dto = new BaseDTO(req);
+				Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.CREATED);
+				HashMap<String, Object> hData = new HashMap<>();
+				hData.put("_token", _id);
+
+				msg.setObjData(hData);
+				JSONRoot root = new JSONRoot(msg);
+				fileInfo = restAPI.callAPIGetFilePDF("/commons/print-cttncnAllV1", cup.getLoginRes().getToken(),
+						HttpMethod.POST, root);
+				if (null == fileInfo || null == fileInfo.getContentFile()) {
+					resp.setContentType("text/html; charset=utf-8");
+					resp.setCharacterEncoding("UTF-8");
+					resp.setHeader("success", "yes");
+					writer = resp.getWriter();
+					writer.write("Xuất chứng từ không thành công.");
+					writer.flush();
+					return;
+				}
+
+				String type = "application/octet-stream";
+				InputStream inputStream = new ByteArrayInputStream(fileInfo.getContentFile());
+				resp.setHeader("Content-Type", type);
+				resp.setHeader("Content-Disposition", "inline; filename=" + fileInfo.getFileName());
+				resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				resp.setHeader("Pragma", "no-cache");
+				resp.setHeader("Expires", "0"); 
+				int bufferSize = 1024;
+				resp.setContentType(type);
+				final byte[] buffer = new byte[bufferSize];
+				int bytesRead;
+				OutputStream out = null;
+				try {
+					out = resp.getOutputStream();
+					while ((bytesRead = inputStream.read(buffer)) > 0) {
+						out.write(buffer, 0, bytesRead);
+					}
+				} finally {
+					if (out != null) {
+						out.flush();
+						out.close();
+					}
+					if (inputStream != null) {
+						inputStream.close();
+					}
+				}
+			} catch (Exception e) {
+				resp.setContentType("text/html; charset=utf-8");
+				resp.setCharacterEncoding("UTF-8");
+				resp.setHeader("success", "yes");
+				writer = resp.getWriter();
+				writer.write("Không tìm thấy thông tin chứng từ. Vui lòng thử lại!!!");
+				writer.flush();
+				writer.close();
 			}
 		}
 	
