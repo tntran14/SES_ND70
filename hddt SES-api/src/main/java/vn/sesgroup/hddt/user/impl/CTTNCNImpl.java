@@ -5401,56 +5401,36 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		StringBuilder errorMsg = new StringBuilder();
 		for (int i = 0; i < ctTNCNExcelFormList.size(); i++) {
 			CTTNCNExcelForm cttncnFrom = ctTNCNExcelFormList.get(i);
-			if ("".equals(cttncnFrom.getHovatennhanvien().trim())) {
-				errorMsg.append("- Họ và tên nhân viên ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getDiachi().trim())) {
-				errorMsg.append("- Địa chỉ ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			
-			if ("".equals(cttncnFrom.getCccd().trim())) {
-				errorMsg.append("- CCCD ở dòng " + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getSodienthoai().trim())) {
-				errorMsg.append("- Số điện thoại ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getCanhancutru().trim())) {
-				errorMsg.append("- Cá nhân cư trú ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
+
+			validateNotEmpty(cttncnFrom.getHovatennhanvien(), "Họ và tên nhân viên", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getDiachi(), "Địa chỉ", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getCccd(), "CCCD", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getSodienthoai(), "Số điện thoại", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getCanhancutru(), "Cá nhân cư trú", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getNam(), "Năm", i + 1, errorMsg);
+
 			if (!"01".contains(cttncnFrom.getCanhancutru().trim())) {
-				errorMsg.append("- Cá nhân cư trú ở dòng	" + (i + 1) + " không đúng định dạng.\r\n");
+				errorMsg.append("- ")
+				.append("Cá nhân cư trú ở dòng ")
+				.append(i + 1)
+				.append(" không đúng định dạng.\r\n");
 			}
-			if ("".equals(cttncnFrom.getNam().trim())) {
-				errorMsg.append("- Năm ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getTuthang().trim())) {
-				errorMsg.append("- Từ tháng ở dòng " + (i + 1) + " không được để trống.\r\n");
-			} else if(cttncnFrom.getTuthang().trim().length() ==1 ) {
+
+			validateMonth(cttncnFrom.getTuthang(), "Từ tháng", i + 1, errorMsg);
+			validateMonth(cttncnFrom.getDenthang(), "Đến tháng", i + 1, errorMsg);
+
+			if (cttncnFrom.getTuthang().trim().length() == 1) {
 				cttncnFrom.setTuthang("0" + cttncnFrom.getTuthang());
 			}
-			if ("".equals(cttncnFrom.getDenthang().trim())) {
-				errorMsg.append("- Đến tháng ở dòng " + (i + 1) + " không được để trống.\r\n");
-			}else if(cttncnFrom.getDenthang().trim().length() ==1 ) {
+			if (cttncnFrom.getDenthang().trim().length() == 1) {
 				cttncnFrom.setDenthang("0" + cttncnFrom.getDenthang().trim());
 			}
-			if ("".equals(cttncnFrom.getKhoanthunhap().trim())) {
-				errorMsg.append("- Khoản thu nhập ở dòng " + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getBaohiem().trim())) {
-				errorMsg.append("- Bảo hiểm ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getKhoantuthien().trim())) {
-				errorMsg.append("- Khoản từ thiện, nhân đạo, khuyến học ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getTongthunhapchiuthue().trim())) {
-				errorMsg.append("- Tổng thu nhập chịu thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getTongthunhaptinhthue().trim())) {
-				errorMsg.append("- Tổng thu nhập tính thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
-			if ("".equals(cttncnFrom.getSothue().trim())) {
-				errorMsg.append("- Số thuế ở dòng	" + (i + 1) + " không được để trống.\r\n");
-			}
+			validateNotEmpty(cttncnFrom.getKhoanthunhap(), "Khoản thu nhập", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getBaohiem(), "Bảo hiểm", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getKhoantuthien(), "Khoản từ thiện, nhân đạo, khuyến học", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getTongthunhapchiuthue(), "Tổng thu nhập chịu thuế", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getTongthunhaptinhthue(), "Tổng thu nhập tính thuế", i + 1, errorMsg);
+			validateNotEmpty(cttncnFrom.getSothue(), "Số thuế", i + 1, errorMsg);
 		}
 		
 		if (errorMsg.length() > 0) {
@@ -5646,6 +5626,35 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				.sothue(getCellValueAsString(cells.get(18)))
 				.build();
 		return excelFrom;
+	}
+	
+	private void validateNotEmpty(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không được để trống.\r\n");
+	    }
+	}
+	
+	private void validateMonth(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không được để trống.\r\n");
+	        return;
+	    }
+	    try {
+	        int month = Integer.parseInt(value.trim());
+	        if (month < 1 || month > 12) {
+	            errorMsg.append("- ").append(fieldName)
+	                    .append(" ở dòng ").append(row)
+	                    .append(" phải từ 1 đến 12.\r\n");
+	        }
+	    } catch (NumberFormatException e) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không đúng định dạng số.\r\n");
+	    }
 	}
 	
 	private String getCellValueAsString(Cell cell) {
