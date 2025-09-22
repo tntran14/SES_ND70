@@ -78,21 +78,12 @@
 								<div class="row mT-0">
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-											
-											<!-- 										   <button type="button" title="Send mail all" data-action="cttncn-sendMailAll" class="btns btns-edit__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail|')}"  th:disabled="true"> -->
-											<!--                             					<i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Gửi mail hàng loạt</span> -->
-											<!--                             				</button> -->
+										
 
 
 											<!-- 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" > -->
 											<!-- 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span> -->
 											<!-- 											  </button>   -->
-											<button type="button" title="Xuất PDF hàng loạt"
-												data-action="cttncn-pdfAllV1" class="btns in_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}">
-												<i class="mdi mdi-file-pdf"> </i><span
-													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
-											</button>
 											<button type="button" title="Import danh sách"
 												data-action="cttncn-importV1"
 												class="btns import_hdon hover-up__ses"
@@ -100,11 +91,27 @@
 												<i class="mdi mdi-file-excel"> </i><span
 													class="d-none d-md-inline">Import danh sách</span>
 											</button>
+											<button type="button" title="Xuất PDF hàng loạt"
+												data-action="cttncn-pdfAllV1"
+												class="btns in_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}">
+												<i class="mdi mdi-file-pdf"> </i><span
+													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
+											</button>
+											<button type="button" title="Send mail all"
+												data-action="cttncn-sendMailAllV1"
+												class="btns send_mail_hl hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail-allV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-email"> </i><span
+													class="d-none d-md-inline">Gửi mail hàng loạt</span>
+											</button>
 											<button type="button" title="Xuất XML"
-												data-action="cttncn-xmlV1" class="btns xuat_xml hover-up__ses"
+												data-action="cttncn-xmlV1"
+												class="btns xuat_xml hover-up__ses"
 												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}">
-												<i class="mdi mdi-xml"> </i><span 
-												class="d-none d-md-inline">Xuất XML</span>
+												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
+													XML</span>
 											</button>
 											<button type="button" title="Thêm mới"
 												data-action="cttncn-creV1"
@@ -470,11 +477,11 @@
 						$("#f-cttncn").find('button[data-action="cttncn-signAll"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
 						$("#f-cttncn").find('button[data-action="cttncn-editV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);						
 						if('Đã phát hành' == rowData['Status'] && 'Đã ký' == rowData['SignStatus']){						  
-					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', false);
+					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', false);
 					          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', false);
 					        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', false);
 							}else{
-								$("#f-cttncn").find('button[data-action="cttncn-sendMailAll"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
 								$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
 								$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
 							}
@@ -1204,7 +1211,7 @@
 							$('#divSubContent').show();$('#divMainContent').hide();
 							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 							break;
-						case 'cttncn-sendMailAll':									
+						case 'cttncn-sendMailAllV1':									
 							ids = [];
 							objData = {};
 							checkRows.each(function(i, v) {
@@ -1221,8 +1228,8 @@
 							};
 						
 							var objURL = {};	
-							objURL['check'] = ROOT_PATH + '/main/cttncn-send-mail/check-data-sendAll';
-							objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mail/send-mailAll';
+							objURL['check'] = ROOT_PATH + '/main/cttncn-send-mailV1/check-data-sendAll';
+							objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mailV1/send-mailAll';
 							
 							$.ajax({
 								type: "POST",
@@ -1252,26 +1259,18 @@
 												        	showLoading();
 														},
 														success:function(res) {
-															hideLoading();
 															if(res) {
-																if(res.errorCode == 0) {
-																	_gridMain.data("kendoGrid").dataSource.read();
-																}else{
-																	alertDLSuccess(createObjectError(res).html(), function(){});
-																}
+																alertDLSuccess(createObjectError(res).html(), function(){});
 															}else{
 																alertDLSuccess('unknown error!!!', function(){});
-																hideLoading();
 															}
+															hideLoading();
 														},
 														error:function (xhr, ajaxOptions, thrownError){
 															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
 												            hideLoading();
 												        }
 													});
-											
-												
-										
 										}else{
 											alertDLSuccess(createObjectError(res).html(), function(){});
 										}

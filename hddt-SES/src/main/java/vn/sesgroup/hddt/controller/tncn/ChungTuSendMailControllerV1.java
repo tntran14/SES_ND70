@@ -356,7 +356,7 @@ public class ChungTuSendMailControllerV1 extends AbstractController {
 		
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
-		MsgRsp rsp = restAPI.callAPINormal("/cttncn/send-mailAll", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MsgRsp rsp = restAPI.callAPINormal("/cttncn/send-mailAllV1", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		if(rspStatus.getErrorCode() == 0) {
 			dtoRes.setErrorCode(0);

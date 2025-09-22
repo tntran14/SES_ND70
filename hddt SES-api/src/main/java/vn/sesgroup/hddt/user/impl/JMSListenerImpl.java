@@ -842,67 +842,32 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	@Override
 	public void sendMailWithQueueBulkMailOnCttncn(String infoServerID) throws Exception {
 		List<Document> pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match", new Document("InfoServerID", infoServerID)));
 		pipeline.add(
-			new Document("$match", new Document("InfoServerID", infoServerID))
-		);
+				new Document("$lookup",
+						new Document("from", "LogBulkEMail")
+								.append("pipeline",
+										Arrays.asList(
+												new Document("$match", new Document("InfoServerID", infoServerID))))
+								.append("as", "LogBulkEMail")));
 		pipeline.add(
-			new Document("$lookup", 
-				new Document("from", "LogBulkEMail")
-				.append("pipeline", 
-					Arrays.asList(
-						new Document("$match", new Document("InfoServerID", infoServerID))
-					)
-				)
-				.append("as", "LogBulkEMail")
-			)
-		);
-		pipeline.add(
-				new Document("$lookup", 
-					new Document("from", "PramLink")
-					.append("pipeline", 
-						Arrays.asList(
-							new Document("$match", 
-								new Document("$expr", 
-										new Document("IsDelete", false)
-								)
-							)
-						)	
-					)
-					.append("as", "PramLink")
-				)
-			);
-			pipeline.add(
-				new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true))
-			);	
-			pipeline.add(
-					new Document("$lookup", 
+				new Document("$lookup",
 						new Document("from", "PramLink")
-						.append("pipeline", 
-							Arrays.asList(
-								new Document("$match", 
-									new Document("$expr", 
-											new Document("IsDelete", false)
-									)
-								)
-							)	
-						)
-						.append("as", "PramLink")
-					)
-				);
-				pipeline.add(
-					new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true))
-				);
+								.append("pipeline",
+										Arrays.asList(new Document("$match",
+												new Document("$expr", new Document("IsDelete", false)))))
+								.append("as", "PramLink")));
+		pipeline.add(
+				new Document("$unwind", new Document("path", "$PramLink").append("preserveNullAndEmptyArrays", true)));
 
 		Document docTmp = null;
-		MongoClient mongoClient = cfg.mongoClient();
-		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMailInfoServer");
-		try {
-			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();	
+		try (MongoClient mongoClient = cfg.mongoClient()){
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMailInfoServer");
+
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();	
 		} catch (Exception e) {
 			// TODO: handle exception
-		}
-		mongoClient.close();
-		
+		}		
 		
 		if(docTmp == null) return;
 		
@@ -923,7 +888,6 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			return;
 
 		for (Document toEmail : toEmails) {
-			// reset var
 			title = new StringBuilder();
 			tmp = "";
 			email="";
@@ -936,18 +900,18 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			title.append(" ");
 			title.append(toEmail.get("Name", ""));
 			title.append(" Thông báo phát hành Chứng từ khấu trừ thuế");
-			tmp = toEmail.getEmbedded(Arrays.asList("Data","TaxCode"), "");
+			tmp = toEmail.getEmbedded(Arrays.asList("Data","NNT", "MST"), "");
 			if (!"".equals(tmp)) {
 				title.append(" ");
 				title.append(tmp);
 			}
-			tmp = toEmail.getEmbedded(Arrays.asList("Data","Name"), "");
+			tmp = toEmail.getEmbedded(Arrays.asList("Data","NNT", "Ten"), "");
 			if (!"".equals(tmp)) {
 				title.append(" ");
 				title.append(tmp);
 			}
 			
-			tmp = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""));
+			tmp = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SCTu"), ""));
 			if (!"".equals(tmp)) {
 				title.append(" - Số Chứng từ ");
 				title.append(tmp);
@@ -957,30 +921,35 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			
 			// set content
 			content.setLength(0);
-			tmp = toEmail.getEmbedded(Arrays.asList("Data","Name"), "");
+			tmp = toEmail.getEmbedded(Arrays.asList("Data", "NNT", "Ten"), "");
 			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label>"
 					+ ("".equals(tmp) ? "Nhân viên" : tmp) + "</label><o:p></o:p></span></p>\n");
-			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label>" + toEmail.get("Name", "")
-					+ "</label> xin gửi " + ("".equals(tmp) ? "Nhân viên" : tmp)
+			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'><label>"
+					+ toEmail.get("Name", "") + "</label> xin gửi " + ("".equals(tmp) ? "Nhân viên" : tmp)
 					+ " chứng từ khấu trừ thuế TNCN theo file đính kèm.</span></p>\n");
 			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng!</span></p>");
-
 			content.append("<hr style='margin: 5px 0 5px 0;'>");
 			content.append(
 					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>NHÂN VIÊN VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
 			content.append(
 					"<p style='margin-bottom: 0px;'><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>"
 							+ toEmail.get("Name", "").toUpperCase() + "</label><o:p></o:p></span></p>");
-//			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + ii.getAddress()
-//					+ "</span></p>\n");
+			content.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>"
+					+ toEmail.getEmbedded(Arrays.asList("Data", "TCTTNhap", "DChi"), "") + "</span></p>\n");
+
+			String checkFooterMail = docTmp.getEmbedded(Arrays.asList("Data", "UserConFig", "footermail"), "");
+			if (!checkFooterMail.equals("Y")) {
+				String noidung = docTmp.getEmbedded(Arrays.asList("Data", "DMFooterWeb", "Noidung"), "");
+				content.append(noidung);
+			} 
 			// end set content
 			
 			// set email
-			email=toEmail.getEmbedded(Arrays.asList("Data","ContactEmail"), "");
+			email=toEmail.getEmbedded(Arrays.asList("Data", "NNT", "DCTDTu"), "");
 			if (email.trim().isEmpty()) break;
 			
 			emailReceives= email;
-			emailcc=toEmail.getEmbedded(Arrays.asList("Data","EmailCC"), "");
+			emailcc=toEmail.getEmbedded(Arrays.asList("Data", "NNT", "DCTDTuCC"), "");
 			if (!emailcc.trim().isEmpty()) {
 				emailReceives+=","+emailcc;
 			}
@@ -988,35 +957,35 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			
 			// check contained pdf
 			String id = toEmail.getEmbedded(Arrays.asList("Data", "_id"), ObjectId.class).toString();
-			String status = toEmail.getEmbedded(Arrays.asList("Data","Status"), "");
 			String fileName = id + ".xml";
-			String fileNameXML = id + ".xml";
 			String fileNamePDF = id + ".pdf";
-			if (Constants.INVOICE_STATUS.DELETED.equals(status))
-				fileNamePDF = id + "-deleted.pdf";
-			String statusCode = toEmail.getEmbedded(Arrays.asList("Data","SignStatus"), "");
+			
+			String statusCode = toEmail.getEmbedded(Arrays.asList("Data", "SignStatus"), "");
 			String dir = toEmail.getEmbedded(Arrays.asList("Data","Dir"), "");
 			if ("SIGNED".equals(statusCode)) {
 				fileName = id + "_signed.xml";
-				fileNameXML= id + "_signed.xml";
 			}
 			
 			file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
-				String imgLogo = toEmail.getEmbedded(Arrays.asList("Data","DMMSTNCN","LoGo"), "");
-				
-				String kh = toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), "");
-				String ms = toEmail.getEmbedded(Arrays.asList("Data","DMMSTNCN","MauSo"), "");
+				String imgLogo = toEmail.getEmbedded(Arrays.asList("Data", "DMMSTNCN","LoGo"), "");
+				String kh = toEmail.getEmbedded(Arrays.asList("Data","KHCTu"), "");
+				String ms = toEmail.getEmbedded(Arrays.asList("Data", "DMMSTNCN", "MauSo"), "");
 
 				org.w3c.dom.Document doc = commons.fileToDocument(file);
 				
 				String fileNameJP = toEmail.getEmbedded(Arrays.asList("Data", "DMMSTNCN", "FileName"), "");
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 				ByteArrayOutputStream baosPDF = null;
-				baosPDF = jpUtils.viewpdfcttncnV1(fileJP, doc, toEmail.get("Data", Document.class),
-						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN", toEmail.get("TaxCode", ""), imgLogo)
-								.toString(),
-						kh, ms, link, false);
+				baosPDF = jpUtils.viewpdfcttncnV1(
+						fileJP, 
+						doc, 
+						toEmail.get("Data", Document.class),
+						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "MauSoTNCN", toEmail.get("TaxCode", ""), imgLogo).toString(),
+						kh, 
+						ms,
+						link, 
+						false);
 
 				if (null != baosPDF) {
 					try (OutputStream fileOuputStream = new FileOutputStream(new File(dir, fileNamePDF))) {
@@ -1028,24 +997,21 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			}
 			// end check contained pdf
 			
-			String mauHD = toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), "");
-			String soHD = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""));
+			String khctu = toEmail.getEmbedded(Arrays.asList("Data", "KHCTu"), "");
+			String sctu = String.valueOf(toEmail.getEmbedded(Arrays.asList("Data","SCTu"), ""));
 			List<String> listFiles = new ArrayList<>();
 			List<String> listNames = new ArrayList<>();
 			
-			if ("SIGNED".equals(statusCode)) {
-				fileNameXML = id + "_signed.xml";
-			}
-			file = new File(dir, fileNameXML);
+			file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
 				listFiles.add(file.toString());
-				listNames.add(mauHD + "-" + soHD + ".xml");
+				listNames.add(khctu + "-" + sctu + ".xml");
 			}
 			
 			file = new File(dir, fileNamePDF);
 			if (file.exists() && file.isFile()) {
 				listFiles.add(file.toString());
-				listNames.add(mauHD + "-" + soHD + ".pdf");
+				listNames.add(khctu + "-" + sctu + ".pdf");
 			}
 			
 			// send mail
@@ -1066,21 +1032,17 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			options.maxTime(5000, TimeUnit.MILLISECONDS);
 			options.returnDocument(ReturnDocument.AFTER);
 					
-			if(boo == false) {
-				collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMail");
-				collection.findOneAndUpdate(new Document("InfoServerID", infoServerID)
-			   			.append("_id", toEmail.get("_id", ObjectId.class)),
-						new Document("$set",
-								new Document("Status", "error")),							
-															
-						options);
-				mongoClient.close();
-				System.out.println("Gui Email Server den " +emailReceives +" THAT BAI");
-				
-			} else {
-				try {
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoCollection<Document> collection = null;
+				if(boo == false) {
+					collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogBulkEMail");
+					collection.findOneAndUpdate(new Document("InfoServerID", infoServerID)
+				   			.append("_id", toEmail.get("_id", ObjectId.class)),
+							new Document("$set",
+									new Document("Status", "error")),						
+							options);
+				} else {
 					Document docInsert = null;
-					mongoClient = cfg.mongoClient();
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("LogEmailUser");
 					docInsert = new Document("IssuerId", toEmail.get("IssuerId",""))
 							.append("Title", title.toString())
@@ -1094,19 +1056,18 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 					/* LOG BAO CAO THONG KE */
 					collection = mongoClient.getDatabase(cfg.dbName).getCollection("BaoCaoThongKeCTTNCN");
 					docInsert = new Document("IssuerId", toEmail.get("IssuerId",""))
-							.append("Name", toEmail.getEmbedded(Arrays.asList("Data","Name"), ""))
-							.append("Code", toEmail.getEmbedded(Arrays.asList("Data","Code"), ""))
-							.append("Address", toEmail.getEmbedded(Arrays.asList("Data","Address"), ""))
-							.append("ContactPhone", toEmail.getEmbedded(Arrays.asList("Data","ContactPhone"), ""))
-							.append("TaxCode", toEmail.getEmbedded(Arrays.asList("Data","TaxCode"), ""))
-							.append("KyHieu", toEmail.getEmbedded(Arrays.asList("Data","KyHieu"), ""))
-							.append("CCCD", toEmail.getEmbedded(Arrays.asList("Data","CMND-CCCD","CCCD"), ""))
-							.append("KyBaoCao", toEmail.getEmbedded(Arrays.asList("Data","KyBaoCao"), ""))
-							.append("TuNgay", toEmail.getEmbedded(Arrays.asList("Data","TuNgay"), ""))
-							.append("DenNgay", toEmail.getEmbedded(Arrays.asList("Data","DenNgay"), ""))
-							.append("SHDon", toEmail.getEmbedded(Arrays.asList("Data","SHDon"), ""))
+							.append("Name", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "Ten"), ""))
+							.append("Code", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "Code"), ""))
+							.append("Address", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "DChi"), ""))
+							.append("ContactPhone", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "SDThoai"), ""))
+							.append("TaxCode", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "MST"), ""))
+							.append("KyHieu", toEmail.getEmbedded(Arrays.asList("Data", "KHCTu"), ""))
+							.append("CCCD", toEmail.getEmbedded(Arrays.asList("Data", "NNT", "CCCDan"), ""))
+							.append("KyBaoCao", toEmail.getEmbedded(Arrays.asList("Data", "TTNCNKTru", "Nam"), ""))
+							.append("TThang", toEmail.getEmbedded(Arrays.asList("Data", "TTNCNKTru", "TThang"), ""))
+							.append("DThang", toEmail.getEmbedded(Arrays.asList("Data", "TTNCNKTru", "DThang"), ""))
+							.append("SCTu", toEmail.getEmbedded(Arrays.asList("Data","SCTu"), 0))
 							.append("EmailGuiCTTNCN", emailReceives)
-							.append("Date", toEmail.getEmbedded(Arrays.asList("Data","Date"), ""))
 							.append("IsDelete", false);
 					collection.insertOne(docInsert);
 					
@@ -1114,15 +1075,11 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 					collection.findOneAndUpdate(new Document("InfoServerID", infoServerID)
 				   			.append("_id", toEmail.get("_id", ObjectId.class)),
 							new Document("$set",
-									new Document("Status", "success")),							
-																
+									new Document("Status", "success")),				
 							options);
-					mongoClient.close();
-					System.out.println("Gui Email Server den " +emailReceives + " THANH CONG");
-
-				} catch (Exception ex) {
-					System.out.println(ex);
 				}
+			} catch (Exception e) {
+				
 			}
 		}
 	}

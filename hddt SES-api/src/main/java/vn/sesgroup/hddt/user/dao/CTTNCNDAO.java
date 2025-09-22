@@ -44,4 +44,6 @@ public interface CTTNCNDAO {
 	public MsgRsp history(JSONRoot jsonRoot, String _id) throws Exception;
 
 	public MsgRsp sendMailV1(JSONRoot jsonRoot) throws Exception;
+	
+	public MsgRsp sendMailAllV1(JSONRoot jsonRoot) throws Exception;
 }
