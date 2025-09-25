@@ -88,40 +88,35 @@
 											<button type="button" title="Xuất PDF hàng loạt"
 												data-action="cttncn-pdfAllV1"
 												class="btns in_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}">
 												<i class="mdi mdi-file-pdf"> </i><span
 													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
 											</button>
 											<button type="button" title="Send mail all"
 												data-action="cttncn-sendMailAllV1"
 												class="btns send_mail_hl hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail-allV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-send-mail-allV1|')}">
 												<i class="mdi mdi-email"> </i><span
 													class="d-none d-md-inline">Gửi mail hàng loạt</span>
 											</button>
 											<button type="button" title="Send to cqt all"
 												data-action="cttncn-sendAllToCQTV1"
 												class="btns send_cqt_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-sendAllToCQTV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-sendAllToCQTV1|')}">
 												<i class="mdi mdi-telegram"> </i><span
 													class="d-none d-md-inline">Gửi tới CQT hàng loạt</span>
 											</button>
 											<button type="button" title="Refresh all from cqt"
 												data-action="cttncn-refreshAllFromCQTV1"
 												class="btns lay_ma_hl hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-refreshAllFromCQTV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-refreshAllFromCQTV1|')}">
 												<i class="mdi mdi-refresh-circle"> </i><span
 													class="d-none d-md-inline">Lấy kết quả từ CQT hàng loạt</span>
 											</button>
 											<button type="button" title="Xuất XML"
 												data-action="cttncn-xmlV1"
 												class="btns xuat_xml hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}">
 												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
 													XML</span>
 											</button>
@@ -135,48 +130,42 @@
 											<button type="button" title="Chi tiết"
 												data-action="cttncn-detailV1"
 												class="btns btns-detail__ses hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-detailV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-detailV1|')}">
 												<i class="mdi mdi-information-outline"> </i><span
 													class="d-none d-md-inline">Chi tiết</span>
 											</button>
 											<button type="button" title="Thay đổi"
 												data-action="cttncn-editV1"
 												class="btns btns-edit__ses hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-editV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-editV1|')}">
 												<i class="mdi mdi-tooltip-edit"> </i><span
 													class="d-none d-md-inline">Thay đổi</span>
 											</button>
 											<button type="button" title="Thêm mới CT Điều chỉnh/Thay thế"
 												data-action="cttncn-cre-dc"
 												class="btns dc_tt_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}">
 												<i class="mdi mdi-contrast"></i><span
 													class="d-none d-md-inline">Điều chỉnh CT</span>
 											</button>
 											<button type="button" title="Thêm mới CT Điều chỉnh/Thay thế"
 												data-action="cttncn-cre-tt"
 												class="btns dc_tt_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-cre-dc-tt|')}">
 												<i class="mdi mdi-contrast"></i><span
 													class="d-none d-md-inline">Thay thế CT</span>
 											</button>
 											<button type="button" title="Ký từng chứng từ"
 												data-action="cttncn-signV1"
 												class="btns btns-export__ses hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signV1|')}"
-												>
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signV1|')}">
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Ký từng chứng từ</span>
 											</button>
 											<button type="button" title="Ký hàng loạt"
 												data-action="cttncn-signAllV1"
 												class="btns ky_hl hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAllV1|')}"
-												th:disabled="true">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAllV1|')}">
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Ký hàng loạt</span>
 											</button>
@@ -331,7 +320,7 @@
 				    	dataBound: function(e) {
 
 							
-							$("#f-cttncn").find('button[data-action="cttncn-detailV1"],button[data-action="cttncn-signV1"], button[data-action="cttncn-editV1"], button[data-action="cttncn-xoaboV1"], button[data-action="cttncn-cre-dc"], button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+							$("#f-cttncn").find('button[data-action="cttncn-importV1"], button[data-action="cttncn-pdfAllV1"], button[data-action="cttncn-sendMailAllV1"], button[data-action="cttncn-sendAllToCQTV1"], button[data-action="cttncn-refreshAllFromCQTV1"], button[data-action="cttncn-xmlV1"], button[data-action="cttncn-creV1"], button[data-action="cttncn-detailV1"], button[data-action="cttncn-editV1"], button[data-action="cttncn-cre-dc"], button[data-action="cttncn-cre-tt"], button[data-action="cttncn-signV1"], button[data-action="cttncn-signAllV1"]').prop('disabled', true);
 							
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -467,69 +456,67 @@
 							_gridMain.find(' tbody tr').removeClass("k-state-selected");
 						}
 						
-						isDisabledEditDel();
+						isDisabledSingleHandleButton();
 					});
 					
 					_gridMain.find('table[role="grid"]').find('tbody').undelegate('input[type="checkbox"][data-check-item]', 'click');
 					_gridMain.find('table[role="grid"]').find('tbody').delegate('input[type="checkbox"][data-check-item]', 'click', function(e){
-						var checked = $(this).prop('checked');
-						var $tr = $(this).closest("tr");		
-						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
-					
-						
-						if(checked){
-							$(this).closest("tr").addClass("k-state-selected");
-						}else{
-							$(this).closest("tr").removeClass("k-state-selected");
-						}
-						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
-						isDisabledEditDel();
+						 handleRowSelection($(this).closest("tr"));
 					});
 					
 					_gridMain.find('table[role="grid"]').find('tbody').undelegate('tr td:not(:eq(1))', 'click');
 					_gridMain.find('table[role="grid"]').find('tbody').delegate('tr td:not(:eq(1))', 'click', function(e){
-						var _obj = $(this).closest("tr");
-						var $tr = $(this).closest("tr");
-						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
-						
+						const $tr = $(this).closest("tr");
+				        const $checkbox = $tr.find('input[type=checkbox][data-check-item]');
+				        $checkbox.prop('checked', !$checkbox.prop('checked'));
+				        handleRowSelection($tr);
+					});
 					
-						$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
-						$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
-						$("#f-cttncn").find('button[data-action="cttncn-editV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);						
-						if('SIGNED' == rowData['SignStatusCode']){						  
-					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', false);
-					          	$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', false);
-					          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', false);
-					          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', false);
-					        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', false);
-					        	
-					        	$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', true);
-								$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', true);
-						}else{
-								$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
-								$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
-					          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
-								$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
-								$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
-								
-					          	$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', false);
-								
-						}
-						
-						
-						var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
-						
-				
-						
-						$(_obj).find('input[type=checkbox][data-check-item]').prop('checked', !_oldChecked);
-						if(!_oldChecked){
+					function handleRowSelection($tr) {
+						const rowData = _gridMain.data("kendoGrid").dataItem($tr);
+					    const $checkbox = $tr.find('input[type=checkbox][data-check-item]');
+					    const checked = $checkbox.prop('checked');
+						if(!checked){
 							$(this).closest("tr").addClass("k-state-selected");
 						}else{
 							$(this).closest("tr").removeClass("k-state-selected");
 						}
 						_gridMain.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridMain.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);
-						isDisabledEditDel();
-					});
+						
+					    isDisabledSingleHandleButton();
+
+					if('SIGNED' == rowData['SignStatusCode']){		
+						if (rowData['StatusCode'] == 'COMPLETE'){
+				          	$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
+						} else if (rowData['StatusCode'] == 'ERROR_CQT') {
+							$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
+				        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+						}else if (rowData['StatusCode'] == 'PENDING') {
+					        $("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
+					        $("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
+				        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+						} else if (rowData['StatusCode'] == 'PROCESSING') {
+							$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
+					        $("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
+				          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
+				        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
+						}
+						$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', true);
+						$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', true);
+			          	$("#f-cttncn").find('button[data-action="cttncn-editV1"]').prop('disabled', true);
+					}else{
+						$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
+						$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
+			          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
+						$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
+						$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);								
+					}
+					}
 
 					$("#f-cttncn").find('button[data-action]').click(function (event) {
 						event.preventDefault();/*event.stopPropagation();*/
@@ -539,7 +526,7 @@
 						var objData = {};
 						
 						var rowData = null;
-						var actionCheck = '|cttncn-detailV1|cttncn-editV1|cttncn-signV1|cttncn-deleteV1|cttncn-signAllV1|cttncn-xmlV1|';
+						var actionCheck = '|cttncn-pdfAllV1|cttncn-sendMailAllV1|cttncn-sendAllToCQTV1|cttncn-refreshAllFromCQTV1|cttncn-xmlV1|cttncn-detailV1|cttncn-editV1|cttncn-cre-dc|cttncn-cre-tt|cttncn-signV1|cttncn-signAllV1|';
 						var grid = _gridMain.data("kendoGrid");
 						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 						var ids = null;
@@ -560,7 +547,6 @@
 							    ids.push(rowData['_id']);
 							});	
 							
-							
 							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
 							
 							$.ajax({
@@ -579,14 +565,11 @@
 											  var responseData = res.responseData;
 											  var idData = responseData['ID'];										
 											  window.open(ROOT_PATH + '/common/cttncnXmlV1/' + idData,'_blank');
-											  
-										}else{
 										}
 									}else{
 										alertDLSuccess('unknown error!!!', function(){});
 										hideLoading();
 									}
-									
 								},
 								error:function (xhr, ajaxOptions, thrownError){
 									alertDLSuccess("Không tìm thấy thông tin", function(){});
@@ -622,7 +605,6 @@
 											  var responseData = res.responseData;
 											  var result = responseData['ID'];
 											  window.open(ROOT_PATH + '/common/view-pdfAll-cttncnV1/' + result,'_blank');
-											  
 										}else{
 											alertDLSuccess(createObjectError(res).html(), function(){});
 								            hideLoading();
@@ -631,7 +613,6 @@
 										alertDLSuccess('unknown error!!!', function(){});
 										hideLoading();
 									}
-									
 								},
 								error:function (xhr, ajaxOptions, thrownError){
 									alertDLSuccess("Không tìm thấy thông tin", function(){});
@@ -655,230 +636,171 @@
 								_token : encodeObjJsonBase64UTF8(ids)
 							};
 							$.ajax({
-										type : "POST",
-										datatype : "json",
-										url : ROOT_PATH
-												+ '/main/cttncn-signAllV1/check-data-signAll',
-										data : objData,
-										beforeSend : function(
-												req) {
-											initAjaxJsonRequest(req);
-											showLoading();
-										},
-										success : function(
-												res) {
-											if (res) {
-												if (res.errorCode == 0) {
-													var responseData = res.responseData;
-													var token = responseData.Token;
-													var time = responseData.Time;
-													var numbers = responseData.Numbers;
-													var formIssueInvoiceID = responseData.FormIssueInvoiceID;
-													var taxCode = responseData.TaxCode;
-													
-													datetimeString = responseData.DateTime;
-													
-													var shd = responseData.SHD;
-													objData = {
-														_token : encodeObjJsonBase64UTF8(tokenTransaction)
-													};
-													objData['tokenTransaction'] = tokenTransaction;
-
-													var urlOrigin = window.location.origin;
-													var urlPathname = window.location.pathname;
-													var url = urlOrigin;
-													var link = taxCode
-															+ ","
-															+ time
-															+ ","
-															+ token;
-
-													url += ROOT_PATH
-															+ '/InvoiceUtility/downloadFileForSignMulti/'
-															+ link;
-
-													getCert(function(e) {
-														if (null == e) {
-															alertDLSuccess(
-																	'Lấy chữ ký số không thành công.',
-																	function myFunction() {
-																		  timeout = setTimeout(ckserro, 0);
-																		}
-																	);
-															hideLoading();
-															$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
-														}
-													
-														
-														checkToken(function(e) {
-															if (e) {
-																showLoading();
-																
-																serialNumber = serialNumber['Seri'];
-																var postEnc = new FormData();
-																	postEnc.append('DateTime',datetimeString);
-																postEnc.append('SerialNumber',serialNumber);
-																postEnc.append('UrlDecode',base64.encode(base64._utf8_encode(url)));
-
-																var xhrSignMulti = new XMLHttpRequest();
-																xhrSignMulti.onreadystatechange = function() {
-																	if (this.readyState == 4) {
-																		hideLoading();
-																		if (this.status == 200) {
-																			var blob = new Blob(
-																					[ this.response ],
-																					{
-																						type : "application/zip"
-																					});
-																			var formData = new FormData();
-																			formData
-																					.append(
-																							_csrf_name,
-																							_csrf_value);
-																			formData
-																					.append(
-																							"Numbers",
-																							base64
-																									.encode(base64
-																											._utf8_encode(JSON
-																													.stringify(numbers))));
-																			formData
-																					.append(
-																							"FormIssueInvoiceID",
-																							formIssueInvoiceID);
-																			formData
-																					.append(
-																							"zipFile",
-																							blob);
-																			formData
-																					.append(
-																							"Certificate",
-																							base64Cert
-																									.replace(
-																											/\+/g,
-																											"@"));
-																			sendSignMulti(formData);
-																		} else if (this.status == 401) {
-																		
-																			alertDLSuccess(
-																					'<span class="text-error">Lỗi trong quá trình ký tập tin.<span>',
-																					function myFunction() {
-																						
-																						}
-																				
-																					);
-																		} else {
-																			alertDLSuccess(
-																					'<span class="text-error">Lỗi khi thực hiện ký chứng từ.<br>Quý khách vui lòng cập nhật lại plugin ký số.<span>',
-																					function myFunction() {
-																						
-																						}
-																				
-																					);
-																		}
-																	}
-																}
-																xhrSignMulti.open('POST', urlPluginSign + signMultiCTTNCN, true);
-																xhrSignMulti.timeout = 5 * 60 * 1000;
-																xhrSignMulti.responseType = 'blob'; //or arraybuffer
-																xhrSignMulti
-																		.send(postEnc);
-															}
-														});
-													});
-												} else {
+								type : "POST",
+								datatype : "json",
+								url : ROOT_PATH + '/main/cttncn-signAllV1/check-data-signAll',
+								data : objData,
+								beforeSend : function(req) {
+									initAjaxJsonRequest(req);
+									showLoading();
+								},
+								success : function(res) {
+									if (res) {
+										if (res.errorCode == 0) {
+											var responseData = res.responseData;
+											var token = responseData.Token;
+											var time = responseData.Time;
+											var numbers = responseData.Numbers;
+											var formIssueInvoiceID = responseData.FormIssueInvoiceID;
+											var taxCode = responseData.TaxCode;
+											
+											datetimeString = responseData.DateTime;
+											
+											var shd = responseData.SHD;
+											objData = {
+												_token : encodeObjJsonBase64UTF8(tokenTransaction)
+											};
+											objData['tokenTransaction'] = tokenTransaction;
+	
+											var urlOrigin = window.location.origin;
+											var urlPathname = window.location.pathname;
+											var url = urlOrigin;
+											var link = taxCode
+													+ ","
+													+ time
+													+ ","
+													+ token;
+	
+											url += ROOT_PATH + '/InvoiceUtility/downloadFileForSignMulti/' + link;
+	
+											getCert(function(e) {
+												if (null == e) {
+													alertDLSuccess('Lấy chữ ký số không thành công.', 
+															function myFunction() { timeout = setTimeout(ckserro, 0);});
 													hideLoading();
-													  alertDLSuccess(createObjectError(res).html(), function(){});
+													$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
 												}
-											} else {
-												console.log(res)
-												  alertDLSuccess(createObjectError(res).html(), function(){});
-												hideLoading();
-											}
-										},
-										error : function(
-												xhr,
-												ajaxOptions,
-												thrownError) {
-											  alertDLSuccess(createObjectError(res).html(), function(){});
+	
+												checkToken(function(e) {
+													if (e) {
+														showLoading();
+														
+														serialNumber = serialNumber['Seri'];
+														var postEnc = new FormData();
+														postEnc.append('DateTime',datetimeString);
+														postEnc.append('SerialNumber',serialNumber);
+														postEnc.append('UrlDecode',base64.encode(base64._utf8_encode(url)));
+	
+														var xhrSignMulti = new XMLHttpRequest();
+														xhrSignMulti.onreadystatechange = function() {
+															if (this.readyState == 4) {
+																hideLoading();
+																if (this.status == 200) {
+																	var blob = new Blob(
+																			[ this.response ],
+																			{ type : "application/zip"}
+																			);
+																	var formData = new FormData();
+																	formData.append(_csrf_name, _csrf_value);
+																	formData.append("Numbers", 
+																			base64.encode(base64._utf8_encode(JSON.stringify(numbers))));
+																	formData.append("FormIssueInvoiceID", formIssueInvoiceID);
+																	formData.append("zipFile",blob);
+																	formData.append("Certificate", base64Cert.replace(/\+/g, "@"));
+																	sendSignMulti(formData);
+																} else if (this.status == 401) {
+																	alertDLSuccess(
+																			'<span class="text-error">Lỗi trong quá trình ký tập tin.<span>',
+																			function myFunction() {}
+																		);
+																} else {
+																	alertDLSuccess(
+																			'<span class="text-error">Lỗi khi thực hiện ký chứng từ.<br>Quý khách vui lòng cập nhật lại plugin ký số.<span>',
+																			function myFunction() {}
+																		);
+																}
+															}
+														}
+														xhrSignMulti.open('POST', urlPluginSign + signMultiCTTNCN, true);
+														xhrSignMulti.timeout = 5 * 60 * 1000;
+														xhrSignMulti.responseType = 'blob'; //or arraybuffer
+														xhrSignMulti.send(postEnc);
+													}
+												});
+											});
+										} else {
 											hideLoading();
+											  alertDLSuccess(createObjectError(res).html(), function(){});
 										}
+									} else {
+										console.log(res)
+										  alertDLSuccess(createObjectError(res).html(), function(){});
+										hideLoading();
+									}
+								},
+								error : function(
+										xhr,
+										ajaxOptions,
+										thrownError) {
+									  alertDLSuccess(createObjectError(res).html(), function(){});
+									hideLoading();
+								}
 
-									});
-							
+							});
 							
 							function checkToken(cb) {
 								serialNumber = '';
-								$
-										.ajax({
-											type : "POST",
-											datatype : "json",
-											url : ROOT_PATH
-													+ '/main/common/check-cert',
-											data : {
-											'cert' : base64Cert
-											},
-										
-											beforeSend : function(
-													req) {
-												initAjaxJsonRequest(req);
-												showLoading();
-											},
-											success : function(
-													res) {
-												hideLoading();
-												if (res) {
-													if (res.errorCode == 0) {
-														serialNumber = res.responseData;
-														var check = serialNumber['check'];
-														
-														if(check==="300"){
-															alertDLSuccess('Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.', function(){});
+								$.ajax({
+									type : "POST",
+									datatype : "json",
+									url : ROOT_PATH + '/main/common/check-cert',
+									data : {'cert' : base64Cert},
+									beforeSend : function(req) {
+										initAjaxJsonRequest(req);
+										showLoading();
+									},
+									success : function(res) {
+										hideLoading();
+										if (res) {
+											if (res.errorCode == 0) {
+												serialNumber = res.responseData;
+												var check = serialNumber['check'];
 												
-														}else{
-															cb(serialNumber)
-														}
-													
-													} else {
-														alertDLSuccess(
-																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																function myFunction() {
-																
-																	}
-															
-																);
-													}
-												} else {
+												if(check==="300"){
 													alertDLSuccess(
-															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-															function myFunction() {
-																
-																}
-														
-															);
-													hideLoading();
+															'Chữ ký số chưa đăng ký lên hệ thống, vui lòng kiểm tra lại tờ khai 01 và menu Hệ thống/Chứng thư số.',
+															function(){}
+														);
+												}else{
+													cb(serialNumber)
 												}
-											},
-											error : function(
-													xhr,
-													ajaxOptions,
-													thrownError) {
+											} else {
 												alertDLSuccess(
 														'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-														function myFunction() {
-															 
-															}
-													
-														);
-												hideLoading();
+														function myFunction() {}
+													);
 											}
-										});
+										} else {
+											alertDLSuccess(
+													'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+													function myFunction() {}
+												);
+											hideLoading();
+										}
+									},
+									error : function(xhr, ajaxOptions, thrownError) {
+										alertDLSuccess(
+												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+												function myFunction() {}
+											);
+										hideLoading();
+									}
+								});
 							}
 
 							 function sendSignMulti(formData) {
 								$.ajax({
-									url : ROOT_PATH
-											+ '/main/cttncn-signAllV1/signFileAll',
+									url : ROOT_PATH + '/main/cttncn-signAllV1/signFileAll',
 									type : 'POST',
 									data : formData,
 									async : false,
@@ -887,15 +809,11 @@
 									enctype : 'multipart/form-data',
 									processData : false,
 									dataType : 'json',
-									beforeSend : function(
-											req) {
+									beforeSend : function(req) {
 										initAjaxJsonRequest(req);
 										showLoading();
 									},
-									success : function(
-											res,
-											textStatus,
-											xhr) {
+									success : function(res, textStatus, xhr) {
 										if (res) {
 											if (res.errorCode == 0) {
 												$('#f-cttncn').find("#grid").data("kendoGrid").dataSource.read();		
@@ -908,17 +826,11 @@
 										}
 										hideLoading();
 									},
-									error : function(
-											xhr,
-											ajaxOptions,
-											thrownError) {
+									error : function(xhr, ajaxOptions, thrownError) {
 										alertDLSuccess(
 												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-												function myFunction() {
-													  
-													}
-											
-												);
+												function myFunction() {}
+											);
 										hideLoading();
 									}
 								});
@@ -953,7 +865,7 @@
 													$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
 													return;
 												}
-												serialNumber = '';
+												serialNumber = ''; 
 												//KIEM TRA THONG TIN CERT
 												$.ajax({
 													type: "POST",
@@ -1561,12 +1473,15 @@
 					return dataPost;
 				}
 
-		 		function isDisabledEditDel(){
+		 		function isDisabledSingleHandleButton(){
+					$("#f-cttncn").find('button[data-action="cttncn-importV1"], button[data-action="cttncn-pdfAllV1"], button[data-action="cttncn-sendMailAllV1"], button[data-action="cttncn-sendAllToCQTV1"], button[data-action="cttncn-refreshAllFromCQTV1"], button[data-action="cttncn-xmlV1"], button[data-action="cttncn-creV1"], button[data-action="cttncn-detailV1"], button[data-action="cttncn-editV1"], button[data-action="cttncn-cre-dc"], button[data-action="cttncn-cre-tt"], button[data-action="cttncn-signV1"], button[data-action="cttncn-signAllV1"]').prop('disabled', false);
 					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
-					$('#f-cttncn').find('button[data-action="cttncn-detailV1"]').prop('disabled', checkRows.length != 1);
-					$('#f-cttncn').find('button[data-action="cttncn-editV1"]').prop('disabled', checkRows.length != 1);
-					$('#f-cttncn').find('button[data-action="cttncn-xmlV1"]').prop('disabled', checkRows.length != 1);
-
+					var isEnable = checkRows.length != 1;
+					$('#f-cttncn').find('button[data-action="cttncn-detailV1"]').prop('disabled', isEnable);
+					$('#f-cttncn').find('button[data-action="cttncn-editV1"]').prop('disabled', isEnable);
+					$('#f-cttncn').find('button[data-action="cttncn-cre-dc"]').prop('disabled', isEnable);
+					$('#f-cttncn').find('button[data-action="cttncn-cre-tt"]').prop('disabled', isEnable);
+					$('#f-cttncn').find('button[data-action="cttncn-signV1"]').prop('disabled', isEnable);
 				} 
 				function setTemplateForGridMAIN(key, data){
 					var statusCode = data['StatusCode']?? "";
