@@ -159,6 +159,7 @@ public class CTTNCNController {
 		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
 				.body(SerializationUtils.serialize(fileInfo));
 	}
+	
 	@RequestMapping(value = "/signAll", method = RequestMethod.POST, consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<?> agentSignFileAll(HttpServletRequest req,
@@ -352,5 +353,63 @@ public class CTTNCNController {
 				.headers(headers)
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/get-file-for-signAllV1", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	public ResponseEntity<?> getFilesForSignAllV1(@RequestBody JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = dao.getFileForSignAllV1(jsonRoot);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "template.data");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
+	
+	@RequestMapping(value = "/check-sctu-list", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> checkSctuList(@RequestBody JSONRoot jsonRoot) throws Exception{
+		MsgRsp rsp = dao.checkSctList(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(rsp);
+	}
+	
+	@RequestMapping(value = "/signAllV1", method = RequestMethod.POST, consumes = {
+			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> agentSignFileAllV1(HttpServletRequest req,
+			MultipartHttpServletRequest multipartHttpServletRequest,
+			@RequestParam(name = "Base64JsonRoot", defaultValue = "") String _Base64JsonRoot,
+			@RequestParam(name = "Ten", defaultValue = "") String ten) throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+
+		JSONRoot jsonRoot = null;
+		try {
+			jsonRoot = Json.serializer().fromJson(commons.decodeBase64ToString(_Base64JsonRoot),
+					new TypeReference<JSONRoot>() {
+					});
+		} catch (Exception e) {
+			throw new Exception("Lỗi dữ liệu đầu vào");
+		}
+
+		String[] words = ten.split("/");
+		String taxcode = words[0];
+		String ms = words[1];
+
+		UpdateSignedMultiBillReq input = new UpdateSignedMultiBillReq();
+		input.setFileData(multipartHttpServletRequest.getFile("zipFile").getBytes());
+		input.setTaxcode(taxcode);
+		input.setFormIssueInvoiceID(ms);
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(dao.signAllV1(input, jsonRoot));
 	}
 }

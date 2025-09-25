@@ -46,4 +46,10 @@ public interface CTTNCNDAO {
 	public MsgRsp sendMailV1(JSONRoot jsonRoot) throws Exception;
 	
 	public MsgRsp sendMailAllV1(JSONRoot jsonRoot) throws Exception;
+	
+	public FileInfo getFileForSignAllV1(JSONRoot jsonRoot) throws Exception;
+	
+	public MsgRsp checkSctList(JSONRoot jsonRoot) throws Exception;
+	
+	public Object signAllV1(UpdateSignedMultiBillReq input, JSONRoot jsonRoot) throws Exception;
 }

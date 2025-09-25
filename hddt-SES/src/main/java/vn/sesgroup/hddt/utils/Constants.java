@@ -62,6 +62,7 @@ public class Constants {
 		public static final String CREATEDPARAM = "CREATEDPARAM";
 		public static final String REPORT = "REPORT";
 		public static final String SEND_CQTALL = "SEND_CQTALL";
+		public static final String CHECK_ALL = "CHECK_ALL";
 	}
 	
 	public static final class FORMAT_DATE {

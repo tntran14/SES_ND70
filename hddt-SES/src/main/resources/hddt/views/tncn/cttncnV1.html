@@ -78,12 +78,6 @@
 								<div class="row mT-0">
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-										
-
-
-											<!-- 										   <button type="button" title="Ký hàng loạt" data-action="cttncn-signAll" class="btns ky_hl hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAll|')}" > -->
-											<!-- 											  <i class="mdi mdi-account-check-outline"> </i><span class="d-none d-md-inline">Ký hàng loạt</span> -->
-											<!-- 											  </button>   -->
 											<button type="button" title="Import danh sách"
 												data-action="cttncn-importV1"
 												class="btns import_hdon hover-up__ses"
@@ -94,7 +88,8 @@
 											<button type="button" title="Xuất PDF hàng loạt"
 												data-action="cttncn-pdfAllV1"
 												class="btns in_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-pdfAllV1|')}"
+												th:disabled="true">
 												<i class="mdi mdi-file-pdf"> </i><span
 													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
 											</button>
@@ -106,10 +101,27 @@
 												<i class="mdi mdi-email"> </i><span
 													class="d-none d-md-inline">Gửi mail hàng loạt</span>
 											</button>
+											<button type="button" title="Send to cqt all"
+												data-action="cttncn-sendAllToCQTV1"
+												class="btns send_cqt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-sendAllToCQTV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-telegram"> </i><span
+													class="d-none d-md-inline">Gửi tới CQT hàng loạt</span>
+											</button>
+											<button type="button" title="Refresh all from cqt"
+												data-action="cttncn-refreshAllFromCQTV1"
+												class="btns lay_ma_hl hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-refreshAllFromCQTV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-refresh-circle"> </i><span
+													class="d-none d-md-inline">Lấy kết quả từ CQT hàng loạt</span>
+											</button>
 											<button type="button" title="Xuất XML"
 												data-action="cttncn-xmlV1"
 												class="btns xuat_xml hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}">
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-xmlV1|')}"
+												th:disabled="true">
 												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
 													XML</span>
 											</button>
@@ -156,9 +168,17 @@
 												data-action="cttncn-signV1"
 												class="btns btns-export__ses hover-up__ses"
 												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signV1|')}"
-												th:disabled="true">
+												>
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Ký từng chứng từ</span>
+											</button>
+											<button type="button" title="Ký hàng loạt"
+												data-action="cttncn-signAllV1"
+												class="btns ky_hl hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|cttncn-signAllV1|')}"
+												th:disabled="true">
+												<i class="mdi mdi-account-check-outline"> </i><span
+													class="d-none d-md-inline">Ký hàng loạt</span>
 											</button>
 										</div>
 									</div>
@@ -474,17 +494,28 @@
 						
 					
 						$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
-						$("#f-cttncn").find('button[data-action="cttncn-signAll"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
+						$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);
 						$("#f-cttncn").find('button[data-action="cttncn-editV1"]').prop('disabled', 'Chưa ký' == rowData['SignStatus']? false: true);						
-						if('Đã phát hành' == rowData['Status'] && 'Đã ký' == rowData['SignStatus']){						  
+						if('SIGNED' == rowData['SignStatusCode']){						  
 					          	$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', false);
+					          	$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', false);
+					          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', false);
 					          	$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', false);
 					        	$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', false);
-							}else{
+					        	
+					        	$("#f-cttncn").find('button[data-action="cttncn-signV1"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', true);
+						}else{
 								$("#f-cttncn").find('button[data-action="cttncn-sendMailAllV1"]').prop('disabled', true);
+								$("#f-cttncn").find('button[data-action="cttncn-sendAllToCQTV1"]').prop('disabled', true);
+					          	$("#f-cttncn").find('button[data-action="cttncn-refreshAllFromCQTV1"]').prop('disabled', true);
 								$("#f-cttncn").find('button[data-action="cttncn-cre-dc"]').prop('disabled', true);
 								$("#f-cttncn").find('button[data-action="cttncn-cre-tt"]').prop('disabled', true);
-							}
+								
+					          	$("#f-cttncn").find('button[data-action="cttncn-signAllV1"]').prop('disabled', false);
+								
+						}
+						
 						
 						var _oldChecked = $(_obj).find('input[type=checkbox][data-check-item]').prop('checked');
 						
@@ -608,7 +639,7 @@
 						        }
 							});
 							break;
-						case 'cttncn-signAll':
+						case 'cttncn-signAllV1':
 							ids = [];
 							objData = {};
 							checkRows.each(function(i, v) {
@@ -627,7 +658,7 @@
 										type : "POST",
 										datatype : "json",
 										url : ROOT_PATH
-												+ '/main/cttncn-signAll/check-data-signAll',
+												+ '/main/cttncn-signAllV1/check-data-signAll',
 										data : objData,
 										beforeSend : function(
 												req) {
@@ -673,14 +704,9 @@
 																	function myFunction() {
 																		  timeout = setTimeout(ckserro, 0);
 																		}
-																
 																	);
-															
-																
-															
 															hideLoading();
 															$("#f-cttncn").find('#grid').find(".k-pager-refresh").trigger('click');
-															/*Get Certificate*/
 														}
 													
 														
@@ -743,23 +769,16 @@
 																					);
 																		} else {
 																			alertDLSuccess(
-																					'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<br>Quý khách vui lòng cập nhật lại plugin ký số.<span>',
+																					'<span class="text-error">Lỗi khi thực hiện ký chứng từ.<br>Quý khách vui lòng cập nhật lại plugin ký số.<span>',
 																					function myFunction() {
 																						
 																						}
 																				
 																					);
-																		
 																		}
-
 																	}
 																}
-																xhrSignMulti
-																		.open(
-																				'POST',
-																				urlPluginSign
-																						+ signMultiXML,
-																				true);
+																xhrSignMulti.open('POST', urlPluginSign + signMultiCTTNCN, true);
 																xhrSignMulti.timeout = 5 * 60 * 1000;
 																xhrSignMulti.responseType = 'blob'; //or arraybuffer
 																xhrSignMulti
@@ -856,72 +875,55 @@
 										});
 							}
 
-							function sendSignMulti(formData) {
-								$
-										.ajax({
-											url : ROOT_PATH
-													+ '/main/cttncn-signAll/signFileAll',
-											type : 'POST',
-											data : formData,
-											async : false,
-											cache : false,
-											contentType : false,
-											enctype : 'multipart/form-data',
-											processData : false,
-											dataType : 'json',
-											beforeSend : function(
-													req) {
-												initAjaxJsonRequest(req);
-												showLoading();
-											},
-											success : function(
-													res,
-													textStatus,
-													xhr) {
-												hideLoading();
-												if (res) {
-													if (res.errorCode == 0) {
-														$(
-																'#f-cttncn').find("#grid").data("kendoGrid").dataSource.read();
-														hideLoading();
-													
-													} else {
-														alertDLSuccess(
-																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-																function myFunction() {
-																	
-																	}
-															
-																);
-													}
-												} else {
-													alertDLSuccess(
-															'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-															function myFunction() {
-																 
-																}
-														
-															);
-													hideLoading();
-												}
-											},
-											error : function(
-													xhr,
-													ajaxOptions,
-													thrownError) {
-												alertDLSuccess(
-														'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
-														function myFunction() {
-															  
-															}
-													
-														);
-												hideLoading();
+							 function sendSignMulti(formData) {
+								$.ajax({
+									url : ROOT_PATH
+											+ '/main/cttncn-signAllV1/signFileAll',
+									type : 'POST',
+									data : formData,
+									async : false,
+									cache : false,
+									contentType : false,
+									enctype : 'multipart/form-data',
+									processData : false,
+									dataType : 'json',
+									beforeSend : function(
+											req) {
+										initAjaxJsonRequest(req);
+										showLoading();
+									},
+									success : function(
+											res,
+											textStatus,
+											xhr) {
+										if (res) {
+											if (res.errorCode == 0) {
+												$('#f-cttncn').find("#grid").data("kendoGrid").dataSource.read();		
+												 callSendAllToCQT(ids, true);
+											} else {
+												alertDLSuccess(res.errorMessage, function myFunction() {});
 											}
-										});
+										} else {
+											alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',function myFunction() {});
+										}
+										hideLoading();
+									},
+									error : function(
+											xhr,
+											ajaxOptions,
+											thrownError) {
+										alertDLSuccess(
+												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
+												function myFunction() {
+													  
+													}
+											
+												);
+										hideLoading();
+									}
+								});
 							}
 
-							
 							break;
 						case 'cttncn-signV1':
 							objDataSend = {};
@@ -1219,71 +1221,30 @@
 								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
 								ids.push(rowData['_id']);
 							});
-							/*CHECK THONG TIN HD*/
-							objData = {
-								_ids : encodeObjJsonBase64UTF8(ids)
-							};
-							dsID = {
-								_token : encodeObjJsonBase64UTF8(ids)
-							};
-						
-							var objURL = {};	
-							objURL['check'] = ROOT_PATH + '/main/cttncn-send-mailV1/check-data-sendAll';
-							objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mailV1/send-mailAll';
-							
-							$.ajax({
-								type: "POST",
-								datatype: "json",
-								url: objURL['check'],
-								data: objData,
-								beforeSend: function(req) {
-									initAjaxJsonRequest(req);
-						        	showLoading();
-								},
-								success:function(res) {
-									hideLoading();
-									if(res) {
-										if(res.errorCode == 0) {
-											var responseData = res.responseData;
-											tokenTransaction = responseData['TOKEN'];
-											
-											objData['tokenTransaction'] = tokenTransaction;
 
-													$.ajax({
-														type: "POST",
-														datatype: "json",
-														url: objURL['exec'],
-														data: objData,
-														beforeSend: function(req) {
-															initAjaxJsonRequest(req);
-												        	showLoading();
-														},
-														success:function(res) {
-															if(res) {
-																alertDLSuccess(createObjectError(res).html(), function(){});
-															}else{
-																alertDLSuccess('unknown error!!!', function(){});
-															}
-															hideLoading();
-														},
-														error:function (xhr, ajaxOptions, thrownError){
-															alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-												            hideLoading();
-												        }
-													});
-										}else{
-											alertDLSuccess(createObjectError(res).html(), function(){});
-										}
-									}else{
-										alertDLSuccess('unknown error!!!', function(){});
-										hideLoading();
-									}
-								},
-								error:function (xhr, ajaxOptions, thrownError){
-									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-						            hideLoading();
-						        }
-							}); 
+							sendAllMail(ids);
+							break;
+						case 'cttncn-sendAllToCQTV1':									
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
+							});
+
+							callSendAllToCQT(ids, false);
+							break;
+						case 'cttncn-refreshAllFromCQTV1':									
+							ids = [];
+							objData = {};
+							checkRows.each(function(i, v) {
+								idx = $(checkRows[i].closest("tr")).index();
+								rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+								ids.push(rowData['_id']);
+							});
+							
+							refreshAllFromCQT(ids, false);
 							break;
 						case 'cttncn-cre-dc':
 							objData = {};
@@ -1370,7 +1331,7 @@
 						}
 					});
 				}
-				
+								
 				function getResultFromCQT(data) {
 					objDataSend = {};
 					objDataSend['_id'] = data;
@@ -1433,6 +1394,164 @@
 						}
 					});
 				}
+				
+				function callSendAllToCQT(ids, isContinue) {
+					dsID = {_token : encodeObjJsonBase64UTF8(ids)};
+					var objURL = {};
+					objURL['check'] = ROOT_PATH + '/main/cttncn-signAllV1/check-data-send-all-cqtV1';
+					objURL['exec'] = ROOT_PATH + '/main/cttncn-signAllV1/send-all-cqtV1';
+					
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: objURL['check'],
+						data: dsID,
+						beforeSend: function (req) {
+							initAjaxJsonRequest(req);
+							showLoading();
+						},
+						success: function (res) {
+							if (res) {
+								if (res.errorCode == 0) {
+									var responseData = res.responseData;
+									dsID['tokenTransaction'] = responseData['TOKEN'];
+									$.ajax({
+										type: "POST",
+										datatype: "json",
+										url: objURL['exec'],
+										data: dsID,
+										beforeSend: function (req) {
+											initAjaxJsonRequest(req);
+											showLoading();
+										},
+										success: function (res) {
+											if (res) {
+												if (true === isContinue) {
+													refreshAllFromCQT(ids, true);
+												} else{
+													alertDLSuccess(res.responseData,function () { });
+												}
+											} else {
+												alertDLSuccess('Gửi chứng từ đến cqt lỗi.', function () { });
+											}
+											_gridMain.data("kendoGrid").dataSource.read();
+											hideLoading();
+										},
+										error: function (xhr, ajaxOptions, thrownError) {
+											_gridMain.data("kendoGrid").dataSource.read();
+											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+											hideLoading();
+										}
+									});
+								} else {
+									alertDLSuccess(createObjectError(res).html(), function () { });
+									hideLoading();
+								}
+							} else {
+								alertDLSuccess('Kiểm tra dữ liệu gửi cqt lỗi.', function () { });
+								hideLoading();
+							}
+
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
+							hideLoading();
+						}
+					});
+					
+				}
+				
+				function refreshAllFromCQT(ids, isContinue) {
+					dsID = {_token : encodeObjJsonBase64UTF8(ids)};	
+					$.ajax({	
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/main/cttncn-signAllV1/refresh-all-status-from-cqt',
+						data: dsID,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res) {
+								if (true === isContinue && res.errorCode == 0){
+									alertDLSuccess('Ký chứng từ hàng loạt thành công.', function(){});
+								} else {
+									alertDLSuccess(createObjectError(res).html(), function(){});
+								}
+							}else{
+								alertDLSuccess('unknown error!!!', function(){});
+							}
+							_gridMain.data("kendoGrid").dataSource.read();
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					});		
+				}
+				
+				function sendAllMail(ids){
+					objData = {_ids : encodeObjJsonBase64UTF8(ids)};
+					dsID = {_token : encodeObjJsonBase64UTF8(ids)};
+					
+					var objURL = {};	
+					objURL['check'] = ROOT_PATH + '/main/cttncn-send-mailV1/check-data-sendAll';
+					objURL['exec'] = ROOT_PATH + '/main/cttncn-send-mailV1/send-mailAll';
+					
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: objURL['check'],
+						data: objData,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res) {
+								if(res.errorCode == 0) {
+									var responseData = res.responseData;
+									tokenTransaction = responseData['TOKEN'];
+									
+									objData['tokenTransaction'] = tokenTransaction;
+
+											$.ajax({
+												type: "POST",
+												datatype: "json",
+												url: objURL['exec'],
+												data: objData,
+												beforeSend: function(req) {
+													initAjaxJsonRequest(req);
+										        	showLoading();
+												},
+												success:function(res) {
+													if(res) {
+														alertDLSuccess(createObjectError(res).html(), function(){});
+													}
+													hideLoading();
+												},
+												error:function (xhr, ajaxOptions, thrownError){
+													alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+										            hideLoading();
+										        }
+											});
+								}else{
+									alertDLSuccess(createObjectError(res).html(), function(){});
+								}
+							}else{
+								alertDLSuccess('unknown error!!!', function(){});
+								hideLoading();
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+				            hideLoading();
+				        }
+					}); 
+				}
 
 				function getDataSearch(){
 					var dataPost = {};
@@ -1445,7 +1564,9 @@
 		 		function isDisabledEditDel(){
 					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 					$('#f-cttncn').find('button[data-action="cttncn-detailV1"]').prop('disabled', checkRows.length != 1);
-					$('#f-cttncn').find('button[data-action="cttncn-deleteV1"]').prop('disabled', checkRows.length == 0);
+					$('#f-cttncn').find('button[data-action="cttncn-editV1"]').prop('disabled', checkRows.length != 1);
+					$('#f-cttncn').find('button[data-action="cttncn-xmlV1"]').prop('disabled', checkRows.length != 1);
+
 				} 
 				function setTemplateForGridMAIN(key, data){
 					var statusCode = data['StatusCode']?? "";

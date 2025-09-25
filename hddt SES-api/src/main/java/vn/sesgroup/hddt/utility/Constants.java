@@ -62,6 +62,7 @@ public class Constants {
 		public static final String CHECK = "CHECK";
 		public static final String DELETEALL = "DELETEALL";
 		public static final String SEND_CQTALL = "SEND_CQTALL";
+		public static final String CHECK_ALL = "CHECK_ALL";
 	}
 	
 	public static final LinkedHashMap<String, String> MAP_VAT = new LinkedHashMap<String, String>(){
