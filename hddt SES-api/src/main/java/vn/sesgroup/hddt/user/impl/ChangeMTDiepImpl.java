@@ -1,5 +1,6 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +12,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -18,6 +24,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.api.message.JSONRoot;
 import com.api.message.Msg;
@@ -93,10 +101,9 @@ public class ChangeMTDiepImpl extends AbstractDAO implements ChangeMTDiepDAO {
 		MspResponseStatus responseStatus = null;
 
 		ObjectId objectId = null;
-		Document docTmp = null;
-		Iterable<Document> cursor = null;
 		Iterator<Document> iter = null;
 		List<Document> pipeline = new ArrayList<Document>();
+		List<Document> docsTmp = new ArrayList<Document>();
 
 		LocalDate dateFrom = null;
 		LocalDate dateTo = null;
@@ -172,78 +179,55 @@ public class ChangeMTDiepImpl extends AbstractDAO implements ChangeMTDiepDAO {
 		pipeline.add(new Document("$sort",
 				new Document("EInvoiceDetail.TTChung.MauSoHD", -1).append("SHDon", -1).append("_id", -1)));
 		pipeline.add(new Document("$project", fillter));
-		pipeline.addAll(createFacetForSearchNotSort(page));
+//		pipeline.addAll(createFacetForSearchNotSort(page));
 
-	
-		
-		MongoClient mongoClient = cfg.mongoClient();
-		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		try {
-			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
+			}
+			
+			iter = null;
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
+			}
+			
+			iter = null;
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
+			}
+			
+			iter = null;
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
+			}
+			
+			
+			iter = null;
+			collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docsTmp.add(iter.next());
+			}
+			
+			
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
-			
-		mongoClient.close();
-
-		if (null == docTmp) {			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();			
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
-			
-		}
-		if (null == docTmp) {
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();			
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
-			
-		}
-	
-		
-		if (null == docTmp) {
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();			
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
-			
 		}
 		
-		
-	
 		rsp = new MsgRsp(header);
-		responseStatus = null;
-		if (null == docTmp) {
-			responseStatus = new MspResponseStatus(9999, Constants.MAP_ERROR.get(9999));
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
-
-		page.setTotalRows(docTmp.getInteger("total", 0));
-		rsp.setMsgPage(page);
-
-		List<Document> rows = null;
-		if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
-			rows = docTmp.getList("data", Document.class);
-		}
-
+		
 		ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
 		HashMap<String, Object> hItem = null;
-		if (null != rows) {
-			for (Document doc : rows) {
+		int totalRows = docsTmp.size();
+		if (totalRows > 0) {
+			for (Document doc : docsTmp) {
 				objectId = (ObjectId) doc.get("_id");
 
 				hItem = new HashMap<String, Object>();
@@ -259,21 +243,31 @@ public class ChangeMTDiepImpl extends AbstractDAO implements ChangeMTDiepDAO {
 				hItem.put("MTDiep", doc.get("MTDiep"));
 				hItem.put("MTDTChieu", doc.get("MTDTChieu"));
 				
-				
 				rowsReturn.add(hItem);
 			}
 		}
+		page.setTotalRows(totalRows);
+		rsp.setMsgPage(page);
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
+		
+		int pageNo = page.getPageNo();     
+		int pageSize = page.getSize();
+
+		// Calculate start and end indexes
+		int fromIndex = (pageNo - 1) * pageSize;
+		int toIndex = Math.min(fromIndex + pageSize, totalRows);
+		List<HashMap<String, Object>> results = new ArrayList<>();
+		if (fromIndex < totalRows) {
+			results = rowsReturn.subList(fromIndex, toIndex);
+		}
 
 		HashMap<String, Object> mapDataR = new HashMap<String, Object>();
-		mapDataR.put("rows", rowsReturn);
+		mapDataR.put("rows", results);
 		rsp.setObjData(mapDataR);
 		return rsp;
 	}
-
-
-
+	
 	@Override
 	public MsgRsp change(JSONRoot jsonRoot, String _id) throws Exception {
 		ObjectId objectId = null;
@@ -284,150 +278,158 @@ public class ChangeMTDiepImpl extends AbstractDAO implements ChangeMTDiepDAO {
 		Document docFind = null;
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
-		MsgPage page = msg.getMsgPage();
-		Object objData = msg.getObjData();
 		MsgRsp rsp = new MsgRsp(header);
 		MspResponseStatus responseStatus = null;
-		Iterable<Document> cursor = null;
-		Iterator<Document> iter = null;
-		List<Object> listDSHHDVu = new ArrayList<Object>();
+		List<Object> oldMTDs = new ArrayList<Object>();
 		HashMap<String, Object> hItem = null;
-		String check = "";
+		String collectionName = "";
 		Document docTmp = null;
 		List<Document> pipeline = null;
 		pipeline = new ArrayList<Document>();
-		pipeline.add(new Document("$match", new Document("_id", objectId)
-				.append("IsDelete", new Document("$ne", true))));
-		
+		pipeline.add(
+				new Document("$match", new Document("_id", objectId).append("IsDelete", new Document("$ne", true))));
 
-		
-		MongoClient mongoClient = cfg.mongoClient();
-		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		try {
-			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
-			check = "1";
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			collectionName = "EInvoice";
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+			Iterator<Document> iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			if (iter.hasNext()) {
+				docTmp = iter.next();
+			}
+
+			if (null == docTmp) {
+				collectionName = "EInvoiceBH";
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+				iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+			}
+
+			if (null == docTmp) {
+				collectionName = "EInvoicePXK";
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+				iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+			}
+
+			if (null == docTmp) {
+				collectionName = "EInvoicePXKDL";
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+				iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+			}
+
+			if (null == docTmp) {
+				collectionName = "EInvoiceMTT";
+				collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+				iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+				if (iter.hasNext()) {
+					docTmp = iter.next();
+				}
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
-			
-		mongoClient.close();
+			System.out.println(e);
 
-		if (null == docTmp) {
-			
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBH");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
-					check = "2";
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
+		}
 		
-		}
-		if (null == docTmp) {
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXK");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
-					check = "3";
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
-			
-		}
-	
-		
-		if (null == docTmp) {
-			 mongoClient = cfg.mongoClient();
-			 collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoicePXKDL");
-			 try {
-					docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();	
-					check = "4";
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			mongoClient.close();
-			
-		}
-
 		if (null == docTmp) {
 			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-		 docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
-		          .append("_id", objectId);	
-			ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
-
-		String mtdiepcu =  docTmp.get("MTDiep", "");
-		String MTDiep = SystemParams.MSTTCGP + commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
-		FindOneAndUpdateOptions options = null;
-	
-		String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"),"")+docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"),"");
-		Integer SHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"),0);
 		
-		String mtd = "";
-		rsp.setObjData(docTmp);
-		JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-		HashMap<String, String> hItem123 = null;
-		if(!jsonData.at("/MTDiepCU").isMissingNode()) {
-			for(JsonNode o: jsonData.at("/MTDiepCU")) {
-				hItem123 = new LinkedHashMap<String, String>();
-				hItem123.put("Date", commons.getTextJsonNode(o.at("/Date")));
-				hItem123.put("MTDiep", commons.getTextJsonNode(o.at("/MTDiep")));
-				mtd += hItem123.get("MTDiep")+" , ";
-				listDSHHDVu.add(hItem123);
-				}
+		String mtdiepcu = docTmp.get("MTDiep", "");
+		String MTDiep = SystemParams.MSTTCGP
+				+ commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+	
+		String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")
+				+ docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "");
+		Integer SHD = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), 0);
+		
+		ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
+		List<Document> oldMTDDoc = docTmp.getList("MTDiepCU", Document.class);
+		if (oldMTDDoc != null && oldMTDDoc instanceof List) {
+			for (Document doc: oldMTDDoc) {
+				hItem = new LinkedHashMap<String, Object>();
+				hItem.put("Date", doc.get("Date"));
+				hItem.put("MTDiep", doc.get("MTDiep"));
+				oldMTDs.add(hItem);
+			}
 		}
-	
-
-	
 		hItem = new LinkedHashMap<String, Object>();
 		hItem.put("Date", LocalDateTime.now());
-		hItem.put("MTDiep",mtdiepcu );	
-		listDSHHDVu.add(hItem);
+		hItem.put("MTDiep", mtdiepcu);
+		oldMTDs.add(hItem);
 		
-		
-	
-		
-
 		hItem = new HashMap<String, Object>();
 		hItem.put("SHD", SHD);
-	  	hItem.put("MS",MSKH);
+		hItem.put("MS", MSKH);
 		hItem.put("MTDiep", MTDiep);
-		if(mtd.equals("")) {
-			hItem.put("MTDiepCU", mtdiepcu);
-		}
-		else
-		{
-			hItem.put("MTDiepCU", mtd);
-		}
+		hItem.put("MTDiepCU", mtdiepcu);
 		rowsReturn.add(hItem);
-		
-		Document docR = null;
 
-		options = new FindOneAndUpdateOptions();
+		FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
 		options.upsert(false);
 		options.maxTime(5000, TimeUnit.MILLISECONDS);
 		options.returnDocument(ReturnDocument.AFTER);
 
+		docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", new Document("$ne", true))
+				.append("_id", objectId);
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection(collectionName);
+			collection.findOneAndUpdate(
+					docFind, 
+					new Document("$set",
+							new Document("MTDiep", MTDiep)
+							.append("EInvoiceStatus", Constants.INVOICE_STATUS.PENDING)
+							.append("MTDiepCU", oldMTDs)),
+					options);
+		}
 		
-		mongoClient = cfg.mongoClient();
-		collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
-		docR =	collection.findOneAndUpdate(docFind,
-				new Document("$set",
-						new Document("MTDiep", MTDiep).append("EInvoiceStatus", "PENDING").append("MTDiepCU", listDSHHDVu)),
-				options);		
-		mongoClient.close();
+		if (collectionName.equals("EInvoiceMTT")) {
+			String dir = docTmp.get("Dir", "");
+			String stringId = docTmp.get("_id", ObjectId.class).toString();
+			String signStatusCode = docTmp.get("SignStatusCode", "");
+			String fileName = stringId + ".xml";
+			if (Constants.INVOICE_SIGN_STATUS.SIGNED.equals(signStatusCode)) {
+				fileName = stringId + "_signed.xml";
+			}
+			File file = new File(dir, fileName);
 
-responseStatus = new MspResponseStatus(0, "SUCCESS");
-rsp.setResponseStatus(responseStatus);
-HashMap<String, Object> mapDataR = new HashMap<String, Object>();
-mapDataR.put("rows", rowsReturn);
-rsp.setObjData(mapDataR);
-return rsp;
+			if (!file.exists()) {
+				responseStatus = new MspResponseStatus(999, "Cập nhật Mã thông điệp ở file xml thất bại.");
+				rsp.setResponseStatus(responseStatus);
+			}
+			
+			org.w3c.dom.Document doc = commons.fileToDocument(file);
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			Node nodeTTChung = (Node) xPath.evaluate("/TDiep/TTChung", doc, XPathConstants.NODE);
+			Element MTDiepElement = (Element) xPath.evaluate("MTDiep", nodeTTChung, XPathConstants.NODE);
+			if (null == MTDiepElement) {
+				MTDiepElement = doc.createElement("MTDiep");
+				MTDiepElement.setTextContent(MTDiep);
+				nodeTTChung.appendChild(MTDiepElement);
+			} else {
+				MTDiepElement.setTextContent(MTDiep);
+			}
+			
+			boolean isSdaveFile = commons.docW3cToFile(doc, dir, fileName);
+			if (!isSdaveFile) {
+				throw new Exception("Lưu dữ liệu xml mới không thành công.");
+			}
+		}
+		
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		HashMap<String, Object> mapDataR = new HashMap<String, Object>();
+		mapDataR.put("rows", rowsReturn);
+		rsp.setObjData(mapDataR);
+		return rsp;
 	}
 
 }
