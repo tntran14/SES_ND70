@@ -109,6 +109,7 @@ public class CommonController extends AbstractController{
 	private String _token;
 	private List<String> ids = null;
 	
+	@ResponseBody
 	@RequestMapping(value = "/common/get-mau-so",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public List<?> loai_hd(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestParam(name = "loai_hd", defaultValue = "", required = true) String loai_hd) throws Exception{

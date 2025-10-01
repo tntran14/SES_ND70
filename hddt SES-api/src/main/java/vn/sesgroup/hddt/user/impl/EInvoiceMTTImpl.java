@@ -609,8 +609,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							
 							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
 									commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
-									commons.getTextJsonNode(o.at("/STT"))));
+//							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
+//									commons.getTextJsonNode(o.at("/STT"))));
 							elementSubTmp.appendChild(elementSubTmp01);
 
 							elementTmp.appendChild(elementSubTmp);
@@ -1185,8 +1185,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							
 							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
 									commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
-									commons.getTextJsonNode(o.at("/STT"))));
+//							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
+//									commons.getTextJsonNode(o.at("/STT"))));
 							elementSubTmp.appendChild(elementSubTmp01);
 
 							elementTmp.appendChild(elementSubTmp);
@@ -1766,8 +1766,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							
 							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
 									commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
-									commons.getTextJsonNode(o.at("/STT"))));
+//							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Stt", "numeric",
+//									commons.getTextJsonNode(o.at("/STT"))));
 							elementSubTmp.appendChild(elementSubTmp01);
 
 							elementTmp.appendChild(elementSubTmp);
