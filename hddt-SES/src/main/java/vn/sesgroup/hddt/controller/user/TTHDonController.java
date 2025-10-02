@@ -60,132 +60,114 @@ import vn.sesgroup.hddt.utils.Json;
 public class TTHDonController extends AbstractController{
 	private static final Logger log = LogManager.getLogger(TTHDonController.class);
 	@Autowired RestAPIUtility restAPI; 
-		
-
 	private String mtdiep;
 	private String tthdon;
 	private String lhd;
 	
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
 		try {
-			BaseDTO baseDTO = new BaseDTO(req);
-			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
+			LinkedHashMap<String, String> mapStatus = new LinkedHashMap<String, String>();
+			mapStatus.put("CREATED", "Mới tạo (CREATED)");
+			mapStatus.put("PENDING", "Đang xử lý, Chờ gửi CQT, Chưa gửi CQT (PENDING)");
+			mapStatus.put("PROCESSING", "Đang xử lý từ CQT, Gửi CQT  thành công (PROCESSING)");
+			mapStatus.put("COMPLETE", "Đã phát hành, CQT chấp nhận (COMPLETE)");
+			mapStatus.put("ERROR_CQT", "Lỗi từ CQT (ERROR_CQT)");
+			mapStatus.put("DELETED", "Đã hủy (DELETED)");
+			mapStatus.put("REPLACED", "Đã thay thế (REPLACED)");
+			mapStatus.put("ADJUSTED", "Đã điều chỉnh (ADJUSTED)");
+			String[] status = {
+					"Mới tạo (CREATED)",
+					"Đang xử lý, Chờ gửi CQT, Chưa gửi CQT (PENDING)",
+					"Đang xử lý từ CQT, Gửi CQT thành công (PROCESSING)", 
+					"Đã phát hành, CQT chấp nhận (COMPLETE)",
+					"Lỗi từ CQT (ERROR_CQT)",
+					"Đã hủy (DELETED)", 
+					"Đã thay thế (REPLACED)",
+					"Đã điều chỉnh (ADJUSTED)" };
 
-			
-			
-			String[] status = { "Mới tạo", "Chưa được ký", "Đang xử lý từ CQT", "Đã phát hành" , "Lỗi từ CQT", "Đã hủy","Đã thay thế", "Đã điều chỉnh"};
-			
-			
-				LinkedHashMap<String, String> hItem = null;
+			LinkedHashMap<String, String> hItem = null;
 
-					hItem = new LinkedHashMap<String, String>();
-					int dem = 0;
-					for(int i=0; i<status.length;i++) {
-						dem += 1; 
-						String d = String.valueOf(dem);
-						hItem.put(d, status[i]);
-						
-					}
-					req.setAttribute("map_tthdon", hItem);
-				
-			
-			
-		}catch(Exception e) {}
+			hItem = new LinkedHashMap<String, String>();
+			int dem = 0;
+			for (int i = 0; i < status.length; i++) {
+				dem += 1;
+				String d = String.valueOf(dem);
+				hItem.put(d, status[i]);
+			}
+			req.setAttribute("map_tthdon", mapStatus);
+		} catch (Exception e) {
+		}
 	}
-	
-	@RequestMapping(value = "/init", method = {RequestMethod.POST, RequestMethod.GET})
-	public String init(Locale locale, Principal principal, HttpServletRequest req) throws Exception{
+
+	@RequestMapping(value = "/init", method = { RequestMethod.POST, RequestMethod.GET })
+	public String init(Locale locale, Principal principal, HttpServletRequest req) throws Exception {
 		req.setAttribute("_TitleView_", Constants.PREFIX_TITLE + " - Trạng thái hóa đơn");
-	
+
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		LoadParameter(cup, locale, req, "");
-		
-		//req.setAttribute("USERS-CHECK", "USER-CHECK");
+
 		return "user/tthdon";
 	}
 
-	
-//	private BaseDTO checkDataSearch(Locale locale, HttpServletRequest req, HttpSession session) {
-//		BaseDTO dto = new BaseDTO();
-//		dto.setErrorCode(0);
-//		
-//		mtdiep = commons.getParameterFromRequest(req, "mtdiep").replaceAll("\\s", "");
-//		if(!"".equals(mtdiep)) {
-//			dto.setErrorCode(1);
-//			dto.getErrorMessages().add("Vui lòng nhập mã thông điệp.");
-//		}
-//		
-//		
-//		return dto;
-//	}
-	
-	@RequestMapping(value = "/search",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
-	public BaseDTO execSearch(Locale locale, HttpServletRequest req, HttpSession session) throws Exception{
+	public BaseDTO execSearch(Locale locale, HttpServletRequest req, HttpSession session) throws Exception {
 		JsonGridDTO grid = new JsonGridDTO();
-		
-//		BaseDTO baseDTO = checkDataSearch(locale, req, session);
-//		if(0 != baseDTO.getErrorCode()) {
-//			grid.setErrorCode(baseDTO.getErrorCode());
-//			grid.setErrorMessages(baseDTO.getErrorMessages());
-//			grid.setResponseData(Constants.MAP_ERROR.get(999));
-//			return grid;
-//		}
+
 		BaseDTO baseDTO = new BaseDTO(req);
 		mtdiep = commons.getParameterFromRequest(req, "mtdiep").replaceAll("\\s", "");
-		
-		if(!"".equals(mtdiep)) {
+
+		if (!"".equals(mtdiep)) {
 			baseDTO.setErrorCode(1);
 			baseDTO.getErrorMessages().add("Vui lòng nhập mã thông điệp.");
 		}
-		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();		
-		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+
 		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.SEARCH);
-		
+
 		HashMap<String, Object> hData = new HashMap<>();
 		hData.put("MTDiep", mtdiep);
 		msg.setObjData(hData);
-		
+
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/tthdon/check", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			MsgPage page = rsp.getMsgPage();
 			grid.setTotal(page.getTotalRows());
-			
+
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 			JsonNode rows = null;
 			HashMap<String, String> hItem = null;
-			if(!jsonData.at("/rows").isMissingNode()) {
+			if (!jsonData.at("/rows").isMissingNode()) {
 				rows = jsonData.at("/rows");
-				for(JsonNode row: rows) {
+				for (JsonNode row : rows) {
 					hItem = new HashMap<String, String>();
-					
-					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
-					hItem.put("EInvoiceNumber", 
-							"".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))? "":
-							commons.formatNumberBillInvoice(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon")))
-						);
 
-						hItem.put("NLap", 
-							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-						);
+					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
+					hItem.put("EInvoiceNumber",
+							"".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon"))) 
+							? "" : commons.formatNumberBillInvoice(
+											commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/SHDon"))));
+					hItem.put("NLap",
+							commons.convertLocalDateTimeToString(
+									commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()),
+									Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					hItem.put("SignStatusCode", commons.getTextJsonNode(row.at("/SignStatusCode")));
-					hItem.put("SignStatusDesc", Constants.MAP_EINVOICE_SIGN_STATUS.get(commons.getTextJsonNode(row.at("/SignStatusCode"))));
+					hItem.put("SignStatusDesc",
+							Constants.MAP_EINVOICE_SIGN_STATUS.get(commons.getTextJsonNode(row.at("/SignStatusCode"))));
 					hItem.put("EInvoiceStatus", commons.getTextJsonNode(row.at("/EInvoiceStatus")));
 					String status = commons.getTextJsonNode(row.at("/EInvoiceStatus"));
 					String sign = commons.getTextJsonNode(row.at("/SignStatusCode"));
-					if(status.equals("PENDING") && sign.equals("SIGNED")) {
+					if (status.equals("PENDING") && sign.equals("SIGNED")) {
 						hItem.put("StatusDesc", "Chờ gửi CQT");
-						
+
+					} else {
+						hItem.put("StatusDesc",
+								Constants.MAP_EINVOICE_STATUS.get(commons.getTextJsonNode(row.at("/EInvoiceStatus"))));
 					}
-					else {
-						hItem.put("StatusDesc", Constants.MAP_EINVOICE_STATUS.get(commons.getTextJsonNode(row.at("/EInvoiceStatus"))));
-						
-					}
-					hItem.put("MauSoHD", 
-							commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHMSHDon")) + commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHHDon"))
-						);
+					hItem.put("MauSoHD", commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHMSHDon"))
+							+ commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/KHHDon")));
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));
 					hItem.put("CompanyName", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
 					hItem.put("MTDiep", commons.getTextJsonNode(row.at("/MTDiep")));
@@ -193,119 +175,93 @@ public class TTHDonController extends AbstractController{
 					grid.getRows().add(hItem);
 				}
 			}
-			
-		}else {
+
+		} else {
 			grid = new JsonGridDTO();
 			grid.setErrorCode(rspStatus.getErrorCode());
 			grid.setResponseData(rspStatus.getErrorDesc());
 		}
-		
+
 		return grid;
 	}
-	
-	
-//	@RequestMapping(value = "/check_search", method = {RequestMethod.POST, RequestMethod.GET})
-//	public String check_search(Locale locale, Principal principal, HttpServletRequest req) throws Exception{	
-//		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-//		BaseDTO baseDTO = new BaseDTO(req);
-//		LoadParameter(cup, locale, req, "");
-//		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.SEARCH);
-//		HashMap<String, Object> hData = new HashMap<>();
-//		mtdiep = commons.getParameterFromRequest(req, "mtdiep").replaceAll("\\s", "");
-//		hData.put("MTDiep", mtdiep);
-//		msg.setObjData(hData);
-//		
-//		JSONRoot root = new JSONRoot(msg);
-//		MsgRsp rsp = restAPI.callAPINormal("/tthdon/check", cup.getLoginRes().getToken(), HttpMethod.POST, root);
-//		MspResponseStatus rspStatus = rsp.getResponseStatus();
-//		if(rspStatus.getErrorCode() == 0) {
-//		req.setAttribute("LHDon", "123");
-//		}
-//		dto.setErrorCode(0);
-//		return "user/tthdon";
-//	}
-	
-	public BaseDTO checkDataToSave(HttpServletRequest req, HttpSession session
-			, String transaction, CurrentUserProfile cup) throws Exception{
+
+	public BaseDTO checkDataToSave(HttpServletRequest req, HttpSession session, String transaction,
+			CurrentUserProfile cup) throws Exception {
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);
-	
-	
+
 		mtdiep = commons.getParameterFromRequest(req, "mtdiep").trim().replaceAll("\\s+", "");
 		tthdon = commons.getParameterFromRequest(req, "tthdon").trim().replaceAll("\\s+", "");
-	//	lhd = commons.getParameterFromRequest(req, "lhd").trim().replaceAll("\\s+", "");
-		
-		if("".equals(mtdiep)) {
+
+		if ("".equals(mtdiep)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Vui lòng nhập mã thông điệp.");
 		}
-		if("".equals(tthdon)) {
+		if ("".equals(tthdon)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Vui lòng chọn trạng thái hóa đơn.");
 		}
 		return dto;
 	}
-	
-	
-	@RequestMapping(value = "/check-data-save",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+
+	@RequestMapping(value = "/check-data-save", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
-	public BaseDTO execCheckDataToSave(Locale locale, HttpServletRequest req, HttpSession session
-			, @RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
+	public BaseDTO execCheckDataToSave(Locale locale, HttpServletRequest req, HttpSession session,
+			@RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
 		String token = "";
 		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
 			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
 			session.removeAttribute(token);
 		}
 		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
-		
+
 		BaseDTO dto = new BaseDTO();
-		String messageConfirm =  "Bạn có muốn thay đổi trạng thái hóa đơn này không";
+		String messageConfirm = "Bạn có muốn thay đổi trạng thái hóa đơn này không";
 		switch (transaction) {
 		case "tthdon":
-			messageConfirm =  "Bạn có muốn thay đổi trạng thái hóa đơn này không";
+			messageConfirm = "Bạn có muốn thay đổi trạng thái hóa đơn này không";
 			break;
-			
+
 		default:
 			dto = new BaseDTO();
 			dto.setErrorCode(998);
 			dto.setResponseData("Không tìm thấy chức năng giao dịch.");
 			return dto;
 		}
-		
+
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		dto = checkDataToSave(req, session, transaction, cup);
-		if(0 != dto.getErrorCode()) {
+		if (0 != dto.getErrorCode()) {
 			dto.setErrorCode(999);
 			dto.setResponseData(Constants.MAP_ERROR.get(999));
 			return dto;
-		}		
+		}
 		token = commons.csRandomAlphaNumbericString(30);
 		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
-		
+
 		HashMap<String, String> hInfo = new HashMap<String, String>();
 		hInfo.put("CONFIRM", messageConfirm);
 		hInfo.put("TOKEN", token);
 		hInfo.put("MTDiep", mtdiep);
 		hInfo.put("TTHDon", tthdon);
-		//hInfo.put("LoaiHD", lhd);
 		dto.setResponseData(hInfo);
 		dto.setErrorCode(0);
 		return dto;
-	
+
 	}
-	
-	@RequestMapping(value = "/save-data",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+
+	@RequestMapping(value = "/save-data", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
-	public BaseDTO execSaveData(Locale locale,HttpServletRequest req, HttpSession session
-			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
-			, @RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction) throws Exception{
+	public BaseDTO execSaveData(Locale locale, HttpServletRequest req, HttpSession session,
+			@RequestAttribute(name = "transaction", value = "", required = false) String transaction,
+			@RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction)
+			throws Exception {
 		BaseDTO dtoRes = new BaseDTO();
-		
+
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-		String []split_ = tokenTransaction.split(",");
+		String[] split_ = tokenTransaction.split(",");
 		String token_ = split_[0];
-//		String mtdiep_ = split_[1];
-		/*CHECK TOKEN*/
+		/* CHECK TOKEN */
 		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
 				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
 		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
@@ -314,33 +270,24 @@ public class TTHDonController extends AbstractController{
 			dtoRes.setResponseData("Token giao dịch không hợp lệ.");
 			return dtoRes;
 		}
-		/*END: CHECK TOKEN*/
-		
-		String actionCode = Constants.MSG_ACTION_CODE.CREATED;
-		switch (transaction) {
-		case "tthdon": actionCode = Constants.MSG_ACTION_CODE.CREATED; break;		
-		default:
-			dtoRes = new BaseDTO();
-			dtoRes.setErrorCode(998);
-			dtoRes.setResponseData(Constants.MAP_ERROR.get(998));
-			return dtoRes;
-		}
-		
+		/* END: CHECK TOKEN */
+
+
 		dtoRes = new BaseDTO(req);
-		Msg msg = dtoRes.createMsg(cup, actionCode);
+		Msg msg = dtoRes.createMsgPass();
 		HashMap<String, Object> hData = new HashMap<>();
-		dtoRes = checkDataToSave(req, session, transaction, cup);		
+		dtoRes = checkDataToSave(req, session, transaction, cup);
 		hData.put("MTDiep", mtdiep);
 		hData.put("TTHDon", tthdon);
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/tthdon/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			dtoRes.setErrorCode(0);
-			dtoRes.setResponseData("Thay đổi trạng thái thành công");					
-				
-		}else {
+			dtoRes.setResponseData("Thay đổi trạng thái thành công");
+
+		} else {
 			dtoRes.setErrorCode(rspStatus.getErrorCode());
 			dtoRes.setResponseData(rspStatus.getErrorDesc());
 		}

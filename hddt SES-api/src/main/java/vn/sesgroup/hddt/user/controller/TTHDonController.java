@@ -25,33 +25,22 @@ public class TTHDonController {
 	Commons commons = new Commons();
 	@Autowired private TTHDonDAO dao;
 	
-	@RequestMapping(value = "/crud", method = RequestMethod.POST,
-			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
-			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<?> crud(@RequestBody JSONRoot jsonRoot) throws Exception{
+	@RequestMapping(value = "/crud", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> crud(@RequestBody JSONRoot jsonRoot) throws Exception {
 		MsgRsp rsp = dao.crud(jsonRoot);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-		return ResponseEntity.ok()
-				.headers(headers)
-				.cacheControl(CacheControl.noCache())
-				.body(rsp);
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
 	}
-	
-	
-	@RequestMapping(value = "/check", method = RequestMethod.POST,
-	consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
-	produces = {MediaType.APPLICATION_JSON_VALUE})
-public ResponseEntity<?> check(@RequestBody JSONRoot jsonRoot) throws Exception{
-MsgRsp rsp = dao.check(jsonRoot);
-HttpHeaders headers = new HttpHeaders();
-headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-return ResponseEntity.ok()
-		.headers(headers)
-		.cacheControl(CacheControl.noCache())
-		.body(rsp);
-}
 
-	
-}
+	@RequestMapping(value = "/check", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<?> check(@RequestBody JSONRoot jsonRoot) throws Exception {
+		MsgRsp rsp = dao.check(jsonRoot);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache()).body(rsp);
+	}
 
+}
