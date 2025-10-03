@@ -40,7 +40,6 @@ public class AdminController {
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
 	}
-
 	
 	@RequestMapping(value = "/detail/{_id}", method = RequestMethod.POST,
 			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
@@ -56,8 +55,4 @@ public class AdminController {
 				.cacheControl(CacheControl.noCache())
 				.body(rsp);
 	}
-	
-	///
-	
-
 }

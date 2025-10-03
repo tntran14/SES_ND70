@@ -934,6 +934,13 @@ public class EInvoiceCRUDController extends AbstractController{
 				return dto;
 			}
 			
+			if(!commons.isValidQuantity(commons.getTextJsonNode(jsonNode.at("/Quantity")), 21, 6)) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại định dạng số lượng hàng hóa STT: " + count
+						+ ".</br> Số lượng hàng hóa có 21 chữ số tối đa (bao gồm cả phần nguyên và phần thập phân), 6 chữ số tối đa phần thập phân.");
+				return dto;
+			}
+			
 			if ("5".equals(commons.getTextJsonNode(jsonNode.at("/Feature")))) {
 				String lhddt = commons.getTextJsonNode(jsonNode.at("/LHHDTrung"));
 				if ("1".equals(lhddt) && (commons.getTextJsonNode(jsonNode.at("/SKhung")).trim().equals("") || commons.getTextJsonNode(jsonNode.at("/SMay")).trim().equals(""))) {
@@ -1090,8 +1097,6 @@ public class EInvoiceCRUDController extends AbstractController{
 		hData.put("NgayLap", ngayLap);
 		hData.put("HinhThucThanhToan", hinhThucThanhToan);
 		hData.put("HinhThucThanhToanText", hinhThucThanhToanText);
-//		hData.put("MaCuaHang", maCuaHang);
-//		hData.put("TenCuaHang", tenCuaHang);
 		hData.put("KhMst", khMst);
 		hData.put("KhMKHang", khMKHang);
 		hData.put("KhHoTenNguoiMua", khHoTenNguoiMua);

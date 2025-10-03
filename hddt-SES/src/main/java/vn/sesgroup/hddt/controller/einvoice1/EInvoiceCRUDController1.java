@@ -538,28 +538,7 @@ public class EInvoiceCRUDController1 extends AbstractController{
 			if("".equals(tienBangChu)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Tiền bằng chữ không được rỗng.");
-			}
-//			if(!khMst.equals("")) {
-//				if(khMst.length() < 10 || khMst.length() > 14 || khMst.length() == 11 || khMst.length() ==12 || khMst.length() ==13) {
-//					dto.setErrorCode(1);
-//					dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//				}else {					
-//					if(khMst.length() == 14) {
-//						if(!khMst.contains("-")){
-//						dto.setErrorCode(1);
-//						dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//						}else {
-//							String split[] = khMst.split("-");
-//							if(split[1].length() != 3) {
-//								dto.setErrorCode(1);
-//								dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//							}
-//							
-//						}
-//					}
-//				}
-//			}
-			
+			}			
 			break;
 
 		default:
@@ -633,18 +612,19 @@ public class EInvoiceCRUDController1 extends AbstractController{
 				check = false;
 				break;
 			}
-//			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
-//				dto.setErrorCode(999);
-//				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
-//						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu: , . : ; / ( ) [ ] { } -");
-//				return dto;
-//			}
 			count++;
 			
 			if(commons.getTextJsonNode(jsonNode.at("/ProductName")).length() > 500) {
 				dto.setErrorCode(999);
 				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
 						+ ".</br> Tên hàng hóa không vượt quá 500 ký tự.");
+				return dto;
+			}
+			
+			if(!commons.isValidQuantity(commons.getTextJsonNode(jsonNode.at("/Quantity")), 21, 6)) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại định dạng số lượng hàng hóa STT: " + count
+						+ ".</br> Số lượng hàng hóa có 21 chữ số tối đa (bao gồm cả phần nguyên và phần thập phân), 6 chữ số tối đa phần thập phân.");
 				return dto;
 			}
 		}

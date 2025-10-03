@@ -740,17 +740,20 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 				check = false;
 				break;
 			}
-//			if (commons.containsSpecialCharacter(commons.getTextJsonNode(jsonNode.at("/ProductName")))) {
-//				dto.setErrorCode(999);
-//				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
-//						+ ". Chỉ cho phép: chữ cái, số, khoảng trắng và dấu câu: , . : ; / ( ) [ ] { } -");
-//				return dto;
-//			}
+			
 			count++;
+			
 			if(commons.getTextJsonNode(jsonNode.at("/ProductName")).length() > 500) {
 				dto.setErrorCode(999);
 				dto.setResponseData("Vui lòng kiểm tra lại tên hàng hóa STT: " + count
 						+ ".</br> Tên hàng hóa không vượt quá 500 ký tự.");
+				return dto;
+			}
+			
+			if(!commons.isValidQuantity(commons.getTextJsonNode(jsonNode.at("/Quantity")), 21, 6)) {
+				dto.setErrorCode(999);
+				dto.setResponseData("Vui lòng kiểm tra lại định dạng số lượng hàng hóa STT: " + count
+						+ ".</br> Số lượng hàng hóa có 21 chữ số tối đa (bao gồm cả phần nguyên và phần thập phân), 6 chữ số tối đa phần thập phân.");
 				return dto;
 			}
 		}

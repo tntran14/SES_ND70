@@ -395,6 +395,14 @@ public class Commons {
 		return numberFormat.format(billNumber);
 	}
 	
+	public boolean isValidQuantity(String quantity, int maxOfDigits, int maxOfDecimal) {
+		String regex = "^-?\\d+(\\.\\d{1," + maxOfDecimal + "})?$";
+		if (quantity.replaceAll(",", "").matches(regex) && quantity.replaceAll("[.,-]", "").length() <= maxOfDigits) {
+			return true;
+		}
+		return false;
+	}
+	
 	public String formatNumberBillInvoice(String billNumber) {
 		return formatNumberBillInvoice(ToNumber(billNumber));
 	}
