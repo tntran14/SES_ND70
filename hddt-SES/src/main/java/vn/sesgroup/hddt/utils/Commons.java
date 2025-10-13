@@ -397,6 +397,7 @@ public class Commons {
 	
 	public boolean isValidQuantity(String quantity, int maxOfDigits, int maxOfDecimal) {
 		String regex = "^-?\\d+(\\.\\d{1," + maxOfDecimal + "})?$";
+		if ("".equals(quantity)) return true;
 		if (quantity.replaceAll(",", "").matches(regex) && quantity.replaceAll("[.,-]", "").length() <= maxOfDigits) {
 			return true;
 		}
