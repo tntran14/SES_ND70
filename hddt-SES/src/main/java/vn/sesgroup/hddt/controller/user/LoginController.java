@@ -214,67 +214,7 @@ public class LoginController extends AbstractController{
 						sbRights.append(s).append("|");	
 					}					
 				}
-//				sbRights.append("einvoice-history|einvoice-change|einvoice-deleteAll|einvoice-send-cqt|einvoice-send-mail|einvoice-send-emailauto|viewmail|einvoice_check_mst|einvoice_save_nmua|einvoice-sendAll-emailauto|");
-//	        	sbRights.append("einvoice1-history|einvoice1-change|einvoice1-send-emailauto|einvoice1-send-cqt|einvoice1-send-mail|einvoice1_check_mst|einvoice1_save_nmua|");
-//	        	sbRights.append("agent-history|agent-change|agent-send-emailauto|agent-send-cqt|agent-send-mail|agent_check_mst|agent_save_nmua|agent-deleteAll|");
-//	        	sbRights.append("export-history|export-change|export-send-emailauto|export-send-cqt|export-send-mail|export_save_nmua|export-deleteAll|");       	
-//	        	sbRights.append("issu-del|issu-detail|issu-send-cqt|issu-send-mail|");
-//	        	sbRights.append("issu-contract-delete|issu-contract-active|issu-contract-deactive|");
-//
-//	        	sbRights.append("hdsduser-detail|");
-//	        	sbRights.append("mauhd-del|mauhd-active|mauhd-deactive|");
-//	        	sbRights.append("mstncn-del|");
-//	        	
-//	        	sbRights.append("tbhdssot-del|");        	
-//	        	sbRights.append("tbhdssot_mtt-del|");
-//	        	
-//	        	sbRights.append("ql-footerweb-del|ql-footerweb-active|ql-footerweb-deactive|");
-//				
-//	        	sbRights.append("ql-tinh-del|");
-//	        	sbRights.append("ql-tinweb-del|ql-tinweb-active|ql-tinweb-deactive|");
-//	        	sbRights.append("ql-ttweb-del|");
-//	        	sbRights.append("ql-cqt-del|");
-//	        	sbRights.append("ql-mstk-del|");
-//	        	sbRights.append("ql-httk-del|");
-//	        	sbRights.append("ql-lhd-del|");
-//	        	
-//	        	sbRights.append("tktncn-excel|tktncn-pdf|");
-//	        	sbRights.append("hdsd-del|hdsd-delete|hdsd-active|hdsd-deactive|");
-//	        	sbRights.append("qly-mauhd-del|qly-mauhd-active|qly-mauhd-deactive|");  
-//	        	sbRights.append("qly-mauct|qly-mauct-cre|qly-mauct-edit|qly-mauct-del|qly-mauct-detail|qly-mauct-active|qly-mauct-deactive|");  
-//	    	
-//	        	sbRights.append("config-email-mailjet|");
-//	        	sbRights.append("tbhdssot-history|");
-//	        	sbRights.append("tbhdssot-send-cqt|tbhdssot-send-mail|tbhdssot_mtt-del|");
-//	        	
-//	         	sbRights.append("tbhdssot_mtt-history|");
-//	        	sbRights.append("tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
-//	        	
-//	        	sbRights.append("changeprofile|viewprofile|");   
-//	        	sbRights.append("changepass|");
-//	        	
-//	        	sbRights.append("changepassAdmin|");
-//	 	        
-//	        	sbRights.append("qly-phoihd-active|qly-phoihd-deactive|qly-phoihd-del|qly-phoihd-view|");
-//	        	
-//	        	sbRights.append("color-del|");
-//	         	sbRights.append("session_key_check|session_key_del|");       	      	
-//	         	
-//	           	sbRights.append("mauhd_admin-edit|mauhd_admin-check|");
-//	           	
-//	         	sbRights.append("dm-lhd|dm-lhd-cre|dm-lhd-detail|dm-lhd-edit|dm-lhd-del|");
-//	         	
-//	         	sbRights.append("mauso-expires-active|mauso-expires-deactive|");
-//	         	
-//	        	sbRights.append("issu-contract-expires-active|issu-contract-expires-deactive|");
-//	        	
-//	        	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
-//	        	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-send-cqtAll|einvoice_mtt-sendAll-email-auto|");
-
-			}else {
-        	
-        	
-        	
+			} else {
         	sbRights.append("einvoices|einvoice-sendAll-cqt|einvoice-history|einvoice-change|einvoice-signAll|einvoice-send-cqtAll|einvoice-cre|einvoice-edit|einvoice-del|einvoice-deleteAll|einvoice-import|einvoice-detail|einvoice-signAll|einvoice-pdfAll|einvoice-xml|einvoice-sign|einvoice-copy|einvoice-send-cqt|einvoice-send-mail|einvoice-send-emailauto|einvoice-import-auto|einvoice-import-misa|viewmail|einvoice_check_mst|einvoice_save_nmua|einvoice-pdfCD|einvoice-cre-dc-tt|einvoice-refreshAll|einvoice-sendAll-emailauto|einvoice-send-cqt|einvoice-sendMailAll|");
         	sbRights.append("einvoices1|einvoice1-history|einvoice1-change|einvoice1-send-emailauto|einvoice1-cre|einvoice1-edit|einvoice1-copy|einvoice1-del|einvoice1-detail|einvoice1-sign|einvoice1-send-cqt|einvoice1-send-mail|einvoice1-import-auto|einvoice1_check_mst|einvoice1_save_nmua|einvoice1-pdfAll|einvoice1-xml|einvoice1-cre-dc-tt|");
         	sbRights.append("agent|agent-history|agent-change|agent-send-emailauto|agent-cre|agent-copy|agent-edit|agent-del|agent-detail|agent-sign|agent-send-cqt|agent-send-mail|agent-import|agent_check_mst|agent_save_nmua|agent_online_mst|agent-cre-dc-tt|agent-deleteAll|agent-import|");
@@ -288,7 +228,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("cttncn-creV1|cttncn-editV1|cttncn-delV1|cttncn-detailV1|cttncn-signV1|cttncn-importV1|cttncn-signAllV1|cttncn-xoaboV1|cttncn-xmlV1|cttncn-send-mailV1|cttncn-pdfAllV1|cttncn-historyV1|cttncn-cre-dc-tt|");
         	sbRights.append("hdsduser|hdsduser-detail|");
         	sbRights.append("qlnvtncn|qlnvtncn-cre|qlnvtncn-edit|qlnvtncn-del|qlnvtncn-detail|");
-        		sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");
+        	sbRights.append("ql-link|ql-link-cre|ql-link-edit|ql-link-del|ql-link-detail|ql-link-active|ql-link-deactive|");
         	sbRights.append("ql-footerweb|ql-footerweb-cre|ql-footerweb-edit|ql-footerweb-del|ql-footerweb-detail|ql-footerweb-active|ql-footerweb-deactive|");
         	sbRights.append("ql-notification|ql-notification-cre|ql-notification-edit|ql-notification-del|ql-notification-detail|ql-notification-active|ql-notification-deactive|");
         	sbRights.append("ql-tinh|ql-tinh-cre|ql-tinh-edit|ql-tinh-del|ql-tinh-detail|");
@@ -298,7 +238,6 @@ public class LoginController extends AbstractController{
         	sbRights.append("ql-mstk|ql-mstk-cre|ql-mstk-edit|ql-mstk-del|ql-mstk-detail|");
         	sbRights.append("ql-httk|ql-httk-cre|ql-httk-edit|ql-httk-del|ql-httk-detail|");
         	sbRights.append("ql-lhd|ql-lhd-cre|ql-lhd-edit|ql-lhd-del|ql-lhd-detail|");
-        	
         	sbRights.append("tktncn|tktncn-excel|tktncn-pdf|");
         	sbRights.append("mauhd|mauhd-cre|mauhd-edit|mauhd-del|mauhd-detail|mauhd-active|mauhd-deactive|");
         	sbRights.append("hdsd|hdsd-cre|hdsd-edit|hdsd-del|hdsd-detail|hdsd-delete|hdsd|hdsd-active|hdsd-deactive|");
@@ -321,7 +260,6 @@ public class LoginController extends AbstractController{
         	sbRights.append("lbbdctt|lbbdctt-cre|lbbdctt-detail|lbbdctt-edit|lbbdctt-del|lbbdctt-sign|lbbdctt-sendMail|");
         	sbRights.append("tbhdssot-send-cqt|tbhdssot-del|tbhdssot-send-mail|");
         	sbRights.append("cttncnss|cttncnss-history|cttncnss-cre|cttncnss-detail|cttncnss-edit|cttncnss-del|cttncnss-sign|cttncnss-send-cqt|cttncnss-refresh|cttncnss-send-mail|");
-        	
         	sbRights.append("introduce|");
         	sbRights.append("support|");
         	sbRights.append("config-mailjet|");
@@ -339,67 +277,37 @@ public class LoginController extends AbstractController{
         	sbRights.append("roleRightManager|RolesRightManageCreate|RolesRightManageDetail|RolesRightManageEdit|RolesRightManageActive|RolesRightManageDeActive|");
          	sbRights.append("roleManager|RolesManageCreate|RolesManageDetail|RolesManageEdit|RolesManageActive|RolesManageDeActive|");          	
          	sbRights.append("createUser|createUserCre|createUserDetail|createUserEdit|createUserActive|createUserDeActive|createUserResetPassword|createUserDelete|");
-			
          	sbRights.append("support_admin|support-cre|support-detail|support-edit|support-del|support-active|support-deactive|");
-         	
            	sbRights.append("mauhd_admin|mauhd_admin-edit|mauhd_admin-check|");
-         	
-        	sbRights.append("einvoice_mtt|einvoice_mtt-cre|einvoice_mtt-detail|einvoice_mtt-edit|einvoice_mtt-sign|einvoice_mtt-copy|einvoice_mtt-cre-dc-tt|einvoice_mtt-import-auto|einvoice_mtt-signAll|einvoice_mtt-xml|");
-           
-        		
+         	sbRights.append("einvoice_mtt|einvoice_mtt-cre|einvoice_mtt-detail|einvoice_mtt-edit|einvoice_mtt-sign|einvoice_mtt-copy|einvoice_mtt-cre-dc-tt|einvoice_mtt-import-auto|einvoice_mtt-signAll|einvoice_mtt-xml|");
          	sbRights.append("dm-lhd|dm-lhd-cre|dm-lhd-detail|dm-lhd-edit|dm-lhd-del|");
-         	
-         	
-        	sbRights.append("tbhdssot_mtt|tbhdssot_mtt-history|tbhdssot_mtt-cre|tbhdssot_mtt-detail|tbhdssot_mtt-edit|tbhdssot_mtt-del|tbhdssot_mtt-sign|tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
-			
+         	sbRights.append("tbhdssot_mtt|tbhdssot_mtt-history|tbhdssot_mtt-cre|tbhdssot_mtt-detail|tbhdssot_mtt-edit|tbhdssot_mtt-del|tbhdssot_mtt-sign|tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
         	sbRights.append("tkdsmtt|tkdsmtt-export-excel-detail|tkdsmtt-export-excel-general|");
-        	
         	sbRights.append("issu-contract-expires|issu-contract-expires-export|issu-contract-expires-active|issu-contract-expires-deactive|");
-        	
-        	
         	sbRights.append("roleManagerAdmin|RolesManageAdminCreate|RolesManageAdminDetail|RolesManageAdminEdit|RolesManageAdminActive|RolesManageAdminDeActive|");          	
          	sbRights.append("createUserAdmin|createUserAdminCre|createUserAdminDetail|createUserAdminEdit|createUserAdminActive|createUserAdminDeActive|createUserAdminResetPassword|createUserAdminDelete|");
-			
           	sbRights.append("changeprofile|viewprofile|");
         	sbRights.append("changepass|");
-        	
         	sbRights.append("changepassAdmin|");
-        	
         	sbRights.append("ca_invoice|ca_invoice-export|");
-        	
         	sbRights.append("mauhd_update_admin|mauhd_update_admin-edit|mauhd_update_admin-check|mauhd_update_admin-export|");
-		
          	sbRights.append("mauso-expires|mauso-expires-export|mauso-expires-active|mauso-expires-deactive|");
-         	
          	sbRights.append("tax-code-search-statistics|tax-code-search-statistics-export|");
          	sbRights.append("client-signature-info|client-signature-info-export|");
            	sbRights.append("khxhd|khxhd-export|");
-           	
            	sbRights.append("ql-user-check|qlUserCheckAdminCre|qlUserCheckAdminDetail|qlUserCheckAdminEdit|qlUserCheckAdminActive|qlUserCheckAdminDeActive|qlUserCheckAdminResetPassword|qlUserCheckAdminDelete|");
-		
-			
            	sbRights.append("misaSME2015|misaSME2015-export-excel|");
-           	
            	sbRights.append("tax_invoice|tax_invoice-cre|tax_invoice-detail|tax_invoice-edit|tax_invoice-del|tax_invoice-active|tax_invoice-deActive|tax_invoice-default|");
-           	
         	sbRights.append("email-send-hd|email-send-hd-export|");
-			
-           	sbRights.append("sl-access-users|");
-           	           	
+           	sbRights.append("sl-access-users|");       	
            	sbRights.append("tbhdssot_mtt|tbhdssot_mtt-history|tbhdssot_mtt-cre|tbhdssot_mtt-detail|tbhdssot_mtt-edit|tbhdssot_mtt-del|tbhdssot_mtt-sign|tbhdssot_mtt-send-cqt|tbhdssot_mtt-send-mail|");
-			
-        	sbRights.append("tkdsmtt|tkdsmtt-export-excel-detail|tkdsmtt-export-excel-general|");
-        	      	
+        	sbRights.append("tkdsmtt|tkdsmtt-export-excel-detail|tkdsmtt-export-excel-general|");   	
         	sbRights.append("einvoice_mtt-del|einvoice_mtt-send-cqt|einvoice_mtt-history|einvoice_mtt-publish|einvoice_mtt_list|einvoice_mtt_list-send|einvoice_mtt_list-sendAll|einvoice_mtt-send-mail|");        	
         	sbRights.append("einvoice_mtt_cqt|einvoice_mtt_cqt-detail|einvoice_mtt-send-emailauto|einvoice_mtt-send-cqt|einvoice_mtt-sendAll-email-auto|einvoice_mtt-send-cqtAll|");
-
           	sbRights.append("statistic-report|statistic-report-export|statistic-report-backup|");
-          	
-        	sbRights.append("tbhdssot_tbn|tbhdssot_tbn-history|tbhdssot_tbn-cre|tbhdssot_tbn-detail|tbhdssot_tbn-edit|tbhdssot_tbn-del|tbhdssot_tbn-sign|tbhdssot_tbn-send-cqt|tbhdssot_tbn-send-mail|");
-
+          	sbRights.append("tbhdssot_tbn|tbhdssot_tbn-history|tbhdssot_tbn-cre|tbhdssot_tbn-detail|tbhdssot_tbn-edit|tbhdssot_tbn-del|tbhdssot_tbn-sign|tbhdssot_tbn-send-cqt|tbhdssot_tbn-send-mail|");
           	sbRights.append("param-admin|");
         	sbRights.append("qlnvtncn-import|dmproduct-copy|einvoice-pdfAll1|cttncn-xmlV1|cttncn-importV1|cttncn-pdfAllV1|cttncn-send-mail-allV1|cttncn-signAllV1|cttncn-refreshAllFromCQTV1|cttncn-sendAllToCQTV1|");
-           	
 			}
         	cup.setUsername(userName);
         	cup.setPassword(password);
@@ -419,12 +327,6 @@ public class LoginController extends AbstractController{
             session.setMaxInactiveInterval(60 * 60 * 2);
 			
 			dtoRes = new BaseDTO(0, Constants.MAP_ERROR.get(0));
-			
-//			dem+=1;			
-//			System.out.println("So luong nguoi dung truy cap:" +  dem);			
-//			int activeUsers = SessionListener.getActiveSessions();
-//			 System.out.println("So luong nguoi dung truy cap: " + activeUsers);
-			
         }else {
         	dtoRes = new BaseDTO(res.getStatusCode(), res.getStatusText());
         }

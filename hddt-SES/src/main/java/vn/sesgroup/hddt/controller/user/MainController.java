@@ -80,7 +80,7 @@ public class MainController extends AbstractController {
 			
 			if (admin == issu.isAdmin()) {
 			/* GET LIST PARAM ADMIN */
-			
+			System.out.println("ADMIN-ADMIN: " + issu.getUserName());
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
 			hInput = new HashMap<>();
@@ -223,7 +223,6 @@ public class MainController extends AbstractController {
 			
 			return "/admin/admin";
 		} else {
-
 			root = new JSONRoot();
 			rsp = restAPI.callAPINormal("/issu/mskh/" + issu.getIssuerId(), cup.getLoginRes().getToken(),
 					HttpMethod.POST, root);
