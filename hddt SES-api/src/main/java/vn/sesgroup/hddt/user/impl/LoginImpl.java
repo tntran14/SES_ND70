@@ -291,7 +291,7 @@ public class LoginImpl extends AbstractDAO implements LoginDAO{
 		String taxCodeOfIssuer = docTmp.getEmbedded(Arrays.asList("IssuerInfo", "TaxCode"), "");
 		String userNameOfUser = docTmp.get("UserName", "");	
 		
-		if (!userNameOfUser.equals(taxCodeOfIssuer)) {
+		if (!userNameOfUser.equals(taxCodeOfIssuer) && !userNameOfUser.contains("ADMIN")) {
 			userNameOfUser = taxCodeOfIssuer;
 		}
 		res.setIssuerId(docTmp.get("IssuerId", ""));

@@ -36,8 +36,9 @@ public class MainController extends AbstractController {
 	@Autowired
 	RestAPIUtility restAPI;
 
-	@RequestMapping(value = { "/main", "/main/{transaction}/{method}",
-			"/main/{transaction}/{method}/{param1}" }, method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(
+			value = { "/main", "/main/{transaction}/{method}", "/main/{transaction}/{method}/{param1}" }, 
+			method = { RequestMethod.GET, RequestMethod.POST })
 	public String main(@PathVariable(name = "transaction", required = false, value = "") String transaction,
 			@PathVariable(name = "method", required = false, value = "") String method,
 			@PathVariable(name = "param1", required = false, value = "") String param1, HttpServletRequest request)
@@ -50,43 +51,42 @@ public class MainController extends AbstractController {
 		if (null == param1)
 			param1 = "";
 
+		
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		boolean admin = true;
 		LoginRes issu = cup.getLoginRes();
 		String CompanyName = issu.getIssuerInfo().getName();
 		String UserName = issu.getUserName();
-			
-			JSONRoot root = new JSONRoot();
-			
-			BaseDTO dtoRes = new BaseDTO();
-			Msg msg = dtoRes.createMsgPass();
-			HashMap<String, String> hInput = new HashMap<>();
-			msg.setObjData(hInput);
-			root = new JSONRoot(msg);
-			MsgRsp rsp = restAPI.callAPIPass("/forgotpass/dl", HttpMethod.POST, root);
-			MspResponseStatus rspStatus = rsp.getResponseStatus();
-			JsonNode rows = null;
-			if (rspStatus.getErrorCode() == 0) {
-				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-				if (!jsonData.at("/rows").isMissingNode()) {
-					rows = jsonData.at("/rows");
-					for (JsonNode row : rows) {
-						request.setAttribute("LOGO", commons.getTextJsonNode(row.at("/LOGO")));
-						request.setAttribute("PHONE", commons.getTextJsonNode(row.at("/PHONE")));
-						request.setAttribute("EMAIL", commons.getTextJsonNode(row.at("/EMAIL")));
-					}
+		JSONRoot root = new JSONRoot();
+
+		BaseDTO dtoRes = new BaseDTO();
+		Msg msg = dtoRes.createMsgPass();
+		HashMap<String, String> hInput = new HashMap<>();
+		msg.setObjData(hInput);
+		root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPIPass("/forgotpass/dl", HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		JsonNode rows = null;
+		if (rspStatus.getErrorCode() == 0) {
+			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+			if (!jsonData.at("/rows").isMissingNode()) {
+				rows = jsonData.at("/rows");
+				for (JsonNode row : rows) {
+					request.setAttribute("LOGO", commons.getTextJsonNode(row.at("/LOGO")));
+					request.setAttribute("PHONE", commons.getTextJsonNode(row.at("/PHONE")));
+					request.setAttribute("EMAIL", commons.getTextJsonNode(row.at("/EMAIL")));
 				}
 			}
-			
-			if (admin == issu.isAdmin()) {
+		}
+
+		if (admin == issu.isAdmin()) {
 			/* GET LIST PARAM ADMIN */
-			System.out.println("ADMIN-ADMIN: " + issu.getUserName());
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
 			hInput = new HashMap<>();
-			msg.setObjData(hInput);		
+			msg.setObjData(hInput);
 			root = new JSONRoot(msg);
-			
+
 			String MS_EXPIRES = "30";
 			String CKS_EXPIRES = "3";
 			String NUMBER_OF_DAY_CONTRACT = "30";
@@ -96,9 +96,9 @@ public class MainController extends AbstractController {
 			rsp = restAPI.callAPINormal("/param-admin/detail", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 			rspStatus = rsp.getResponseStatus();
 			rows = null;
-			if (rspStatus.getErrorCode() == 0) {	
-				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());			
-				MS_EXPIRES = commons.getTextJsonNode(jsonData.at("/MS_EXPIRES"));	
+			if (rspStatus.getErrorCode() == 0) {
+				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+				MS_EXPIRES = commons.getTextJsonNode(jsonData.at("/MS_EXPIRES"));
 				CKS_EXPIRES = commons.getTextJsonNode(jsonData.at("/CKS_EXPIRES"));
 				NUMBER_OF_DAY_CONTRACT = commons.getTextJsonNode(jsonData.at("/NUMBER_CONTRACT"));
 				NUMBER_OF_DAY_CUSTOMER = commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER"));
@@ -106,56 +106,54 @@ public class MainController extends AbstractController {
 				contract_days = Integer.parseInt(commons.getTextJsonNode(jsonData.at("/NUMBER_CUSTOMER")));
 			}
 			int CKS_EXPIRES_ = Integer.parseInt(CKS_EXPIRES);
-			
-			
+
 			/* GET LIST MAU SO GAN HET HAN */
-							
+
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
 			hInput = new HashMap<>();
-		
+
 			hInput.put("TaxCode", "");
 			hInput.put("TyLe", MS_EXPIRES);
 			hInput.put("Status", "");
-			
+
 			msg.setObjData(hInput);
-			
+
 			root = new JSONRoot(msg);
 			rsp = restAPI.callAPIPass("/mauso-expires/list", HttpMethod.POST, root);
 			rspStatus = rsp.getResponseStatus();
 			rows = null;
-			if (rspStatus.getErrorCode() == 0) {		
-				request.setAttribute("SOLUONG_EXPIRES", rspStatus.getErrorDesc());					
-			}else {
-				request.setAttribute("SOLUONG_EXPIRES", "0");	
+			if (rspStatus.getErrorCode() == 0) {
+				request.setAttribute("SOLUONG_EXPIRES", rspStatus.getErrorDesc());
+			} else {
+				request.setAttribute("SOLUONG_EXPIRES", "0");
 			}
-			
-			
-			
+
 			/* GET LIST CKS GAN HET HAN */
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
 			hInput = new HashMap<>();
 			LocalDate now = LocalDate.now();
-			
+
 			hInput.put("TaxCode", "");
 			hInput.put("Name", "");
 			hInput.put("FromDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
-			hInput.put("ToDate", commons.convertLocalDateTimeToString(now.plusMonths(CKS_EXPIRES_), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			hInput.put("ToDate", commons.convertLocalDateTimeToString(now.plusMonths(CKS_EXPIRES_),
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			hInput.put("Status", "");
-			
+
 			msg.setObjData(hInput);
-			
+
 			root = new JSONRoot(msg);
 			rsp = restAPI.callAPIPass("/ca_invoice/list", HttpMethod.POST, root);
 			rspStatus = rsp.getResponseStatus();
 			rows = null;
-			if (rspStatus.getErrorCode() == 0) {		
-				request.setAttribute("CKS_EXPIRES", rspStatus.getErrorDesc());					
-			}else {
-				request.setAttribute("CKS_EXPIRES", "0");	
+			if (rspStatus.getErrorCode() == 0) {
+				request.setAttribute("CKS_EXPIRES", rspStatus.getErrorDesc());
+			} else {
+				request.setAttribute("CKS_EXPIRES", "0");
 			}
-			
+
 			// Get sl contract in a days
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
@@ -166,8 +164,9 @@ public class MainController extends AbstractController {
 			hInput.put("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			msg.setObjData(hInput);
 			root = new JSONRoot(msg);
-			
-			rsp = restAPI.callAPINormal("/issu-contract/count-contract", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+
+			rsp = restAPI.callAPINormal("/issu-contract/count-contract", cup.getLoginRes().getToken(), HttpMethod.POST,
+					root);
 			rspStatus = rsp.getResponseStatus();
 			if (rspStatus.getErrorCode() == 0) {
 				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
@@ -181,7 +180,6 @@ public class MainController extends AbstractController {
 				request.setAttribute("NUMBER_OF_CONTRACT", "0");
 			}
 
-			
 			// Get sl customer in a days
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgMain(cup, Constants.MSG_ACTION_CODE.SEARCH);
@@ -192,7 +190,7 @@ public class MainController extends AbstractController {
 			hInput.put("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 			msg.setObjData(hInput);
 			root = new JSONRoot(msg);
-			
+
 			rsp = restAPI.callAPINormal("/issu/count-customer", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 			rspStatus = rsp.getResponseStatus();
 			if (rspStatus.getErrorCode() == 0) {
@@ -206,7 +204,7 @@ public class MainController extends AbstractController {
 			} else {
 				request.setAttribute("NUMBER_OF_CUSTOMER", "0");
 			}
-		
+
 			request.setAttribute("NUMBER_OF_DAY_CUSTOMER", NUMBER_OF_DAY_CUSTOMER);
 			request.setAttribute("NUMBER_OF_DAY_CONTRACT", NUMBER_OF_DAY_CONTRACT);
 			request.setAttribute("transaction", transaction);
@@ -220,7 +218,6 @@ public class MainController extends AbstractController {
 					return "forward:/" + transaction + "/" + method + "/" + param1;
 				return "forward:/" + transaction + "/" + method;
 			}
-			
 			return "/admin/admin";
 		} else {
 			root = new JSONRoot();
@@ -239,7 +236,7 @@ public class MainController extends AbstractController {
 			int DD = 0;
 			int PercentCL = 0;
 			int PercentDD = 0;
-			String mshdAboutToExpire = "" ;
+			String mshdAboutToExpire = "";
 			if (!jsonData.at("/DMMauSoKyHieu").isMissingNode()) {
 				rows = jsonData.at("/DMMauSoKyHieu");
 				rowsMSKH = new ArrayList<HashMap<String, Object>>();
@@ -343,11 +340,10 @@ public class MainController extends AbstractController {
 					String DD_ = hashMap.get("DD").toString();
 					String MSHD_ = hashMap.get("MSHD").toString();
 					String PERCENT_CL_ = hashMap.get("PERCENT_CL").toString();
-					
-					if (Integer.parseInt(PERCENT_CL_) <= 30 && 
-							Integer.parseInt(hashMap.get("NamPhatHanh").toString()) == currentYear
-							) {
-						mshdAboutToExpire += "Mẫu " + MSHD_ +": số lượng còn lại "+CL_+" số <br>";
+
+					if (Integer.parseInt(PERCENT_CL_) <= 30
+							&& Integer.parseInt(hashMap.get("NamPhatHanh").toString()) == currentYear) {
+						mshdAboutToExpire += "Mẫu " + MSHD_ + ": số lượng còn lại " + CL_ + " số <br>";
 					}
 					String PERCENT_DD_ = hashMap.get("PERCENT_DD").toString();
 
@@ -378,11 +374,11 @@ public class MainController extends AbstractController {
 				request.setAttribute("MauSoBH", rowsBH);
 				request.setAttribute("MauSoPXK", rowsPXKNB);
 				request.setAttribute("MauSoPXKDL", rowsPXKDL);
-				
+
 				/* END GET DATA ADD LIST ARRAY INVOICE TYPE */
 			}
 
-			//get MSTNCN
+			// get MSTNCN
 			List<HashMap<String, Object>> rowsTNCN = new ArrayList<HashMap<String, Object>>();
 			if (!jsonData.at("/DMMSTNCN").isMissingNode()) {
 				rows = jsonData.at("/DMMSTNCN");
@@ -408,9 +404,9 @@ public class MainController extends AbstractController {
 						PercentCL = (CL * 100) / SL;
 						PercentDD = 100 - PercentCL;
 					}
-					String nam	= commons.getTextJsonNode(row.at("/Nam"));
+					String nam = commons.getTextJsonNode(row.at("/Nam"));
 					if (PercentCL <= 30 && Integer.parseInt(commons.getTextJsonNode(row.at("/Nam"))) == currentYear) {
-						mshdAboutToExpire += "Mẫu " + mstn +": số lượng còn lại "+CL+" số <br>";
+						mshdAboutToExpire += "Mẫu " + mstn + ": số lượng còn lại " + CL + " số <br>";
 					}
 					hTmp = new HashMap<String, Object>();
 					hTmp.put("MSTNCN", mstn);
@@ -427,8 +423,8 @@ public class MainController extends AbstractController {
 				request.setAttribute("MauSoTNCN", rowsTNCN);
 			}
 			request.setAttribute("MSHDAboutToExpire", mshdAboutToExpire);
-			
-			// LAY MAU SAC CAC NUT 
+
+			// LAY MAU SAC CAC NUT
 
 			dtoRes = new BaseDTO();
 			msg = dtoRes.createMsgPass();
@@ -501,7 +497,8 @@ public class MainController extends AbstractController {
 			}
 			// END LAY MAU SAC CAC NUT
 			root = new JSONRoot();
-			rsp = restAPI.callAPINormal("/commons/getNotification", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			rsp = restAPI.callAPINormal("/commons/getNotification", cup.getLoginRes().getToken(), HttpMethod.POST,
+					root);
 			rspStatus = rsp.getResponseStatus();
 			if (rspStatus.getErrorCode() == 0) {
 				jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
@@ -520,6 +517,6 @@ public class MainController extends AbstractController {
 				return "forward:/" + transaction + "/" + method;
 			}
 			return "/user/main";
-		} 
+		}
 	}
 }

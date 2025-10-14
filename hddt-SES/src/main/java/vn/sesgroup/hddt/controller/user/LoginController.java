@@ -56,24 +56,23 @@ public class LoginController extends AbstractController{
 	@Autowired RestAPIUtility restAPI;	
 	
 	
-	@RequestMapping(value = {"/", "/login"}, method = {RequestMethod.GET, RequestMethod.POST})
-	public String login(Model model, HttpServletRequest request, HttpSession session, 
-			@ModelAttribute("logout") String isLogout,
-			@ModelAttribute("message") String message) throws Exception {
+	@RequestMapping(value = { "/", "/login" }, method = { RequestMethod.GET, RequestMethod.POST })
+	public String login(Model model, HttpServletRequest request, HttpSession session,
+			@ModelAttribute("logout") String isLogout, @ModelAttribute("message") String message) throws Exception {
 		HashMap<String, Object> hTmp = null;
 		Document r10 = null;
 		String messageLogin = "";
 		List<HashMap<String, Object>> rowsL = null;
-		if("true".equals(isLogout)) {
+		if ("true".equals(isLogout)) {
 			messageLogin = "Bạn vừa đăng xuất. Vui lòng đăng nhập lại để thực hiện giao dịch.";
-		}else if(null != message && !"".equals(message)) {
+		} else if (null != message && !"".equals(message)) {
 			messageLogin = message;
 		}
-		if(!"".equals(messageLogin)) {
+		if (!"".equals(messageLogin)) {
 			request.setAttribute("messageLogin", messageLogin);
 		}
 		request.setAttribute("_header", Constants.PREFIX_TITLE + " - Đăng nhập");
-		
+
 		BaseDTO dtoRes = new BaseDTO();
 		Msg msg = dtoRes.createMsgPass();
 		HashMap<String, String> hInput = new HashMap<>();
@@ -82,71 +81,68 @@ public class LoginController extends AbstractController{
 		MsgRsp rsp = restAPI.callAPIPass("/forgotpass/dl", HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		JsonNode rows = null;
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-			if(!jsonData.at("/rows").isMissingNode()) {
+			if (!jsonData.at("/rows").isMissingNode()) {
 				rows = jsonData.at("/rows");
-			for(JsonNode row: rows) {
-			request.setAttribute("LOGO", commons.getTextJsonNode(row.at("/LOGO")));
-			request.setAttribute("PHONE", commons.getTextJsonNode(row.at("/PHONE")));
-			request.setAttribute("EMAIL", commons.getTextJsonNode(row.at("/EMAIL")));
-			}
+				for (JsonNode row : rows) {
+					request.setAttribute("LOGO", commons.getTextJsonNode(row.at("/LOGO")));
+					request.setAttribute("PHONE", commons.getTextJsonNode(row.at("/PHONE")));
+					request.setAttribute("EMAIL", commons.getTextJsonNode(row.at("/EMAIL")));
+				}
 			}
 		}
-		
 
-		 dtoRes = new BaseDTO(request);
-		 msg = dtoRes.createMsgPass();
-		 hInput = new HashMap<>();
+		dtoRes = new BaseDTO(request);
+		msg = dtoRes.createMsgPass();
+		hInput = new HashMap<>();
 		msg.setObjData(hInput);
-		 root = new JSONRoot(msg);
-		 rsp = restAPI.callAPIPass("/forgotpass/left", HttpMethod.POST, root);
-		 rspStatus = rsp.getResponseStatus();
-		 rows = null;
-		
-		
-		if(rspStatus.getErrorCode() == 0) {
+		root = new JSONRoot(msg);
+		rsp = restAPI.callAPIPass("/forgotpass/left", HttpMethod.POST, root);
+		rspStatus = rsp.getResponseStatus();
+		rows = null;
+
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-			if(!jsonData.at("/rows").isMissingNode()) {
+			if (!jsonData.at("/rows").isMissingNode()) {
 				rows = jsonData.at("/rows");
-			rowsL = new ArrayList<HashMap<String,Object>>();
-			for(JsonNode row: rows) {
-			hTmp = new HashMap<String, Object>();
-			hTmp.put("Chude", commons.getTextJsonNode(row.at("/Chude")));
-			hTmp.put("Tieude", commons.getTextJsonNode(row.at("/Tieude")));
-			hTmp.put("Link", commons.getTextJsonNode(row.at("/Link")));
-			hTmp.put("Noidung", commons.getTextJsonNode(row.at("/Noidung")));
-			hTmp.put("_id", commons.getTextJsonNode(row.at("/_id")));
-			rowsL.add(hTmp);
-			}
-			request.setAttribute("TinWebL", rowsL);
+				rowsL = new ArrayList<HashMap<String, Object>>();
+				for (JsonNode row : rows) {
+					hTmp = new HashMap<String, Object>();
+					hTmp.put("Chude", commons.getTextJsonNode(row.at("/Chude")));
+					hTmp.put("Tieude", commons.getTextJsonNode(row.at("/Tieude")));
+					hTmp.put("Link", commons.getTextJsonNode(row.at("/Link")));
+					hTmp.put("Noidung", commons.getTextJsonNode(row.at("/Noidung")));
+					hTmp.put("_id", commons.getTextJsonNode(row.at("/_id")));
+					rowsL.add(hTmp);
+				}
+				request.setAttribute("TinWebL", rowsL);
 			}
 		}
-		
-		
-		 dtoRes = new BaseDTO(request);
-		 msg = dtoRes.createMsgPass();
-		 hInput = new HashMap<>();
+
+		dtoRes = new BaseDTO(request);
+		msg = dtoRes.createMsgPass();
+		hInput = new HashMap<>();
 		msg.setObjData(hInput);
-		 root = new JSONRoot(msg);
-		 rsp = restAPI.callAPIPass("/forgotpass/right", HttpMethod.POST, root);
-		 rspStatus = rsp.getResponseStatus();
-		 rows = null;
-		if(rspStatus.getErrorCode() == 0) {
+		root = new JSONRoot(msg);
+		rsp = restAPI.callAPIPass("/forgotpass/right", HttpMethod.POST, root);
+		rspStatus = rsp.getResponseStatus();
+		rows = null;
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-			if(!jsonData.at("/rows").isMissingNode()) {
+			if (!jsonData.at("/rows").isMissingNode()) {
 				rows = jsonData.at("/rows");
-			rowsL = new ArrayList<HashMap<String,Object>>();
-			for(JsonNode row: rows) {
-			hTmp = new HashMap<String, Object>();
-			hTmp.put("Chude", commons.getTextJsonNode(row.at("/Chude")));
-			hTmp.put("Tieude", commons.getTextJsonNode(row.at("/Tieude")));
-			hTmp.put("Noidung", commons.getTextJsonNode(row.at("/Noidung")));
-			request.setAttribute("Content",commons.getTextJsonNode(row.at("/Noidung")));
-			hTmp.put("_id", commons.getTextJsonNode(row.at("/_id")));
-			rowsL.add(hTmp);
-			}
-			request.setAttribute("TinWebR", rowsL);
+				rowsL = new ArrayList<HashMap<String, Object>>();
+				for (JsonNode row : rows) {
+					hTmp = new HashMap<String, Object>();
+					hTmp.put("Chude", commons.getTextJsonNode(row.at("/Chude")));
+					hTmp.put("Tieude", commons.getTextJsonNode(row.at("/Tieude")));
+					hTmp.put("Noidung", commons.getTextJsonNode(row.at("/Noidung")));
+					request.setAttribute("Content", commons.getTextJsonNode(row.at("/Noidung")));
+					hTmp.put("_id", commons.getTextJsonNode(row.at("/_id")));
+					rowsL.add(hTmp);
+				}
+				request.setAttribute("TinWebR", rowsL);
 			}
 		}
 		return "user/login";
@@ -157,8 +153,6 @@ public class LoginController extends AbstractController{
         return "forward:/static/images/ses.jpg";
     }
 	
-	
-//	public static int dem = 0;
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST
 			, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
 	@ResponseBody
@@ -181,8 +175,6 @@ public class LoginController extends AbstractController{
 			dtoRes = new BaseDTO(1, Constants.MAP_ERROR.get(2));
 			return dtoRes;
 		}
-		
-
 		
 		Authentication auth = null;
 		CurrentUserProfile cup = new CurrentUserProfile();
@@ -343,8 +335,6 @@ public class LoginController extends AbstractController{
 		new SecurityContextLogoutHandler().logout(request, response, auth);
 		
 		redirectAttributes.addFlashAttribute("logout", "true");
-//		dem-=1;
-//		System.out.println("So luong nguoi dung truy cap:" +  dem);
 		return "redirect:/login";
 			
 	}
