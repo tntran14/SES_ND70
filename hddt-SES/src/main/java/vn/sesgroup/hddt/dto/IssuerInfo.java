@@ -13,6 +13,8 @@ public class IssuerInfo implements Serializable{
 	private String email;
 	private String taxCode;
 	private Object bankAccount;
+	private String curUserId;
+	private String curUserName;
 	
 	public String get_id() {
 		return _id;
@@ -61,5 +63,17 @@ public class IssuerInfo implements Serializable{
 	}
 	public void setBankAccount(Object bankAccount) {
 		this.bankAccount = bankAccount;
+	}
+	public String getCurUserId() {
+		return curUserId;
+	}
+	public void setCurUserId(String curUserId) {
+		this.curUserId = curUserId;
+	}
+	public String getCurUserName() {
+		return curUserName;
+	}
+	public void setCurUserName(String curUserName) {
+		this.curUserName = curUserName;
 	}
 }

@@ -27,6 +27,10 @@ public class MsgHeader implements Serializable{
 	private String actionCode;
 	@JsonProperty(value = "RqId")
 	private String rqId;
+	@JsonProperty(value = "CurUserId")
+	private String curUserId;
+	@JsonProperty(value = "CurUserName")
+	private String curUserName;
 	
 	public UserType getType() {
 		return type;
@@ -82,5 +86,16 @@ public class MsgHeader implements Serializable{
 	public void setRqId(String rqId) {
 		this.rqId = rqId;
 	}
-	
+	public String getCurUserId() {
+		return curUserId;
+	}
+	public void setCurUserId(String curUserId) {
+		this.curUserId = curUserId;
+	}
+	public String getCurUserName() {
+		return curUserName;
+	}
+	public void setCurUserName(String curUserName) {
+		this.curUserName = curUserName;
+	}
 }

@@ -146,7 +146,8 @@ public class BaseDTO implements Serializable{
 		header.setIpAddress(req.getRemoteAddr());
 		header.setActionCode(actionCode);
 		header.setRqId(csRandomAlphaNumbericString(30));
-		
+		header.setCurUserId(loginRes.getIssuerInfo().getCurUserId());
+		header.setCurUserName(loginRes.getIssuerInfo().getCurUserName());
 		return header;
 	}
 	

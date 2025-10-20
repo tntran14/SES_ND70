@@ -116,6 +116,9 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		List<Document> pipeline = new ArrayList<Document>();
 		
 		Document docMatch = new Document("IsDelete",new Document("$ne", true));	
+		if(!header.getCurUserId().equals(header.getUserId())) {
+			docMatch.append("InfoCreated.CreateBySubUserID", header.getCurUserId());
+		}
 		
 		if(!"".equals(t))
 			docMatch.append("TaxCode", commons.regexEscapeForMongoQuery(t));
@@ -452,7 +455,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 							.append("EmailUserLh", englh)				
 				
 						)
-			.append("BankAccount", 
+				.append("BankAccount", 
 							new Document("AccountNumber", ac)
 							.append("AccountName", an)
 							.append("BankName", bn)
@@ -460,13 +463,19 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 				.append("IsActive", quyen)
 				.append("IsRoot", false)
 				.append("IsDelete", false)
-				.append("IsUserHDDT", true)
-				.append("InfoCreated", 
-						new Document("CreateDate", LocalDateTime.now())
-						.append("CreateUserID", header.getUserId())
-						.append("CreateUserName", header.getUserName())
-						.append("CreateUserFullName", header.getUserFullName())
-					);
+				.append("IsUserHDDT", true);
+			
+			Document docInforCreated = new Document("CreateDate", LocalDateTime.now())
+					.append("CreateUserID", header.getUserId())
+					.append("CreateUserName", header.getUserName())
+					.append("CreateUserFullName", header.getUserFullName());
+			
+			if(!header.getCurUserId().equals(header.getUserId())) {
+				docInforCreated.append("CreateBySubUserID", header.getCurUserId())
+				.append("CreateBySubUserName", header.getCurUserName());
+			}
+
+			docUpsert.append("InfoCreated", docInforCreated);
 			/*END - LUU DU LIEU*/
 			
 			 mongoClient = cfg.mongoClient();
@@ -479,12 +488,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			docUpsertmaill = new Document("IssuerId", idIssu.toString())
 					.append("Mail", "N")
 					.append("MailJet", "Y")
-					.append("InfoCreated", 
-							new Document("CreateDate", LocalDateTime.now())
-							.append("CreateUserID", header.getUserId())
-							.append("CreateUserName", header.getUserName())
-							.append("CreateUserFullName", header.getUserFullName())
-						);
+					.append("InfoCreated", docInforCreated);
 			
 				/*END - LUU DU LIEU*/
 				
@@ -516,12 +520,7 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 					.append("IsAdmin", false)
 					.append("IsActive", true)
 					.append("IsDelete", false)
-					.append("InfoCreated", 
-							new Document("CreateDate", LocalDateTime.now())
-							.append("CreateUserID", header.getUserId())
-							.append("CreateUserName", header.getUserName())
-							.append("CreateUserFullName", header.getUserFullName())
-						);
+					.append("InfoCreated", docInforCreated);
 				/*END - LUU DU LIEU*/
 				mongoClient = cfg.mongoClient();
 				collection = mongoClient.getDatabase(cfg.dbName).getCollection("Users");

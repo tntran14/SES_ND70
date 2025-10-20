@@ -29,6 +29,10 @@ public class MsgHeader implements Serializable{
 	private String rqId;
 	@JsonProperty(value = "IsAdmin")
 	private boolean isAdmin;
+	@JsonProperty(value = "CurUserId")
+	private String curUserId;
+	@JsonProperty(value = "CurUserName")
+	private String curUserName;
 	
 	public UserType getType() {
 		return type;
@@ -90,5 +94,16 @@ public class MsgHeader implements Serializable{
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
-	
+	public String getCurUserId() {
+		return curUserId;
+	}
+	public void setCurUserId(String curUserId) {
+		this.curUserId = curUserId;
+	}
+	public String getCurUserName() {
+		return curUserName;
+	}
+	public void setCurUserName(String curUserName) {
+		this.curUserName = curUserName;
+	}
 }

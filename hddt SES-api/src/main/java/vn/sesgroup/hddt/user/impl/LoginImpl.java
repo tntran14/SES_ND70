@@ -144,6 +144,8 @@ public class LoginImpl extends AbstractDAO implements LoginDAO{
 			issuer.setTaxCode(docSub.get("TaxCode", ""));;
 			if(docSub.get("BankAccount") != null)
 				issuer.setBankAccount(docSub.get("BankAccount", Object.class));
+			issuer.setCurUserId(docTmp.getObjectId("_id").toString());
+			issuer.setCurUserName(docTmp.get("UserName", ""));
 			res.setIssuerInfo(issuer);
 		}
 		

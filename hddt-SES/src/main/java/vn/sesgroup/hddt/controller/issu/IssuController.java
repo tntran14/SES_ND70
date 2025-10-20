@@ -127,9 +127,9 @@ public class IssuController extends AbstractController {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 			JsonNode rows = null;
 			HashMap<String, String> hItem = null;
-			if(!jsonData.at("/rows").isMissingNode()) {
+			if (!jsonData.at("/rows").isMissingNode()) {
 				rows = jsonData.at("/rows");
-				for(JsonNode row: rows) {
+				for (JsonNode row : rows) {
 					hItem = new HashMap<String, String>();
 					String CreateUserFullName = commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName"));
 					hItem.put("_id", commons.getTextJsonNode(row.at("/_id")));
@@ -139,13 +139,15 @@ public class IssuController extends AbstractController {
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/TaxCode")));
 					hItem.put("IsActive", Constants.MAP_STATUS.get(commons.getTextJsonNode(row.at("/IsActive"))));
 					hItem.put("UserCreated", commons.getTextJsonNode(row.at("/InfoCreated/CreateUserFullName")));
-				if(!CreateUserFullName.equals("")) {
-						hItem.put("NLap", 
-								commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/InfoCreated/CreateDate").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-							);
-					
-				}
-				
+					if (!CreateUserFullName.equals("")) {
+						hItem.put("NLap",
+								commons.convertLocalDateTimeToString(
+										commons.convertLongToLocalDate(row.at("/InfoCreated/CreateDate").asLong()),
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						hItem.put("SubUserCreated",
+								commons.getTextJsonNode(row.at("/InfoCreated/CreateBySubUserName")));
+					}
+
 					grid.getRows().add(hItem);
 				}
 			}
