@@ -53,12 +53,12 @@ public class CreateUserImpl extends AbstractDAO implements CreateUserDAO {
 	JPUtils jpUtils;
 	Document docUpsert = null;
 	
-public MsgRsp list(JSONRoot jsonRoot) throws Exception {
+	public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
 		MsgPage page = msg.getMsgPage();
 		Object objData = msg.getObjData();
-		
+
 		String userName = "";
 		String fullName = "";
 		String phone = "";
@@ -67,14 +67,14 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		JsonNode jsonData = null;
 		if (objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
-			
+
 			userName = commons.getTextJsonNode(jsonData.at("/UserName")).replaceAll("\\s", "").toUpperCase();
 			fullName = commons.getTextJsonNode(jsonData.at("/FullName")).trim().replaceAll("\\s+", " ");
 			phone = commons.getTextJsonNode(jsonData.at("/Phone")).trim().replaceAll("\\s+", " ");
 			email = commons.getTextJsonNode(jsonData.at("/Email")).trim().replaceAll("\\s+", " ");
-	
+
 		}
-				
+
 		MsgRsp rsp = new MsgRsp(header);
 		MspResponseStatus responseStatus = null;
 
@@ -85,12 +85,11 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		List<Document> pipeline = new ArrayList<Document>();
 		Document docSubTmp = null;
 
-		Document docMatch = new Document("IsDelete",
-				new Document("$ne", true))
+		Document docMatch = new Document("IsDelete", new Document("$ne", true))
 				.append("IssuerId", header.getIssuerId())
 				.append("IsRole", true)
-				;
-		
+				.append("InfoCreated.CreateUserID", header.getUserId());
+
 		if (!"".equals(fullName))
 			docMatch.append("FullName",
 					new Document("$regex", commons.regexEscapeForMongoQuery(fullName)).append("$options", "i"));
@@ -103,101 +102,107 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		if (!"".equals(email))
 			docMatch.append("Email",
 					new Document("$regex", commons.regexEscapeForMongoQuery(email)).append("$options", "i"));
-	
-		
+
 		Document fillter = new Document("_id", 1).append("RolesRightManageInfo", 1).append("ExpireDate", 1)
-				.append("ExpireDate", 1).append("EffectDate", 1).append("InfoUpdated", 1).append("InfoCreated", 1).append("IsRoot", 1)
-				.append("IsActive", 1).append("Email", 1).append("Phone", 1).append("FullName", 1).append("UserName", 1);
-				
+				.append("ExpireDate", 1).append("EffectDate", 1).append("InfoUpdated", 1).append("InfoCreated", 1)
+				.append("IsRoot", 1).append("IsActive", 1).append("Email", 1).append("Phone", 1).append("FullName", 1)
+				.append("UserName", 1);
+
 		pipeline = new ArrayList<Document>();
-		pipeline.add(new Document("$match", docMatch));		
-		
-		pipeline.add(new Document("$sort",
-				new Document("_id", -1)					
-				));
+		pipeline.add(new Document("$match", docMatch));
+
+		pipeline.add(new Document("$sort", new Document("_id", -1)));
 		pipeline.add(new Document("$project", fillter));
 		pipeline.addAll(createFacetForSearchNotSort(page));
 
-		
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Users");
 		try {
-			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-			
+
 		mongoClient.close();
-		
+
 		rsp = new MsgRsp(header);
 		responseStatus = null;
-		
+
 		if (null == docTmp) {
 			responseStatus = new MspResponseStatus(9999, Constants.MAP_ERROR.get(9999));
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-		
+
 		page.setTotalRows(docTmp.getInteger("total", 0));
 		rsp.setMsgPage(page);
 
 		ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
-		
+
 		List<Document> rows = null;
-		
-		if(docTmp!=null) {
-		if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
-			rows = docTmp.getList("data", Document.class);
-		}
 
-
-		HashMap<String, Object> hItem = null;
-		if (null != rows) {
-			for (Document doc : rows) {
-				objectId = (ObjectId) doc.get("_id");
-
-				hItem = new HashMap<String, Object>();
-				hItem.put("_id", objectId.toString());
-				hItem.put("UserName", doc.getString("UserName"));
-				hItem.put("FullName", doc.getString("FullName"));
-				hItem.put("Phone", doc.getString("Phone"));
-				hItem.put("Email", doc.getString("Email"));
-				hItem.put("IsActive", doc.getBoolean("IsActive", false));					
-				hItem.put("IsRoot", doc.getBoolean("IsRoot", false));
-				
-				if(null != doc.get("InfoCreated") && doc.get("InfoCreated") instanceof Document) {
-					docSubTmp = (Document) doc.get("InfoCreated");
-					hItem.put("CreateDate", (null == docSubTmp.get("CreateDate") || !(docSubTmp.get("CreateDate") instanceof Date))?
-							"":
-							commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(docSubTmp.getDate("CreateDate")), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB)
-						);
-					hItem.put("CreateUserFullName", null == docSubTmp.get("CreateUserFullName")? "": docSubTmp.getString("CreateUserFullName"));
-				}
-				if(null != doc.get("InfoUpdated") && doc.get("InfoUpdated") instanceof Document) {
-					docSubTmp = (Document) doc.get("InfoUpdated");
-					hItem.put("UpdatedDate", (null == docSubTmp.get("UpdatedDate") || !(docSubTmp.get("UpdatedDate") instanceof Date))?
-							"":
-							commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(docSubTmp.getDate("UpdatedDate")), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB)
-						);
-					hItem.put("UpdatedUserFullName", null == docSubTmp.get("UpdatedUserFullName")? "": docSubTmp.getString("UpdatedUserFullName"));
-				}
-				
-				hItem.put("EffectDate", (null == doc.get("EffectDate") || !(doc.get("EffectDate") instanceof Date))?
-						"":
-						commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(doc.getDate("EffectDate")), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-					);
-				hItem.put("ExpireDate", (null == doc.get("ExpireDate") || !(doc.get("ExpireDate") instanceof Date))?
-						"":
-						commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(doc.getDate("ExpireDate")), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-					);
-				hItem.put("RolesRightManageInfo", doc.get("RolesRightManageInfo"));
-				
-				rowsReturn.add(hItem);
+		if (docTmp != null) {
+			if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
+				rows = docTmp.getList("data", Document.class);
 			}
+
+			HashMap<String, Object> hItem = null;
+			if (null != rows) {
+				for (Document doc : rows) {
+					objectId = (ObjectId) doc.get("_id");
+
+					hItem = new HashMap<String, Object>();
+					hItem.put("_id", objectId.toString());
+					hItem.put("UserName", doc.getString("UserName"));
+					hItem.put("FullName", doc.getString("FullName"));
+					hItem.put("Phone", doc.getString("Phone"));
+					hItem.put("Email", doc.getString("Email"));
+					hItem.put("IsActive", doc.getBoolean("IsActive", false));
+					hItem.put("IsRoot", doc.getBoolean("IsRoot", false));
+
+					if (null != doc.get("InfoCreated") && doc.get("InfoCreated") instanceof Document) {
+						docSubTmp = (Document) doc.get("InfoCreated");
+						hItem.put("CreateDate",
+								(null == docSubTmp.get("CreateDate") || !(docSubTmp.get("CreateDate") instanceof Date))
+										? ""
+										: commons.convertLocalDateTimeToString(
+												commons.convertDateToLocalDateTime(docSubTmp.getDate("CreateDate")),
+												Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
+						hItem.put("CreateUserFullName", null == docSubTmp.get("CreateUserFullName") ? ""
+								: docSubTmp.getString("CreateUserFullName"));
+					}
+					if (null != doc.get("InfoUpdated") && doc.get("InfoUpdated") instanceof Document) {
+						docSubTmp = (Document) doc.get("InfoUpdated");
+						hItem.put("UpdatedDate",
+								(null == docSubTmp.get("UpdatedDate")
+										|| !(docSubTmp.get("UpdatedDate") instanceof Date))
+												? ""
+												: commons.convertLocalDateTimeToString(
+														commons.convertDateToLocalDateTime(
+																docSubTmp.getDate("UpdatedDate")),
+														Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
+						hItem.put("UpdatedUserFullName", null == docSubTmp.get("UpdatedUserFullName") ? ""
+								: docSubTmp.getString("UpdatedUserFullName"));
+					}
+
+					hItem.put("EffectDate",
+							(null == doc.get("EffectDate") || !(doc.get("EffectDate") instanceof Date)) ? ""
+									: commons.convertLocalDateTimeToString(
+											commons.convertDateToLocalDateTime(doc.getDate("EffectDate")),
+											Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					hItem.put("ExpireDate",
+							(null == doc.get("ExpireDate") || !(doc.get("ExpireDate") instanceof Date)) ? ""
+									: commons.convertLocalDateTimeToString(
+											commons.convertDateToLocalDateTime(doc.getDate("ExpireDate")),
+											Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					hItem.put("RolesRightManageInfo", doc.get("RolesRightManageInfo"));
+
+					rowsReturn.add(hItem);
+				}
+			}
+
 		}
-		
-	}
-		
+
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
 
@@ -220,9 +225,6 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 
 		
 		Document docTmp = null;
-		Iterable<Document> cursor = null;
-		Iterator<Document> iter = null;
-		
 		Document docTmpSub = null;
 		Document docRolesRightManageInfo = null;
 		String user = "";
@@ -309,35 +311,7 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 					new Document("path", "$UsersInfo").append("preserveNullAndEmptyArrays", true)
 				)
 			);
-//			pipeline.add(
-//				new Document("$lookup", 
-//					new Document("from", "PositionsManage")
-//					.append("pipeline", 
-//						Arrays.asList(
-//							new Document("$match", 
-//								new Document("$expr", 
-//									new Document("$and", 
-//										Arrays.asList(
-//											new Document("$eq", Arrays.asList("$AgentId", header.getAgentId()))
-//											, new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), positionId))
-//											, new Document("$eq", Arrays.asList("$IsActive", true))
-//											, new Document("$ne", Arrays.asList("$IsDelete", true))
-//										)
-//									)
-//								)
-//							)
-//							, new Document("$project", new Document("_id", new Document("$toString", "$_id")).append("PositionName", 1))
-//							, new Document("$limit", 1)
-//						)
-//					)
-//					.append("as", "PositionsManageInfo")
-//				)
-//			);
-//			pipeline.add(
-//				new Document("$unwind", 
-//					new Document("path", "$PositionsManageInfo").append("preserveNullAndEmptyArrays", true)
-//				)
-//			);
+			
 			pipeline.add(
 				new Document("$lookup", 
 					new Document("from", "RolesRightManage")
@@ -399,8 +373,6 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 			
 			String prefixUserID = header.getUserName();
 			user = prefixUserID + "_" + userName;
-//			password = commons.csRandomNumbericString(6);
-//			passwordInput = commons.generateSHA(user + password, false).toUpperCase();
 			password = commons.csRandomNumbericString(8);
 			
 			passwordInput = commons.encryptThisString(user + password);	
@@ -466,31 +438,6 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 			pipeline.add(
 				new Document("$project", new Document("_id", 1).append("IsActive", new Document("$ifNull", Arrays.asList("$IsActive", false))))
 			);
-//			pipeline.add(
-//				new Document("$lookup", 
-//					new Document("from", "PositionsManage")
-//					.append("pipeline", 
-//						Arrays.asList(
-//							new Document("$match", 
-//								new Document("$expr", 
-//									new Document("$and", 
-//										Arrays.asList(
-//											new Document("$eq", Arrays.asList("$AgentId", header.getAgentId()))
-//											, new Document("$eq", Arrays.asList(new Document("$toString", "$_id"), positionId))
-//											, new Document("$eq", Arrays.asList("$IsActive", true))
-//											, new Document("$ne", Arrays.asList("$IsDelete", true))
-//										)
-//									)
-//								)
-//							)
-//							, new Document("$project", new Document("_id", new Document("$toString", "$_id")).append("PositionName", 1))
-//							, new Document("$limit", 1)
-//						)
-//					)
-//					.append("as", "PositionsManageInfo")
-//				)
-//			);
-//			pipeline.add(new Document("$unwind", new Document("path", "$PositionsManageInfo").append("preserveNullAndEmptyArrays", true)));
 			pipeline.add(
 				new Document("$lookup", 
 					new Document("from", "RolesRightManage")
@@ -542,13 +489,6 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 				return rsp;
 			}
 			
-//			if(null == docTmp.get("PositionsManageInfo")) {
-//				responseStatus = new MspResponseStatus(9999, "Chức danh không tồn tại hoặc chưa được kích hoạt.");
-//				rsp.setResponseStatus(responseStatus);
-//				return rsp;
-//			}else {
-//				docPositionsManageInfo = (Document) docTmp.get("PositionsManageInfo");
-//			}
 			if(null == docTmp.get("RolesRightManageInfo")) {
 				responseStatus = new MspResponseStatus(9999, "Nhóm quyền không tồn tại hoặc chưa được kích hoạt.");
 				rsp.setResponseStatus(responseStatus);

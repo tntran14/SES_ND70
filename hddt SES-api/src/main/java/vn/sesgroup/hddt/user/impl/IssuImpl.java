@@ -1078,6 +1078,9 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 			    }
 
 			} catch (Exception e2) {
+				responseStatus = new MspResponseStatus(999, "Lỗi khi cập nhật thông tin khách hàng.");
+				rsp.setResponseStatus(responseStatus);				
+				return rsp;		
 			}
 
 		      	
