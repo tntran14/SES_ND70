@@ -319,6 +319,14 @@ public class PHSLMauHDAdminImpl extends AbstractDAO implements PHSLMauHDAdminDAO
 				));
 		pipeline.add(new Document("$unwind",
 				new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+		
+		if (!header.getCurUserId().equals(header.getUserId())) {
+			pipeline.add(new Document("$match",
+					new Document("$or", Arrays.asList(new Document("Issuer.InfoCreated.CreateBySubUserID", header.getCurUserId()),
+							new Document("Issuer.ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))))
+					));
+		}
+		
 		pipeline.add(new Document("$sort", new Document("NLap", -1)));
 		pipeline.addAll(createFacetForSearchNotSort(page));
 
@@ -444,9 +452,17 @@ public class PHSLMauHDAdminImpl extends AbstractDAO implements PHSLMauHDAdminDAO
 		MspResponseStatus responseStatus = null;
 
 		Document docTmp = null;
-		
+		Document docFind = new Document("TaxCode", taxCode);
+		if (!header.getCurUserId().equals(header.getUserId())) {
+			docFind.append("$or", Arrays.asList(
+					new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
+					new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
+					));
+		}
+
 		List<Document> pipeline = new ArrayList<Document>();
-		pipeline.add(new Document("$match", new Document("TaxCode", taxCode)));
+		
+		pipeline.add(new Document("$match", docFind));
 		pipeline.add(new Document("$project", new Document("_id", 1)));
 		pipeline.add(new Document("$lookup", new Document("from", "DMMauSoKyHieu")
 				.append("let", new Document("issuerIdString", new Document("$toString", "$_id")))
