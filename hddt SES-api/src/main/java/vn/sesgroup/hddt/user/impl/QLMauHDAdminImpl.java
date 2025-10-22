@@ -113,6 +113,12 @@ public class QLMauHDAdminImpl extends AbstractDAO implements QLMauHDAdminDao {
 			docFind = new Document("TaxCode", mstkh)
 					.append("IsActive", true)
 					.append("IsDelete", new Document("$ne", true));
+			if (!header.getCurUserId().equals(header.getUserId())) {
+				docFind.append("$or", Arrays.asList(
+						new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
+						new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
+						));
+			}
 			
 			pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match", docFind));
@@ -572,76 +578,67 @@ public class QLMauHDAdminImpl extends AbstractDAO implements QLMauHDAdminDao {
 
 		MsgRsp rsp = new MsgRsp(header);
 		MspResponseStatus responseStatus = null;
-		
+
 		ObjectId objectId = null;
 		Document docTmp = null;
 		List<Document> pipeline = new ArrayList<Document>();
 		MongoCollection<Document> collection = null;
 
-		try (MongoClient mongoClient = cfg.mongoClient()){
+		Document docMatch = new Document("TaxCode", mstkh);		
+		try (MongoClient mongoClient = cfg.mongoClient()) {
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
-			Document issuerDoc = collection
-			        .find(new Document("TaxCode", mstkh))
-			        .projection(new Document("_id", 1))
-			        .first();
+			Document issuerDoc = collection.find(docMatch).projection(new Document("_id", 1)).first();
 
-			    if (issuerDoc != null) {
-			        issuerId = issuerDoc.get("_id").toString();
-			    }
+			if (issuerDoc != null) {
+				issuerId = issuerDoc.get("_id").toString();
+			}
 		} catch (Exception e) {
 
 		}
 
-		Document docMatch = new Document();
+		
+		docMatch = new Document();
+		if (!"".equals(mausohd))
+			docMatch.append("KHHDon", commons.regexEscapeForMongoQuery(mausohd));
+		if (!"".equals(issuerId))
+			docMatch.append("IssuerId", issuerId);
 
-		if(!"".equals(mausohd))
-			docMatch.append("KHHDon",  commons.regexEscapeForMongoQuery(mausohd));
-		if(!"".equals(issuerId))
-			docMatch.append("IssuerId",  issuerId);
-
-		Document fillter = new Document("_id", 1)
-				.append("KHMSHDon", 1)
-				.append("KHHDon", 1)
-				.append("Templates", 1)
-				.append("KHMSHDon", 1)
-				.append("NgayTao", 1)
-				.append("IsDelete", 1)
-				.append("IsActive", 1)
-				.append("Issuer", 1);	
+		Document fillter = new Document("_id", 1).append("KHMSHDon", 1).append("KHHDon", 1).append("Templates", 1)
+				.append("KHMSHDon", 1).append("NgayTao", 1).append("IsDelete", 1).append("IsActive", 1)
+				.append("Issuer", 1);
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));
 		pipeline.add(new Document("$lookup", new Document("from", "Issuer")
-			    .append("let", new Document("issuerIdObj", new Document("$toObjectId", "$IssuerId")))
-			    .append("pipeline", Arrays.asList(
-			        new Document("$match", new Document("$expr",
-			            new Document("$and", Arrays.asList(
-			                new Document("$eq", Arrays.asList("$_id", "$$issuerIdObj"))
-			            ))
-			        )),
-			        new Document("$project", new Document("TaxCode", 1).append("Name", 1))
-			    ))
-			    .append("as", "Issuer")
-			));
+				.append("let",
+						new Document("issuerIdObj", new Document("$toObjectId", "$IssuerId")))
+				.append("pipeline",
+						Arrays.asList(
+								new Document("$match",
+										new Document("$expr", new Document("$and",
+												Arrays.asList(
+														new Document("$eq", Arrays.asList("$_id", "$$issuerIdObj")))))),
+								new Document("$project", new Document("TaxCode", 1).append("Name", 1))))
+				.append("as", "Issuer")));
 
-		pipeline.add(new Document("$unwind",
-				new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
-		
+		pipeline.add(
+				new Document("$unwind", new Document("path", "$Issuer").append("preserveNullAndEmptyArrays", true)));
+
 		if (!"".equals(tenkh)) {
-		    String patternText = ".*" + commons.regexEscapeForMongoQuery(tenkh) + ".*";
-		    Pattern regex = Pattern.compile(patternText, Pattern.CASE_INSENSITIVE);
-		    pipeline.add(new Document("$match",
-		            new Document("Issuer.Name", regex)
-		    ));
+			String patternText = ".*" + commons.regexEscapeForMongoQuery(tenkh) + ".*";
+			Pattern regex = Pattern.compile(patternText, Pattern.CASE_INSENSITIVE);
+			pipeline.add(new Document("$match", new Document("Issuer.Name", regex)));
 		}
 		
-		pipeline.add(
-				new Document("$sort", 
-					new Document("_id", -1)
-				)
-			);
+		if (!header.getCurUserId().equals(header.getUserId())) {
+			pipeline.add(new Document("$match",
+					new Document("$or", Arrays.asList(new Document("Issuer.InfoCreated.CreateBySubUserID", header.getCurUserId()),
+							new Document("Issuer.ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))))
+					));
+		}
+
+		pipeline.add(new Document("$sort", new Document("_id", -1)));
 		pipeline.add(new Document("$project", fillter));
 		pipeline.addAll(createFacetForSearchNotSort(page));
-
 
 		try (MongoClient mongoClient = cfg.mongoClient()) {
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
