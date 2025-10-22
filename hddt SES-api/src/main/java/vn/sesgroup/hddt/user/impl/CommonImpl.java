@@ -509,6 +509,23 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 									))
 							.append("as", msgParam.getId())));
 					break;
+				case "DMSubAdmin":
+					code01 = header.getIssuerId();
+					pipeline.add(
+							new Document("$lookup",
+									new Document("from", "Users")
+											.append("pipeline", Arrays.asList(
+													new Document("$match",
+															new Document("IsActive", true)
+																	.append("IsDelete", false)
+																	.append("IsRole", true)
+																	.append("IssuerId", code01)),
+													new Document("$sort", new Document("_id", 1)),
+													new Document("$project",
+															new Document("_id", new Document("$toString", "$_id"))
+																	.append("UserName", 1).append("FullName", 1))))
+											.append("as", msgParam.getId())));
+					break;
 				default:
 					break;
 				}

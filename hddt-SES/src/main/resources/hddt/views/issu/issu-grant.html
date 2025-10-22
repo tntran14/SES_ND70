@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">	
+<div class="modal-header">
+	<h4 class="modal-title text-uppercase fw-700" id="dlg_title" th:text="${_header_}"></h4>
+</div>
+<div class="modal-body">
+	<div class="container-fluid" >
+		<form id="f-issu-grant" name="f-issu-grant" method="post" enctype="multipart/form-data" >
+			<div class="row" >
+				<div class="col-sm-12">
+					<div class="form-group m-b-5">
+						<div class="row">
+							<div class="col-12 p-l-0 p-r-0">
+								<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline">Hướng dẫn Gán</span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 p-l-0 p-r-0">
+								<ul class="list-group">
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">1. Chọn danh sách khách hàng.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">2. Chọn button 'Gán KH cho Sub-Admin'.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">3. Chọn Sub-Admin.</li>
+									<li class="list-group-item p-t-3 p-b-3 text-info bg-light-primary fw-700 fs-12 c-pointer p-l-5">4. Chọn 'Chấp nhận' để thực hiện gán.</li>
+								</ul>
+							</div>
+						</div>
+						<div class="row mt-3">
+							<div class="col-12 custom-field m-b-16 ">
+								<div class="c-f__wrapper">
+									<select id="sub-admins" name="sub-admins"
+										class="form-control form-control-sm c-f__textbox" multiple="multiple">
+										<th:block th:if="${map_subadmin != null}">
+											<option th:each="entry : ${map_subadmin.entrySet()}"
+												th:value="${entry.key}" th:utext="${entry.value}"
+												th:selected="${users_managed == null}? false: ${#lists.contains(users_managed, entry.key)}">
+											</option>
+										</th:block>
+									</select>
+									<fieldset class="c-f__set">
+										<legend class="c-f__legend">
+											<label>Chọn Sub-Admin<span class="text-danger">*</span></label>
+										</legend>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row"><div class="col-12 p-l-0"><hr style="margin: 200px 0 0 0;"></div></div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
+	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
+</div>
+
+<script type="text/javascript">
+transactionSub = '[[${transaction}]]';
+$(function(){
+	var objTmp = null;
+	sumoSelectAllowSearch('#f-issu-grant #sub-admins','Nhập để tìm kiếm', 'Không tìm thấy {0}');
+
+	$('div.modal-footer').find('button[data-action="accept"]').click(function (event) {
+		event.preventDefault();
+		var $obj = $(this);
+		
+		var objDataSend = getPopupDataToSave();
+		$.ajax({
+			type: "POST",
+			datatype: "json",
+			url: ROOT_PATH + '/main/' + transactionSub + '/check-data-grant',
+			data: objDataSend,
+			beforeSend: function(req) {
+				initAjaxJsonRequest(req);
+	        	showLoading();
+			},
+			success:function(res) {
+				$obj.prop('disabled', false);
+				hideLoading();
+				if(res) {
+					if(res.errorCode == 0) {
+						var responseData = res.responseData;
+						var confirmText = responseData['CONFIRM'];
+						tokenTransaction = responseData['TOKEN'];
+						
+						objDataSend['tokenTransaction'] = tokenTransaction;
+						
+						alertConfirm(confirmText,
+							function(e) {
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/' + transactionSub + '/grant',
+									data: objDataSend,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res) {
+											if(res.errorCode == 0) {
+												$('div.modal-footer').find('button[data-action="accept"]').prop('disabled', true);				
+												$('#f-issu-grant').closest("div.modal").modal("hide");
+												$('#f-issu-grant').closest("div.modal").find('.modal-content').empty();
+											}
+											alertDLSuccess(createObjectError(res).html(), function(){});
+										}else{
+											alertDLSuccess('unknown error!!!', function(){});
+											hideLoading();
+										}
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							},
+							function(e) {
+								
+							}
+						);
+						
+					}else{
+						alertDLSuccess(createObjectError(res).html(), function(){});
+					}
+				}else{
+					alertDLSuccess('unknown error!!!', function(){});
+					hideLoading();
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				$obj.prop('disabled', false);
+				alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+	            hideLoading();
+	        }
+		});
+	});
+	
+});
+
+function getPopupDataToSave(){
+	var dataPost = {};
+	dataPost['customerIds'] = '[[${IDS}]]';
+	dataPost['sub-admins'] = encodeObjJsonBase64UTF8($('#f-issu-grant').find('#sub-admins').val());
+	return dataPost;
+
+}
+
+</script>
+
+</html>

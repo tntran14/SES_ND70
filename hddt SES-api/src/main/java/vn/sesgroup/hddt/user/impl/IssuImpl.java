@@ -116,8 +116,11 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		List<Document> pipeline = new ArrayList<Document>();
 		
 		Document docMatch = new Document("IsDelete",new Document("$ne", true));	
-		if(!header.getCurUserId().equals(header.getUserId())) {
-			docMatch.append("InfoCreated.CreateBySubUserID", header.getCurUserId());
+		if (!header.getCurUserId().equals(header.getUserId())) {
+			docMatch.append("$or", Arrays.asList(
+					new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
+					new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
+					));
 		}
 		
 		if(!"".equals(t))
@@ -1349,6 +1352,79 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		HashMap<String, Object> mapData = new HashMap<String, Object>();
 		mapData.put("total", count);
 		rsp.setObjData(mapData);
+		responseStatus = new MspResponseStatus(0, "SUCCESS");
+		rsp.setResponseStatus(responseStatus);
+		return rsp;
+	}
+
+	@Override
+	public MsgRsp grant(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+ 		Object objData = msg.getObjData();
+		JsonNode jsonData = null;
+		MsgRsp rsp = new MsgRsp(header);
+		MspResponseStatus responseStatus = null;
+		
+		try {
+			jsonData = Json.serializer().nodeFromObject(objData);
+		} catch (Exception e) {
+		}
+		String ids = commons.getTextJsonNode(jsonData.at("/CUSTOMERS")).replaceAll("\\s", "");
+		String subAdminIds = commons.getTextJsonNode(jsonData.at("/SUBADMINS")).replaceAll("\\s", " ");
+		
+		String[] idList = ids.split(",");
+		String[] subAdminIdList = subAdminIds.split(",");
+		
+		List<Document> pipeline = new ArrayList<Document>();
+		Document docMatch = null;
+		Document docUpsert = null;
+		Document docTmp = null;
+		ObjectId objectId = null;
+		
+		FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+		options.upsert(true);
+		options.maxTime(5000, TimeUnit.MILLISECONDS);
+		options.returnDocument(ReturnDocument.AFTER);
+		
+		for (String id : idList) {
+			try {
+				objectId = new ObjectId(id);
+			} catch(Exception e){}
+			
+			docMatch = new Document("IsDelete", new Document("$ne", true))
+					.append("_id", objectId);
+			pipeline.clear();
+
+			pipeline.add(new Document("$match", docMatch));
+			pipeline.add(new Document("$project", new Document("_id", 1)));
+
+			docTmp = null;
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+			} catch (Exception e) {
+
+			}
+			
+			if (docTmp == null) {
+				continue;
+			}
+			docUpsert = new Document();
+			docUpsert.append("ManagedByUsers", Arrays.asList(subAdminIdList));
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+				collection.findOneAndUpdate(
+						docMatch, 
+						new Document("$set", docUpsert),
+						options);
+			} catch (Exception e) {
+				responseStatus = new MspResponseStatus(999, "Lỗi khi set data");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+		}
+			
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
