@@ -77,7 +77,13 @@ public class THHDonImpl extends AbstractDAO implements THHDonDAO {
 		//CHECK ISSUER TON TAI
  		Document docMatch = new Document("TaxCode", mst)
 				.append("IsDelete", new Document("$ne", true));		
-		
+ 		if (!header.getCurUserId().equals(header.getUserId())) {
+			docMatch.append("$or", Arrays.asList(
+					new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
+					new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
+					));
+		}
+ 		
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
 		      try {
