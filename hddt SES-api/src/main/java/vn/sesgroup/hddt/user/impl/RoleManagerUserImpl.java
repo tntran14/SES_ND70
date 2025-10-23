@@ -52,22 +52,22 @@ public class RoleManagerUserImpl extends AbstractDAO implements RoleManagerUserD
 	JPUtils jpUtils;
 	Document docUpsert = null;
 	
-public MsgRsp list(JSONRoot jsonRoot) throws Exception {
+	public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
 		MsgPage page = msg.getMsgPage();
 		Object objData = msg.getObjData();
-		
+
 		String roleName = "";
 
 		JsonNode jsonData = null;
 		if (objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
-			
+
 			roleName = commons.getTextJsonNode(jsonData.at("/RoleName")).replaceAll("\\s", " ");
-	
+
 		}
-				
+
 		MsgRsp rsp = new MsgRsp(header);
 		MspResponseStatus responseStatus = null;
 
@@ -78,100 +78,101 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		List<Document> pipeline = new ArrayList<Document>();
 		Document docSubTmp = null;
 
-		Document docMatch = new Document("IsDelete",
-				new Document("$ne", true))
-				.append("IssuerId", header.getIssuerId());
-		
+		Document docMatch = new Document("IsDelete", new Document("$ne", true)).append("IssuerId", header.getIssuerId())
+				.append("InfoCreated.CreateUserID", header.getUserId());
+
 		if (!"".equals(roleName))
 			docMatch.append("RoleName",
 					new Document("$regex", commons.regexEscapeForMongoQuery(roleName)).append("$options", "i"));
-	
-		
 
-		
 		Document fillter = new Document("_id", 1).append("InfoUpdated", 1).append("InfoCreated", 1)
-				.append("IsRoleRoot", 1).append("IsActive", 1).append("FunctionRights", 1).append("RoleName", 1).append("RoleId", 1);
-		
-		
+				.append("IsRoleRoot", 1).append("IsActive", 1).append("FunctionRights", 1).append("RoleName", 1)
+				.append("RoleId", 1);
+
 		pipeline = new ArrayList<Document>();
-		pipeline.add(new Document("$match", docMatch));		
-		
-		pipeline.add(new Document("$sort",
-				new Document("_id", -1)					
-				));
+		pipeline.add(new Document("$match", docMatch));
+
+		pipeline.add(new Document("$sort", new Document("_id", -1)));
 		pipeline.add(new Document("$project", fillter));
 		pipeline.addAll(createFacetForSearchNotSort(page));
-	
+
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("RolesRightManage");
 		try {
-			docTmp =   collection.aggregate(pipeline).allowDiskUse(true).iterator().next();		
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-			
+
 		mongoClient.close();
-		
+
 		rsp = new MsgRsp(header);
 		responseStatus = null;
-		
+
 		if (null == docTmp) {
 			responseStatus = new MspResponseStatus(9999, Constants.MAP_ERROR.get(9999));
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}
-		
+
 		page.setTotalRows(docTmp.getInteger("total", 0));
 		rsp.setMsgPage(page);
 
 		ArrayList<HashMap<String, Object>> rowsReturn = new ArrayList<HashMap<String, Object>>();
-		
+
 		List<Document> rows = null;
-		
-		if(docTmp!=null) {
-		if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
-			rows = docTmp.getList("data", Document.class);
-		}
 
-
-		HashMap<String, Object> hItem = null;
-		if (null != rows) {
-			for (Document doc : rows) {
-				objectId = (ObjectId) doc.get("_id");
-
-				hItem = new HashMap<String, Object>();
-				hItem.put("_id", objectId.toString());
-				hItem.put("RoleId", doc.get("RoleId"));
-				hItem.put("RoleName", doc.get("RoleName"));		
-				hItem.put("IsActive", doc.get("IsActive"));		
-				hItem.put("NumFunctionRights", 
-						null != doc.get("FunctionRights") && doc.get("FunctionRights") instanceof List?
-								doc.getList("FunctionRights", Object.class).size() : 0
-						);	
-				hItem.put("IsActive", doc.getBoolean("IsActive", false));
-				hItem.put("IsRoleRoot", doc.getBoolean("IsRoleRoot", false));
-				if(null != doc.get("InfoCreated") && doc.get("InfoCreated") instanceof Document) {
-					docSubTmp = (Document) doc.get("InfoCreated");
-					hItem.put("CreateDate", (null == docSubTmp.get("CreateDate") || !(docSubTmp.get("CreateDate") instanceof Date))?
-							"":
-							commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(docSubTmp.getDate("CreateDate")), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB)
-						);
-					hItem.put("CreateUserFullName", null == docSubTmp.get("CreateUserFullName")? "": docSubTmp.getString("CreateUserFullName"));
-				}
-				if(null != doc.get("InfoUpdated") && doc.get("InfoUpdated") instanceof Document) {
-					docSubTmp = (Document) doc.get("InfoUpdated");
-					hItem.put("UpdatedDate", (null == docSubTmp.get("UpdatedDate") || !(docSubTmp.get("UpdatedDate") instanceof Date))?
-							"":
-							commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(docSubTmp.getDate("UpdatedDate")), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB)
-						);
-					hItem.put("UpdatedUserFullName", null == docSubTmp.get("UpdatedUserFullName")? "": docSubTmp.getString("UpdatedUserFullName"));
-				}
-				rowsReturn.add(hItem);
+		if (docTmp != null) {
+			if (docTmp.get("data") != null && docTmp.get("data") instanceof List) {
+				rows = docTmp.getList("data", Document.class);
 			}
+
+			HashMap<String, Object> hItem = null;
+			if (null != rows) {
+				for (Document doc : rows) {
+					objectId = (ObjectId) doc.get("_id");
+
+					hItem = new HashMap<String, Object>();
+					hItem.put("_id", objectId.toString());
+					hItem.put("RoleId", doc.get("RoleId"));
+					hItem.put("RoleName", doc.get("RoleName"));
+					hItem.put("IsActive", doc.get("IsActive"));
+					hItem.put("NumFunctionRights",
+							null != doc.get("FunctionRights") && doc.get("FunctionRights") instanceof List
+									? doc.getList("FunctionRights", Object.class).size()
+									: 0);
+					hItem.put("IsActive", doc.getBoolean("IsActive", false));
+					hItem.put("IsRoleRoot", doc.getBoolean("IsRoleRoot", false));
+					if (null != doc.get("InfoCreated") && doc.get("InfoCreated") instanceof Document) {
+						docSubTmp = (Document) doc.get("InfoCreated");
+						hItem.put("CreateDate",
+								(null == docSubTmp.get("CreateDate") || !(docSubTmp.get("CreateDate") instanceof Date))
+										? ""
+										: commons.convertLocalDateTimeToString(
+												commons.convertDateToLocalDateTime(docSubTmp.getDate("CreateDate")),
+												Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
+						hItem.put("CreateUserFullName", null == docSubTmp.get("CreateUserFullName") ? ""
+								: docSubTmp.getString("CreateUserFullName"));
+					}
+					if (null != doc.get("InfoUpdated") && doc.get("InfoUpdated") instanceof Document) {
+						docSubTmp = (Document) doc.get("InfoUpdated");
+						hItem.put("UpdatedDate",
+								(null == docSubTmp.get("UpdatedDate")
+										|| !(docSubTmp.get("UpdatedDate") instanceof Date))
+												? ""
+												: commons.convertLocalDateTimeToString(
+														commons.convertDateToLocalDateTime(
+																docSubTmp.getDate("UpdatedDate")),
+														Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
+						hItem.put("UpdatedUserFullName", null == docSubTmp.get("UpdatedUserFullName") ? ""
+								: docSubTmp.getString("UpdatedUserFullName"));
+					}
+					rowsReturn.add(hItem);
+				}
+			}
+
 		}
-		
-	}
-		
+
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
 
@@ -180,7 +181,6 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		rsp.setObjData(mapDataR);
 		return rsp;
 	}
-	
 	
 	@Override
 	public MsgRsp crud(JSONRoot jsonRoot) throws Exception {

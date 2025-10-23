@@ -427,8 +427,9 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 							new Document("$lookup", new Document("from", "RolesRightManage")
 									.append("pipeline", Arrays.asList(
 											new Document("$match",
-													new Document("IssuerId", header.getIssuerId()).append("IsActive",
-															true)),
+													new Document("IssuerId", header.getIssuerId())
+													.append("IsActive", true)
+													.append("InfoCreated.CreateUserID", header.getUserId())),
 											new Document("$addFields",
 													new Document("_id", new Document("$toString", "$_id"))),
 											new Document("$project",

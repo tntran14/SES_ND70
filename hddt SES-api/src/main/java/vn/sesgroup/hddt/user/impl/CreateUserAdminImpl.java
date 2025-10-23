@@ -81,7 +81,7 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 				new Document("$ne", true))
 				.append("IssuerId", header.getIssuerId())
 				.append("IsRole", true)
-				;
+				.append("InfoCreated.CreateUserID", header.getUserId());
 		
 		if (!"".equals(fullName))
 			docMatch.append("FullName",

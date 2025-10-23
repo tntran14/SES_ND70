@@ -74,7 +74,8 @@ public MsgRsp list(JSONRoot jsonRoot) throws Exception {
 		Document docMatch = new Document("IsDelete",
 				new Document("$ne", true))
 				.append("IsRoleRoot", true)
-				.append("IssuerId", header.getIssuerId());
+				.append("IssuerId", header.getIssuerId())
+				.append("InfoCreated.CreateUserID", header.getUserId());
 		
 		if (!"".equals(roleName))
 			docMatch.append("RoleName",
