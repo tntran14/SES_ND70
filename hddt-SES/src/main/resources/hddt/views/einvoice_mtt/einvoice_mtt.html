@@ -405,7 +405,6 @@
 				<!--   <script th:src="@{/static/function/einvoice/einvoices.js(v=1.55) }"></script>  -->
 				<script>
 
-
 				$(function(){
 					dateInputFormat($('#f-einvoice_mtt').find('#from-date'));
 					dateInputFormat($('#f-einvoice_mtt').find('#to-date'));
@@ -563,7 +562,7 @@
 							},					
 				    	],
 						dataBound: function(e) {
-							
+							processCurrentPage(e.sender);
 							$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-detail"], button[data-action="einvoice_mtt-edit"],button[data-action="einvoice_mtt-copy"], button[data-action="einvoice_mtt-sign"], button[data-action="einvoice_mtt-cre-dc"], button[data-action="einvoice_mtt-cre-tt"], button[data-action="einvoice_mtt-signAll"], button[data-action="einvoice_mtt-sendAll-email-auto"], button[data-action="einvoice_mtt-send-cqtAll"],button[data-action="einvoice_mtt-xml"]').prop('disabled', true);
 							
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
@@ -2560,6 +2559,151 @@
 					$('#f-einvoice_mtt').find('button[data-action="einvoice-delete_"]').prop('disabled', checkRows.length == 0);
 					$('#f-einvoice_mtt').find('button[data-action="einvoice_mtt-xml"]').prop('disabled', checkRows.length == 0);
 				}
+				
+				function refreshStatusFromCQT(objData) {
+						return new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/einvoice_mtt/refresh-status-cqt',
+								data: objData,
+								beforeSend: function (req) {
+									initAjaxJsonRequest(req);
+								},
+								success: function (res) {
+									if (res && res.errorCode == 0) {
+										resolve(res);
+									} else {
+										reject(res || { errorCode: -1, message: 'unknown error!!!' });
+									}
+								},
+								error: function (xhr, ajaxOptions, thrownError) {
+									reject({
+										errorCode: xhr.status,
+										message: xhr.responseText || thrownError
+									});
+								}
+							});
+						});
+					}
+
+					// 				function checkDataSend(objData) {
+					// 				    return new Promise(function(resolve, reject) {
+					// 				        $.ajax({
+					// 				            type: "POST",
+					// 				            datatype: "json",
+					// 				            url: ROOT_PATH + '/main/einvoice-send-emailauto/check-data-send',
+					// 				            data: objData,
+					// 				            beforeSend: function(req) {
+					// 				                initAjaxJsonRequest(req);
+					// 				            },
+					// 				            success: function(res) {
+					// 				                if (res && res.errorCode == 0) {
+					// 				                    resolve(res.responseData);
+					// 				                } else {
+					// 				                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
+					// 				                }
+					// 				            },
+					// 				            error: function(xhr, ajaxOptions, thrownError) {
+					// 				                reject({ 
+					// 				                    errorCode: xhr.status, 
+					// 				                    message: xhr.responseText || thrownError 
+					// 				                });
+					// 				            }
+					// 				        });
+					// 				    });
+					// 				}
+
+					// 				function sendMail(objData) {
+					// 				    return new Promise(function(resolve, reject) {
+					// 				        $.ajax({
+					// 				            type: "POST",
+					// 				            datatype: "json",
+					// 				            url: ROOT_PATH + '/main/einvoice-send-emailauto/send-mail',
+					// 				            data: objData,
+					// 				            beforeSend: function(req) {
+					// 				                initAjaxJsonRequest(req);
+					// 				            },
+					// 				            success: function(res) {
+					// 				                if (res && res.errorCode == 0) {
+					// 				                    resolve(res);
+					// 				                } else {
+					// 				                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
+					// 				                }
+					// 				            },
+					// 				            error: function(xhr, ajaxOptions, thrownError) {
+					// 				                reject({ 
+					// 				                    errorCode: xhr.status, 
+					// 				                    message: xhr.responseText || thrownError 
+					// 				                });
+					// 				            }
+					// 				        });
+					// 				    });
+					// 				}
+
+					function autoRefreshStatusFromCQT(rowData) {
+						return new Promise(async function (resolve, reject) {
+							try {
+								var objData = {
+									_id: rowData['_id']
+								};
+
+								var res1 = await refreshStatusFromCQT(objData);
+
+								// 						var res2 = await checkDataSend(objData);
+								// 						var tokenTransaction = res2['TOKEN'];
+
+								// 						objData['tokenTransaction'] = tokenTransaction;
+								// 						var res3 = await sendMail(objData);
+
+								resolve(res1);
+							}
+							catch (e) {
+								reject(e);
+							}
+						});
+					}
+
+					var processedPages = new Set();
+
+					function shouldAutoRefresh(dataItem) {
+						return 'PROCESSING' == dataItem['EInvoiceStatus'] && 'SIGNED' == dataItem['SignStatusCode'];
+					}
+
+					async function processCurrentPage(grid) {
+						var dataSource = grid.dataSource;
+						var currentPage = dataSource.page();
+
+						if (processedPages.has(currentPage)) {
+							return;
+						}
+						var dataItems = dataSource.view();
+						var itemsToProcess = [];
+
+						for (var i = 0; i < dataItems.length; i++) {
+							if (shouldAutoRefresh(dataItems[i])) {
+								itemsToProcess.push(dataItems[i]);
+							}
+						}
+
+						if (itemsToProcess.length > 0) {
+							var promises = [];
+							for (var i = 0; i < itemsToProcess.length; i++) {
+								promises.push(autoRefreshStatusFromCQT(itemsToProcess[i]).catch(function (error) {
+									return null;
+								}));
+							}
+							try {
+								await Promise.all(promises);
+
+								dataSource.read();
+							} catch (e) {
+								console.log(e);
+							}
+						}
+
+						processedPages.add(currentPage);
+					}
 
 				function setTemplateForGridMAIN(key, data){
 					var signStatusCode = data['SignStatusCode'];
