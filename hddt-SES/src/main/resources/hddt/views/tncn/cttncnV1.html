@@ -318,7 +318,7 @@
 							},
 				    	],
 				    	dataBound: function(e) {
-
+				    		processCurrentPage(e.sender);
 							
 							$("#f-cttncn").find('button[data-action="cttncn-pdfAllV1"], button[data-action="cttncn-sendMailAllV1"], button[data-action="cttncn-sendAllToCQTV1"], button[data-action="cttncn-refreshAllFromCQTV1"], button[data-action="cttncn-xmlV1"], button[data-action="cttncn-detailV1"], button[data-action="cttncn-editV1"], button[data-action="cttncn-cre-dc"], button[data-action="cttncn-cre-tt"], button[data-action="cttncn-signV1"], button[data-action="cttncn-signAllV1"]').prop('disabled', true);
 							
@@ -1471,6 +1471,122 @@
 					dataPost['date'] = $('#f-cttncn #date').val() == null? '': $('#f-cttncn #date').val();
 					
 					return dataPost;
+				}
+				
+				function checkDataSend(objData) {
+					return new Promise(function (resolve, reject) {
+						$.ajax({
+							type: "POST",
+							datatype: "json",
+							url: ROOT_PATH + '/main/cttncn-signV1/check-data-refresh-cqtV1',
+							data: objData,
+							beforeSend: function (req) {
+								initAjaxJsonRequest(req);
+							},
+							success: function (res) {
+								if (res && res.errorCode == 0) {
+									resolve(res);
+								} else {
+									reject(res || { errorCode: -1, message: 'unknown error!!!' });
+								}
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								reject({
+									errorCode: xhr.status,
+									message: xhr.responseText || thrownError
+								});
+							}
+						});
+					});
+				}
+
+				function execSend(objData) {
+					return new Promise(function (resolve, reject) {
+						$.ajax({
+							type: "POST",
+							datatype: "json",
+							url: ROOT_PATH + '/main/cttncn-signV1/refresh-cqtV1',
+							data: objData,
+							beforeSend: function (req) {
+								initAjaxJsonRequest(req);
+							},
+							success: function (res) {
+								if (res && res.errorCode == 0) {
+									resolve(res.responseData);
+								} else {
+									reject(res || { errorCode: -1, message: 'unknown error!!!' });
+								}
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+								reject({
+									errorCode: xhr.status,
+									message: xhr.responseText || thrownError
+								});
+							}
+						});
+					});
+				}
+
+				function autoRefreshStatusFromCQT(rowData) {
+					return new Promise(async function (resolve, reject) {
+						try {
+							var objData = {
+								_id: rowData['_id']
+							};
+
+							var res1 = await checkDataSend(objData);
+							
+							var tokenTransaction = res1['TOKEN'];
+							objData['tokenTransaction'] = tokenTransaction;
+							var res2 = await execSend(objData);
+							
+							resolve(res2);
+						}
+						catch (e) {
+							reject(e);
+						}
+					});
+				}
+
+				var processedPages = new Set();
+
+				function shouldAutoRefresh(dataItem) {
+					return 'PROCESSING' == dataItem['StatusCode'] && 'SIGNED' == dataItem['SignStatusCode'];
+				}
+
+				async function processCurrentPage(grid) {
+					var dataSource = grid.dataSource;
+					var currentPage = dataSource.page();
+
+					if (processedPages.has(currentPage)) {
+						return;
+					}
+					var dataItems = dataSource.view();
+					var itemsToProcess = [];
+
+					for (var i = 0; i < dataItems.length; i++) {
+						if (shouldAutoRefresh(dataItems[i])) {
+							itemsToProcess.push(dataItems[i]);
+						}
+					}
+
+					if (itemsToProcess.length > 0) {
+						var promises = [];
+						for (var i = 0; i < itemsToProcess.length; i++) {
+							promises.push(autoRefreshStatusFromCQT(itemsToProcess[i]).catch(function (error) {
+								return null;
+							}));
+						}
+						try {
+							await Promise.all(promises);
+
+							dataSource.read();
+						} catch (e) {
+							console.log(e);
+						}
+					}
+
+					processedPages.add(currentPage);
 				}
 
 		 		function isDisabledSingleHandleButton(){
