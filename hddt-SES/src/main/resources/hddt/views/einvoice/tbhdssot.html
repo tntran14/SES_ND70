@@ -944,7 +944,9 @@ function refreshStatusFromCQT(objData) {
 							}
 						});
 					}
-
+					
+					var processedPages = new Set();
+					
 					function shouldAutoRefresh(dataItem) {
 						return 'PROCESSING' == dataItem['Status'] && 'SIGNED' == dataItem['SignStatusCode'];
 					}
@@ -952,8 +954,14 @@ function refreshStatusFromCQT(objData) {
 					async function processCurrentPage(grid) {
 						var dataSource = grid.dataSource;
 						var currentPage = dataSource.page();
-
+						var pageSize = dataSource.pageSize();
 						var dataItems = dataSource.view();
+						
+						const key = getUniqueKey(dataItems, currentPage, pageSize);
+						if (processedPages.has(key)) {
+							return;
+						}
+						
 						var itemsToProcess = [];
 
 						for (var i = 0; i < dataItems.length; i++) {
@@ -977,6 +985,8 @@ function refreshStatusFromCQT(objData) {
 								console.log(e);
 							}
 						}
+						
+						processedPages.add(key);
 					}
 
 function getDataSearch(){

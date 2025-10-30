@@ -1557,11 +1557,14 @@
 				async function processCurrentPage(grid) {
 					var dataSource = grid.dataSource;
 					var currentPage = dataSource.page();
-
-					if (processedPages.has(currentPage)) {
+					var pageSize = dataSource.pageSize();
+					var dataItems = dataSource.view();
+					
+					const key = getUniqueKey(dataItems, currentPage, pageSize);
+					if (processedPages.has(key)) {
 						return;
 					}
-					var dataItems = dataSource.view();
+
 					var itemsToProcess = [];
 
 					for (var i = 0; i < dataItems.length; i++) {
@@ -1586,7 +1589,7 @@
 						}
 					}
 
-					processedPages.add(currentPage);
+					processedPages.add(key);
 				}
 
 		 		function isDisabledSingleHandleButton(){

@@ -983,5 +983,28 @@ function initTinyMCEForMail(objId){
 	}
 }
 
+function simpleHash(idsArray) {
+    var hash = 0;
+    var str = idsArray.join(',');
+    
+    for (var i = 0; i < str.length; i++) {
+        var char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    
+    return hash;
+}
+
+function getUniqueKey(dataItems, page, pageSize) {
+	var ids = [];
+	if (dataItems.length > 0) {
+		ids = dataItems.map(item => item['_id']);
+	}
+
+	const hash = simpleHash(ids);
+	return `grid_${page}_${pageSize}_${hash}`;
+}
+
 
 
