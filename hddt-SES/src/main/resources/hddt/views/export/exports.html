@@ -465,9 +465,7 @@ $(function(){
 			
     	],
 		dataBound: function(e) {
-//			_gridMain.find('div table tbody tr td').each(function(idx, obj){
-//				$(obj).attr('title', $(obj).html())
-//			});
+			processCurrentPage(e.sender);
 			
 			$("#f-export").find('button[data-action="export-detail"], button[data-action="export-edit"], button[data-action="export-copy"],button[data-action="export-cre-dc"],button[data-action="export-cre-tt"], button[data-action="export-sign"]').prop('disabled', true);
 			
@@ -1739,7 +1737,243 @@ $(function(){
 	});
 	
 });
+// $.ajax({
+// 	type: "POST",
+// 	datatype: "json",
+// 	url: ROOT_PATH + '/main/export/refresh-status-cqt',
+// 	data: objData,
+// 	beforeSend: function(req) {
+// 		initAjaxJsonRequest(req);
+//     	showLoading();
+// 	},
+// 	success:function(res) {
+// 		hideLoading();
+// 		if(res) {
+// 			if(res.errorCode == 0) {
+// 				var objURL1 = {};
+// 				objURL1['check'] = ROOT_PATH + '/main/export-send-emailauto/check-data-send';
+// 				objURL1['exec'] = ROOT_PATH + '/main/export-send-emailauto/send-mail';
+			
+// 				$.ajax({
+// 					type: "POST",
+// 					datatype: "json",
+// 					url: objURL1['check'],
+// 					data: objData,
+// 					beforeSend: function(req) {
+// 						initAjaxJsonRequest(req);
+// 			        	showLoading();
+// 					},
+// 					success:function(res) {
+// 						hideLoading();
+// 						if(res) {
+// 							if(res.errorCode == 0) {
+// 								var responseData = res.responseData;
+// 								tokenTransaction = responseData['TOKEN'];
+								
+// 								objData['tokenTransaction'] = tokenTransaction;
 
+// 										$.ajax({
+// 											type: "POST",
+// 											datatype: "json",
+// 											url: objURL1['exec'],
+// 											data: objData,
+// 											beforeSend: function(req) {
+// 												initAjaxJsonRequest(req);
+// 									        	showLoading();
+// 											},
+// 											success:function(res) {
+// 												hideLoading();
+// 												if(res) {
+// 													if(res.errorCode == 0) {
+// 														_gridMain.data("kendoGrid").dataSource.read();
+// 													}else{
+// 														alertDLSuccess(createObjectError(res).html(), function(){});
+// 													}
+// 												}else{
+// 													alertDLSuccess('unknown error!!!', function(){});
+// 													hideLoading();
+// 												}
+// 											},
+// 											error:function (xhr, ajaxOptions, thrownError){
+// 												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+// 									            hideLoading();
+// 									        }
+// 										});
+								
+									
+							
+// 							}else{
+// 								alertDLSuccess(createObjectError(res).html(), function(){});
+// 							}
+// 						}else{
+// 							alertDLSuccess('unknown error!!!', function(){});
+// 							hideLoading();
+// 						}
+// 					},
+// 					error:function (xhr, ajaxOptions, thrownError){
+// 						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+// 			            hideLoading();
+// 			        }
+// 				});
+// 			}else{
+// 				alertDLSuccess(createObjectError(res).html(), function(){});
+// 			}
+// 		}else{
+// 			alertDLSuccess('unknown error!!!', function(){});
+// 			hideLoading();
+// 		}
+// 	},
+// 	error:function (xhr, ajaxOptions, thrownError){
+// 		alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+//         hideLoading();
+//     }
+// });		
+
+function refreshStatusFromCQT(objData) {
+						return new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/export/refresh-status-cqt',
+								data: objData,
+								beforeSend: function (req) {
+									initAjaxJsonRequest(req);
+								},
+								success: function (res) {
+									if (res && res.errorCode == 0) {
+										resolve(res);
+									} else {
+										reject(res || { errorCode: -1, message: 'unknown error!!!' });
+									}
+								},
+								error: function (xhr, ajaxOptions, thrownError) {
+									reject({
+										errorCode: xhr.status,
+										message: xhr.responseText || thrownError
+									});
+								}
+							});
+						});
+					}
+
+					function checkDataSend(objData) {
+						return new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/export-send-emailauto/check-data-send',
+								data: objData,
+								beforeSend: function (req) {
+									initAjaxJsonRequest(req);
+								},
+								success: function (res) {
+									if (res && res.errorCode == 0) {
+										resolve(res.responseData);
+									} else {
+										reject(res || { errorCode: -1, message: 'unknown error!!!' });
+									}
+								},
+								error: function (xhr, ajaxOptions, thrownError) {
+									reject({
+										errorCode: xhr.status,
+										message: xhr.responseText || thrownError
+									});
+								}
+							});
+						});
+					}
+
+					function sendMail(objData) {
+						return new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/export-send-emailauto/send-mail',
+								data: objData,
+								beforeSend: function (req) {
+									initAjaxJsonRequest(req);
+								},
+								success: function (res) {
+									if (res && res.errorCode == 0) {
+										resolve(res);
+									} else {
+										reject(res || { errorCode: -1, message: 'unknown error!!!' });
+									}
+								},
+								error: function (xhr, ajaxOptions, thrownError) {
+									reject({
+										errorCode: xhr.status,
+										message: xhr.responseText || thrownError
+									});
+								}
+							});
+						});
+					}
+
+					function autoRefreshStatusFromCQT(rowData) {
+						return new Promise(async function (resolve, reject) {
+							try {
+								var objData = {
+									_id: rowData['_id']
+								};
+
+								var res1 = await refreshStatusFromCQT(objData);
+
+								var res2 = await checkDataSend(objData);
+								var tokenTransaction = res2['TOKEN'];
+
+								objData['tokenTransaction'] = tokenTransaction;
+								var res3 = await sendMail(objData);
+
+								resolve(res3);
+							}
+							catch (e) {
+								reject(e);
+							}
+						});
+					}
+
+// 					var processedPages = new Set();
+
+					function shouldAutoRefresh(dataItem) {
+						return 'PROCESSING' == dataItem['EInvoiceStatus'] && 'SIGNED' == dataItem['SignStatusCode'];
+					}
+
+					async function processCurrentPage(grid) {
+						var dataSource = grid.dataSource;
+						var currentPage = dataSource.page();
+
+// 						if (processedPages.has(currentPage)) {
+// 							return;
+// 						}
+						var dataItems = dataSource.view();
+						var itemsToProcess = [];
+
+						for (var i = 0; i < dataItems.length; i++) {
+							if (shouldAutoRefresh(dataItems[i])) {
+								itemsToProcess.push(dataItems[i]);
+							}
+						}
+
+						if (itemsToProcess.length > 0) {
+							var promises = [];
+							for (var i = 0; i < itemsToProcess.length; i++) {
+								promises.push(autoRefreshStatusFromCQT(itemsToProcess[i]).catch(function (error) {
+									return null;
+								}));
+							}
+							try {
+								await Promise.all(promises);
+
+								dataSource.read();
+							} catch (e) {
+								console.log(e);
+							}
+						}
+
+// 						processedPages.add(currentPage);
+					}
+					
 function getDataSearch(){
 	var dataPost = {};
 	
