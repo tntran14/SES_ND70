@@ -2942,7 +2942,7 @@
 						});
 					}
 
-					var processedPages = new Set();
+// 					var processedPages = new Set();
 
 					function shouldAutoRefresh(dataItem) {
 						return 'PROCESSING' == dataItem['EInvoiceStatus'] && 'SIGNED' == dataItem['SignStatusCode'];
@@ -2952,9 +2952,9 @@
 						var dataSource = grid.dataSource;
 						var currentPage = dataSource.page();
 
-						if (processedPages.has(currentPage)) {
-							return;
-						}
+// 						if (processedPages.has(currentPage)) {
+// 							return;
+// 						}
 						var dataItems = dataSource.view();
 						var itemsToProcess = [];
 
@@ -2980,7 +2980,7 @@
 							}
 						}
 
-						processedPages.add(currentPage);
+// 						processedPages.add(currentPage);
 					}
 					 
 				function getDataSearch(){
