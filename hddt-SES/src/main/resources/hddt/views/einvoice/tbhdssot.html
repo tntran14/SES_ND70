@@ -316,6 +316,7 @@ $(function(){
 			},
     	],
     	dataBound: function(e) {
+    		processCurrentPage(e.sender);
     		$("#f-tbhdssot").find('button[data-action="tbhdssot-detail"], button[data-action="tbhdssot-edit"], button[data-action="tbhdssot-sign"]').prop('disabled', true);
     		
     		_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
@@ -900,6 +901,83 @@ $(function(){
 	});
 	
 });
+
+function refreshStatusFromCQT(objData) {
+						return new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/tbhdssot/refresh-status-cqt',
+								data: objData,
+								beforeSend: function (req) {
+									initAjaxJsonRequest(req);
+								},
+								success: function (res) {
+									if (res && res.errorCode == 0) {
+										resolve(res);
+									} else {
+										reject(res || { errorCode: -1, message: 'unknown error!!!' });
+									}
+								},
+								error: function (xhr, ajaxOptions, thrownError) {
+									reject({
+										errorCode: xhr.status,
+										message: xhr.responseText || thrownError
+									});
+								}
+							});
+						});
+					}
+					
+					function autoRefreshStatusFromCQT(rowData) {
+						return new Promise(async function (resolve, reject) {
+							try {
+								var objData = {
+									_id: rowData['_id']
+								};
+
+								var res1 = await refreshStatusFromCQT(objData);
+								resolve(res1);
+							}
+							catch (e) {
+								reject(e);
+							}
+						});
+					}
+
+					function shouldAutoRefresh(dataItem) {
+						return 'PROCESSING' == dataItem['Status'] && 'SIGNED' == dataItem['SignStatusCode'];
+					}
+
+					async function processCurrentPage(grid) {
+						var dataSource = grid.dataSource;
+						var currentPage = dataSource.page();
+
+						var dataItems = dataSource.view();
+						var itemsToProcess = [];
+
+						for (var i = 0; i < dataItems.length; i++) {
+							if (shouldAutoRefresh(dataItems[i])) {
+								itemsToProcess.push(dataItems[i]);
+							}
+						}
+
+						if (itemsToProcess.length > 0) {
+							var promises = [];
+							for (var i = 0; i < itemsToProcess.length; i++) {
+								promises.push(autoRefreshStatusFromCQT(itemsToProcess[i]).catch(function (error) {
+									return null;
+								}));
+							}
+							try {
+								await Promise.all(promises);
+
+								dataSource.read();
+							} catch (e) {
+								console.log(e);
+							}
+						}
+					}
 
 function getDataSearch(){
 	var dataPost = {};
