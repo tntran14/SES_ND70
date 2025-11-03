@@ -11,29 +11,46 @@
 
 <div class="row">
 	<div class="col-12">
-		<form id="f-einvoice-crud" name="f-einvoice-crud" method="post" enctype="multipart/form-data">
+		<form id="f-einvoice-crud" name="f-einvoice-crud" method="post"
+			enctype="multipart/form-data">
 			<div class="card">
 				<div class="card-body">
-					<div class="row text-danger m-b-10 fw-500 col-12" th:if="${messageError != null}">
+					<div class="row text-danger m-b-10 fw-500 col-12"
+						th:if="${messageError != null}">
 						[[${messageError}]]
-						<div class="col-12 p-0"><hr class="m-t-5 m-b-5"></div>
+						<div class="col-12 p-0">
+							<hr class="m-t-5 m-b-5">
+						</div>
 					</div>
 					<div class="row">
-					<div class="col-6"></div>
-									<div class="col-6 m-b-3 "><span class="  color-ses"><span id="AlertMessage" class="warning__text-title text-uppercase text-decoration-underline text-danger font-weight-bold"></span></span></div>														
-					
-					</div>					
-					<div class="form-group row m-b-6" th:classappend="${messageError != null? 'none-pointer-event': ''}" >
+						<div class="col-6"></div>
+						<div class="col-6 m-b-3 ">
+							<span class="  color-ses"><span id="AlertMessage"
+								class="warning__text-title text-uppercase text-decoration-underline text-danger font-weight-bold"></span></span>
+						</div>
+
+					</div>
+					<div class="form-group row m-b-6"
+						th:classappend="${messageError != null? 'none-pointer-event': ''}">
 						<div class="col-md-6">
 							<div class="row m-b-16">
-								<div class="col-12 "><span class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin hóa đơn</span></div>
+								<div class="col-12 ">
+									<span
+										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+										tin hóa đơn</span>
+								</div>
 							</div>
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="nban-mst" name="nban-mst" class="form-control form-control-sm c-f__textbox" th:value="${NbanMst}" type="text" autocomplete="off" th:readonly="true" />
+										<input id="nban-mst" name="nban-mst"
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${NbanMst}" type="text" autocomplete="off"
+											th:readonly="true" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã số thuế</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -41,9 +58,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="nban-ten" name="nban-ten" class="form-control form-control-sm c-f__textbox" th:value="${NbanTen}" type="text" autocomplete="off" th:readonly="true" />
+										<input id="nban-ten" name="nban-ten"
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${NbanTen}" type="text" autocomplete="off"
+											th:readonly="true" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tên đơn vị</label></legend>
+											<legend class="c-f__legend">
+												<label>Tên đơn vị</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -51,9 +73,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="nban-dchi" name="nban-dchi" class="form-control form-control-sm c-f__textbox" th:value="${NbanDchi}" type="text" autocomplete="off" th:readonly="true" />
+										<input id="nban-dchi" name="nban-dchi"
+											class="form-control form-control-sm c-f__textbox"
+											th:value="${NbanDchi}" type="text" autocomplete="off"
+											th:readonly="true" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Địa chỉ</label></legend>
+											<legend class="c-f__legend">
+												<label>Địa chỉ</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -61,35 +88,51 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="ten-loai-hd" name="ten-loai-hd" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" readonly="readonly" th:value="${THDon}" />
+										<input id="ten-loai-hd" name="ten-loai-hd"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" readonly="readonly" th:value="${THDon}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tên hóa đơn</label></legend>
+											<legend class="c-f__legend">
+												<label>Tên hóa đơn</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="row">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
 									<div class="c-f__wrapper">
-										<input class="form-control form-control-sm c-f__textbox" th:value="${MauSoHdon}" type="text" autocomplete="off" th:if="${!_isedit_}" th:readonly="true" />
-										<select id="mau-so-hdon" name="mau-so-hdon" class="form-control form-control-sm c-f__textbox" th:if="${_isedit_}" th:disabled="${'EDIT' == _action_}" >
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${MauSoHdon}" type="text" autocomplete="off"
+											th:if="${!_isedit_}" th:readonly="true" /> <select
+											id="mau-so-hdon" name="mau-so-hdon"
+											class="form-control form-control-sm c-f__textbox"
+											th:if="${_isedit_}" th:disabled="${'EDIT' == _action_}">
 											<option value=""></option>
 											<th:block th:if="${map_mausokyhieu != null}">
 												<option th:each="entry : ${map_mausokyhieu.entrySet()}"
-													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${MauSoHD == entry.key}" > </option>
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${MauSoHD == entry.key}"></option>
 											</th:block>
 										</select>
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mẫu số<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+											<legend class="c-f__legend">
+												<label>Mẫu số<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class=" col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input class=" form-control form-control-sm c-f__textbox " id="ngay-lap" name="ngay-lap" type="text" autocomplete="off" th:value="${NLap}" th:readonly="${!_isedit_}" />
+										<input class=" form-control form-control-sm c-f__textbox "
+											id="ngay-lap" name="ngay-lap" type="text" autocomplete="off"
+											th:value="${NLap}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Ngày lập</label></legend>
+											<legend class="c-f__legend">
+												<label>Ngày lập</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -97,17 +140,25 @@
 							<div class="row" th:if="${'DETAIL' == _action_}">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16 ">
 									<div class="c-f__wrapper">
-										<input class="form-control form-control-sm c-f__textbox" th:value="${SHDon}" type="text" autocomplete="off" th:readonly="true" />
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${SHDon}" type="text" autocomplete="off"
+											th:readonly="true" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Số hóa đơn</label></legend>
+											<legend class="c-f__legend">
+												<label>Số hóa đơn</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input class=" form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${MCCQT}" th:readonly="true" />
+										<input class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${MCCQT}"
+											th:readonly="true" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã CQT</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã CQT</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -115,132 +166,190 @@
 							<div class="row">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input class="form-control form-control-sm c-f__textbox" th:value="${HTTToan}" type="text" autocomplete="off" th:if="${!_isedit_}" th:readonly="true" />
-										<select id="hinh-thuc-thanh-toan" name="hinh-thuc-thanh-toan" class="form-control form-control-sm c-f__textbox" th:if="${_isedit_}" >
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${HTTToan}" type="text" autocomplete="off"
+											th:if="${!_isedit_}" th:readonly="true" /> <select
+											id="hinh-thuc-thanh-toan" name="hinh-thuc-thanh-toan"
+											class="form-control form-control-sm c-f__textbox"
+											th:if="${_isedit_}">
 											<option value=""></option>
 											<th:block th:if="${map_paymenttype != null}">
 												<option th:each="entry : ${map_paymenttype.entrySet()}"
-													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${HTTToanCode == entry.key}" > </option>
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${HTTToanCode == entry.key}"></option>
 											</th:block>
 										</select>
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Hình thức thanh toán<span class="text-danger" style="font-size:15px">(*)</span></label></legend>
+											<legend class="c-f__legend">
+												<label>Hình thức thanh toán<span class="text-danger"
+													style="font-size: 15px">(*)</span></label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="ty-gia" name="ty-gia" class="form-control form-control-sm c-f__textbox text-number text-left" th:if="${!_isedit_}" th:value="${DVTTe}" th:readonly="${!_isedit_}" type="text" autocomplete="off" />
-										<select id="loai-tien-tt" name="loai-tien-tt" class=" form-control form-control-sm c-f__textbox " th:if="${_isedit_}" >
+										<input id="ty-gia" name="ty-gia"
+											class="form-control form-control-sm c-f__textbox text-number text-left"
+											th:if="${!_isedit_}" th:value="${DVTTe}"
+											th:readonly="${!_isedit_}" type="text" autocomplete="off" />
+										<select id="loai-tien-tt" name="loai-tien-tt"
+											class=" form-control form-control-sm c-f__textbox "
+											th:if="${_isedit_}">
 											<option value=""></option>
 											<th:block th:if="${map_currencies != null}">
 												<option th:each="entry : ${map_currencies.entrySet()}"
-													th:value="${entry.key}" th:utext="${entry.value}" th:selected="${DVTTe == entry.key}" > </option>
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${DVTTe == entry.key}"></option>
 											</th:block>
 										</select>
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Loại tiền thanh toán</label></legend>
+											<legend class="c-f__legend">
+												<label>Loại tiền thanh toán</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
 							<div class="row m-b-16" th:if="${null != _notice}">
-								<div class="col-12 p-t-0">
-									<span class="fw-800 text-danger fs-i fs-12" th:text="${_notice}" ></span>
+								<div class="col-12 p-t-0" th:if="${!IS_DCTTT_TBN}">
+									<span class="fw-800 text-danger fs-i fs-12"
+										th:text="${_notice}"></span>
 								</div>
 								<input type="hidden" name="_tchdon" th:value="${_tchdon}">
-								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}" >
+								<input type="hidden" name="_id_tt_dc" th:value="${_id_tt_dc}">
 							</div>
-							<div class="row m-b-16" th:if="false">
+							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<select id="hinh-thuc-thanh-toan" name="hinh-thuc-thanh-toan" class="form-control form-control-sm c-f__textbox">
-											<option value=""></option>
-											<th:block th:if="${map_paymenttype != null}">
-												<option th:each="entry : ${map_paymenttype.entrySet()}"
-													th:value="${entry.key}" th:utext="${entry.value}" > </option>
-											</th:block>
-										</select>
+
+										<input id="ma-hd" name="ma-hd"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											th:value="${MaHD}" autocomplete="off"
+											th:readonly="${!_isedit_}" />
+
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Hình thức thanh toán</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã hóa đơn</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-							<div class="row" th:if="false">
-								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-12">
-									<label class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
-										<input type="checkbox" name="chk-xuat-theo-loai-tien-tt" class="custom-control-input" /><span class="custom-control-label p-t-5">Xuất theo loại tiền thanh toán</span>
-									</label>
+							<div th:if="${IS_DCTTT_TBN}">
+								<div class="row m-b-12">
+									<div class="col-12 ">
+										<span
+											class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+											tin hóa đơn thay thế/điều chỉnh tbn</span>
+									</div>
 								</div>
-							</div>
 								<div class="row m-b-16">
-								<div class="col-12">
-									<div class="c-f__wrapper">
-										
-										<input id="ma-hd" name="ma-hd" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaHD}" autocomplete="off" th:readonly="${!_isedit_}" />
-										
-										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã hóa đơn</label></legend>
-										</fieldset>
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input id="shdon-tbn" name="shdon-tbn"
+												class="form-control form-control-sm c-f__textbox"
+												type="text" th:value="${SHDonTBN}" autocomplete="off"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Số hóa đơn</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input class="form-control form-control-sm c-f__textbox "
+												id="nlap-tbn" name="nlap-tbn" type="text"
+												autocomplete="off" th:value="${NLapTBN}"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Ngày lập</label>
+												</legend>
+											</fieldset>
+										</div>
 									</div>
 								</div>
-<!-- 								<div class="col-6"> -->
-<!-- 								<div class="c-f__wrapper"> -->
-<!-- 										<input id="ma-ch" name="ma-ch" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaCH}" autocomplete="off" th:readonly="${!_isedit_}" /> -->
-										
-<!-- 										<fieldset aria-hidden="true" class="c-f__set"> -->
-<!-- 											<legend class="c-f__legend"><label>Mã cửa hàng</label></legend> -->
-<!-- 										</fieldset> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-							</div>
-<!-- 							<div class="row m-b-16"> -->
-<!-- 								<div class="col-12"> -->
-<!-- 								<div class="c-f__wrapper"> -->
-<!-- 										<input id="ten-ch" name="ten-ch" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${TenCH}" autocomplete="off" th:readonly="${!_isedit_}" /> -->
-										
-<!-- 										<fieldset aria-hidden="true" class="c-f__set"> -->
-<!-- 											<legend class="c-f__legend"><label>Tên cửa hàng</label></legend> -->
-<!-- 										</fieldset> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
-							<div class="row" th:if="false">
-								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-12">
-									<label class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
-										<input type="checkbox" name="chk-xuat-theo-loai-tien-tt" class="custom-control-input" /><span class="custom-control-label p-t-5">Xuất theo loại tiền thanh toán</span>
-									</label>
+								<div class="row m-b-16">
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input id="mshdon-tbn" name="mshdon-tbn"
+												class="form-control form-control-sm c-f__textbox"
+												type="text" th:value="${MSHDonTBN}" autocomplete="off"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Mẫu số hóa đơn (vd: 1C25AAA)</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input class="form-control form-control-sm c-f__textbox"
+												th:value="${TCHDonTBN}" th:readonly="true"
+												th:if="${!_isedit_}" type="text" autocomplete="off" /> 
+											<select
+												class="form-control form-control-sm c-f__textbox" 
+												id="tchdon-tbn"
+												name="tchdon-tbn" th:if="${_isedit_}">
+												<option value="1" th:selected="${TCHDonTBN == '1'}">Thay thế</option>
+												<option value="2" th:selected="${TCHDonTBN == '2'}">Điều chỉnh</option>
+											</select>
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Tính chất hóa đơn</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="row c-f__bottom">
-							<div class="col-xs-12 col-sm-12 col-md-6 p-l__md">
-		                      	<div class="checkbox1">
-								<label class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
-								<th:block th:if="${checkProductExtension == 'true'}">
-                              <input name="checkProductExtension" id="checkProductExtension" type="checkbox"  th:checked="${checkProductExtension}"  class="custom-control-input">
-                              </th:block>
-                               <input name="checkProductExtension" id="checkProductExtension" type="checkbox" class="custom-control-input">
-                              <span class="custom-control-label p-t-5"></span>Mở rộng thông tin sản phẩm
-                            </label>
-									
+								<div class="col-xs-12 col-sm-12 col-md-6 p-l__md">
+									<div class="checkbox1">
+										<label
+											class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
+											<th:block th:if="${checkProductExtension == 'true'}">
+												<input name="checkProductExtension"
+													id="checkProductExtension" type="checkbox"
+													th:checked="${checkProductExtension}"
+													class="custom-control-input">
+											</th:block> <input name="checkProductExtension"
+											id="checkProductExtension" type="checkbox"
+											class="custom-control-input"> <span
+											class="custom-control-label p-t-5"></span>Mở rộng thông tin
+											sản phẩm
+										</label>
+
+									</div>
 								</div>
-							</div>			                   
-						</div>
+							</div>
 						</div>
 						<div class="col-md-6">
-						
-						<div class="row m-b-12">
-								<div class="col-12 "><span class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông tin người mua</span></div>
+
+							<div class="row m-b-12">
+								<div class="col-12 ">
+									<span
+										class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+										tin người mua</span>
+								</div>
 							</div>
-											
-															
+
+
 							<div class="row m-b-16" th:if="false">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="kh-mst" name="kh-mst" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaMST}" th:readonly="${!_isedit_}" />
+										<input id="kh-mst" name="kh-mst"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaMST}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã số thuế</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -250,53 +359,92 @@
 								<div class="col-12">
 									<div class="c-f__wrapper">
 										<div class="input-group">
-											<input id="kh-mst" name="kh-mst" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaMST}" th:readonly="${!_isedit_}" />
-											<div class="input-group-append" >
-												<button type="button" data-action="kh-check-mst" class="btn btn-sm btn-info p-t-1 p-b-1" title="Tìm kiếm trong danh mục khách hàng"><i class="mdi mdi-account-check-outline"> </i></button>
-											</div>
-											<div class="input-group-append" >
-												<button type="button" data-action="kh-history" class="btn btn-sm btn-primary p-t-1 p-b-1" title="Tìm kiếm trong lịch sử khách hàng"><i class="mdi mdi-history"> </i></button>
-											</div>
-											  <div class="input-group-append">
-												<button type="button" data-action="kh_searchol" class="btn btn-sm btn-warning p-t-1 p-b-1" title="Tìm kiếm tự động"><i class="mdi mdi-account-search-outline"> </i></button>
-											</div> 
-											
-											<div class="input-group-append"  >
-												<button type="button" data-action="kh-add" class="btn btn-sm btn-primary p-t-1 p-b-1" title="Lưu vào danh sách khách hàng"><i class="mdi mdi-content-save"> </i></button>
+											<input id="kh-mst" name="kh-mst"
+												class="form-control form-control-sm c-f__textbox"
+												type="text" autocomplete="off" th:value="${NMuaMST}"
+												th:readonly="${!_isedit_}" />
+											<div class="input-group-append">
+												<button type="button" data-action="kh-check-mst"
+													class="btn btn-sm btn-info p-t-1 p-b-1"
+													title="Tìm kiếm trong danh mục khách hàng">
+													<i class="mdi mdi-account-check-outline"> </i>
+												</button>
 											</div>
 											<div class="input-group-append">
-												<button type="button" data-action="kh-refresh" class="btn btn-sm btn-warning p-t-1 p-b-1" title="Xóa nội dung người mua đã nhập"><i class="mdi mdi-refresh"> </i></button>
+												<button type="button" data-action="kh-history"
+													class="btn btn-sm btn-primary p-t-1 p-b-1"
+													title="Tìm kiếm trong lịch sử khách hàng">
+													<i class="mdi mdi-history"> </i>
+												</button>
 											</div>
-											 	
 											<div class="input-group-append">
-												<button type="button" data-action="kh_search" class="btn btn-sm btn-info p-t-1 p-b-1" title="Danh sách khách hàng"><i class="mdi mdi-format-list-bulleted-type"> </i></button>
-											</div>  
+												<button type="button" data-action="kh_searchol"
+													class="btn btn-sm btn-warning p-t-1 p-b-1"
+													title="Tìm kiếm tự động">
+													<i class="mdi mdi-account-search-outline"> </i>
+												</button>
+											</div>
 
-										
-										</div>										
+											<div class="input-group-append">
+												<button type="button" data-action="kh-add"
+													class="btn btn-sm btn-primary p-t-1 p-b-1"
+													title="Lưu vào danh sách khách hàng">
+													<i class="mdi mdi-content-save"> </i>
+												</button>
+											</div>
+											<div class="input-group-append">
+												<button type="button" data-action="kh-refresh"
+													class="btn btn-sm btn-warning p-t-1 p-b-1"
+													title="Xóa nội dung người mua đã nhập">
+													<i class="mdi mdi-refresh"> </i>
+												</button>
+											</div>
+
+											<div class="input-group-append">
+												<button type="button" data-action="kh_search"
+													class="btn btn-sm btn-info p-t-1 p-b-1"
+													title="Danh sách khách hàng">
+													<i class="mdi mdi-format-list-bulleted-type"> </i>
+												</button>
+											</div>
+
+
+										</div>
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã số thuế</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã số thuế</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
-								
+
 							</div>
 							<div class="row m-b-16">
 								<div class="col-12 col-sm-6 col-md-6 custom-field">
 									<div class="c-f__wrapper">
-										<input id="kh-makhachhang" name="kh-makhachhang" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaMKHang}" th:readonly="${!_isedit_}" />
+										<input id="kh-makhachhang" name="kh-makhachhang"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaMKHang}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã khách hàng</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã khách hàng</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
-								
+
 								<div class="col-12 col-sm-6 col-md-6 custom-field">
 									<div class="c-f__wrapper">
-										<input id="ma-dvqhns" name="ma-dvqhns" class="form-control form-control-sm c-f__textbox" type="text"  th:value="${MaDVQHNS}" autocomplete="off" th:readonly="${!_isedit_}" />
-										
+										<input id="ma-dvqhns" name="ma-dvqhns"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											th:value="${MaDVQHNS}" autocomplete="off"
+											th:readonly="${!_isedit_}" />
+
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Mã số ĐVQHNS</label></legend>
+											<legend class="c-f__legend">
+												<label>Mã số ĐVQHNS</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -304,9 +452,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="kh-ho-ten-nguoi-mua" name="kh-ho-ten-nguoi-mua" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaHVTNMHang}" th:readonly="${!_isedit_}" />
+										<input id="kh-ho-ten-nguoi-mua" name="kh-ho-ten-nguoi-mua"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaHVTNMHang}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Họ và tên người mua hàng</label></legend>
+											<legend class="c-f__legend">
+												<label>Họ và tên người mua hàng</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -314,17 +467,27 @@
 							<div class="row">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="kh-cccd" name="kh-cccd" class=" form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaCCCDan}" th:readonly="${!_isedit_}" />
+										<input id="kh-cccd" name="kh-cccd"
+											class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaCCCDan}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Số CCCD</label></legend>
+											<legend class="c-f__legend">
+												<label>Số CCCD</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="kh-shchieu" name="kh-shchieu" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaSHChieu}" th:readonly="${!_isedit_}" />
+										<input id="kh-shchieu" name="kh-shchieu"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSHChieu}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Số hộ chiếu</label></legend>
+											<legend class="c-f__legend">
+												<label>Số hộ chiếu</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -332,9 +495,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="kh-ten-don-vi" name="kh-ten-don-vi" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaTen}" th:readonly="${!_isedit_}" />
+										<input id="kh-ten-don-vi" name="kh-ten-don-vi"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaTen}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tên đơn vị</label></legend>
+											<legend class="c-f__legend">
+												<label>Tên đơn vị</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -342,9 +510,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="kh-dia-chi" name="kh-dia-chi" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaDChi}" th:readonly="${!_isedit_}" />
+										<input id="kh-dia-chi" name="kh-dia-chi"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaDChi}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Địa chỉ</label></legend>
+											<legend class="c-f__legend">
+												<label>Địa chỉ</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -352,27 +525,42 @@
 							<div class="row">
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="kh-email" name="kh-email" class=" form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaDCTDTu}" th:readonly="${!_isedit_}" />
+										<input id="kh-email" name="kh-email"
+											class=" form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaDCTDTu}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Email</label></legend>
+											<legend class="c-f__legend">
+												<label>Email</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="kh-so-dt" name="kh-so-dt" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaSDThoai}" th:readonly="${!_isedit_}" />
+										<input id="kh-so-dt" name="kh-so-dt"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSDThoai}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Điện thoại</label></legend>
+											<legend class="c-f__legend">
+												<label>Điện thoại</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-								<div class="row m-b-16">
+							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="kh-emailcc" name="kh-emailcc" class="form-control form-control-sm c-f__textbox" type="text" autocomplete="off" th:value="${NMuaDCTDTuCC}" th:readonly="${!_isedit_}" />
+										<input id="kh-emailcc" name="kh-emailcc"
+											class="form-control form-control-sm c-f__textbox" type="text"
+											autocomplete="off" th:value="${NMuaDCTDTuCC}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>EmailCC(cách nhau bởi dấu ,)</label></legend>
+											<legend class="c-f__legend">
+												<label>EmailCC(cách nhau bởi dấu ,)</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -380,31 +568,51 @@
 							<div class="row m-b-16">
 								<div class="col-6 col-sm-6 col-md-6 custom-field pr-mobile__ses">
 									<div class="c-f__wrapper">
-										<input id="kh-so-tk" name="kh-so-tk" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaSTKNHang}" th:readonly="${!_isedit_}" />
+										<input id="kh-so-tk" name="kh-so-tk"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaSTKNHang}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Số tài khoản</label></legend>
+											<legend class="c-f__legend">
+												<label>Số tài khoản</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 								<div class="col-6 custom-field pl-mobile__ses">
 									<div class="c-f__wrapper">
-										<input id="kh-tk-tai-ngan-hang" name="kh-tk-tai-ngan-hang" class="form-control form-control-sm c-f__textbox " type="text" autocomplete="off" th:value="${NMuaTNHang}" th:readonly="${!_isedit_}" />
+										<input id="kh-tk-tai-ngan-hang" name="kh-tk-tai-ngan-hang"
+											class="form-control form-control-sm c-f__textbox "
+											type="text" autocomplete="off" th:value="${NMuaTNHang}"
+											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tại ngân hàng</label></legend>
+											<legend class="c-f__legend">
+												<label>Tại ngân hàng</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
 						</div>
-						
+
 						<div class="col-12">
 							<div class="row mT-0 mB-5">
 								<div class="col-9 col-sm-6 p-t-8">
-									<span class="text-middle fw-800 text-uppercase text-decoration-underline color-ses ">Danh mục hàng hóa, dịch vụ</span>
+									<span
+										class="text-middle fw-800 text-uppercase text-decoration-underline color-ses ">Danh
+										mục hàng hóa, dịch vụ</span>
 								</div>
 								<div class="col-3 col-sm-6 text-right">
-									<button type="button" data-action="delete-to-grid" class="btn-sm btn-danger" title="Xóa hàng loạt sản phẩm, dịch vụ" th:if="${_isedit_}" ><i class="mdi mdi-delete-forever fs-15"></i></button>
-									<button type="button" data-action="add-to-grid" class="btn-sm btn-primary btn-ses" title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}" ><i class="mdi mdi-plus fs-15"></i></button>
+									<button type="button" data-action="delete-to-grid"
+										class="btn-sm btn-danger"
+										title="Xóa hàng loạt sản phẩm, dịch vụ" th:if="${_isedit_}">
+										<i class="mdi mdi-delete-forever fs-15"></i>
+									</button>
+									<button type="button" data-action="add-to-grid"
+										class="btn-sm btn-primary btn-ses"
+										title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}">
+										<i class="mdi mdi-plus fs-15"></i>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -417,20 +625,30 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tong-tien-truoc-thue" name="tong-tien-truoc-thue" class="form-control form-control-sm c-f__textbox text-right" th:value="${TgTCThue}" th:readonly="${!_isedit_}" type="text" autocomplete="off"/>
+										<input id="tong-tien-truoc-thue" name="tong-tien-truoc-thue"
+											class="form-control form-control-sm c-f__textbox text-right"
+											th:value="${TgTCThue}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tổng tiền trước thuế</label></legend>
+											<legend class="c-f__legend">
+												<label>Tổng tiền trước thuế</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="ty-gia" name="ty-gia" class="form-control form-control-sm c-f__textbox text-number text-right" th:value="${TGia}" th:readonly="${!_isedit_}" type="text" autocomplete="off" />
+										<input id="ty-gia" name="ty-gia"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TGia}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tỷ giá</label></legend>
+											<legend class="c-f__legend">
+												<label>Tỷ giá</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -438,9 +656,14 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tong-tien-thue-gtgt" name="tong-tien-thue-gtgt" class="form-control form-control-sm c-f__textbox text-right" th:value="${TgTThue}" th:readonly="${!_isedit_}" type="text" autocomplete="off" />
+										<input id="tong-tien-thue-gtgt" name="tong-tien-thue-gtgt"
+											class="form-control form-control-sm c-f__textbox text-right"
+											th:value="${TgTThue}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tổng tiền thuế GTGT</label></legend>
+											<legend class="c-f__legend">
+												<label>Tổng tiền thuế GTGT</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -448,57 +671,80 @@
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tong-tien-da-co-thue" name="tong-tien-da-co-thue" class="form-control form-control-sm c-f__textbox text-right" th:value="${TgTTTBSo}" th:readonly="${!_isedit_}" type="text" autocomplete="off"/>
+										<input id="tong-tien-da-co-thue" name="tong-tien-da-co-thue"
+											class="form-control form-control-sm c-f__textbox text-right"
+											th:value="${TgTTTBSo}" th:readonly="${!_isedit_}" type="text"
+											autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tổng tiền đã có thuế GTGT</label></legend>
+											<legend class="c-f__legend">
+												<label>Tổng tiền đã có thuế GTGT</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="row m-b-16 quidoingoaite">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tong-tien-quy-doi" name="tong-tien-quy-doi" class="form-control form-control-sm c-f__textbox text-number text-right" th:value="${TgTTTBSoQuyDoi}" type="text" autocomplete="off"/>
+										<input id="tong-tien-quy-doi" name="tong-tien-quy-doi"
+											class="form-control form-control-sm c-f__textbox text-number text-right"
+											th:value="${TgTTTBSoQuyDoi}" type="text" autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Tổng tiền quy đổi</label></legend>
+											<legend class="c-f__legend">
+												<label>Tổng tiền quy đổi</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
-							
+
 						</div>
 						<div class="col-md-12">
 							<div class="row m-b-16">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tien-bang-chu" name="tien-bang-chu" class="form-control form-control-sm c-f__textbox " th:value="${TgTTTBChu}" th:readonly="${!_isedit_}" type="text" autocomplete="off" />
+										<input id="tien-bang-chu" name="tien-bang-chu"
+											class="form-control form-control-sm c-f__textbox "
+											th:value="${TgTTTBChu}" th:readonly="${!_isedit_}"
+											type="text" autocomplete="off" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Số tiền viết bằng chữ</label></legend>
+											<legend class="c-f__legend">
+												<label>Số tiền viết bằng chữ</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row"><div class="col-12"><hr style="margin: 0 0 10px 0" /></div></div>
-					
+					<div class="row">
+						<div class="col-12">
+							<hr style="margin: 0 0 10px 0" />
+						</div>
+					</div>
+
 					<div class="form-group row m-b-6">
 						<div class="col-6">
-							<button type="button" data-action="back" title="Quay lại" 
-								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span class="d-none d-md-inline">Quay lại</span></button>
+							<button type="button" data-action="back" title="Quay lại"
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
 						</div>
 						<div class="col-6 text-right">
-							<button type="button" data-action="accept" class="btnadd btns btns-import__ses-1" title="Lưu thông tin" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}" >
-								<i class="mdi mdi-check-all"></i>
-								<span class="d-none d-md-inline">Lưu thông tin</span>
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-import__ses-1" title="Lưu thông tin"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Lưu thông tin</span>
 							</button>
-						
+
 						</div>
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="_id" th:value="${_id}" >
+			<input type="hidden" name="_id" th:value="${_id}">
 		</form>
 		<script type="text/javascript">
 		transactionMain = '[[${transaction}]]';
@@ -514,7 +760,8 @@
 		
 		var defaultTaxAdmin = '[[${DefaultTaxAdmin}]]';
 		</script>
-		<script type="text/javascript" th:if="${_action_ == 'CREATE' && false}"></script>
+		<script type="text/javascript"
+			th:if="${_action_ == 'CREATE' && false}"></script>
 		<script type="text/javascript" th:if="${null == DSHHDVu}">
 		$.each(new Array(5),
 			function(n){
@@ -534,32 +781,33 @@
 			rowsTMP = decodeBase64UTF8ToObj(strJson);
 		}catch(err){}
 		</script>
-	<!-- 	 <script th:src="@{/static/function/einvoice/einvoice-crud.js(v=1.37) }"></script>  -->
-	<script type="text/javascript">
+		<!-- 	 <script th:src="@{/static/function/einvoice/einvoice-crud.js(v=1.37) }"></script>  -->
+		<script type="text/javascript">
 	/* for(var i=1; i<=lt; i++){
 	$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(i))
 	console.log(dblVATAmount);
 } */
 	</script>
-	
+
 		<script type="text/javascript" th:if="${null != userconfig_usd}">
 		var usd_ = '[[${userconfig_usd}]]';	
 	</script>
-	
+
 		<script type="text/javascript" th:if="${null != viewmoney}">
 		var viewmoney = '[[${viewmoney}]]';	
 	</script>
-	
-	
+
+
 		<script type="text/javascript" th:if="${null != userconfig_vnd}">
 		var vnd_ = '[[${userconfig_vnd}]]';
-	</script> 
-	
-	<script type="text/javascript">
+	</script>
+
+		<script type="text/javascript">
 	$(function(){
 		if(vIsEdit){
 			initInputNumber('#f-einvoice-crud .text-number');	
 			dateInputFormat($('#f-einvoice-crud').find('#ngay-lap'));
+			dateInputFormat($('#f-einvoice-crud').find('#nlap-tbn'));
 		}
 		
 		_gridSub01.kendoGrid({
@@ -1802,8 +2050,11 @@
 		dataPost['_id_tt_dc'] = $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_id_tt_dc"]').val();
 		dataPost['_tchdon'] = $('#f-einvoice-crud').find('input[name="_tchdon"]').length == 0? '': $('#f-einvoice-crud').find('input[name="_tchdon"]').val();
 		dataPost['ma-hd'] = $('#f-einvoice-crud').find('#ma-hd').val();
-// 		dataPost['ma-ch'] = $('#f-einvoice-crud').find('#ma-ch').val();
-// 		dataPost['ten-ch'] = $('#f-einvoice-crud').find('#ten-ch').val();
+		
+		dataPost['shdon-tbn'] = $('#f-einvoice-crud').find('#shdon-tbn').val();
+		dataPost['nlap-tbn'] = $('#f-einvoice-crud').find('#nlap-tbn').val();
+		dataPost['mshdon-tbn'] = $('#f-einvoice-crud').find('#mshdon-tbn').val();
+		dataPost['tchdon-tbn'] = $('#f-einvoice-crud').find('#tchdon-tbn').val();
 		
 		dataPost['kh-mst'] = $('#f-einvoice-crud').find('#kh-mst').val();
 		dataPost['kh-makhachhang'] = $('#f-einvoice-crud').find('#kh-makhachhang').val();

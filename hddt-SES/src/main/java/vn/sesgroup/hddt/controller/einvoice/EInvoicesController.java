@@ -231,11 +231,6 @@ public class EInvoicesController extends AbstractController{
 						commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
 					);
 					
-//					hItem.put("NLap", 
-//							commons.convertLongToLocalDateTime(commons.convertLongToLocalDate(row.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-//						);
-					
-					
 					hItem.put("TaxCode", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/MST")));
 					hItem.put("CompanyName", commons.getTextJsonNode(row.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
 					hItem.put("TgTTTBSo", 
@@ -280,6 +275,9 @@ public class EInvoicesController extends AbstractController{
 								mskh,
 								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
 								);
+						if ("true".equals(commons.getTextJsonNode(row.at("/EInvoiceDetail/TTChung/TTHDLQuan/TBN")))){
+							hItem.put("INVOICE_TYPE", "TBN");
+						}
 					}
 					if (status.equals("REPLACED") && !row.at("/ReplacedBy").isMissingNode()) {
 						if (!note.isEmpty()) 
@@ -312,7 +310,6 @@ public class EInvoicesController extends AbstractController{
 						}
 					}
 					hItem.put("Note", note);
-					
 					grid.getRows().add(hItem);
 				}
 			}

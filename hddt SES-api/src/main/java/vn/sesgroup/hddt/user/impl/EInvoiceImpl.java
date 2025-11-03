@@ -151,10 +151,14 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String hinhThucThanhToan = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToan")).replaceAll("\\s", "");
 		String hinhThucThanhToanText = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToanText")).trim()
 				.replaceAll("\\s+", " ");
-//		String maCuaHang = commons.getTextJsonNode(jsonData.at("/MaCuaHang")).trim().replaceAll("\\s+", " ");
-//		String tenCuaHang = commons.getTextJsonNode(jsonData.at("/TenCuaHang")).trim().replaceAll("\\s+", " ");
 		
-//		String chkXuatTheoLoaiTienTt = commons.getTextJsonNode(jsonData.at("/ChkXuatTheoLoaiTienTt")).replaceAll("\\s", "");
+		String shdontbn = commons.getTextJsonNode(jsonData.at("/SHDonTBN")).trim().replaceAll("\\s+", " ");
+		String nlaptbn = commons.getTextJsonNode(jsonData.at("/NLapTBN")).trim().replaceAll("\\s+", " ");
+		String mshdontbn = commons.getTextJsonNode(jsonData.at("/MSHDonTBN")).replaceAll("\\s", "");
+		String tchdontbn = commons.getTextJsonNode(jsonData.at("/TCHDonTBN")).replaceAll("\\s", "");
+		String khmshdclquan = mshdontbn.substring(0, 1); 
+		String khhdclquan  = mshdontbn.substring(1); 
+		
 		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "")
 				.replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
 		String khMKHang = commons.getTextJsonNode(jsonData.at("/KhMKHang")).trim().replaceAll("\\s+", " ");
@@ -541,6 +545,18 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								commons.convertDateToLocalDateTime(
 										docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "NLap"), Date.class)),
 								"yyyy-MM-dd")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
+				elementSubContent.appendChild(elementTmp);
+			}
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				elementTmp = doc.createElement("TTHDLQuan");
+				elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon", tchdontbn));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "LHDCLQuan", "1"));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHMSHDCLQuan", khmshdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHHDCLQuan", khhdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "SHDCLQuan", shdontbn.replaceFirst("^0+", "")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
 				elementSubContent.appendChild(elementTmp);
 			}
@@ -948,10 +964,22 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								"yyyy-MM-dd"))
 						.append("GChu", "");
 			}
+			
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				docTTHDLQuan = new Document("_id", "")
+						.append("TCHDon", tchdontbn)
+						.append("LHDCLQuan", "1")
+						.append("KHMSHDCLQuan", khmshdclquan)
+						.append("KHHDCLQuan", khhdclquan)
+						.append("SHDCLQuan", shdontbn.replaceFirst("^0+", ""))
+						.append("NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+						.append("GChu", "")
+						.append("TBN", true);
+			}
 
 			docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
 					.append("MTDiep", MTDiep).append("DSVAT", listVAT)
-//							.append("EInvoiceNumber", null)				//PHAT SINH KHI THUC HIEN KY
 					.append("EInvoiceDetail", new Document("TTChung", new Document("THDon", tenLoaiHd)
 							.append("MaHD", maHoadon).append("MauSoHD", mauSoHdon)
 							.append("KHMSHDon", docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), ""))
@@ -1432,6 +1460,18 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
 				elementSubContent.appendChild(elementTmp);
 			}
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				elementTmp = doc.createElement("TTHDLQuan");
+				elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon", tchdontbn));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "LHDCLQuan", "1"));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHMSHDCLQuan", khmshdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHHDCLQuan", khhdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "SHDCLQuan", shdontbn.replaceFirst("^0+", "")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
+				elementSubContent.appendChild(elementTmp);
+			}
 
 			elementContent.appendChild(elementSubContent);
 
@@ -1812,6 +1852,18 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				throw new Exception("Lưu dữ liệu không thành công.");
 			}
 			/* END - TAO XML HOA DON */
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				docTTHDLQuan = new Document("_id", "")
+						.append("TCHDon", tchdontbn)
+						.append("LHDCLQuan", "1")
+						.append("KHMSHDCLQuan", khmshdclquan)
+						.append("KHHDCLQuan", khhdclquan)
+						.append("SHDCLQuan", shdontbn.replaceFirst("^0+", ""))
+						.append("NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+						.append("GChu", "")
+						.append("TBN", true);
+			}
 			if (shd == 0) {
 				/* LUU DU LIEU HD */
 				docUpsert = new Document("TTChung", new Document("THDon", tenLoaiHd).append("MaHD", maHoadon)

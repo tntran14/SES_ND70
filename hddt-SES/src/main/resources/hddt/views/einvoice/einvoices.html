@@ -277,9 +277,6 @@
 													class="d-none d-md-inline">Xuất PDF
 													Chuyển Đổi</span>
 											</button>
-
-
-
 											<button type="button" title="Thêm mới HĐ Điều chỉnh/Thay thế"
 												data-action="einvoice-cre-dc"
 												class="btns dc_tt_hd hover-up__ses"
@@ -298,31 +295,23 @@
 													class="d-none d-md-inline">Thay thế
 													HĐ</span>
 											</button>
-
 										</div>
-
 									</div>
 								</div>
-
 							</div>
 							<div class="col-12">
 								<div class="row m-t-8">
 
 									<div class="col-12 col-sm-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-
-
-
-											<button type="button" title="Xóa hàng loạt"
-												data-action="einvoice-delete"
-												class="btns xoa_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|einvoice-del|')}">
-												<i class="mdi mdi-delete"> </i><span
-													class="d-none d-md-inline">Xóa hàng loạt</span>
+											<button type="button" title="Thêm mới HĐ Điều chỉnh/Thay thế"
+												data-action="einvoice-cre-dctt-tbn"
+												class="btns dc_tt_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice-cre-dctt-tbn|')}"
+												>
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">ĐC/TT HĐ TBN</span>
 											</button>
-
-
-
 											<button type="button" title="Ký hàng loạt"
 												data-action="einvoice-signAll"
 												class="btns ky_hl hover-up__ses"
@@ -337,8 +326,6 @@
 												<i class="mdi mdi-delete"> </i><span
 													class="d-none d-md-inline">Gửi lấy mã CQT hàng loạt</span>
 											</button>
-
-
 											<button type="button" title="Lấy mã CQT hàng loạt"
 												data-action="einvoice-refreshAll"
 												class="btns lay_ma_hl hover-up__ses"
@@ -346,7 +333,6 @@
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Lấy mã CQT hàng loạt</span>
 											</button>
-
 											<button type="button" title="Gửi mail hàng loạt"
 												data-action="einvoice-sendMailAll"
 												class="btns send_mail_hl hover-up__ses"
@@ -369,7 +355,6 @@
 												<i class="mdi mdi mdi-information-outline"> </i><span
 													class="d-none d-md-inline">Chi tiết</span>
 											</button>
-
 											<button type="button" title="Copy"
 												data-action="einvoice-copy"
 												class="btns coppy_hd hover-up__ses"
@@ -2039,7 +2024,10 @@
 							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 							break;
 							
-						
+						case 'einvoice-cre-dctt-tbn':
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/einvoice-cre/init-dctt-tbn', objData, $('#divSubContent'));
+							break;
 						case 'einvoice-cre-dc':
 							objData = {};
 							idx = $(checkRows[0].closest("tr")).index();
@@ -3056,7 +3044,6 @@
 							text += '<i title="Xem hóa đơn pdf" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="print" ></i>';
 							text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-email" ></i>';	
 						}
-						
 						}
 						break;
 					case 'StatusDesc':
@@ -3092,10 +3079,13 @@
 							text += '<div style="background: #DD0000;border-radius: 10px;color: white;">' + data['StatusDesc'] + '</div>';
 							text += '<i title="Chi tiết lỗi" class="text-info c-pointer fs-15 font-weight-bold text-decoration-underline" data-sub-action="history" >Chi tiết lỗi</i>';
 						}
-						
 						else{
 							text = data['StatusDesc'];
 						}
+						if ('TBN' == data['INVOICE_TYPE'])
+							text += '<div style="background: #FFFF66; border-radius: 10px; color: black; text-align: center; margin-top: 5px">' + 
+						       'TT/DC HĐ bên ngoài' + 
+						       '</div>';
 						break;
 
 					default:

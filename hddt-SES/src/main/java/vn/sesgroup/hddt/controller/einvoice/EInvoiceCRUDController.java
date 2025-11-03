@@ -91,14 +91,15 @@ public class EInvoiceCRUDController extends AbstractController{
 	private String _tchdon;
 	private String mauSoHdon;
 	private String maHoaDon;
-//	private String maCuaHang;
-//	private String tenCuaHang;
-	
 	private String tenLoaiHd;
 	private String ngayLap;
 	private String hinhThucThanhToan;
 	private String hinhThucThanhToanText;
-//	private String chkXuatTheoLoaiTienTt;
+	private String shdontbn;
+	private String nlaptbn;
+	private String mshdontbn;
+	private String tchdontbn;
+	
 	private String khMst;
 	private String khMKHang;
 	private String khHoTenNguoiMua;
@@ -288,7 +289,7 @@ public class EInvoiceCRUDController extends AbstractController{
 	public void execResetProducts(Locale locale, HttpServletRequest req, HttpSession session) {
 	session.removeAttribute(Constants.SESSION_TYPE.SESSION_FORM_ACTION);
 	}
-	@RequestMapping(value = {"/init", "/init-dc", "/init-tt"}, method = {RequestMethod.POST})
+	@RequestMapping(value = {"/init", "/init-dc", "/init-tt", "/init-dctt-tbn"}, method = {RequestMethod.POST})
 	public String init(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
 			, @RequestAttribute(name = "method", value = "", required = false) String method
@@ -383,14 +384,24 @@ public class EInvoiceCRUDController extends AbstractController{
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
 		req.setAttribute("Param", Param);
+		req.setAttribute("IS_DCTTT_TBN", true);
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
 		
 		return "einvoice/einvoice-crud";
 	}
 
-	private void inquiry(CurrentUserProfile cup, Locale locale, HttpServletRequest req, HttpSession session, String _id , String action, String transaction, String method) throws Exception{
-		if("".equals(_id)) {
+	private void inquiry(
+			CurrentUserProfile cup, 
+			Locale locale, 
+			HttpServletRequest req, 
+			HttpSession session, 
+			String _id,
+			String action, 
+			String transaction, 
+			String method
+			) throws Exception {
+		if ("".equals(_id)) {
 			errorCode = "NOT FOUND";
 			errorDesc = "Không tìm thấy thông tin hóa đơn.";
 			return;
@@ -399,108 +410,144 @@ public class EInvoiceCRUDController extends AbstractController{
 		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.INQUIRY);
 		HashMap<String, String> hData = new HashMap<>();
 		msg.setObjData(hData);
-		
+
 		JSONRoot root = new JSONRoot(msg);
-		MsgRsp rsp = restAPI.callAPINormal("/einvoice/detail/" + _id, cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MsgRsp rsp = restAPI.callAPINormal("/einvoice/detail/" + _id, cup.getLoginRes().getToken(), HttpMethod.POST,
+				root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-			
+
 			String TCTBao = "";
 			String notice = "";
-			if(("init-dc".equals(method) || "init-tt".equals(method) )&& "einvoice-cre".equals(transaction)) {
-				String title = "init-dc".equals(method)? "Điều chỉnh":"Thay thế";
-				
-					notice = String.format("(%s cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
-							title,
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon")),
-							commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")),
-							commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()),
-							commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-						);
+			if (("init-dc".equals(method) || "init-tt".equals(method)) && "einvoice-cre".equals(transaction)) {
+				String title = "init-dc".equals(method) ? "Điều chỉnh" : "Thay thế";
+
+				notice = String.format("(%s cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", title,
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon")),
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")),
+						commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()),
+						commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 
 				req.setAttribute("_notice", notice);
 				req.setAttribute("_id_tt_dc", _id);
-				req.setAttribute("_tchdon", "init-tt".equals(method)? "1":"2");
-			}else {
-				if(!jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan").isMissingNode()) {
+				req.setAttribute("_tchdon", "init-tt".equals(method) ? "1" : "2");
+			} else {
+				if (!jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan").isMissingNode()) {
 					TCTBao = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon"));
-					if("1".equals(TCTBao)) {
-						notice = String.format("(Thay thế cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
+					if ("1".equals(TCTBao)) {
+						notice = String.format("(Thay thế cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)",
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan")),
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")),
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")),
-								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-							);
-					}else if("2".equals(TCTBao)) {
-						notice = String.format("(Điều chỉnh cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)", 
+								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(
+										commons.getTextJsonNode(
+												jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
+										"yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					} else if ("2".equals(TCTBao)) {
+						notice = String.format("(Điều chỉnh cho hóa đơn Mẫu số %s, Ký hiệu %s, số %s, ngày %s)",
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan")),
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")),
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")),
-								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")), "yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB)
-							);
+								commons.convertLocalDateTimeToString(commons.convertStringToLocalDate(
+										commons.getTextJsonNode(
+												jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
+										"yyyy-MM-dd"), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					}
 					req.setAttribute("_notice", notice);
+					if ("true".equals(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TBN")))) {
+						req.setAttribute("IS_DCTTT_TBN", true);
+						req.setAttribute("SHDonTBN",
+								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")));
+						req.setAttribute("MSHDonTBN", commons
+								.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan"))
+								+ commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")));
+						req.setAttribute("TCHDonTBN",
+								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon")));
+						String a = commons.convertLocalDateTimeStringToString(
+								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
+								"yyyy-MM-dd",
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+						req.setAttribute("NLapTBN",
+								commons.convertLocalDateTimeStringToString(
+										commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
+										"yyyy-MM-dd",
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					}
 				}
 			}
-			if("SIDED".equals(commons.getTextJsonNode(jsonData.at("/SignStatusCode")))){
-				
-			}
-			else {
+			if ("SIDED".equals(commons.getTextJsonNode(jsonData.at("/SignStatusCode")))) {
+
+			} else {
 				req.setAttribute("MCCQT", commons.getTextJsonNode(jsonData.at("/MCCQT")));
-				if(!jsonData.at("/EInvoiceDetail/TTChung/SHDon").isMissingNode())
-					req.setAttribute("SHDon", commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()));	
-				
+				if (!jsonData.at("/EInvoiceDetail/TTChung/SHDon").isMissingNode())
+					req.setAttribute("SHDon",
+							commons.formatNumberBillInvoice(jsonData.at("/EInvoiceDetail/TTChung/SHDon").asInt()));
+
 				req.setAttribute("NbanMst", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NBan/MST")));
 				req.setAttribute("NbanTen", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NBan/Ten")));
 				req.setAttribute("NbanDchi", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NBan/DChi")));
-				req.setAttribute("MauSoHdon",
-					commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon"))
-					+ commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon"))
-				);
+				req.setAttribute("MauSoHdon", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHMSHDon"))
+						+ commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/KHHDon")));
 				req.setAttribute("MauSoHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MauSoHD")));
 				req.setAttribute("THDon", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/THDon")));
-				req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
+				req.setAttribute("HTTToanCode",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
 				req.setAttribute("HTTToan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToan")));
-				req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
+				req.setAttribute("HTTToanCode",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/HTTToanCode")));
 				if (!transaction.equals("einvoice-copy")) {
-					req.setAttribute("NLap", commons.convertLocalDateTimeToString(commons.convertLongToLocalDate(jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					req.setAttribute("NLap",
+							commons.convertLocalDateTimeToString(
+									commons.convertLongToLocalDate(
+											jsonData.at("/EInvoiceDetail/TTChung/NLap").asLong()),
+									Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 
-				}				
-				
-		
-				if(!TCTBao.equals("") && !action.equals("CREATE") && action != "COPY") {
+				}
+
+				if (!TCTBao.equals("") && !action.equals("CREATE") && action != "COPY") {
 					req.setAttribute("MaHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MaHD")));
 				}
-				
-				
+
 				req.setAttribute("NMuaMST", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MST")));
-				req.setAttribute("MaDVQHNS", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MDVQHNSach")));
-				req.setAttribute("NMuaMKHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MKHang")));
-				req.setAttribute("NMuaHVTNMHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
+				req.setAttribute("MaDVQHNS",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MDVQHNSach")));
+				req.setAttribute("NMuaMKHang",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/MKHang")));
+				req.setAttribute("NMuaHVTNMHang",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/HVTNMHang")));
 				req.setAttribute("NMuaTen", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/Ten")));
 				req.setAttribute("NMuaDChi", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DChi")));
-				req.setAttribute("NMuaCCCDan", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/CCCDan")));
-				req.setAttribute("NMuaSHChieu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SHChieu")));
-				req.setAttribute("NMuaDCTDTu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTu")));
-				req.setAttribute("NMuaDCTDTuCC", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTuCC")));
-				req.setAttribute("NMuaSDThoai", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SDThoai")));
-				req.setAttribute("NMuaSTKNHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/STKNHang")));
-				req.setAttribute("NMuaTNHang", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/TNHang")));
-				
+				req.setAttribute("NMuaCCCDan",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/CCCDan")));
+				req.setAttribute("NMuaSHChieu",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SHChieu")));
+				req.setAttribute("NMuaDCTDTu",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTu")));
+				req.setAttribute("NMuaDCTDTuCC",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/DCTDTuCC")));
+				req.setAttribute("NMuaSDThoai",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/SDThoai")));
+				req.setAttribute("NMuaSTKNHang",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/STKNHang")));
+				req.setAttribute("NMuaTNHang",
+						commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/NDHDon/NMua/TNHang")));
+
 				HashMap<String, String> hItem = null;
 				List<Object> prds = new ArrayList<Object>();
-				if(!jsonData.at("/EInvoiceDetail/DSHHDVu").isMissingNode()) {
-					for(JsonNode o: jsonData.at("/EInvoiceDetail/DSHHDVu")) {
+				if (!jsonData.at("/EInvoiceDetail/DSHHDVu").isMissingNode()) {
+					for (JsonNode o : jsonData.at("/EInvoiceDetail/DSHHDVu")) {
 						hItem = new LinkedHashMap<String, String>();
-						
+
 						hItem.put("STT", commons.getTextJsonNode(o.at("/STT")));
-						if("DETAIL".equals(action)){
+						if ("DETAIL".equals(action)) {
 							hItem.put("ProductName", commons.getTextJsonNode(o.at("/ProductName")));
-						}else {
+						} else {
 							String productName = commons.getTextJsonNode(o.at("/ProductName"));
 							productName = StringEscapeUtils.escapeHtml4(productName);
-							hItem.put("ProductName",productName);
+							hItem.put("ProductName", productName);
 						}
 						hItem.put("ProductCode", commons.getTextJsonNode(o.at("/ProductCode")));
 						hItem.put("SLo", commons.getTextJsonNode(o.at("/SLo")));
@@ -522,56 +569,43 @@ public class EInvoiceCRUDController extends AbstractController{
 //								);
 //							break;
 						default:
-							hItem.put("Quantity", 
-								o.at("/Quantity").isMissingNode()? "":
-								commons.formatNumberReal(o.at("/Quantity").doubleValue())
-							);
-							hItem.put("Price", 
-								o.at("/Price").isMissingNode()? "":
-								commons.formatNumberReal(o.at("/Price").doubleValue())
-							);
-							hItem.put("Total", 
-								o.at("/Total").isMissingNode()? "":
-								commons.formatNumberReal(o.at("/Total").doubleValue())
-							);
-							if("DETAIL".equals(action))
-								hItem.put("VATRate", 
-									o.at("/VATRate").isMissingNode()? "":
-									Constants.MAP_VAT.get(commons.formatNumberReal(o.at("/VATRate").doubleValue()))
-								);
-							else if((o.at("/VATRate").toString().equals(""))){
+							hItem.put("Quantity", o.at("/Quantity").isMissingNode() ? ""
+									: commons.formatNumberReal(o.at("/Quantity").doubleValue()));
+							hItem.put("Price", o.at("/Price").isMissingNode() ? ""
+									: commons.formatNumberReal(o.at("/Price").doubleValue()));
+							hItem.put("Total", o.at("/Total").isMissingNode() ? ""
+									: commons.formatNumberReal(o.at("/Total").doubleValue()));
+							if ("DETAIL".equals(action))
+								hItem.put("VATRate",
+										o.at("/VATRate").isMissingNode() ? ""
+												: Constants.MAP_VAT
+														.get(commons.formatNumberReal(o.at("/VATRate").doubleValue())));
+							else if ((o.at("/VATRate").toString().equals(""))) {
 								hItem.put("VATRate", "0");
+							} else if ((o.at("/VATRate").toString().equals("0.0"))) {
+								hItem.put("VATRate", "1");
+
+							} else {
+								hItem.put("VATRate", o.at("/VATRate").isMissingNode() ? ""
+										: commons.formatNumberReal(o.at("/VATRate").doubleValue()));
 							}
-							else if((o.at("/VATRate").toString().equals("0.0"))){
-								hItem.put("VATRate", "1");	
-								
-							}	else	{							
-								hItem.put("VATRate", 
-										o.at("/VATRate").isMissingNode()? "":
-										commons.formatNumberReal(o.at("/VATRate").doubleValue()));
-							}						
-								
-								
-							hItem.put("VATAmount", 
-								o.at("/VATAmount").isMissingNode()? "":
-								commons.formatNumberReal(o.at("/VATAmount").doubleValue())
-							);
-							hItem.put("Amount", 
-								o.at("/Amount").isMissingNode()? "":
-								commons.formatNumberReal(o.at("/Amount").doubleValue())
-							);
+
+							hItem.put("VATAmount", o.at("/VATAmount").isMissingNode() ? ""
+									: commons.formatNumberReal(o.at("/VATAmount").doubleValue()));
+							hItem.put("Amount", o.at("/Amount").isMissingNode() ? ""
+									: commons.formatNumberReal(o.at("/Amount").doubleValue()));
 							break;
 						}
 						String lhhdtrung = commons.getTextJsonNode(o.at("/TTHHDTrung"));
-						if("DETAIL".equals(action)) {
-							hItem.put("Feature", Constants.MAP_PRD_FEATURE.get(commons.getTextJsonNode(o.at("/Feature"))));
+						if ("DETAIL".equals(action)) {
+							hItem.put("Feature",
+									Constants.MAP_PRD_FEATURE.get(commons.getTextJsonNode(o.at("/Feature"))));
 							hItem.put("LHHDTrung", Constants.MAP_PRD_LHHDTrung.get(lhhdtrung));
-						}
-						else {
+						} else {
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 							hItem.put("LHHDTrung", lhhdtrung);
 						}
-						
+
 						if ("1".equals(lhhdtrung)) {
 							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
 							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
@@ -591,13 +625,15 @@ public class EInvoiceCRUDController extends AbstractController{
 				req.setAttribute("DSHHDVu", commons.encodeStringBase64(Json.serializer().toString(prds)));
 				loaiTienTt = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/DVTTe"));
 				req.setAttribute("DVTTe", loaiTienTt);
-				req.setAttribute("TGia", commons.formatNumberReal(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TGia"))));
-				
+				req.setAttribute("TGia",
+						commons.formatNumberReal(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TGia"))));
+
 				String ParamUSD = commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TToan/ParamUSD"));
-							
-				if(!loaiTienTt.equals("VND") && !ParamUSD.equals("")) {				
+
+				if (!loaiTienTt.equals("VND") && !ParamUSD.equals("")) {
 					int CheckParamUSD = Integer.parseInt(ParamUSD);
-					String TgTCThue = commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue());
+					String TgTCThue = commons
+							.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue());
 //					if (TgTCThue.contains(".")) {
 //					    String[] parts = TgTCThue.split("\\.");
 //					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
@@ -608,23 +644,23 @@ public class EInvoiceCRUDController extends AbstractController{
 //					        TgTCThue = sb.toString();
 //					    }
 //					}
-					
+
 					if (TgTCThue.contains(".")) {
-					    String[] parts = TgTCThue.split("\\.");
-					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
-					        StringBuilder sb = new StringBuilder(TgTCThue);
-					        while (parts[1].length() < CheckParamUSD) {
-					            sb.append("0");
-					            parts[1] += "0";
-					        }
-					        TgTCThue = sb.toString();
-					    }
+						String[] parts = TgTCThue.split("\\.");
+						if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
+							StringBuilder sb = new StringBuilder(TgTCThue);
+							while (parts[1].length() < CheckParamUSD) {
+								sb.append("0");
+								parts[1] += "0";
+							}
+							TgTCThue = sb.toString();
+						}
 					}
-					
+
 					req.setAttribute("TgTCThue", TgTCThue);
-				
-					
-					String TgTThue = commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTThue").doubleValue());
+
+					String TgTThue = commons
+							.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTThue").doubleValue());
 //					if (TgTThue.contains(".")) {
 //					    String[] parts = TgTThue.split("\\.");
 //					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
@@ -635,22 +671,23 @@ public class EInvoiceCRUDController extends AbstractController{
 //					        TgTThue = sb.toString();
 //					    }
 //					}
-					
+
 					if (TgTThue.contains(".")) {
-					    String[] parts = TgTThue.split("\\.");
-					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
-					        StringBuilder sb = new StringBuilder(TgTThue);
-					        while (parts[1].length() < CheckParamUSD) {
-					            sb.append("0");
-					            parts[1] += "0";
-					        }
-					        TgTThue = sb.toString();
-					    }
+						String[] parts = TgTThue.split("\\.");
+						if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
+							StringBuilder sb = new StringBuilder(TgTThue);
+							while (parts[1].length() < CheckParamUSD) {
+								sb.append("0");
+								parts[1] += "0";
+							}
+							TgTThue = sb.toString();
+						}
 					}
-					
+
 					req.setAttribute("TgTThue", TgTThue);
-					
-					String TgTTTBSo = commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue());
+
+					String TgTTTBSo = commons
+							.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue());
 //					if (TgTTTBSo.contains(".")) {
 //					    String[] parts = TgTTTBSo.split("\\.");
 //					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
@@ -661,47 +698,40 @@ public class EInvoiceCRUDController extends AbstractController{
 //					        TgTTTBSo = sb.toString();
 //					    }
 //					}		
-					
+
 					if (TgTTTBSo.contains(".")) {
-					    String[] parts = TgTTTBSo.split("\\.");
-					    if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
-					        StringBuilder sb = new StringBuilder(TgTTTBSo);
-					        while (parts[1].length() < CheckParamUSD) {
-					            sb.append("0");
-					            parts[1] += "0";
-					        }
-					        TgTTTBSo = sb.toString();
-					    }
+						String[] parts = TgTTTBSo.split("\\.");
+						if (parts.length == 2 && parts[1].length() < CheckParamUSD) {
+							StringBuilder sb = new StringBuilder(TgTTTBSo);
+							while (parts[1].length() < CheckParamUSD) {
+								sb.append("0");
+								parts[1] += "0";
+							}
+							TgTTTBSo = sb.toString();
+						}
 					}
-					
+
 					req.setAttribute("TgTTTBSo", TgTTTBSo);
-					
-				}else {
-				req.setAttribute("TgTCThue", 
-					jsonData.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode()? "":
-					commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue())
-				);
-				
-				req.setAttribute("TgTThue", 
-						jsonData.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode()? "":
-						commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTThue").doubleValue())
-					);
-				
-				req.setAttribute("TgTTTBSo", 
-						jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode()? "":
-						commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue())
-					);		
-			}
-					
-				req.setAttribute("TgTTTBSoQuyDoi", 
-					jsonData.at("/EInvoiceDetail/TToan/TgTQDoi").isMissingNode()? "":
-					commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTQDoi").doubleValue())
-				);
+
+				} else {
+					req.setAttribute("TgTCThue", jsonData.at("/EInvoiceDetail/TToan/TgTCThue").isMissingNode() ? ""
+							: commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTCThue").doubleValue()));
+
+					req.setAttribute("TgTThue", jsonData.at("/EInvoiceDetail/TToan/TgTThue").isMissingNode() ? ""
+							: commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTThue").doubleValue()));
+
+					req.setAttribute("TgTTTBSo", jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").isMissingNode() ? ""
+							: commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTTTBSo").doubleValue()));
+				}
+
+				req.setAttribute("TgTTTBSoQuyDoi", jsonData.at("/EInvoiceDetail/TToan/TgTQDoi").isMissingNode() ? ""
+						: commons.formatNumberReal(jsonData.at("/EInvoiceDetail/TToan/TgTQDoi").doubleValue()));
 				req.setAttribute("TgTTTBChu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TToan/TgTTTBChu")));
-				req.setAttribute("checkProductExtension", commons.getTextJsonNode(jsonData.at("/checkProductExtension")));
-		
+				req.setAttribute("checkProductExtension",
+						commons.getTextJsonNode(jsonData.at("/checkProductExtension")));
+
 			}
-				}else {
+		} else {
 			errorDesc = rspStatus.getErrorDesc();
 		}
 	}
@@ -721,9 +751,12 @@ public class EInvoiceCRUDController extends AbstractController{
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
 		hinhThucThanhToan = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan").replaceAll("\\s", "");
 		hinhThucThanhToanText = commons.getParameterFromRequest(req, "hinh-thuc-thanh-toan-text").trim().replaceAll("\\s+", " ");
-//		maCuaHang= commons.getParameterFromRequest(req, "ma-ch").replaceAll("\\s", " ");
-//		tenCuaHang = commons.getParameterFromRequest(req, "ten-ch").replaceAll("\\s", " ");
-//		chkXuatTheoLoaiTienTt = commons.getParameterFromRequest(req, "chk-xuat-theo-loai-tien-tt").replaceAll("\\s", "");
+		
+		shdontbn= commons.getParameterFromRequest(req, "shdon-tbn").replaceAll("\\s", "");
+		nlaptbn = commons.getParameterFromRequest(req, "nlap-tbn").replaceAll("\\s", "");
+		mshdontbn = commons.getParameterFromRequest(req, "mshdon-tbn").replaceAll("\\s", "");
+		tchdontbn = commons.getParameterFromRequest(req, "tchdon-tbn").replaceAll("\\s", "");
+		
 		khMst = commons.getParameterFromRequest(req, "kh-mst").replaceAll("\\s+", "");
 		khMKHang = commons.getParameterFromRequest(req, "kh-makhachhang").trim().replaceAll("\\s+", " ");
 		khHoTenNguoiMua = commons.getParameterFromRequest(req, "kh-ho-ten-nguoi-mua").trim().replaceAll("\\s+", " ");
@@ -738,7 +771,6 @@ public class EInvoiceCRUDController extends AbstractController{
 		khSoHoChieu = commons.getParameterFromRequest(req, "kh-shchieu").replaceAll("\\s", "");
 		tongTienTruocThue = commons.getParameterFromRequest(req, "tong-tien-truoc-thue").replaceAll("\\s", "");
 		loaiTienTt = commons.getParameterFromRequest(req, "loai-tien-tt").replaceAll("\\s", "");
-//		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("\\s", "").replaceAll(",", "");
 		tyGia = commons.getParameterFromRequest(req, "ty-gia").replaceAll("(\\s|,)", "");
 		tongTienThueGtgt = commons.getParameterFromRequest(req, "tong-tien-thue-gtgt").replaceAll("\\s", "");
 		tongTienDaCoThue = commons.getParameterFromRequest(req, "tong-tien-da-co-thue").replaceAll("\\s", "");
@@ -801,27 +833,12 @@ public class EInvoiceCRUDController extends AbstractController{
 				dto.getErrorMessages().add("Tiền bằng chữ không được rỗng.");
 			}
 			
-//			if(!khMst.equals("")) {
-//				if(khMst.length() < 10 || khMst.length() > 14 || khMst.length() == 11 || khMst.length() ==12 || khMst.length() ==13) {
-//					dto.setErrorCode(1);
-//					dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//				}else {					
-//					if(khMst.length() == 14) {
-//						if(!khMst.contains("-")){
-//						dto.setErrorCode(1);
-//						dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//						}else {
-//							String split[] = khMst.split("-");
-//							if(split[1].length() != 3) {
-//								dto.setErrorCode(1);
-//								dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//							}
-//							
-//						}
-//					}
-//				}
-//			}
 			
+			if ((!"".equals(shdontbn) || !"".equals(mshdontbn) || !"".equals(tchdontbn))
+					&& ("".equals(shdontbn) || "".equals(mshdontbn) || "".equals(tchdontbn) || "".equals(nlaptbn))) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Kiểm tra lại thông tin hóa đơn Thay thế/Điều chỉnh TBN");
+			}
 			
 			break;
 		case "einvoice-deleteAll":
@@ -1097,6 +1114,12 @@ public class EInvoiceCRUDController extends AbstractController{
 		hData.put("NgayLap", ngayLap);
 		hData.put("HinhThucThanhToan", hinhThucThanhToan);
 		hData.put("HinhThucThanhToanText", hinhThucThanhToanText);
+		
+		hData.put("SHDonTBN", shdontbn);
+		hData.put("NLapTBN", nlaptbn);
+		hData.put("MSHDonTBN", mshdontbn);
+		hData.put("TCHDonTBN", tchdontbn);
+		
 		hData.put("KhMst", khMst);
 		hData.put("KhMKHang", khMKHang);
 		hData.put("KhHoTenNguoiMua", khHoTenNguoiMua);
