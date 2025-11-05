@@ -156,9 +156,13 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String nlaptbn = commons.getTextJsonNode(jsonData.at("/NLapTBN")).trim().replaceAll("\\s+", " ");
 		String mshdontbn = commons.getTextJsonNode(jsonData.at("/MSHDonTBN")).replaceAll("\\s", "");
 		String tchdontbn = commons.getTextJsonNode(jsonData.at("/TCHDonTBN")).replaceAll("\\s", "");
-		String khmshdclquan = mshdontbn.substring(0, 1); 
-		String khhdclquan  = mshdontbn.substring(1); 
-		
+		String khmshdclquan = ""; 
+		String khhdclquan  = ""; 
+		if (mshdontbn.length() > 2) {
+			khmshdclquan = mshdontbn.substring(0, 1); 
+			khhdclquan  = mshdontbn.substring(1); 
+		}
+
 		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "")
 				.replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
 		String khMKHang = commons.getTextJsonNode(jsonData.at("/KhMKHang")).trim().replaceAll("\\s+", " ");
