@@ -71,9 +71,9 @@ public class IssuController extends AbstractController {
 		JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 		String isroot = commons.getTextJsonNode(jsonData.at("/IsRoot"));
 		
-		if("true".equals(isroot) && issu.isRoot() == true && issu.isAdmin() == true)
-		{return "/issu/issu";}
-		else {
+		if ("true".equals(isroot) && issu.isRoot() == true && issu.isAdmin() == true) {
+			return "/issu/issu";
+		} else {
 			return "/admin/admin";
 		}
 		

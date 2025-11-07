@@ -172,8 +172,9 @@
 							},
 							requestEnd: function (e) {
 				               	if (e.type === "read" && e.response) {
-				               		if(e.response.errorCode == 0){
-				               		}else{
+				               		if(e.response.errorCode == 9401){
+				               			alertDLSuccess(createObjectError(e.response).html(), function(){});
+				               		}else if(e.response.errorCode != 0){
 				               			notificationDLSuccess(createObjectError(e.response).html(), function(){});
 				               		}
 				               	}

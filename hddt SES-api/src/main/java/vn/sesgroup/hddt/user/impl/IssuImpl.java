@@ -84,22 +84,22 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		MsgPage page = msg.getMsgPage();
 		Object objData = msg.getObjData();
 	
-		String t = "";
-		String n = "";
-		String a = "";
-		String p = "";
-		String acti = "";
+		String taxCode = "";
+		String name = "";
+		String address = "";
+		String phone = "";
+		String active = "";
 		
 		JsonNode jsonData = null;
 		if(objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
-			t = commons.getTextJsonNode(jsonData.at("/TaxCode")).replaceAll("\\s", "");
-			n = commons.getTextJsonNode(jsonData.at("/Name")).replaceAll("\\s", " ");
-			a = commons.getTextJsonNode(jsonData.at("/Address")).replaceAll("\\s", "");
-			p = commons.getTextJsonNode(jsonData.at("/Phone")).replaceAll("\\s", "");
-			acti = commons.getTextJsonNode(jsonData.at("/IsActive")).replaceAll("\\s", "");
+			taxCode = commons.getTextJsonNode(jsonData.at("/TaxCode")).replaceAll("\\s", "");
+			name = commons.getTextJsonNode(jsonData.at("/Name")).replaceAll("\\s", " ");
+			address = commons.getTextJsonNode(jsonData.at("/Address")).replaceAll("\\s", "");
+			phone = commons.getTextJsonNode(jsonData.at("/Phone")).replaceAll("\\s", "");
+			active = commons.getTextJsonNode(jsonData.at("/IsActive")).replaceAll("\\s", "");
 		}
-		int abcs = commons.stringToInteger(acti);
+		int abcs = commons.stringToInteger(active);
 		Boolean isacti = true;
 		if(abcs == 1) {
 			isacti = true;
@@ -116,23 +116,23 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		List<Document> pipeline = new ArrayList<Document>();
 		
 		Document docMatch = new Document("IsDelete",new Document("$ne", true));	
-		if (!header.getCurUserId().equals(header.getUserId())) {
-			docMatch.append("$or", Arrays.asList(
-					new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
-					new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
-					));
-		}
+//		if (!header.getCurUserId().equals(header.getUserId())) {
+//			docMatch.append("$or", Arrays.asList(
+//					new Document("InfoCreated.CreateBySubUserID", header.getCurUserId()),
+//					new Document("ManagedByUsers", new Document("$in", Arrays.asList(header.getCurUserId())))
+//					));
+//		}
 		
-		if(!"".equals(t))
-			docMatch.append("TaxCode", commons.regexEscapeForMongoQuery(t));
-		if(!"".equals(n))
+		if(!"".equals(taxCode))
+			docMatch.append("TaxCode", commons.regexEscapeForMongoQuery(taxCode));
+		if(!"".equals(name))
 		docMatch.append("Name",
-				new Document("$regex", commons.regexEscapeForMongoQuery(n)).append("$options", "i"));
-		if(!"".equals(a))
-			docMatch.append("Address", commons.regexEscapeForMongoQuery(a));
-		if(!"".equals(p))
-			docMatch.append("Phone", commons.regexEscapeForMongoQuery(p));
-		if(!"".equals(acti))
+				new Document("$regex", commons.regexEscapeForMongoQuery(name)).append("$options", "i"));
+		if(!"".equals(address))
+			docMatch.append("Address", commons.regexEscapeForMongoQuery(address));
+		if(!"".equals(phone))
+			docMatch.append("Phone", commons.regexEscapeForMongoQuery(phone));
+		if(!"".equals(active))
 			docMatch.append("IsActive",isacti );
 		
 		
@@ -147,21 +147,19 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		pipeline.add(
 				new Document("$project", 
 					new Document("_id", 1).append("TaxCode", 1).append("Name", 1).append("Address", 1).append("Phone", 1)
-					.append("IsActive", 1).append("InfoCreated", 1)
+					.append("IsActive", 1).append("InfoCreated", 1).append("ManagedByUsers", 1)
 				)
 			);
 		
 		pipeline.addAll(createFacetForSearchNotSort(page));
-		
-		MongoClient mongoClient = cfg.mongoClient();
-	    MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
-	      try {
-	        docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();    
-	      } catch (Exception e) {
-	        
-	      }
-	        
-	      mongoClient.close();
+
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("Issuer");
+
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
 		
 		rsp = new MsgRsp(header);
 		responseStatus = null;
@@ -183,19 +181,49 @@ public class IssuImpl extends AbstractDAO implements IssuDao{
 		HashMap<String, Object> hItem = null;
 		if(null != rows) {
 			for(Document doc: rows) {
-				objectId = (ObjectId) doc.get("_id");
-				
-				hItem = new HashMap<String, Object>();
-				hItem.put("_id", objectId.toString());
-				hItem.put("TaxCode", doc.get("TaxCode"));
-				hItem.put("Name", doc.get("Name"));
-				hItem.put("Address", doc.get("Address"));
-				hItem.put("Phone", doc.get("Phone"));
-				hItem.put("IsActive", doc.get("IsActive"));
-				hItem.put("InfoCreated", doc.get("InfoCreated",""));				
-				rowsReturn.add(hItem);
+				if (!header.getCurUserId().equals(header.getUserId())) {
+					String createBySubUserId = doc.getEmbedded(Arrays.asList("InfoCreated", "CreateBySubUserID"),String.class);
+
+					List<String> managedByUsers = doc.getList("ManagedByUsers", String.class);
+					boolean check = header.getCurUserId().equals(createBySubUserId)
+					        || (managedByUsers != null && managedByUsers.contains(header.getCurUserId()));
+
+					if (check) {
+						objectId = (ObjectId) doc.get("_id");
+
+						hItem = new HashMap<String, Object>();
+						hItem.put("_id", objectId.toString());
+						hItem.put("TaxCode", doc.get("TaxCode"));
+						hItem.put("Name", doc.get("Name"));
+						hItem.put("Address", doc.get("Address"));
+						hItem.put("Phone", doc.get("Phone"));
+						hItem.put("IsActive", doc.get("IsActive"));
+						hItem.put("InfoCreated", doc.get("InfoCreated", ""));
+						rowsReturn.add(hItem);
+					}
+				} else {
+					objectId = (ObjectId) doc.get("_id");
+					
+					hItem = new HashMap<String, Object>();
+					hItem.put("_id", objectId.toString());
+					hItem.put("TaxCode", doc.get("TaxCode"));
+					hItem.put("Name", doc.get("Name"));
+					hItem.put("Address", doc.get("Address"));
+					hItem.put("Phone", doc.get("Phone"));
+					hItem.put("IsActive", doc.get("IsActive"));
+					hItem.put("InfoCreated", doc.get("InfoCreated",""));				
+					rowsReturn.add(hItem);
+				}
 			}
 		}
+		if (!"".equals(taxCode) || !"".equals(name) || "".equals(phone)) {
+			if (rowsReturn.size() == 0 && rows.size() > 0) {
+				responseStatus = new MspResponseStatus(9401, "MST tồn tại trên hệ thống ! Bạn không có quyền truy cập");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+		}
+		
 		responseStatus = new MspResponseStatus(0, "SUCCESS");
 		rsp.setResponseStatus(responseStatus);
 		
