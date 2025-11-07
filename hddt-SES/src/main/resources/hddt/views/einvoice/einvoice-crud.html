@@ -804,10 +804,13 @@
 
 		<script type="text/javascript">
 	$(function(){
+		var isDCTTT_TBN = '[[${IS_DCTTT_TBN}]]' === 'true';
 		if(vIsEdit){
 			initInputNumber('#f-einvoice-crud .text-number');	
 			dateInputFormat($('#f-einvoice-crud').find('#ngay-lap'));
-			dateInputFormat($('#f-einvoice-crud').find('#nlap-tbn'));
+			if (isDCTTT_TBN){
+			dateInputFormat($('#f-einvoice-crud').find('#nlap-tbn'));		
+			}
 		}
 		
 		_gridSub01.kendoGrid({

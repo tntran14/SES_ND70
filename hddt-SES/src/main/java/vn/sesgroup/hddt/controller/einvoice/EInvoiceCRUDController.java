@@ -384,7 +384,9 @@ public class EInvoiceCRUDController extends AbstractController{
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
 		req.setAttribute("Param", Param);
-		req.setAttribute("IS_DCTTT_TBN", true);
+		if ("init-dctt-tbn".equals(method)) {
+			req.setAttribute("IS_DCTTT_TBN", true);
+		}
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
 		
