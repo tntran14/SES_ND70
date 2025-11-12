@@ -1006,5 +1006,23 @@ function getUniqueKey(dataItems, page, pageSize) {
 	return `grid_${page}_${pageSize}_${hash}`;
 }
 
+function checkExceedSizeOfAnExcelCell(data){
+	let maxLength = 32000; // 32767 tối đa Excel cho 1 ô
+	var arr = [];
+		jQuery.each(data, function(_, item) {
+			tmp = item['ProductName'] == null? '': item['ProductName'].trim();
+			if('' != tmp){
+				arr.push(tmp);
+			}
+		});
+		
+	let str = arr.join(", ");
+	
+	if (str.length > maxLength) {
+	    return true;
+	} 
+	return false;
+}
+
 
 

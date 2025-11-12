@@ -721,6 +721,12 @@
 				break;
 		
 			case 'accept':
+				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+				if(checkExceedSizeOfAnExcelCell(objDataJson)) {
+					alertDLSuccess('<span class="required">Số lượng hàng hóa có tên hàng hóa vượt quá kích thước cho phép.</br>Hướng dẫn:</br>- Giảm số lượng hàng hóa, dịch vụ.</br>- Chỉnh sửa tên hàng hóa ngắn gọn.</span>', function(){});
+					return;
+				}
+				
 				objDataSend = getDataToSave();
 				$.ajax({
 					type: "POST",
