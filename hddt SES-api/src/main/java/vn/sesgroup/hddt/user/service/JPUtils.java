@@ -5511,9 +5511,9 @@ else {
 				/* KIEM TRA FILE LOG & BACKGROUND CO TON TAI KHONG */
 				File f = new File(pathLogo);
 				if (f.exists() && f.isFile())
-					reportParams.put("URL_IMG_BACKGROUND", pathLogo);
+					reportParams.put("URL_IMG_LOGO", pathLogo);
 				else
-					reportParams.put("URL_IMG_BACKGROUND",
+					reportParams.put("URL_IMG_LOGO",
 							Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, IMAGE_FILENAME_BLANK).toString());
 				
 				reportParams.put("KHHDon", KH);
