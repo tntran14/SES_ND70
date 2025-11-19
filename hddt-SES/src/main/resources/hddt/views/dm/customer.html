@@ -69,7 +69,10 @@
 								<div class="row mT-0">
 									<div class="col-12 text-right p-r-0 p-l-0">
 										<div class="button-group text-right">
-											<button type="button" title="Import danh sách" data-action="import" class="btns btns-detail__ses btns-import__ses-1 hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-import|')}">
+											<button type="button" title="Export danh sách" data-action="export" class="btns btns-export__ses hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-export|')}">
+												<i class="mdi mdi-microsoft-excel"> </i><span class="d-none d-md-inline">Xuất Excel</span>
+											</button>
+											<button type="button" title="Import danh sách" data-action="import" class="btns btns-import__ses-1 hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-import|')}">
 												<i class="mdi mdi-file-excel"> </i><span class="d-none d-md-inline"> Import danh sách</span>
 											</button>
 											<button type="button" title="Thêm mới" data-action="cre" class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|dmcustomer-cre|')}">
@@ -101,7 +104,7 @@
 				<script type="text/javascript">
 				_gridMain = $('#f-customer').find('#grid');
 				</script>
-				<script th:src="@{/static/function/dm/customer.js(v=1.3) }"></script>
+				<script th:src="@{/static/function/dm/customer.js(v=1.4)}"></script>
 			</div>
 		</div>
 	</th:block>

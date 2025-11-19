@@ -310,6 +310,35 @@ $(function(){
 		        }
 			});
 			break;
+			
+			case 'export':	
+				objData = getDataSearch();
+				$.ajax({
+					type: "POST",
+					datatype: "json",
+					url: ROOT_PATH + '/main/dmcustomer/check-data-export',
+					data: objData,
+					beforeSend: function(req) {
+						initAjaxJsonRequest(req);
+			        	showLoading();
+					},
+					success:function(res) {
+						hideLoading();
+						if(res.errorCode == 0) {
+							var responseData = res.responseData;
+							
+							tokenTransaction = responseData['TOKEN'];
+							window.open(ROOT_PATH + '/main/dmcustomer/export-excel/' + tokenTransaction,'_blank');
+						}else{
+							alertDLSuccess(createObjectError(res).html(), function(){});
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+			            hideLoading();
+			        }
+				});
+				break;
 		default:
 			break;
 		}

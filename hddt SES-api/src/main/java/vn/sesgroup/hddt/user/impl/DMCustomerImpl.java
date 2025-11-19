@@ -1,5 +1,6 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,12 +17,25 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +60,7 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
+import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.DMCustomerDAO;
@@ -1100,5 +1116,245 @@ db.getCollection('DMCustomer').find({
 		return rsp;
 	}
 
+	@Override
+	public FileInfo exportExcel(JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = new FileInfo();
+		Msg msg = jsonRoot.getMsg();
+		MsgHeader header = msg.getMsgHeader();
+		Object objData = msg.getObjData();
 
+		String taxCode = "";
+		String companyName = "";
+		String customerName = "";
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+			taxCode = commons.getTextJsonNode(jsonData.at("/TaxCode")).replaceAll("\\s+", " ");
+			companyName = commons.getTextJsonNode(jsonData.at("/CompanyName")).replaceAll("\\s", "");
+			customerName = commons.getTextJsonNode(jsonData.at("/CustomerName")).replaceAll("\\s", "");
+		}
+
+		ByteArrayOutputStream out = null;
+		SXSSFWorkbook wb = new SXSSFWorkbook();
+		SXSSFSheet sheet = null;
+
+		List<Document> docTmps = new ArrayList<Document>();
+		Iterator<Document> iter = null;
+		Document docMatch = new Document("IssuerId", header.getIssuerId()).append("IsDelete",
+				new Document("$ne", true));
+		if (!"".equals(taxCode))
+			docMatch.append("TaxCode",
+					new Document("$regex", commons.regexEscapeForMongoQuery(taxCode)).append("$options", "i"));
+		if (!"".equals(companyName))
+			docMatch.append("CompanyName",
+					new Document("$regex", commons.regexEscapeForMongoQuery(companyName)).append("$options", "i"));
+		if (!"".equals(customerName))
+			docMatch.append("CustomerName",
+					new Document("$regex", commons.regexEscapeForMongoQuery(customerName)).append("$options", "i"));
+
+		List<Document> pipeline = new ArrayList<Document>();
+		pipeline.add(new Document("$match", docMatch));
+		pipeline.add(new Document("$sort", new Document("Stock", 1).append("Code", 1).append("_id", -1)));
+
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMCustomer");
+			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+		} catch (Exception e) {
+		}
+
+		while (iter.hasNext()) {
+			docTmps.add(iter.next());
+		}
+
+		if (docTmps.size() == 0) {
+			out = new ByteArrayOutputStream();
+			wb.write(out);
+			wb.dispose();
+			wb.close();
+			fileInfo.setFileName("DANH-SACH-KHACH-HANG.xlsx");
+			fileInfo.setContentFile(out.toByteArray());
+			return fileInfo;
+		}
+
+		try {
+			sheet = wb.createSheet("Sheet 1");
+			SXSSFRow row = null;
+			SXSSFCell cell = null;
+
+			Font fontHeader = wb.createFont();
+			fontHeader.setFontHeightInPoints((short) 13);
+			fontHeader.setFontName("Times New Roman");
+			fontHeader.setItalic(false);
+			fontHeader.setBold(true);
+			fontHeader.setColor(IndexedColors.BLACK.index);
+
+			CellStyle styleHeader = null;
+			styleHeader = wb.createCellStyle();
+			styleHeader.setLocked(false);
+			setStyleInfo(styleHeader);
+			styleHeader.setFont(fontHeader);
+
+			styleHeader.setFillForegroundColor(IndexedColors.GREEN.index);
+			styleHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			Font fontDetail = wb.createFont();
+			fontDetail.setFontHeightInPoints((short) 13);
+			fontDetail.setFontName("Times New Roman");
+			fontDetail.setItalic(false);
+
+			CellStyle styleInfoL = null;
+			styleInfoL = wb.createCellStyle();
+			styleInfoL.setFont(fontDetail);
+			styleInfoL.setLocked(false);
+			setStyleInfo(styleInfoL);
+			styleInfoL.setAlignment(HorizontalAlignment.LEFT);
+
+			CellStyle styleInfoC = null;
+			styleInfoC = wb.createCellStyle();
+			styleInfoC.setFont(fontDetail);
+			styleInfoC.setLocked(false);
+			setStyleInfo(styleInfoC);
+
+			CreationHelper createHelper = wb.getCreationHelper();
+			CellStyle dateCellStyle = wb.createCellStyle();
+			dateCellStyle
+					.setDataFormat(createHelper.createDataFormat().getFormat(Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+			dateCellStyle.setAlignment(HorizontalAlignment.CENTER);
+			dateCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			setStyleInfo(dateCellStyle);
+
+			setCellStyle(wb);
+			List<String> headers = Arrays.asList(new String[] { "STT", "Mã số thuế", "Mã khách hàng", "Tên đơn vị",
+					"Tỉnh/Thành phố", "Tên người mua hàng", "Địa chỉ", "Số tài khoản", "Tại ngân hàng", "Email",
+					"EmailCC", "Điện thoại", "Ngày lập", "Người cập nhật", "Ngày cập nhật" });
+			row = sheet.getRow(0);
+			if (null == row)
+				row = sheet.createRow(0);
+			row.setHeight((short) 500);
+			for (int i = 0; i < headers.size(); i++) {
+				cell = row.getCell(i);
+				if (cell == null)
+					cell = row.createCell(i);
+				cell.setCellStyle(styleHeader);
+				cell.setCellValue(headers.get(i));
+				switch (i) {
+				case 0:
+					sheet.setColumnWidth(i, 2000);
+					break;
+				case 1:
+				case 11:
+				case 12:
+				case 14:
+					sheet.setColumnWidth(i, 4000);
+					break;
+				case 2:
+					sheet.setColumnWidth(i, 6000);
+					break;
+				case 4:
+					sheet.setColumnWidth(i, 7000);
+					break;
+				case 7:
+					sheet.setColumnWidth(i, 8000);
+					break;
+				default:
+					sheet.setColumnWidth(i, 10000);
+					break;
+				}
+			}
+
+			int posRowData = 1;
+
+			for (Document doc : docTmps) {
+				String taxCode_ = doc.get("TaxCode", "");
+				String customerCode = doc.get("CustomerCode", "");
+				String unitName = doc.get("CompanyName", "");
+				String province = doc.getEmbedded(Arrays.asList("Province", "Name"), "");
+				String buyerName = doc.get("CustomerName", "");
+				String address = doc.get("Address", "");
+				String bankAccountNumber = doc.get("AccountNumber", "");
+				String bankAccountName = doc.get("AccountBankName", "");
+				String email = doc.get("Email", "");
+				String emailcc = doc.get("EmailCC", "");
+				String phone = doc.get("Phone", "");
+
+				Date dateTmp = doc.getEmbedded(Arrays.asList("InfoCreated", "CreateDate"), Date.class);
+				String createDate = dateTmp == null ? ""
+						: commons.convertLocalDateTimeToString(commons.convertDateToLocalDate(dateTmp),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+
+				dateTmp = doc.getEmbedded(Arrays.asList("InfoUpdated", "UpdateDate"), Date.class);
+				String updateDate = dateTmp == null ? ""
+						: commons.convertLocalDateTimeToString(commons.convertDateToLocalDate(dateTmp),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+				String updateByName = doc.getEmbedded(Arrays.asList("InfoUpdated", "CreateUserFullName"), "");
+
+				row = sheet.getRow(posRowData);
+				if (null == row)
+					row = sheet.createRow(posRowData);
+
+				setCellValue(0, row, styleInfoC, String.valueOf(posRowData));
+				setCellValue(1, row, styleInfoL, taxCode_);
+				setCellValue(2, row, styleInfoL, customerCode);
+				setCellValue(3, row, styleInfoL, unitName);
+				setCellValue(4, row, styleInfoL, province);
+				setCellValue(5, row, styleInfoL, buyerName);
+				setCellValue(6, row, styleInfoL, address);
+				setCellValue(7, row, styleInfoL, bankAccountNumber);
+				setCellValue(8, row, styleInfoL, bankAccountName);
+				setCellValue(9, row, styleInfoL, email);
+				setCellValue(10, row, styleInfoL, emailcc);
+				setCellValue(11, row, styleInfoC, phone);
+				setCellValue(12, row, styleInfoC, createDate);
+				setCellValue(13, row, styleInfoL, updateByName);
+				setCellValue(14, row, styleInfoC, updateDate);
+
+				posRowData++;
+			}
+
+			out = new ByteArrayOutputStream();
+			wb.write(out);
+			fileInfo.setFileName("DANH-SACH-KHACH-HANG.xlsx");
+			fileInfo.setContentFile(out.toByteArray());
+			return fileInfo;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try {
+				wb.dispose();
+				wb.close();
+			} catch (Exception ex) {
+			}
+		}
+
+	}
+
+	private void setCellValue(int column, SXSSFRow row, CellStyle style, String value) {
+		SXSSFCell cell = row.getCell(column);
+		if (cell == null)
+			cell = row.createCell(column);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+	}
+
+	private void setStyleInfo(CellStyle styleInfo) {
+		styleInfo.setAlignment(HorizontalAlignment.CENTER);
+		styleInfo.setVerticalAlignment(VerticalAlignment.CENTER);
+		styleInfo.setBorderBottom(BorderStyle.THIN);
+		styleInfo.setBorderTop(BorderStyle.THIN);
+		styleInfo.setBorderRight(BorderStyle.THIN);
+		styleInfo.setBorderLeft(BorderStyle.THIN);
+		styleInfo.setWrapText(true);
+	}
+
+	private void setCellStyle(SXSSFWorkbook wb) {
+		DataFormat format = wb.createDataFormat();
+		Short df = format.getFormat(wb.createDataFormat().getFormat(wb.createDataFormat().getFormat("#,##0")));
+		CellStyle cellStyleNum = wb.createCellStyle();
+		cellStyleNum.setDataFormat(df);
+		cellStyleNum.setBorderBottom(BorderStyle.THIN);
+		cellStyleNum.setBorderTop(BorderStyle.THIN);
+		cellStyleNum.setBorderRight(BorderStyle.THIN);
+		cellStyleNum.setBorderLeft(BorderStyle.THIN);
+		cellStyleNum.setWrapText(false);
+	}
 }

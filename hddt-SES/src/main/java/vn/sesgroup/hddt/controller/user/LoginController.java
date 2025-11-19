@@ -234,7 +234,7 @@ public class LoginController extends AbstractController{
         	sbRights.append("mauhd|mauhd-cre|mauhd-edit|mauhd-del|mauhd-detail|mauhd-active|mauhd-deactive|");
         	sbRights.append("hdsd|hdsd-cre|hdsd-edit|hdsd-del|hdsd-detail|hdsd-delete|hdsd|hdsd-active|hdsd-deactive|");
         	sbRights.append("dmproduct|dmproduct-import|dmproduct-exp|dmproduct-cre|dmproduct-edit|dmproduct-del|dmproduct-detail|");
-        	sbRights.append("dmcustomer|dmcustomer-import|dmcustomer-cre|dmcustomer-edit|dmcustomer-del|dmcustomer-detail|");
+        	sbRights.append("dmcustomer|dmcustomer-import|dmcustomer-cre|dmcustomer-edit|dmcustomer-del|dmcustomer-detail|dmcustomer-export|");
         	sbRights.append("tkdshdon|tkdshdon-export-excel-fast|tkdshdon-export-excel-detail|tkdshdon-export-excel-general|");
         	sbRights.append("change-mtdiep|");
         	sbRights.append("report_situation|report_situation-html|report_situation-pdf|report_situation-xml|");
