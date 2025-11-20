@@ -6343,13 +6343,13 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 						// Thong tin khac
 						elementSubTmp = doc.createElement("TTKhac");
-						elementSubTmp.appendChild(
-								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
-
-						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
-						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
+//						elementSubTmp.appendChild(
+//								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+//
+//						elementSubTmp
+//								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
+//						elementSubTmp
+//								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
 
 						elementTmp.appendChild(elementSubTmp);
 						elementSubContent.appendChild(elementTmp);
