@@ -1350,17 +1350,19 @@
 	        calcTotalAmount();
 	        // Get the current Price, Total, and Amount to dynamically update ProductName
 	       var tongtien = sumAmount.toFixed(4);
-           console.log("sumAmount: " + sumAmount);
-           console.log("tongtien: " + tongtien);
            var thueSuat = $('#f-einvoice-crud').find('#thue-suat').val();
-           var soTienGiam = parseInt(tongtien.replace(/,/g, ''), 10) * 20/100 * thueSuat/100;
-           console.log("soTienGiam: " + soTienGiam);
-           soTienGiam = Math.abs(Math.round(soTienGiam));
-           console.log("MathsoTienGiam: " + soTienGiam);
-           console.log("toLocaleStringsoTienGiam: " + soTienGiam.toLocaleString());
+           var aaaa = tongtien.replace(/,/g, '');
+           var soTienGiam = tongtien.replace(/,/g, '') * 20/100 * thueSuat/100;
+           var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+           if(loai_tien_tt == 'VND'){
+        	  	soTienGiam = Math.abs(Math.round(soTienGiam));
+           } else{
+          		soTienGiam = Math.abs(soTienGiam);        	   
+           }
+
            // Assuming you have the necessary ProductName and Feature data
-           var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val() == 'VND' ? ' đồng ' : ' Đô la Mỹ ';
-           var productName = "Đã giảm " + soTienGiam.toLocaleString() + loai_tien_tt +"tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết 204/2025/QH15";
+           var don_vi_tien = getCurrencyCodeDes(loai_tien_tt)[0];
+           var productName = "Đã giảm " + soTienGiam.toLocaleString() +" "+ don_vi_tien +" tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết 204/2025/QH15";
            var feature = "4";
 	        // Add a new record to the Kendo Grid
 	       var grid = $("#grid").data("kendoGrid");
@@ -1625,24 +1627,22 @@
         	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
         	var tongtien = $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val();
-        	console.log("tongtien " + tongtien);
+
         	var thueSuat = $('#f-einvoice-crud').find('#thue-suat').val();
-            soTienGiam = parseInt(tongtien.replace(/,/g, ''), 10) * 20/100 * thueSuat/100;
-            soTienGiam = Math.abs(Math.round(soTienGiam));
+            soTienGiam = tongtien.replace(/,/g, '') * 20/100 * thueSuat/100;
+            if(loai_tien_tt == 'VND'){
+        	  	soTienGiam = Math.abs(Math.round(soTienGiam));
+           	} else{
+          		soTienGiam = Math.abs(soTienGiam);        	   
+           	}
 
-        	console.log("soTienGiam " + soTienGiam);
-
-        	console.log("tongtien.replace(/,/g, '') " + tongtien.replace(/,/g, ''));
-        	console.log("parseInttongtien.replace(/,/g, '') " + parseInt(tongtien.replace(/,/g, ''), 10));
-            $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(parseInt(tongtien.replace(/,/g, ''), 10) - soTienGiam);
+            $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(tongtien.replace(/,/g, '') - soTienGiam);
             FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
             
     		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-        	
-    		/* $('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
-    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt); */
-    		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(parseInt(tongtien.replace(/,/g, ''), 10) - soTienGiam)
+ 
+    		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(tongtien.replace(/,/g, '') - soTienGiam)
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 
             sumAmountAfterTax = sumAmountAfterTax - soTienGiam;
@@ -1650,8 +1650,10 @@
         } else {
         	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+        	
     		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+    		
     		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
     		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
     			

@@ -360,7 +360,7 @@ function readMoneyInWords(SoTien, LoaiTien){
 	if(valueDecimal > 0) {
 		var posDot = r.lastIndexOf(".");
 		if(posDot == r.length -1) r = r.substr(0, posDot);
-		r += ' và ' + DocSo3ChuSo(valueDecimal) + ' cents';
+		r += ' và ' + DocSo3ChuSo(valueDecimal) + ' '+ getCurrencyCodeDes(LoaiTien.trim())[1];
 	}
 	return r.replace(/\s+/g, ' ');
 	
@@ -441,7 +441,7 @@ function readMoneyInWordsOthersV2(SoTien, LoaiTien, decimalPlaces) {
   if (valueDecimal > 0) {
     var posDot = r.lastIndexOf(".");
     if (posDot == r.length - 1) r = r.substr(0, posDot);
-    r += ' và ' + convertNumberToWords_v2(valueDecimal, 'cents');
+    r += ' và ' + convertNumberToWords_v2(valueDecimal, getCurrencyCodeDes(LoaiTien.trim())[1]);
   }
   
   return r.replace(/\s+/g, ' ');
@@ -744,7 +744,7 @@ function FormatCurrency(obj, curr) {
 //		nFinal = Math.round(nFinal);
 		obj.value = numeral(nFinal).format('#,###');
 	}else{
-		obj.value = numeral(nFinal).format('#,###.000');
+		obj.value = numeral(nFinal).format('#,###.00');
 	}
 }
 

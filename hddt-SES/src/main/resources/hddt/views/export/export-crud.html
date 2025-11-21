@@ -1377,19 +1377,19 @@ function calcAmountInGrid($obj){
 		
 		
 		
-//		$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
-//		FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
-		if(loai_tien_tt=="VND"){		
-			$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
-			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+		$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+		FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+// 		if(loai_tien_tt=="VND"){		
+// 			$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+// 			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
 						
-			break;
-			}
-		if(loai_tien_tt=="USD"){		
-			$tr.find('input[name="Total"]').val(dblTotal.toFixed(USD_))	
-				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
-			break;
-			}
+// 			break;
+// 			}
+// 		if(loai_tien_tt=="USD"){		
+// 			$tr.find('input[name="Total"]').val(dblTotal.toFixed(USD_))	
+// 				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+// 			break;
+// 			}
 		
 		break;
 	case 'Total':
@@ -1517,40 +1517,42 @@ function calcTotalAmount(){
 		}
 	});
 	
-/* 	$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+	$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
 	FormatCurrency($('#f-export-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-	$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+	$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 1 : USD_))
 	FormatCurrency($('#f-export-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-	$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+	$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
 	FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 	
-	$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt)); */
+	$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+	
+	calcTienQuyDoi();
 	
 	
 	
-	if(loai_tien_tt=="VND"){
-		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
-		FormatCurrency($('#f-export-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(1))
-		FormatCurrency($('#f-export-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
-		FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+// 	if(loai_tien_tt=="VND"){
+// 		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+// 		FormatCurrency($('#f-export-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+// 		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(1))
+// 		FormatCurrency($('#f-export-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+// 		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+// 		FormatCurrency($('#f-export-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 		
-		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+// 		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 		
-		calcTienQuyDoi();
-	}
-	if(loai_tien_tt=="USD"){
-		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
+// 		calcTienQuyDoi();
+// 	}
+// 	if(loai_tien_tt=="USD"){
+// 		$('#f-export-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
 	
-		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
+// 		$('#f-export-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
 	
-		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
+// 		$('#f-export-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
 		
-		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+// 		$('#f-export-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 		
-		calcTienQuyDoi();
-	}	
+// 		calcTienQuyDoi();
+// 	}	
 }
 
 function calcSTTInGrid(){

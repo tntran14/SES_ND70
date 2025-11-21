@@ -1072,32 +1072,41 @@
 			dblPrice = _numeral == null? 0: _numeral.value();
 			dblTotal = dblQuantity * dblPrice;
 	
-	
-			if(loai_tien_tt=="VND"){		
-				$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
-				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+			
+			
+			$tr.find('input[name="Total"]').val(dblTotal.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+			FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+						
+			_numeral = numeral($tr.find('select[name="VATRate"]').val());
+			dblVATRate = _numeral == null? 0: _numeral.value();
+			if(dblVATRate < 0) dblVATRate = 0;
+			if(dblVATRate == 1) dblVATRate = 0;			
+			dblVATAmount = dblTotal * dblVATRate / 100;
+			$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(loai_tien_tt=="VND" ? VND_ : USD_))
+			
+// 			if(loai_tien_tt=="VND"){		
+// 				$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+// 				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
 							
-				_numeral = numeral($tr.find('select[name="VATRate"]').val());
-				dblVATRate = _numeral == null? 0: _numeral.value();
-				if(dblVATRate < 0) dblVATRate = 0;
-				if(dblVATRate == 1) dblVATRate = 0;			
-				dblVATAmount = dblTotal * dblVATRate / 100;
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
-// 				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
-// 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
-				break;
-				}
-			if(loai_tien_tt=="USD"){		
-				$tr.find('input[name="Total"]').val(dblTotal.toFixed(USD_))	
-					FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
-				_numeral = numeral($tr.find('select[name="VATRate"]').val());
-				dblVATRate = _numeral == null? 0: _numeral.value();
-				if(dblVATRate < 0) dblVATRate = 0;
-				if(dblVATRate == 1) dblVATRate = 0;		
-				dblVATAmount = dblTotal * dblVATRate / 100;
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(USD_))
-				break;
-				}
+// 				_numeral = numeral($tr.find('select[name="VATRate"]').val());
+// 				dblVATRate = _numeral == null? 0: _numeral.value();
+// 				if(dblVATRate < 0) dblVATRate = 0;
+// 				if(dblVATRate == 1) dblVATRate = 0;			
+// 				dblVATAmount = dblTotal * dblVATRate / 100;
+// 				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(VND_))
+// 				break;
+// 				}
+// 			if(loai_tien_tt=="USD"){		
+// 				$tr.find('input[name="Total"]').val(dblTotal.toFixed(USD_))	
+// 					FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
+// 				_numeral = numeral($tr.find('select[name="VATRate"]').val());
+// 				dblVATRate = _numeral == null? 0: _numeral.value();
+// 				if(dblVATRate < 0) dblVATRate = 0;
+// 				if(dblVATRate == 1) dblVATRate = 0;		
+// 				dblVATAmount = dblTotal * dblVATRate / 100;
+// 				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(USD_))
+// 				break;
+// 				}
 	case 'Total':
 			_numeral = numeral($tr.find('input[name="Total"]').val());
 			dblTotal = _numeral == null? 0: _numeral.value();
@@ -1289,30 +1298,45 @@
 			}
 		});
 		
-		if(loai_tien_tt=="VND"){			
-		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
-			FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
 		
-		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
-			FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+		
+		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
 			
-		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
-			FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 			
-			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+		$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+		calcTienQuyDoi();
+		
+		
+// 		if(loai_tien_tt=="VND"){			
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+// 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+		
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+// 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
 			
-			calcTienQuyDoi();
-		}
-		if(loai_tien_tt=="USD"){
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+// 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+			
+// 		$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+			
+// 			calcTienQuyDoi();
+// 		}
+// 		if(loai_tien_tt=="USD"){
 	
-			$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
-			$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
-			$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
-			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+// 			$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
+// 			$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
+// 			$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
+// 			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
 			
-			calcTienQuyDoi();
-		}	
+// 			calcTienQuyDoi();
+// 		}	
 	}
+	
 	$('#f-einvoice_mtt-crud #loai-hd').change(function (event) {
 		event.preventDefault();/*event.stopPropagation();*/
 		var _val = $(this).val();
@@ -1487,7 +1511,8 @@
 		var tyGia = 0;
 		var tienQuiDoi = 0;
 		var $numeral = null;
-		
+		var loai_tien_tt = $('#f-einvoice_mtt-crud').find('#loai-tien-tt').val();
+
 		$numeral = numeral($('#f-einvoice_mtt-crud').find('#ty-gia').val());
 		tyGia = $numeral.value() == null? 1: $numeral.value();
 		$numeral = numeral($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val());
@@ -1495,7 +1520,7 @@
 		
 		tienQuiDoi = tyGia * sumAmountAfterTax;
 		$('#f-einvoice_mtt-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(4))
-		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-quy-doi')[0], 'VND');
+		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-quy-doi')[0], loai_tien_tt);
 	}
 	</script>
 	</div>

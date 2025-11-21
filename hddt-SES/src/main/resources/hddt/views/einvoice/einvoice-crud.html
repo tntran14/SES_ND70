@@ -2030,10 +2030,13 @@
 		else{			
 			
 			$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
-		
+		    FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+			
 			$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
-		
+		    FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+			
 			$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
+			FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 			
 	 		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWordsOthersV2(sumAmountAfterTax.toFixed(USD_), loai_tien_tt, USD_));
 			
@@ -2168,6 +2171,7 @@
 		var tyGia = 0;
 		var tienQuiDoi = 0;
 		var $numeral = null;
+		var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
 		
 		$numeral = numeral($('#f-einvoice-crud').find('#ty-gia').val());
 		tyGia = $numeral.value() == null? 1: $numeral.value();
@@ -2176,7 +2180,7 @@
 		
 		tienQuiDoi = tyGia * sumAmountAfterTax;
 		$('#f-einvoice-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(4))
-		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-quy-doi')[0], 'VND');
+		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-quy-doi')[0], loai_tien_tt);
 	}
 	
 		
