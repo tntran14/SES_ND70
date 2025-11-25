@@ -2,7 +2,6 @@ package vn.sesgroup.hddt.user.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -41,13 +40,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
-import vn.sesgroup.hddt.user.dao.TaxCodeSearchStatisticsDAO;
+import vn.sesgroup.hddt.user.dao.CallReceiveMessageDAO;
 import vn.sesgroup.hddt.utility.Constants;
 import vn.sesgroup.hddt.utility.Json;
 
 @Repository
 @Transactional
-public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeSearchStatisticsDAO {
+public class CallReceiveMessageStatisticImpl extends AbstractDAO implements CallReceiveMessageDAO {
 	@Autowired
 	MongoTemplate mongoTemplate;
 
@@ -69,7 +68,7 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 		}
 
 		if (null != docMatchDateDN)
-			docMatch.append("SearchDate", docMatchDateDN);
+			docMatch.append("SendDate", docMatchDateDN);
 	}
 
 	@Override
@@ -95,16 +94,16 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 		Document docTmp = null;
 		List<Document> docs = null;
 
-		Document docMatch = new Document("IsDelete", new Document("$ne", true));
+		Document docMatch = new Document();
 		buildDocMatch(toDate, fromDate, docMatch);
 
 		List<Document> pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));
 		
-		page.setFieldSort("SearchDate");
+		page.setFieldSort("SendDate");
 		page.setTypeSort(1);
 		pipeline.addAll(createFacetForSearch(page));
-		iter = mongoTemplate.getCollection("TaxCodeSearchStatistics").aggregate(pipeline).allowDiskUse(true).iterator();
+		iter = mongoTemplate.getCollection("CallReceiveMessageLog").aggregate(pipeline).allowDiskUse(true).iterator();
 		if (iter.hasNext()) {
 			docTmp = iter.next();
 		}
@@ -133,14 +132,16 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 				
 				objectIdCTS = (ObjectId) doc.get("_id");
 				resItem.put("_id", objectIdCTS.toString());
-				resItem.put("IssuerName", doc.get("IssuerName") != null ? doc.get("IssuerName") : "");
-				resItem.put("IssuerTaxCode", doc.get("IssuerTaxCode") != null ? doc.get("IssuerTaxCode") : "");
-				resItem.put("SearchDate", doc.get("SearchDate") != null ? doc.get("SearchDate") : "");
-				resItem.put("TaxCodeSearched", doc.get("TaxCode") != null ? doc.get("TaxCode") : "");
-				resItem.put("CompanyNameSearched", doc.get("CompanyName") != null ? doc.get("CompanyName") : "");
-				resItem.put("Address", doc.get("Address") != null ? doc.get("Address") : "");
-				resItem.put("Email", doc.get("Email") != null ? doc.get("Email") : "");
-				resItem.put("Phone", doc.get("Phone") != null ? doc.get("Phone") : "");
+				resItem.put("TaxCode", doc.get("TaxCode", ""));
+				resItem.put("SendDate", doc.get("SendDate", ""));
+				resItem.put("KHMSHDon", doc.get("KHMSHDon", ""));
+				resItem.put("KHHDon", doc.get("KHHDon", ""));
+				resItem.put("SHDon", doc.get("SHDon", ""));
+				resItem.put("MLTDiep", doc.get("MLTDiep", ""));
+				resItem.put("MTDiep", doc.get("MTDiep", ""));
+				resItem.put("TCTN", doc.get("TCTN", ""));
+				resItem.put("Code", doc.get("Code", ""));
+				resItem.put("MTDTChieu", doc.get("MTDTChieu", ""));
 				response.add(resItem);
 			}
 		}
@@ -224,15 +225,13 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
             dateCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             setStyleInfo(dateCellStyle);
             
-            setCellStyle(wb);
-            int countRow =1;
-            
+            setCellStyle(wb);            
 			List<String> headers = Arrays.asList(
-					new String[] { "STT", "Tên issuer", "MST issuer", "Ngày tìm kiếm", "MST tìm", "Tên công ty",
-							"Địa chỉ", "Email", "Điện thoại"});
-			row = sheet.getRow(1);
+					new String[] { "STT", "Tên TCTN", "Mã số thuế", "Ngày gửi", "Mẫu số KH", "Số hóa đơn",
+							"Mã loại TĐ", "Mã thông điệp", "Mã thông điệp đối chiếu", "Trạng thái"});
+			row = sheet.getRow(0);
 			if (null == row)
-				row = sheet.createRow(1);
+				row = sheet.createRow(0);
 			row.setHeight((short) 500);
 			for (int i = 0; i < headers.size(); i++) {
 				cell = row.getCell(i);
@@ -244,25 +243,30 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 				case 0:
 					sheet.setColumnWidth(i, 2000);
 					break;
-				case 1:
-				case 5:
-				case 6:
-					sheet.setColumnWidth(i, 10000);
+				case 2:
+				case 3:
+					sheet.setColumnWidth(i, 5000);
 					break;
+				case 1:
+				case 7:
+				case 8:
+				case 9:
+					sheet.setColumnWidth(i, 10000);
+					break; 
 				default:
-					 sheet.setColumnWidth(i, 5000);
+					 sheet.setColumnWidth(i, 3500);
 					break;
 				}
             }
 
-            int posRowData = 2;
+            int posRowData = 1;
 
-            Document docMatch = new Document("IsDelete", new Document("$ne", true));
+            Document docMatch = new Document();
     		buildDocMatch(toDate, fromDate, docMatch);
 
     		pipeline.add(new Document("$match", docMatch));
     		
-    		iter = mongoTemplate.getCollection("TaxCodeSearchStatistics").aggregate(pipeline).allowDiskUse(true).iterator();
+    		iter = mongoTemplate.getCollection("CallReceiveMessageLog").aggregate(pipeline).allowDiskUse(true).iterator();
 			while (iter.hasNext()) {
 				docTmp = iter.next();
 				if (docTmp != null) {
@@ -271,37 +275,28 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 			}
 
 			if (null != docs) {
-				row = sheet.getRow(0);
-				if (null == row)
-					row = sheet.createRow(0);
-				cell = row.getCell(2);
-				if (cell == null)
-					cell = row.createCell(2);
-				cell.setCellValue("Tổng");
-				
-				cell = row.getCell(3);
-				if (cell == null)
-					cell = row.createCell(3);
-				cell.setCellValue(docs.size());
-				
-				String issuerName = null;
-				String issuerTaxCode = null;
-				Date date = null;
 				String taxCode = null;
-				String companyName = null;
-				String address = null;
-				String email = null;
-				String phone = null;
+				String khmshdon = null;
+				Date date = null;
+				String khhdon = null;
+				String shdon = null;
+				String mltdiep = null;
+				String mtdiep = null;
+				String mtddchieu = null;
+				String tctn = null;
+				String code = null;
 				for (Document doc : docs) {
-					issuerName = Objects.toString(doc.get("IssuerName"),"");
-					issuerTaxCode = Objects.toString(doc.get("IssuerTaxCode"),"");
-					date = doc.getDate("SearchDate");
-					taxCode = Objects.toString(doc.get("TaxCode"),"");
-					companyName = Objects.toString(doc.get("CompanyName"),"");
-					address = Objects.toString(doc.get("Address"),"");
-					email = Objects.toString(doc.get("Email"),"");
-					phone = Objects.toString(doc.get("Phone"),"");
-					
+					taxCode = doc.get("TaxCode", "");
+					khmshdon = doc.get("KHMSHDon","");
+					khhdon = doc.get("KHHDon","");
+					shdon = doc.get("SHDon","");
+					mltdiep = doc.get("MLTDiep","");
+					mtdiep = doc.get("MTDiep","");
+					mtddchieu = doc.get("MTDTChieu","");
+					tctn = doc.get("TCTN","");
+					code = doc.get("Code","");
+					date = doc.getDate("SendDate");
+		
 					row = sheet.getRow(posRowData);
 					if (null == row)
 						row = sheet.createRow(posRowData);
@@ -310,59 +305,68 @@ public class TaxCodeSearchStatisticsImpl extends AbstractDAO implements TaxCodeS
 					if (cell == null)
 						cell = row.createCell(0);
 					cell.setCellStyle(styleInfoC);
-					cell.setCellValue(countRow);
+					cell.setCellValue(posRowData);
 
 					cell = row.getCell(1);
 					if (cell == null)
 						cell = row.createCell(1);
 					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(issuerName);
+					cell.setCellValue(tctn);
 
 					cell = row.getCell(2);
 					if (cell == null)
 						cell = row.createCell(2);
 					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(issuerTaxCode);
+					cell.setCellValue(taxCode);
 
 					cell = row.getCell(3);
 					if (cell == null)
 						cell = row.createCell(3);
-					cell.setCellStyle(dateCellStyle);
+//					cell.setCellStyle(dateCellStyle);
+//					if (date != null) {
+//						cell.setCellValue(commons.convertDateToLocalDateTime(date));
+//					}
+					cell.setCellStyle(styleInfoC);
 					if (date != null) {
-						cell.setCellValue(commons.convertDateToLocalDateTime(date));
+						cell.setCellValue(commons.convertLocalDateTimeToString(commons.convertDateToLocalDateTime(date), Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
 					}
 
 					cell = row.getCell(4);
 					if (cell == null)
 						cell = row.createCell(4);
-					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(taxCode);
+					cell.setCellStyle(styleInfoC);
+					cell.setCellValue(khmshdon + khhdon);
 
 					cell = row.getCell(5);
 					if (cell == null)
 						cell = row.createCell(5);
-					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(companyName);
+					cell.setCellStyle(styleInfoR);
+					cell.setCellValue(shdon);
 					
 					cell = row.getCell(6);
 					if (cell == null)
 						cell = row.createCell(6);
-					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(address);
+					cell.setCellStyle(styleInfoC);
+					cell.setCellValue(mltdiep);
 					
 					cell = row.getCell(7);
 					if (cell == null)
 						cell = row.createCell(7);
 					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(email);
+					cell.setCellValue(mtdiep);
 
 					cell = row.getCell(8);
 					if (cell == null)
 						cell = row.createCell(8);
 					cell.setCellStyle(styleInfoL);
-					cell.setCellValue(phone);
+					cell.setCellValue(mtddchieu);
+					
+					cell = row.getCell(9);
+					if (cell == null)
+						cell = row.createCell(9);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(Constants.MAP_CALL_RECEIVED_MESSAGE_STATUS.get(code));
 					posRowData++;
-					countRow++;
                 }
             }
             out = new ByteArrayOutputStream();

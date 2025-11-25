@@ -337,4 +337,12 @@ public class Constants {
 	public static final class NEXT_SEQUENCE{
 		public static final String EINVOICEMTT = "EINVOICEMTT";
 	}
+	
+	public static final LinkedHashMap<String, String> MAP_CALL_RECEIVED_MESSAGE_STATUS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("0", "Thành công");}
+		{put("1", "Không tìm thấy tenant dữ liệu");}
+		{put("2", "Mã thông điệp đã tồn tại");}
+		{put("3", "Thất bại, lỗi Exception");}
+	};
 }

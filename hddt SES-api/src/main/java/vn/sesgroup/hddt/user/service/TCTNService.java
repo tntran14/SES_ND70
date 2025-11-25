@@ -17,10 +17,18 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,9 +43,12 @@ import vn.sesgroup.hddt.utility.SystemParams;
 public class TCTNService {
 	private static final Logger log = LogManager.getLogger(TCTNService.class);
 	Commons commons = new Commons();
-	@Autowired private ScheduledTasksDAO dao;
+	@Autowired
+	private ScheduledTasksDAO dao;
+	@Autowired
+	MongoTemplate mongoTemplate;
 	DateTimeFormatter format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-	LocalDateTime time_dem  = LocalDateTime.now();
+	LocalDateTime time_dem = LocalDateTime.now();
 	String time = time_dem.format(format_time);
 	
 	
@@ -53,104 +64,145 @@ public class TCTNService {
 		} 
 	};
 	
-
-	
-	public Document callTiepNhanThongDiep(String MLTDiep, String MTDiep, String MSTKHang, String SLuong, Document docDLieu) throws Exception{
+	public Document callTiepNhanThongDiep(String MLTDiep, String MTDiep, String MSTKHang, String SLuong,
+			Document docDLieu) throws Exception {
 		Document r = null;
-		
-			System.out.println(time +" "+"call callTiepNhanThongDiep "+MTDiep);
-		
-		
-		
+
+		System.out.println(time + " " + "call callTiepNhanThongDiep " + MTDiep);
+
 		Element elem01 = docDLieu.getDocumentElement();
-		
-		/*TAO XML THONG DIEP GUI DI*/
+
+		/* TAO XML THONG DIEP GUI DI */
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        
-        Document doc = db.newDocument();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+
+		Document doc = db.newDocument();
 		doc.setXmlStandalone(true);
-		
+
 		Element root = doc.createElement("TDiep");
 		doc.appendChild(root);
-		
-		Element elementContent = doc.createElement("TTChung");
-		
-		elementContent.appendChild(commons.createElementWithValue(doc, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBanV1));
 
+		Element elementContent = doc.createElement("TTChung");
+
+		elementContent
+				.appendChild(commons.createElementWithValue(doc, "PBan", Constants.TDiep_TTChung_TCTN_VISNAM.PBanV1));
 
 		elementContent.appendChild(commons.createElementWithValue(doc, "MNGui", SystemParams.MSTTCGP));
 		elementContent.appendChild(commons.createElementWithValue(doc, "MNNhan", SystemParams.MSTDVTN));
 		elementContent.appendChild(commons.createElementWithValue(doc, "MLTDiep", MLTDiep));
 		elementContent.appendChild(commons.createElementWithValue(doc, "MTDiep", MTDiep));
 		elementContent.appendChild(commons.createElementWithValue(doc, "MTDTChieu", ""));
-		elementContent.appendChild(commons.createElementWithValue(doc, "MST", MSTKHang));		//MA SO THUE NGUOI NOP THUE
-		elementContent.appendChild(commons.createElementWithValue(doc, "SLuong", SLuong));		
+		elementContent.appendChild(commons.createElementWithValue(doc, "MST", MSTKHang)); // MA SO THUE NGUOI NOP THUE
+		elementContent.appendChild(commons.createElementWithValue(doc, "SLuong", SLuong));
 		root.appendChild(elementContent);
-		
+
 		elementContent = doc.createElement("DLieu");
 		Node copiedRoot = doc.importNode(elem01, true);
 		elementContent.appendChild(copiedRoot);
 		root.appendChild(elementContent);
-		
-		String data = commons.docW3cToString(doc);
-        
-		SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-        	public boolean verify(String hostname, SSLSession session) {
-        		return true;
-        	}
-        };
-		
-        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-        System.out.println(time +" "+"Lay dl hoa don bat dau callTiepNhanThongDiep  "+MTDiep);
-        URL url = new URL(SystemParams.VISNAM_URL_TIEPNHANTHONGDIEP);
-        HttpsURLConnection conn = null;
-        try {
-        	conn = (HttpsURLConnection) url.openConnection();
-     		conn.setDoOutput(true); 
-     		conn.setDoInput(true);
-     		conn.setRequestProperty("charset", "utf-8");
-     		conn.setRequestMethod("POST");
-     		conn.setRequestProperty("Content-Type", "application/xml");
-     		conn.setRequestProperty("Authorization", "Bearer " + SystemParams.VISNAM_ACCESSTOKEN);
-     		
-     		conn.setReadTimeout(60000);
-     		conn.setConnectTimeout(60000);
-     		conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-     		
-     		OutputStream os = conn.getOutputStream();
-    		os.write(data.getBytes(Charset.forName("UTF-8")));
-    		os.flush();
-    		
-    		if(conn.getResponseCode() != 200) {
-    			dao.getAccessTokenVISNAM();  	
-    			return null;
-    		}
-    	      System.out.println(time +" "+"callTiepNhanThongDiep thanh cong "+MTDiep);
-    		
- 
-    			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        		StringBuilder sbReceive = new StringBuilder();
-        		String output;
-        		while ((output = br.readLine()) != null) {
-        			sbReceive.append(output);
-        		}
-        		/*READ DATA XML*/
-        		
-    			r = commons.stringToDocument(sbReceive.toString());
 
-    		
-        }catch(Exception ex) {
-        	log.error(" >>>>> An exception occurred!", ex);
-        	  System.out.println(time +" "+"callTiepNhanThongDiep that bai"+" "+MTDiep);
-        }finally {
-        	try {conn.disconnect();}catch(Exception e) {}
-        }
+		String data = commons.docW3cToString(doc);
+
+		SSLContext sc = SSLContext.getInstance("SSL");
+		sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+		HostnameVerifier allHostsValid = new HostnameVerifier() {
+			public boolean verify(String hostname, SSLSession session) {
+				return true;
+			}
+		};
+
+		HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+		System.out.println(time + " " + "Lay dl hoa don bat dau callTiepNhanThongDiep  " + MTDiep);
+		URL url = new URL(SystemParams.VISNAM_URL_TIEPNHANTHONGDIEP);
+		HttpsURLConnection conn = null;
+		try {
+			conn = (HttpsURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setRequestProperty("charset", "utf-8");
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/xml");
+			conn.setRequestProperty("Authorization", "Bearer " + SystemParams.VISNAM_ACCESSTOKEN);
+
+			conn.setReadTimeout(60000);
+			conn.setConnectTimeout(60000);
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+			OutputStream os = conn.getOutputStream();
+			os.write(data.getBytes(Charset.forName("UTF-8")));
+			os.flush();
+
+			if (conn.getResponseCode() != 200) {
+				dao.getAccessTokenVISNAM();
+				return null;
+			}
+			System.out.println(time + " " + "callTiepNhanThongDiep thanh cong " + MTDiep);
+			ObjectId id = saveInforCallRecieveMessageSuccessfully(doc);
+
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			StringBuilder sbReceive = new StringBuilder();
+			String output;
+			while ((output = br.readLine()) != null) {
+				sbReceive.append(output);
+			}
+			/* READ DATA XML */
+
+			r = commons.stringToDocument(sbReceive.toString());
+			updateInfoCallRecieveMessage(id, r);
+
+		} catch (Exception ex) {
+			log.error(" >>>>> An exception occurred!", ex);
+			System.out.println(time + " " + "callTiepNhanThongDiep that bai" + " " + MTDiep);
+		} finally {
+			try {
+				conn.disconnect();
+			} catch (Exception e) {
+			}
+		}
 		return r;
+	}
+	
+	private ObjectId saveInforCallRecieveMessageSuccessfully(Document doc) throws Exception {
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node nodeTDiep = (Node) xPath.evaluate("/TDiep", doc, XPathConstants.NODE);
+		Node nodeTTChung = (Node) xPath.evaluate("TTChung", nodeTDiep, XPathConstants.NODE);
+		String mstkhang = commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeTTChung, XPathConstants.NODE));
+		String mltdiep = commons.getTextFromNodeXML((Element) xPath.evaluate("MLTDiep", nodeTTChung, XPathConstants.NODE));
+		String mtdiep = commons.getTextFromNodeXML((Element) xPath.evaluate("MTDiep", nodeTTChung, XPathConstants.NODE));
+
+		Node nodeTTChung_DLHDon = (Node) xPath.evaluate("DLieu/HDon/DLHDon/TTChung", nodeTDiep, XPathConstants.NODE);
+		String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+		String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+		String shdon = commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+
+		org.bson.Document docInsert = new org.bson.Document()
+				.append("TaxCode", mstkhang)
+				.append("SendDate", LocalDateTime.now())
+				.append("KHMSHDon", khmshdon)
+				.append("KHHDon", khhdon)
+				.append("SHDon", shdon)
+				.append("MLTDiep", mltdiep)
+				.append("MTDiep", mtdiep)
+				.append("TCTN", "VISNAM");
+		mongoTemplate.insert(docInsert, "CallReceiveMessageLog");
+		ObjectId newId = docInsert.getObjectId("_id");
+		return newId;
+	}
+
+	private void updateInfoCallRecieveMessage(ObjectId id, Document doc) throws Exception {
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node nodeTDiep = (Node) xPath.evaluate("/TDiep", doc, XPathConstants.NODE);
+		String codeTTTNhan = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/TTTNhan", nodeTDiep, XPathConstants.NODE));
+		String mtdtchieu = commons.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MTDTChieu", nodeTDiep, XPathConstants.NODE));
+		
+		Query query = new Query(Criteria.where("_id").is(id));
+		Update update = new Update()
+				.set("MTDTChieu", mtdtchieu)
+				.set("Code", codeTTTNhan);
+
+		mongoTemplate.updateFirst(query, update, "CallReceiveMessageLog");
 	}
 	
 	public Document callTraCuuThongDiep(String MTDiep) throws Exception{
@@ -397,17 +449,18 @@ public class TCTNService {
     			dao.getAccessTokenVISNAM();  	
     			return null;
     		}    		
- 
-    			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        		StringBuilder sbReceive = new StringBuilder();
-        		String output;
-        		while ((output = br.readLine()) != null) {
-        			sbReceive.append(output);
-        		}
-        		/*READ DATA XML*/
-        		
-    			r = commons.stringToDocument(sbReceive.toString());
-
+			ObjectId id = saveInforCallRecieveMessageSuccessfully(docDLieu);
+    		
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+    		StringBuilder sbReceive = new StringBuilder();
+    		String output;
+    		while ((output = br.readLine()) != null) {
+    			sbReceive.append(output);
+    		}
+    		/*READ DATA XML*/
+    		
+			r = commons.stringToDocument(sbReceive.toString());
+			updateInfoCallRecieveMessage(id, r);
     		
         }catch(Exception ex) {
         	log.error(" >>>>> An exception occurred!", ex);

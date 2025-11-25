@@ -200,4 +200,12 @@ public class Constants {
 		{put("1", "NNT thông báo");}
 		{put("2", "Giải trình của NNT theo thông báo của CQT");}
 	};
+	
+	public static final LinkedHashMap<String, String> MAP_CALL_RECEIVED_MESSAGE_STATUS = new LinkedHashMap<String, String>(){
+		private static final long serialVersionUID = -4829089663504096703L;
+		{put("0", "Thành công");}
+		{put("1", "Không tìm thấy tenant dữ liệu");}
+		{put("2", "Mã thông điệp đã tồn tại");}
+		{put("3", "Thất bại, lỗi Exception");}
+	};
 }

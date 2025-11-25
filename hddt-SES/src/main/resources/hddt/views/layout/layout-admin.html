@@ -423,6 +423,7 @@
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tax-code-search-statistics|'): false}"><a th:href="@{/main/tax-code-search-statistics/init}">Thống kê SL lượt tìm kiếm MST</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|client-signature-info|'): false}"><a th:href="@{/main/client-signature-info/init}">Thống kê thông tin chữ ký số của KH</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|statistic-tcgp-tctn|'): false}"><a th:href="@{/main/statistic-tcgp-tctn/init}">Thống kê thông tin TCGP/TCTN</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|call_recieve_message_statistic|'): false}"><a th:href="@{/main/call_recieve_message_statistic/init}">Thống kê SL thông điệp đến TNCN</a></li>
 							</ul>
 						</li>
 						<li class="nav-small-cap">PARAM</li>

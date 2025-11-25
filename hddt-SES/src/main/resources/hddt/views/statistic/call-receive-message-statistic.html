@@ -1,0 +1,404 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+		<style>
+		.text-blue123 {
+			color: #7753f8;
+		}
+		</style>
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Thống kê lượt gọi thông điệp đến TNCN</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-call-receive-message-statistics" name="f-ca-invoice" method="post"
+					enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="from-date" name="from-date"
+													th:value="${FromDate}" autocomplete="off"></input>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Từ ngày</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="to-date" name="to-date"
+													th:value="${ToDate}" autocomplete="off"></input>
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Đến ngày</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12">
+											<button
+												class=" btns btns-search_auto__ses hover-up__ses w-100p"
+												data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i><span
+													class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<hr style="margin: 0 0 10px 0"></hr>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-6 p-l-0"></div>
+
+									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+
+											<button type="button" title="Xuất danh sách excel"
+												data-action="tax-code-search-statistics-export"
+												class="btns btns-export__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|call_recieve_message_statistic-export|')}">
+												<i class="mdi mdi-microsoft-excel"> </i><span
+													class="d-none d-md-inline"> Xuất excel</span>
+											</button>
+
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row m-b-5 m-t-7">
+								<div class="col-12 has-min-height-grid">
+									<div id="grid"></div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</form>
+
+				<script type="text/javascript">
+					_gridMain = $('#f-call-receive-message-statistics').find('#grid');
+				</script>
+
+				<script type="text/javascript">
+					$(function() {
+						dateInputFormat($('#f-call-receive-message-statistics').find('#to-date'));
+						dateInputFormat($('#f-call-receive-message-statistics').find('#from-date'));
+						_gridMain
+								.kendoGrid({
+									autoBind: false,
+									dataSource : new kendo.data.DataSource(
+											{
+												transport : {
+													read : {
+														type : 'POST',
+														url : ROOT_PATH
+																+ '/main/call_recieve_message_statistic/search',
+														dataType : 'json',
+														data : function() {
+															return getDataSearch();
+														},
+														beforeSend : function(
+																req) {
+															initAjaxJsonGridRequest(req);
+														},
+													}
+												},
+												requestEnd : function(e) {
+													if (e.type === "read"
+															&& e.response) {
+														if (e.response.errorCode == 0) {
+														} else {
+															notificationDLSuccess(
+																	createObjectError(
+																			e.response)
+																			.html(),
+																	function() {
+																	});
+														}
+													}
+												},
+												schema : {
+													data : "rows",
+													total : "total",
+													model : {
+														fields : {}
+													}
+												},
+												pageSize : KENDOUI_PAGESIZE_NO_SCROLL_Y,
+												serverPaging : true,
+												serverSorting : true,
+												serverFiltering : true,
+												change : function(e) {
+												},
+											}),
+									selectable : true,
+									scrollable : true,
+									sortable : {
+										mode : "single",
+										allowUnsort : true
+									},
+									sortable : true,
+									filterable : false,
+									resizable : true,
+									serverSorting : false,
+									pageable : {
+										refresh : true,
+										pageSizes : true,
+										buttonCount : KENDOUI_BUTTONCOUNT,
+										messages : {
+											itemsPerPage : kendoGridMessages.itemsPerPage,
+											previous : kendoGridMessages.previous,
+											next : kendoGridMessages.next,
+											refresh : kendoGridMessages.refresh,
+											last : kendoGridMessages.last,
+											first : kendoGridMessages.first,
+											empty : kendoGridMessages.empty,
+											display : kendoGridMessages.display
+										},
+										pageSizes : KENDOUI_PAGESIZES,
+										numeric : true
+									},
+									dataBinding : function() {
+										record = (this.dataSource.page() - 1)
+												* this.dataSource.pageSize();
+									},
+									columns : [
+											{
+												field : 'STT',
+												width : '50px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">STT</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+												template : "#= ++record #",
+											},
+											{
+												field : 'TNCN',
+												width : '200px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Tên TNCN</a>',
+												attributes : {
+													'class' : 'table-cell text-left'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+											{
+												field : 'TaxCode',
+												width : '120px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+												attributes : {
+													'class' : 'table-cell text-left'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+											{
+												field : 'SendDate',
+												width : '90px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Ngày gửi</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+
+											{
+												field : 'MSKHieu',
+												width : '90px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Mẫu số KH</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+
+											{
+												field : 'SHDon',
+												width : '100px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Số hóa đơn</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+
+											{
+												field : 'MLTDiep',
+												width : '90px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Mã loại TĐ</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+
+											{
+												field : 'MTDiep',
+												width : '200px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Mã thông điệp</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+											
+											{
+												field : 'MTDTChieu',
+												width : '200px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Mã thông điệp tham chiếu</a>',
+												attributes : {
+													'class' : 'table-cell text-center'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											},
+											
+											{
+												field : 'Status',
+												width : '200px',
+												encoded : false,
+												headerTemplate : '<a class="k-link" href="javascript:void(0);">Trạng thái</a>',
+												attributes : {
+													'class' : 'table-cell text-left'
+												},
+												sortable : false,
+												headerAttributes : {
+													'class' : 'table-header-cell text-center'
+												},
+											}
+									],
+									dataBound : function(e) {}
+								});
+
+						$("#f-call-receive-message-statistics")
+								.find('button[data-action]')
+								.click(
+										function(event) {
+											event.preventDefault();/*event.stopPropagation();*/
+											var dataAction = $(this).data('action');
+											var objData = {};
+											switch (dataAction) {
+											case 'tax-code-search-statistics-export':
+												objData = getDataSearch();
+												$.ajax({
+														type : "POST",
+														datatype : "json",
+														url : ROOT_PATH
+																+ '/main/call_recieve_message_statistic/check-data-export',
+														data : objData,
+														beforeSend : function(req) {
+															initAjaxJsonRequest(req);
+															showLoading();
+														},
+														success : function(res) {
+															hideLoading();
+															if (res.errorCode == 0) {
+																var responseData = res.responseData;
+
+																tokenTransaction = responseData['TOKEN'];
+																window.open(
+																		ROOT_PATH + '/main/call_recieve_message_statistic/export-excel/'
+																		+ tokenTransaction, '_blank');
+															} else {
+																alertDLSuccess(createObjectError(res).html(),
+																		function() {});
+															}
+														},
+														error : function(
+																xhr,
+																ajaxOptions,
+																thrownError) {
+															alertDLSuccess(xhr.status + " - " + xhr.responseText,
+																	function() {});
+															hideLoading();
+														}
+													});
+												break;
+
+											case 'search':
+												_gridMain.data("kendoGrid").dataSource
+														.page(1);
+												break;
+
+											default:
+												break;
+											}
+										});
+
+					});
+
+					function getDataSearch() {
+						var dataPost = {};
+						dataPost['to-date'] = $('#f-call-receive-message-statistics #to-date').val() == null ? '': $('#f-call-receive-message-statistics #to-date').val();
+						dataPost['from-date'] = $('#f-call-receive-message-statistics #from-date').val() == null ? '' : $('#f-call-receive-message-statistics #from-date').val();
+						return dataPost;
+					}
+				</script>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>
