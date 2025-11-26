@@ -495,6 +495,10 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 							o.at("/Price").isMissingNode()? "":
 							commons.formatNumberReal(o.at("/Price").doubleValue())
 						);
+						hItem.put("DiscountRate", 
+								o.at("/DiscountRate").isMissingNode()? "":
+								commons.formatNumberReal(o.at("/DiscountRate").doubleValue())
+							);
 						hItem.put("Total", 
 							o.at("/Total").isMissingNode()? "":
 							commons.formatNumberReal(o.at("/Total").doubleValue())

@@ -539,14 +539,16 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 						elementSubTmp.appendChild(
 								commons.createElementWithValue(doc, "DVTinh", commons.getTextJsonNode(o.at("/Unit"))));
-						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { // ||
-																						// "4".equals(commons.getTextJsonNode(o.at("/Feature")))
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong",
-									commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia",
-									commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
+						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { 
+							String sluong = commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "");
+							String dgia = commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "");
+							double tlckhau = commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate")).replaceAll(",", "")) / 100;
+							double stckhau = commons.ToNumber(sluong) * commons.ToNumber(dgia) * tlckhau;
+							
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong", sluong));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia", dgia));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", String.valueOf(tlckhau)));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", String.valueOf(stckhau)));
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 									commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
 
@@ -580,6 +582,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							double vatRate = 0.0;
 							if (a == 0.0) {
@@ -620,6 +623,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							hItem.put("VATRate", null);
 							hItem.put("VATAmount", null);
@@ -1114,14 +1118,16 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						elementSubTmp.appendChild(
 								commons.createElementWithValue(doc, "DVTinh", commons.getTextJsonNode(o.at("/Unit"))));
 
-						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { // ||
-																						// "4".equals(commons.getTextJsonNode(o.at("/Feature")))
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong",
-									commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia",
-									commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
+						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { 
+							String sluong = commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "");
+							String dgia = commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "");
+							double tlckhau = commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate")).replaceAll(",", "")) / 100;
+							double stckhau = commons.ToNumber(sluong) * commons.ToNumber(dgia) * tlckhau;
+							
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong", sluong));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia", dgia));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", String.valueOf(tlckhau)));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", String.valueOf(stckhau)));
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 									commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
 							if (!tmp.equals("-1") && !loaiHoaDon.equals("2")) {
@@ -1156,6 +1162,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							double vatRate = 0.0;
 							if (a == 0.0) {
@@ -1196,6 +1203,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							hItem.put("VATRate", null);
 							hItem.put("VATAmount", null);
@@ -1697,14 +1705,16 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						elementSubTmp.appendChild(
 								commons.createElementWithValue(doc, "DVTinh", commons.getTextJsonNode(o.at("/Unit"))));
 
-						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { // ||
-																						// "4".equals(commons.getTextJsonNode(o.at("/Feature")))
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong",
-									commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia",
-									commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
-							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
+						if (!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) { 
+							String sluong = commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "");
+							String dgia = commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "");
+							double tlckhau = commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate")).replaceAll(",", "")) / 100;
+							double stckhau = commons.ToNumber(sluong) * commons.ToNumber(dgia) * tlckhau;
+							
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "SLuong", sluong));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "DGia", dgia));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", String.valueOf(tlckhau)));
+							elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", String.valueOf(stckhau)));
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 									commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
 							if (!tmp.equals("-1") && !loaiHoaDon.equals("2")) {
@@ -1737,6 +1747,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							double vatRate = 0.0;
 							if (a == 0.0) {
@@ -1777,6 +1788,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 							hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 							hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
+							hItem.put("DiscountRate", commons.ToNumber(commons.getTextJsonNode(o.at("/DiscountRate"))));							
 							hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
 							hItem.put("VATRate", null);
 							hItem.put("VATAmount", null);

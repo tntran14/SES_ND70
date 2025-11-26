@@ -5162,6 +5162,9 @@ else {
 							hItem.put("DGia",
 								commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("DGia", nodeTmp, XPathConstants.NODE)))
 							);
+							hItem.put("TLCKhau",
+									commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TLCKhau", nodeTmp, XPathConstants.NODE))) * 100
+								);
 							hItem.put("ThTien",
 								commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("ThTien", nodeTmp, XPathConstants.NODE)))
 							);
@@ -5267,6 +5270,9 @@ else {
 							hItem.put("DGia",
 								commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("DGia", nodeTmp, XPathConstants.NODE)))
 							);
+							hItem.put("TLCKhau",
+									commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TLCKhau", nodeTmp, XPathConstants.NODE))) * 100
+								);
 							hItem.put("ThTien",
 								commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("ThTien", nodeTmp, XPathConstants.NODE)))
 							);

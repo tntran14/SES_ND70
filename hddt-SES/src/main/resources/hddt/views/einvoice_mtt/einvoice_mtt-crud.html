@@ -560,6 +560,10 @@
 					attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("Price", data) #'
 				},
+				{field: 'DiscountRate', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Chiết khấu %</a>',
+					attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("DiscountRate", data) #'
+				},
 				{field: 'Total', title: '', width: '130px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Thành tiền</a>',
 					attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("Total", data) #'
@@ -988,6 +992,7 @@
 		switch (key) {
 		case 'Quantity':
 		case 'Price':
+		case 'DiscountRate':
 		case 'Total':
 		case 'VATAmount':
 		case 'Amount':
@@ -1048,6 +1053,7 @@
 		
 		var dblQuantity = 0;
 		var dblPrice = 0;
+		var dblDiscountRate = 0;
 		var dblTotal = 0;
 		var dblVATRate = 0;
 		var dblVATAmount = 0;
@@ -1065,12 +1071,16 @@
 //			}
 			break;
 		case 'Quantity':
+		case 'DiscountRate':
 		case 'Price':
 			_numeral = numeral($tr.find('input[name="Quantity"]').val());
 			dblQuantity = _numeral == null? 0: _numeral.value();
 			_numeral = numeral($tr.find('input[name="Price"]').val());
 			dblPrice = _numeral == null? 0: _numeral.value();
-			dblTotal = dblQuantity * dblPrice;
+			_numeral = numeral($tr.find('input[name="DiscountRate"]').val());
+			dblDiscountRate = _numeral == null? 0: _numeral.value();
+			
+			dblTotal = dblQuantity * dblPrice * (100 - dblDiscountRate) / 100;
 	
 			
 			
@@ -1220,6 +1230,7 @@
 			rowData['Unit'] = $tr.find('input[name="Unit"]').val();
 			rowData['Quantity'] = $tr.find('input[name="Quantity"]').val();
 			rowData['Price'] = $tr.find('input[name="Price"]').val();
+			rowData['DiscountRate'] = $tr.find('input[name="DiscountRate"]').val();
 			rowData['Total'] = $tr.find('input[name="Total"]').val();
 			rowData['VATRate'] = $tr.find('select[name="VATRate"]').val();
 			rowData['VATAmount'] = $tr.find('input[name="VATAmount"]').val();
