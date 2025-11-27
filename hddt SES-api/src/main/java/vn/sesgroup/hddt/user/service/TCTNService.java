@@ -173,10 +173,15 @@ public class TCTNService {
 		String mtdiep = commons.getTextFromNodeXML((Element) xPath.evaluate("MTDiep", nodeTTChung, XPathConstants.NODE));
 
 		Node nodeTTChung_DLHDon = (Node) xPath.evaluate("DLieu/HDon/DLHDon/TTChung", nodeTDiep, XPathConstants.NODE);
-		String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
-		String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
-		String shdon = commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
-
+		String khmshdon = "";
+		String khhdon = "";
+		String shdon = "";
+		if (nodeTTChung_DLHDon != null) {
+			khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+			khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+			shdon = commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeTTChung_DLHDon, XPathConstants.NODE));
+		}
+		
 		org.bson.Document docInsert = new org.bson.Document()
 				.append("TaxCode", mstkhang)
 				.append("SendDate", LocalDateTime.now())
