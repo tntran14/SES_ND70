@@ -210,8 +210,8 @@
 												th:if="${!_isedit_}" type="text" autocomplete="off" /> <select
 												class="form-control form-control-sm c-f__textbox" id="GTinh"
 												name="GTinh" th:if="${_isedit_}">
-												<option value="0" th:selected=${GTinh}>Nữ</option>
-												<option value="1" th:selected=${GTinh}>Nam</option>
+												<option value="0" th:selected="${GTinh == '0'}">Nữ</option>
+												<option value="1" th:selected="${GTinh == '1'}">Nam</option>
 											</select>
 											<fieldset aria-hidden="true" class="c-f__set">
 												<legend class="c-f__legend">

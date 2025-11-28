@@ -617,7 +617,7 @@ public class QLMauHDAdminImpl extends AbstractDAO implements QLMauHDAdminDao {
 										new Document("$expr", new Document("$and",
 												Arrays.asList(
 														new Document("$eq", Arrays.asList("$_id", "$$issuerIdObj")))))),
-								new Document("$project", new Document("TaxCode", 1).append("Name", 1))))
+								new Document("$project", new Document("TaxCode", 1).append("Name", 1).append("ManagedByUsers", 1).append("InfoCreated", 1))))
 				.append("as", "Issuer")));
 
 		pipeline.add(
