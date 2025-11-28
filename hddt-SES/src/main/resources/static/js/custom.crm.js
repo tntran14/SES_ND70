@@ -913,7 +913,7 @@ function sumoSelectAllowSearch(ids, textSearch, textNoMatch){
 		search:true, searchText: textSearch, noMatch: textNoMatch, okCancelInMulti: false, selectAll: true
 		, placeholder: ' '
 //		, placeholder: 'Chọn dữ liệu ...'
-//		, nativeOnDevice: ['Android', 'BlackBerry', 'iPhone', 'iPad', 'iPod', 'Opera Mini', 'IEMobile', 'Silk'], 
+	, nativeOnDevice: []
 	});
 	$(ids).on('sumo:closed', function(sumo) {
 		var _idSumo = $(sumo.currentTarget).attr('id');
