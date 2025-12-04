@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -109,21 +110,32 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		String ndtnhat = commons.getTextJsonNode(jsonData.at("/NDTNhat")).replaceAll("\\s+", " ");
 		String tenbb = loaibb.equals("1") ? "Biên bản thay thế" : "Biên bản điều chỉnh";
 		
-		JsonNode jsonNodeHDon = jsonData.at("/HDon");
-		JsonNode jsonNodeHDNew = jsonData.at("/HDNew");
-		String old_mccqt = commons.getTextJsonNode(jsonNodeHDon.at("/MCQTCap"));
-		int old_shdon = 0;
-		if(!"".equals(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")))) {
-			old_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")));
-		}
-		String old_khhdon = commons.getTextJsonNode(jsonNodeHDon.at("/MSHDon")).replaceFirst("^\\d", "");
+		JsonNode jsonNodeHDons = jsonData.at("/HDon");
+		JsonNode jsonNodeHDNews = jsonData.at("/HDNew");
 		
-		String new_mccqt = commons.getTextJsonNode(jsonNodeHDNew.at("/MCQTCap"));
+		String old_mccqt = "";
+		int old_shdon = 0;
+		String old_khhdon= "";
+		
+		String new_mccqt="";
 		int new_shdon = 0;
-		if (!"".equals(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")))) {
-			new_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")));
+		String new_khhdon= "";
+		if (!jsonNodeHDons.isMissingNode() && !jsonNodeHDNews.isMissingNode()) {
+			JsonNode jsonNodeHDon = jsonData.at("/HDon").get(0);
+			JsonNode jsonNodeHDNew = jsonData.at("/HDNew").get(0);
+			old_mccqt = commons.getTextJsonNode(jsonNodeHDon.at("/MCQTCap"));
+			if(!"".equals(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")))) {
+				old_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")));
+			}
+			old_khhdon = commons.getTextJsonNode(jsonNodeHDon.at("/MSHDon")).replaceFirst("^\\d", "");
+			
+			new_mccqt = commons.getTextJsonNode(jsonNodeHDNew.at("/MCQTCap"));
+			if (!"".equals(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")))) {
+				new_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")));
+			}
+			new_khhdon = commons.getTextJsonNode(jsonNodeHDNew.at("/MSHDon")).replaceFirst("^\\d", "");
+
 		}
-		String new_khhdon = commons.getTextJsonNode(jsonNodeHDNew.at("/MSHDon")).replaceFirst("^\\d", "");
 		
 		ObjectId objectId = null;
 		Document docFind = null;
@@ -135,6 +147,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		Document docUpdate = null;
 		Document oldInvoiceDoc = null;
 		Document newInvoiceDoc = null;
+		Document docTmp = null;
+		List<Document> pipeline = new ArrayList<Document>();
 				
 		String fileNameXML = "";
 		String taxCode = "";
@@ -149,13 +163,22 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		Element root = null;
 		Element elementContent = null;
 		Element elementSubContent = null;
+		Element elementSubContents = null;
+		Element elementSubContentItem= null;
+		
 		
 		boolean isSaveFile = false;
 		String oldCollectionName = "";
 		String newCollectionName = "";
+		String collectionName = "";
+		List<ObjectId> listObjectId = null;
+		List<Document> dshdons = null;
+		ObjectId objectIdEInvoiceBBDCTT = null;
 		
 		Document oldDoc = null;
 		Document newDoc = null;
+		Document docData = null;
+		Document docInsert = null;
 		
 		FindOneAndUpdateOptions options = null;
 		
@@ -163,6 +186,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		LocalDateTime time_dem  = null;
 		String time = null;
 		String name_company = "";
+		int index = 0;
 		
 		switch (actionCode) {
 		case Constants.MSG_ACTION_CODE.CREATED:
@@ -401,7 +425,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				throw new Exception("Lưu dữ liệu biên bản điều chỉnh/thay thế không thành công.");
 			}
 			
-			Document docInsert = new Document();
+			docInsert = new Document();
 			docInsert
 				.append("_id", objectId)
 				.append("IssuerId", header.getIssuerId())
@@ -499,9 +523,341 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
+		case Constants.MSG_ACTION_CODE.CREATE_BBDCTT:
+			listObjectId = new ArrayList<ObjectId>();
+			for (JsonNode json: jsonNodeHDons) {
+				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
+			}
+			for (JsonNode json: jsonNodeHDNews) {
+				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
+			}
 			
+			docFind = new Document("_id", new Document("$in", listObjectId));
+			collectionName = "EInvoice";
+			
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				long count = 0;
+				MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
+				MongoCollection<Document> collection = database.getCollection(collectionName);
+				count = collection.countDocuments(docFind);
+				if (count == 0) {
+					collectionName = "EInvoiceBH";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoicePXK";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoicePXKDL";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoiceMTT";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count != 0 && count != listObjectId.size()) {
+					responseStatus = new MspResponseStatus(9999, "Các hóa đơn không hợp lệ. Vui lòng chọn cách hóa đơn cùng loại hóa đơn.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
+			} catch (Exception e) {
+			}
+			
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+
+			root = doc.createElement("BBDCTThe");
+			doc.appendChild(root);
+
+			elementContent = doc.createElement("DLBBDCTThe");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+			
+			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_HDSS));
+			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
+			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
+			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+			elementContent.appendChild(commons.createElementWithValue(doc, "LDo", ldo));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
+			elementContent.appendChild(commons.createElementWithValue(doc, "SecureKey", secureKey));
+
+			elementSubContent = doc.createElement("TTNBan");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nb_mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVBHang", nb_dvbh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nb_dc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nb_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nb_sdt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nb_cv));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "EReceive", nb_email_receive));
+
+			elementContent.appendChild(elementSubContent);
+
+			elementSubContent = doc.createElement("TTNMua");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nm_cv));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ESend", nm_email_send));
+
+			elementContent.appendChild(elementSubContent);
+			
+			elementSubContents = doc.createElement("DSHDon");
+			
+			
+			index = 0;
+			pipeline = new ArrayList<Document>();
+			docTmp = null;
+			dshdons = new ArrayList<Document>();
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+			} catch (Exception e) {
+			}
+
+			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", false);
+			filter = new Document("_id", 1).append("TaxCode", 1);
+			while (index < jsonNodeHDons.size()) {
+				ObjectId old_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDons.get(index).at("/_id")));
+				ObjectId new_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id")));
+				docFind1 = new Document("_id", old_objectId);
+				docFind2 = new Document("_id", new_objectId);
+				filter1 = filter2 = new Document("MCCQT", 1).append("EInvoiceDetail", 1);
+				
+				pipeline.clear();
+				pipeline.add(new Document("$match", docFind));
+				pipeline.add(new Document("$project", filter));
+				
+				pipeline.add(new Document("$lookup",
+						new Document("from", collectionName)
+								.append("pipeline",
+										Arrays.asList(new Document("$match", docFind1), new Document("$project", filter1)))
+								.append("as", "EInvoice1")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$EInvoice1").append("preserveNullAndEmptyArrays", true)));
+				
+				pipeline.add(new Document("$lookup",
+						new Document("from", collectionName)
+								.append("pipeline",
+										Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
+								.append("as", "EInvoice2")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
+
+				
+				try (MongoClient mongoClient = cfg.mongoClient()) {
+					MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
+					MongoCollection<Document> collection = database.getCollection("Issuer");
+					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+				}
+				
+				
+				oldDoc = docTmp.get("EInvoice1", Document.class);
+				newDoc = docTmp.get("EInvoice2", Document.class);
+				
+				elementSubContentItem = doc.createElement("HDon");
+				elementSubContent = doc.createElement("HDSSot");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementSubContentItem.appendChild(elementSubContent);
+
+				elementSubContent = doc.createElement("HDDCTThe");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementSubContentItem.appendChild(elementSubContent);
+				
+				elementSubContents.appendChild(elementSubContentItem);
+
+				docData = new Document()
+						.append("HDSSot", 
+								new Document()
+								.append("_id", oldDoc.get("_id", ObjectId.class).toString())
+								.append("THDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+								.append("MaHD", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+								.append("MauSoHD", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+								.append("KHMSHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+								.append("KHHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+								.append("DVTTe", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+								.append("NLap", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+								.append("SHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+								.append("TNMua", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+								.append("TgTCThue", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+								.append("TgTThue", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+								.append("TgTTTBSo", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+								.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+								.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+								)
+						.append("HDDCTThe", 
+								new Document()
+								.append("_id", newDoc.get("_id", ObjectId.class).toString())
+								.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+								.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+								.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+								.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+								.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+								.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+								.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+								.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+								.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+								.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+								.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+								.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+								.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+								.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+								);
+				dshdons.add(docData);
+				index++;
+			}
+			
+			elementContent.appendChild(elementSubContents);
+			
+			
+			taxCode = docTmp.getString("TaxCode");
+			secureKey = commons.csRandomNumbericString(6);
+			objectId = new ObjectId();
+			path = Paths.get(SystemParams.DIR_E_INVOICE_BBDCTT, taxCode, String.valueOf(LocalDate.now().getYear()));
+			pathDir = path.toString();
+			file = path.toFile();
+			if (!file.exists())
+				file.mkdirs();
+			fileNameXML = objectId.toString() + ".xml";
+			isSaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			
+			
+			docInsert = new Document();
+			docInsert
+				.append("_id", objectId)
+				.append("IssuerId", header.getIssuerId())
+				.append("PBan", SystemParams.VERSION_XML_HDSS)
+				.append("Ten", tenbb)
+				.append("Loai", loaibb)
+				.append("SBBan", sbban)
+				.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+				.append("LDo", ldo)
+				.append("NDSai", ndsai)
+				.append("NDDung", nddung)
+				.append("NDTNhat", ndtnhat)
+				.append("TTNBan", 
+						new Document()
+						.append("MSThue", nb_mst)
+						.append("DVBHang", nb_dvbh)
+						.append("DChi", nb_dc)
+						.append("DDien", nb_dd)
+						.append("SDThoai", nb_sdt)
+						.append("CVu", nb_cv)
+						.append("EReceive", nb_email_receive)
+						)
+				.append("TTNMua", 
+						new Document()
+						.append("MSThue", nm_mst)
+						.append("DVMHang", nm_dvmh)
+						.append("DChi", nm_dc)
+						.append("DDien", nm_dd)
+						.append("SDThoai", nm_sdt)
+						.append("CVu", nm_cv)
+						.append("ESend", nm_email_send)
+						)
+				.append("DSHDon", dshdons)
+				.append("IsMultiInvoice", true)
+				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+				.append("ClientSignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+				.append("Status", Constants.INVOICE_STATUS.CREATED)
+				.append("IsDelete", false)
+				.append("SecureKey", secureKey)
+				.append("Dir", pathDir)
+				.append("FileNameXML", fileNameXML)
+				.append("InfoCreated", 
+						new Document()
+						.append("CreateDate", LocalDateTime.now())
+						.append("CreateUserID", header.getUserId())
+						.append("CreateUserName", header.getUserName())
+						.append("CreateUserFullName", header.getUserFullName())
+					);
+			try (MongoClient mongoClient = cfg.mongoClient()){
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
+				collection.insertOne(docInsert);
+			} catch (Exception e) {
+			}
+
+			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			time_dem = LocalDateTime.now();
+			time = time_dem.format(format_time);
+			name_company = removeAccent(header.getUserFullName());
+			System.out.println(time + name_company + " Vua lap bien ban dieu chinh thay the");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
 		case Constants.MSG_ACTION_CODE.MODIFY:	
-			ObjectId objectIdEInvoiceBBDCTT = null;
 			try {
 				objectId = new ObjectId(header.getIssuerId());
 				objectIdEInvoiceBBDCTT = new ObjectId(_id);
@@ -843,6 +1199,363 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
+		case Constants.MSG_ACTION_CODE.MODIFY_BBDCTT:
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+				objectIdEInvoiceBBDCTT = new ObjectId(_id);
+			} catch (Exception e) {
+			}
+			
+			docFind = new Document("IssuerId", header.getIssuerId())
+					.append("IsDelete", false)
+					.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+					.append("Status", Constants.INVOICE_STATUS.CREATED)
+					.append("_id", objectIdEInvoiceBBDCTT);
+	
+			filter = new Document("Dir", 1)
+					.append("FileNameXML", 1)
+					.append("SecureKey", 1);
+			
+			pipeline = new ArrayList<Document>();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(new Document("$project", filter));
+			
+			docTmp = null;
+			try (MongoClient mongoClient = cfg.mongoClient()){
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
+				docTmp = collection.aggregate(pipeline).iterator().next();
+			} catch (Exception e) {
+			}
+			
+			if (docTmp == null) {
+				responseStatus = new MspResponseStatus(9999, "Biên bản điều chỉnh thay thế có trạng thái không hợp lệ hoặc không tồn tại.");
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
+			
+			secureKey = docTmp.get("SecureKey", "");
+			pathDir = docTmp.get("Dir", "");
+			fileNameXML = docTmp.get("FileNameXML", "");
+			file = new File(pathDir);
+			if(!file.exists()) 
+				file.mkdirs();
+
+			listObjectId = new ArrayList<ObjectId>();
+			for (JsonNode json: jsonNodeHDons) {
+				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
+			}
+			for (JsonNode json: jsonNodeHDNews) {
+				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
+			}
+			
+			docFind = new Document("_id", new Document("$in", listObjectId));
+			collectionName = "EInvoice";
+			
+			try (MongoClient mongoClient = cfg.mongoClient()) {
+				long count = 0;
+				MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
+				MongoCollection<Document> collection = database.getCollection(collectionName);
+				count = collection.countDocuments(docFind);
+				if (count == 0) {
+					collectionName = "EInvoiceBH";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoicePXK";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoicePXKDL";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count == 0) {
+					collectionName = "EInvoiceMTT";
+					collection = database.getCollection(collectionName);
+					count = collection.countDocuments(docFind);
+				}
+				if (count != 0 && count != listObjectId.size()) {
+					responseStatus = new MspResponseStatus(9999, "Các hóa đơn không hợp lệ. Vui lòng chọn cách hóa đơn cùng loại hóa đơn.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
+			} catch (Exception e) {
+			}
+			
+			dbf = DocumentBuilderFactory.newInstance();
+			db = dbf.newDocumentBuilder();
+			doc = db.newDocument();
+			doc.setXmlStandalone(true);
+
+			root = doc.createElement("BBDCTThe");
+			doc.appendChild(root);
+
+			elementContent = doc.createElement("DLBBDCTThe");
+			elementContent.setAttribute("Id", "data");
+			root.appendChild(elementContent);
+			
+			elementContent.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_HDSS));
+			elementContent.appendChild(commons.createElementWithValue(doc, "Ten", tenbb));
+			elementContent.appendChild(commons.createElementWithValue(doc, "Loai", loaibb));
+			elementContent.appendChild(commons.createElementWithValue(doc, "SBBan", sbban));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+			elementContent.appendChild(commons.createElementWithValue(doc, "LDo", ldo));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDSai", ndsai));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDDung", nddung));
+			elementContent.appendChild(commons.createElementWithValue(doc, "NDTNhat", ndtnhat));
+			elementContent.appendChild(commons.createElementWithValue(doc, "SecureKey", secureKey));
+
+			elementSubContent = doc.createElement("TTNBan");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nb_mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVBHang", nb_dvbh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nb_dc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nb_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nb_sdt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nb_cv));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "EReceive", nb_email_receive));
+
+			elementContent.appendChild(elementSubContent);
+
+			elementSubContent = doc.createElement("TTNMua");
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "CVu", nm_cv));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "ESend", nm_email_send));
+
+			elementContent.appendChild(elementSubContent);
+			
+			elementSubContents = doc.createElement("DSHDon");
+			
+			
+			index = 0;
+			pipeline = new ArrayList<Document>();
+			docTmp = null;
+			dshdons = new ArrayList<Document>();
+			try {
+				objectId = new ObjectId(header.getIssuerId());
+			} catch (Exception e) {
+			}
+
+			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", false);
+			filter = new Document("_id", 1).append("TaxCode", 1);
+			while (index < jsonNodeHDons.size()) {
+				ObjectId old_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDons.get(index).at("/_id")));
+				ObjectId new_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id")));
+				docFind1 = new Document("_id", old_objectId);
+				docFind2 = new Document("_id", new_objectId);
+				filter1 = filter2 = new Document("MCCQT", 1).append("EInvoiceDetail", 1).append("_id", 1);
+				
+				pipeline.clear();
+				pipeline.add(new Document("$match", docFind));
+				pipeline.add(new Document("$project", filter));
+				
+				pipeline.add(new Document("$lookup",
+						new Document("from", collectionName)
+								.append("pipeline",
+										Arrays.asList(new Document("$match", docFind1), new Document("$project", filter1)))
+								.append("as", "EInvoice1")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$EInvoice1").append("preserveNullAndEmptyArrays", true)));
+				
+				pipeline.add(new Document("$lookup",
+						new Document("from", collectionName)
+								.append("pipeline",
+										Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
+								.append("as", "EInvoice2")));
+				pipeline.add(new Document("$unwind",
+						new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
+
+				
+				try (MongoClient mongoClient = cfg.mongoClient()) {
+					MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
+					MongoCollection<Document> collection = database.getCollection("Issuer");
+					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
+				}
+				
+				
+				oldDoc = docTmp.get("EInvoice1", Document.class);
+				newDoc = docTmp.get("EInvoice2", Document.class);
+				
+				elementSubContentItem = doc.createElement("HDon");
+				elementSubContent = doc.createElement("HDSSot");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementSubContentItem.appendChild(elementSubContent);
+
+				elementSubContent = doc.createElement("HDDCTThe");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementSubContentItem.appendChild(elementSubContent);
+				
+				elementSubContents.appendChild(elementSubContentItem);
+
+				docData = new Document()
+						.append("HDSSot", 
+								new Document()
+								.append("_id", oldDoc.get("_id", ObjectId.class).toString())
+								.append("THDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+								.append("MaHD", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+								.append("MauSoHD", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+								.append("KHMSHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+								.append("KHHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+								.append("DVTTe", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+								.append("NLap", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+								.append("SHDon", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+								.append("TNMua", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+								.append("TgTCThue", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+								.append("TgTThue", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+								.append("TgTTTBSo", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+								.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+								.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+								)
+						.append("HDDCTThe", 
+								new Document()
+								.append("_id", newDoc.get("_id", ObjectId.class).toString())
+								.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+								.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+								.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+								.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+								.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+								.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+								.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+								.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+								.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+								.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+								.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+								.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+								.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+								.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+								);
+				dshdons.add(docData);
+				index++;
+			}
+			elementContent.appendChild(elementSubContents);
+			
+			isSaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
+			
+			options = new FindOneAndUpdateOptions();
+			options.upsert(false);
+			options.maxTime(5000, TimeUnit.MILLISECONDS);
+			options.returnDocument(ReturnDocument.AFTER);
+			
+			docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
+					.append("_id", objectIdEInvoiceBBDCTT);
+			docUpdate = new Document();
+			docUpdate.append("IssuerId", header.getIssuerId())
+			.append("Ten", tenbb)
+			.append("Loai", loaibb)
+			.append("SBBan", sbban)
+			.append("NLap", commons.convertLocalDateTimeStringToString(nlap,
+					Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+			.append("LDo", ldo)
+			.append("NDSai", ndsai)
+			.append("NDDung", nddung)
+			.append("NDTNhat", ndtnhat)
+			.append("TTNBan", 
+					new Document()
+					.append("MSThue", nb_mst)
+					.append("DVBHang", nb_dvbh)
+					.append("DChi", nb_dc)
+					.append("DDien", nb_dd)
+					.append("SDThoai", nb_sdt)
+					.append("CVu", nb_cv)
+					.append("EReceive", nb_email_receive)
+					)
+			.append("TTNMua", 
+					new Document()
+					.append("MSThue", nm_mst)
+					.append("DVMHang", nm_dvmh)
+					.append("DChi", nm_dc)
+					.append("DDien", nm_dd)
+					.append("SDThoai", nm_sdt)
+					.append("CVu", nm_cv)
+					.append("ESend", nm_email_send)
+					)
+			.append("DSHDon", dshdons)
+			.append("InfoUpdated", 
+					new Document("UpdatedDate", LocalDateTime.now())
+					.append("UpdatedUserID", header.getUserId())
+					.append("UpdatedUserName", header.getUserName())
+					.append("UpdatedUserFullName", header.getUserFullName())
+					);
+			try (MongoClient mongoClient = cfg.mongoClient()){
+				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
+				collection.findOneAndUpdate(docFind, new Document("$set", docUpdate), options);
+			} catch (Exception e) { 
+			}
+
+			format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			time_dem = LocalDateTime.now();
+			time = time_dem.format(format_time);
+			name_company = removeAccent(header.getUserFullName());
+			System.out.println(time + name_company + " Vua lap bien ban dieu chinh thay the");
+			responseStatus = new MspResponseStatus(0, "SUCCESS");
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
 		case Constants.MSG_ACTION_CODE.DELETE:
 			objectId = null;
 			try {
@@ -856,10 +1569,10 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("_id", objectId)
 					.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
 					.append("Status", Constants.INVOICE_STATUS.CREATED);
-			Document docTmp = null;
+			docTmp = null;
 			filter = new Document("_id", 1);
 
-			List<Document> pipeline = new ArrayList<Document>();
+			pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match", docFind));
 			pipeline.add(new Document("$project", filter));
 

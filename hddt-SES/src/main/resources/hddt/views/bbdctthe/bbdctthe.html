@@ -123,6 +123,13 @@
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Ký biên bản</span>
 											</button>
+											<button type="button" title="Thêm mới biên bản nhiều hóa đơn"
+												data-action="lbbdctt-cre-invs"
+												class="btns btns-add__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|lbbdctt-cre-invs|')}">
+												<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+													class="d-none d-md-inline">Thêm mới BB nhiều HĐ</span>
+											</button>
 										</div>
 									</div>
 								</div>
@@ -470,6 +477,10 @@
 							_gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						case 'lbbdctt-cre':
+							$('#divSubContent').show(); $('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
+							break;
+						case 'lbbdctt-cre-invs':
 							$('#divSubContent').show(); $('#divMainContent').hide();
 							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 							break;

@@ -8,11 +8,13 @@
 </div>
 <div class="row">
 	<div class="col-12">
-		<form id="f-lbbdctt-crud" name="f-lbbdctt-crud" method="post" enctype="multipart/form-data">
+		<form id="f-lbbdctt-crud" name="f-lbbdctt-crud" method="post"
+			enctype="multipart/form-data">
 			<div class="card">
 				<div class="card-body" th:if="${messageError != null}">
 					<div class="row text-danger m-b-10 fw-500 col-12">
-						<div class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center"
+						<div
+							class="col-12 text-danger m-b-10 fw-800 fs-15 text-uppercase text-center"
 							th:utext="${messageError}"></div>
 						<div class="col-12 p-0">
 							<hr class="m-t-5 m-b-5">
@@ -21,12 +23,12 @@
 					<div class="form-group row m-b-6">
 						<div class="col-6">
 							<button type="button" data-action="back" title="Quay lại"
-								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span
-									class="d-none d-md-inline">Quay lại</span></button>
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
 						</div>
-						<div class="col-6 text-right">
-
-						</div>
+						<div class="col-6 text-right"></div>
 					</div>
 				</div>
 
@@ -37,77 +39,97 @@
 								<div class="col-12 ">
 									<span
 										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
-										Thông tin người bán
-									</span>
+										Thông tin người bán invs </span>
 								</div>
 							</div>
 							<div class="custom-field m-b-0">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_mst" name="nb_mst"
-										type="text" autocomplete="off" th:value="${NB_MSThue}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_mst" name="nb_mst" type="text" autocomplete="off"
+										th:value="${NB_MSThue}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Mã số thuế<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Mã số thuế<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_dvbh" name="nb_dvbh"
-										type="text" autocomplete="off" th:value="${NB_DVBHang}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_dvbh" name="nb_dvbh" type="text" autocomplete="off"
+										th:value="${NB_DVBHang}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Đơn vị bán hàng<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Đơn vị bán hàng<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_dc" name="nb_dc"
-										type="text" autocomplete="off" th:value="${NB_DChi}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_dc" name="nb_dc" type="text" autocomplete="off"
+										th:value="${NB_DChi}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Địa chỉ<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Địa chỉ<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_dd" name="nb_dd"
-										type="text" autocomplete="off" th:value="${NB_DDien}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_dd" name="nb_dd" type="text" autocomplete="off"
+										th:value="${NB_DDien}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Đại diện<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Đại diện<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_sdt" name="nb_sdt"
-										type="text" autocomplete="off" th:value="${NB_SDThoai}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_sdt" name="nb_sdt" type="text" autocomplete="off"
+										th:value="${NB_SDThoai}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Số điện thoại</label></legend>
+										<legend class="c-f__legend">
+											<label>Số điện thoại</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nb_cv" name="nb_cv"
-										type="text" autocomplete="off" th:value="${NB_CVu}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nb_cv" name="nb_cv" type="text" autocomplete="off"
+										th:value="${NB_CVu}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Chức vụ<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Chức vụ<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="email_receive"
-										name="email_receive" type="text" autocomplete="off"
-										th:value="${Email_Receive}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="email_receive" name="email_receive" type="text"
+										autocomplete="off" th:value="${Email_Receive}"
+										th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Email nhận<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Email nhận<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
@@ -117,75 +139,96 @@
 								<div class="col-12 ">
 									<span
 										class=" text-middle fw-800 text-uppercase text-decoration-underline color-ses">
-										Thông tin người mua
-									</span>
+										Thông tin người mua </span>
 								</div>
 							</div>
 							<div class="custom-field m-b-0">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_mst" name="nm_mst"
-										type="text" autocomplete="off" th:value="${NM_MSThue}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_mst" name="nm_mst" type="text" autocomplete="off"
+										th:value="${NM_MSThue}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Mã số thuế<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Mã số thuế<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_dvmh" name="nm_dvmh"
-										type="text" autocomplete="off" th:value="${NM_DVMHang}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_dvmh" name="nm_dvmh" type="text" autocomplete="off"
+										th:value="${NM_DVMHang}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Đơn vị mua hàng<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Đơn vị mua hàng<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_dc" name="nm_dc"
-										type="text" autocomplete="off" th:value="${NM_DChi}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_dc" name="nm_dc" type="text" autocomplete="off"
+										th:value="${NM_DChi}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Địa chỉ<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Địa chỉ<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_dd" name="nm_dd"
-										type="text" autocomplete="off" th:value="${NM_DDien}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_dd" name="nm_dd" type="text" autocomplete="off"
+										th:value="${NM_DDien}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Đại diện<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Đại diện<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_sdt" name="nm_sdt"
-										type="text" autocomplete="off" th:value="${NM_SDThoai}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_sdt" name="nm_sdt" type="text" autocomplete="off"
+										th:value="${NM_SDThoai}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Số điện thoại</label></legend>
+										<legend class="c-f__legend">
+											<label>Số điện thoại</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nm_cv" name="nm_cv"
-										type="text" autocomplete="off" th:value="${NM_CVu}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nm_cv" name="nm_cv" type="text" autocomplete="off"
+										th:value="${NM_CVu}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Chức vụ<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Chức vụ<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="email_send"
-										name="email_send" type="text" autocomplete="off" th:value="${Email_Send}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="email_send" name="email_send" type="text"
+										autocomplete="off" th:value="${Email_Send}"
+										th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Email gửi</label></legend>
+										<legend class="c-f__legend">
+											<label>Email gửi</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
@@ -234,9 +277,13 @@
 								</div>
 								<div class="col-3 custom-field">
 									<div class="c-f__wrapper">
-										<input class=" form-control form-control-sm c-f__textbox " id="nlap" name="nlap" type="text" autocomplete="off" th:value="${NLap}" th:readonly="${!_isedit_}" />
+										<input class=" form-control form-control-sm c-f__textbox "
+											id="nlap" name="nlap" type="text" autocomplete="off"
+											th:value="${NLap}" th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
-											<legend class="c-f__legend"><label>Ngày lập</label></legend>
+											<legend class="c-f__legend">
+												<label>Ngày lập</label>
+											</legend>
 										</fieldset>
 									</div>
 								</div>
@@ -245,93 +292,128 @@
 						<div class="col-12">
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="ldo" name="ldo"
-										type="text" autocomplete="off" th:value="${LDo}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="ldo" name="ldo" type="text" autocomplete="off"
+										th:value="${LDo}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Lý do<span class="text-danger"
-													style="font-size:15px">(*)</span></label></legend>
+										<legend class="c-f__legend">
+											<label>Lý do<span class="text-danger"
+												style="font-size: 15px">(*)</span></label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="ndsai" name="ndsai"
-										type="text" autocomplete="off" th:value="${NDSai}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="ndsai" name="ndsai" type="text" autocomplete="off"
+										th:value="${NDSai}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Nội dung trước khi điều chỉnh/thay thế</label></legend>
+										<legend class="c-f__legend">
+											<label>Nội dung trước khi điều chỉnh/thay thế</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="nddung" name="nddung"
-										type="text" autocomplete="off" th:value="${NDDung}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="nddung" name="nddung" type="text" autocomplete="off"
+										th:value="${NDDung}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Nội dung đúng</label></legend>
+										<legend class="c-f__legend">
+											<label>Nội dung đúng</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
-									<input class="form-control form-control-sm c-f__textbox" id="ndtnhat" name="ndtnhat"
-										type="text" autocomplete="off" th:value="${NDTNhat}" th:disabled="${!_isedit_}"/>
+									<input class="form-control form-control-sm c-f__textbox"
+										id="ndtnhat" name="ndtnhat" type="text" autocomplete="off"
+										th:value="${NDTNhat}" th:disabled="${!_isedit_}" />
 									<fieldset aria-hidden="true" class="c-f__set">
-										<legend class="c-f__legend"><label>Nội dung hai bên thống nhất điều chỉnh/thay thế</label></legend>
+										<legend class="c-f__legend">
+											<label>Nội dung hai bên thống nhất điều chỉnh/thay
+												thế</label>
+										</legend>
 									</fieldset>
 								</div>
 							</div>
 						</div>
 					</div>
-
 
 					<div class="row">
 						<div class="col-12">
 							<hr style="margin: 0 0 16px 0" />
 						</div>
 					</div>
-					<div class="row mT-0 mB-5">
-						<div class="col-9 col-sm-6 p-t-8">
-							<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa đơn đã sai sót</span>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="row mT-0 mB-5 p-t-8">
+								<div class="col-9 col-sm-10">
+									<span
+										class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa
+										đơn đã sai sót</span>
+								</div>
+								<div class="col-3 col-sm-2 text-right">
+									<button type="button" data-action="add-inv"
+										class="btn-sm btn-primary btn-ses"
+										title="Thêm chứng thư số thủ công" th:if="${_isedit_}">
+										<i class="mdi mdi-plus fs-15"></i>
+									</button>
+								</div>
+							</div>
+
+							<div class="col-12 p-0 has-min-height-grid-prd">
+								<div id="grid_inv"></div>
+							</div>
 						</div>
-						<div class="col-3 col-sm-6 text-right">
-							<button type="button" data-action="add-inv" class="btn-sm btn-primary btn-ses"
-								title="Thêm hóa đơn" th:if="${_isedit_}"><i class="mdi mdi-plus fs-15"></i></button>
+						<div class="col-6">
+							<div class="row mT-0 mB-5 p-t-8">
+								<div class="col-9 col-sm-10">
+									<span
+										class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa
+										đơn điều chỉnh/thay thế hóa đơn sai sót</span>
+								</div>
+								<div class="col-3 col-sm-2 text-right">
+									<button type="button" data-action="add-inv1"
+										class="btn-sm btn-primary btn-ses"
+										title="Thêm chứng thư số thủ công" th:if="${_isedit_}">
+										<i class="mdi mdi-plus fs-15"></i>
+									</button>
+								</div>
+							</div>
+
+							<div class="col-12 p-0 has-min-height-grid-prd">
+								<div id="grid_inv1"></div>
+							</div>
 						</div>
 					</div>
 
-					<div class="col-12 p-0 has-min-height-grid-prd">
-						<div id="grid_inv"></div>
-					</div>
-					<div class="row mT-0 mB-5">
-						<div class="col-9 col-sm-6 p-t-8">
-							<span class="text-warning text-middle fw-800 text-uppercase text-decoration-underline ">Hóa đơn điều chỉnh/thay thế hóa đơn sai sót</span>
-						</div>
-						<div class="col-3 col-sm-6 text-right">
-							<button type="button" data-action="add-inv1" class="btn-sm btn-primary btn-ses"
-								title="Thêm hóa đơn" th:if="${_isedit_}"><i class="mdi mdi-plus fs-15"></i></button>
-						</div>
-					</div>
 
-					<div class="col-12 p-0 has-min-height-grid-prd">
-						<div id="grid_inv1"></div>
-					</div>
+
 					<div class="row">
 						<div class="col-12">
 							<hr style="margin: 0 0 10px 0" />
 						</div>
 					</div>
-					
+
 					<div class="form-group row m-b-6">
 						<div class="col-6">
 							<button type="button" data-action="back" title="Quay lại"
-								class="btn btn-sm btn-outline-secondary"><i class="mdi mdi-chevron-left"></i> <span
-									class="d-none d-md-inline">Quay lại</span></button>
+								class="btn btn-sm btn-outline-secondary">
+								<i class="mdi mdi-chevron-left"></i> <span
+									class="d-none d-md-inline">Quay lại</span>
+							</button>
 						</div>
 						<div class="col-6 text-right">
-							<button type="button" data-action="accept" class="btnadd btns btns-blue__ses"
-								title="Chấp nhận" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}">
-								<i class="mdi mdi-check-all"></i>
-								<span class="d-none d-md-inline">Chấp nhận</span>
+							<button type="button" data-action="accept"
+								class="btnadd btns btns-blue__ses" title="Chấp nhận"
+								th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_ || 'COPY' == _action_)}">
+								<i class="mdi mdi-check-all"></i> <span
+									class="d-none d-md-inline">Chấp nhận</span>
 							</button>
 						</div>
 					</div>
@@ -339,7 +421,6 @@
 			</div>
 			<input type="hidden" name="_id" th:value="${_id}">
 		</form>
-
 	</div>
 </div>
 <script type="text/javascript">
@@ -351,12 +432,12 @@
 	_gridSub = $('#f-lbbdctt-crud').find('#grid_inv1');
 </script>
 <script type="text/javascript" th:if="${_action_ == 'DETAIL' || _action_ =='EDIT' || _action_ =='COPY'}">
-	var strJson = '[[${DSHDon}]]';
+	var strJson = '[[${DSHDon_Cu}]]';
 	rowsTMP = [];
 	try {
 		rowsTMP = decodeBase64UTF8ToObj(strJson);
 	} catch (err) { }
-	strJson = '[[${DSHDon1}]]';
+	strJson = '[[${DSHDon_Moi}]]';
 	rowsTMP1 = [];
 	try {
 		rowsTMP1 = decodeBase64UTF8ToObj(strJson);
@@ -409,31 +490,16 @@
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'SHDon', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
+					field: 'SHDon', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'Ngay', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+					field: 'Ngay', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'MCQTCap', title: '', width: '290px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
-					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TNMHang', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TgTCThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TgTThue', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiền thuế</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
+					field: 'MCQTCap', title: '', width: '270px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' }, hidden: true,
 				},
 				{
 					field: 'TgTTTBSo', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
@@ -512,31 +578,16 @@
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'SHDon_N', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
+					field: 'SHDon_N', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số HĐ</a>',
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'Ngay_N', title: '', width: '90px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
+					field: 'Ngay_N', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Ngày tạo</a>',
 					attributes: { 'class': 'table-cell text-center text-nowrap' }, headerAttributes: { 'class': 'table-header-cell text-center' },
 				},
 				{
-					field: 'MCQTCap_N', title: '', width: '290px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
-					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TNMHang_N', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Người mua hàng</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TgTCThue_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng tiền</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
-				},
-				{
-					field: 'TgTThue_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tiền thuế</a>',
-					attributes: { 'class': 'table-cell text-center' }, sortable: false,
-					headerAttributes: { 'class': 'table-header-cell text-center' },
+					field: 'MCQTCap_N', title: '', width: '270px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã CQT</a>',
+					attributes: { 'class': 'table-cell text-center' }, headerAttributes: { 'class': 'table-header-cell text-center' }, hidden: true,
 				},
 				{
 					field: 'TgTTTBSo_N', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tổng cộng</a>',
@@ -583,12 +634,13 @@
 			var objDataSend = null;
 
 			switch (dataAction) {
-				case 'accept':
+				case 'accept': 
 					objDataSend = getDataToSave();
+					transactionMainM = '[[${IsMultiInvoice}]]' == 'true'? transactionMain + '-invs' : transactionMain;
 					$.ajax({
 						type: "POST",
 						datatype: "json",
-						url: ROOT_PATH + '/main/' + transactionMain + '/check-data-save',
+						url: ROOT_PATH + '/main/' + transactionMainM + '/check-data-save',
 						data: objDataSend,
 						beforeSend: function (req) {
 							initAjaxJsonRequest(req);
@@ -608,7 +660,7 @@
 										$.ajax({
 											type: "POST",
 											datatype: "json",
-											url: ROOT_PATH + '/main/' + transactionMain + '/save-data',
+											url: ROOT_PATH + '/main/' + transactionMainM + '/save-data',
 											data: objDataSend,
 											beforeSend: function (req) {
 												initAjaxJsonRequest(req);
@@ -648,9 +700,9 @@
 					break;
 				case 'add-inv':
 					objDataSend = {};
-					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-list-invoices-signed', objDataSend, false, function (e) {
+					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-invoices-signed', objDataSend, false, function (e) {
 						if ($.type(e) == 'array') {
-							var objDataJson = [];
+							var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 							var item = null;
 							$.each(e, function (index, value) {
 								item = {};
@@ -659,9 +711,6 @@
 								item['SHDon'] = value['EInvoiceNumber'];
 								item['Ngay'] = value['NLap'];
 								item['MCQTCap'] = value['MCCQT'];
-								item['HVTNMHang'] = value['HVTNMHang'];
-								item['TgTCThue'] = value['TgTCThue'];
-								item['TgTThue'] = value['TgTThue'];
 								item['TgTTTBSo'] = value['TgTTTBSo'];
 								
 								objDataJson.push(item);
@@ -676,9 +725,9 @@
 					break;
 				case 'add-inv1':
 					objDataSend = {};
-					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-list-invoices-signed', objDataSend, false, function (e) {
+					showPopupWithURLAndData(ROOT_PATH + '/common/show-search-invoices-signed', objDataSend, false, function (e) {
 						if ($.type(e) == 'array') {
-							var objDataJson = [];
+							var objDataJson = _gridSub.data("kendoGrid").dataSource.data();
 							var item = null;
 							$.each(e, function (index, value) {
 								item = {};
@@ -687,173 +736,10 @@
 								item['SHDon_N'] = value['EInvoiceNumber'];
 								item['Ngay_N'] = value['NLap'];
 								item['MCQTCap_N'] = value['MCCQT'];
-								item['HVTNMHang_N'] = value['HVTNMHang'];
-								item['TgTCThue_N'] = value['TgTCThue'];
-								item['TgTThue_N'] = value['TgTThue'];
 								item['TgTTTBSo_N'] = value['TgTTTBSo'];
 								objDataJson.push(item);
 							});
 							_gridSub.data("kendoGrid").dataSource.data(objDataJson);
-						}
-					});
-					break;
-				case 'sign':
-					objDataSend = {};
-					objDataSend['_id'] = $('#f-lbbdctt-crud').find('input[name="_id"]').val();
-					$.ajax({
-						type: "POST",
-						datatype: "json",
-						url: ROOT_PATH + '/main/tbhdssot-sign/check-data-sign',
-						data: objDataSend,
-						beforeSend: function (req) {
-							initAjaxJsonRequest(req);
-							showLoading();
-						},
-						success: function (res) {
-							if (res) {
-								if (res.errorCode == 0) {
-									var responseData = res.responseData;
-									tokenTransaction = responseData['TOKEN'];
-									objDataSend['tokenTransaction'] = tokenTransaction;
-
-									getCert(function (e) {
-										if (null == e) {
-											alertDLSuccess('Lấy chữ ký số không thành công.', function () { });
-											hideLoading();
-											return;
-										}
-										serialNumber = '';
-										//KIEM TRA THONG TIN CERT
-										$.ajax({
-											type: "POST",
-											datatype: "json",
-											url: ROOT_PATH + '/main/common/check-cert',
-											data: { 'cert': base64Cert.replace(/\+/g, "@") },
-											beforeSend: function (req) {
-												initAjaxJsonRequest(req);
-												showLoading();
-											},
-											success: function (res) {
-												hideLoading();
-												if (res) {
-													if (res.errorCode == 0) {
-														serialNumber = res.responseData;
-
-														//LAY NOI DUNG FILE XML
-														jQuery.ajax({
-															url: ROOT_PATH + '/main/common/get-file-to-sign/' + tokenTransaction,
-															cache: false,
-															xhr: function () {// Seems like the only way to get access to the xhr object
-																var xhr = new XMLHttpRequest();
-																xhr.responseType = 'blob'
-																return xhr;
-															},
-															success: function (data, textStatus, xhr) {
-																if (xhr.status == 200) {
-																	var blob = new Blob([data], { type: 'octet/stream' });
-																	var postEnc = new FormData();
-																	postEnc.append('SerialNumber', serialNumber);
-																	postEnc.append('xmlFile', blob);
-
-																	var xhrSign = new XMLHttpRequest();
-																	xhrSign.onreadystatechange = function (e) {
-																		if (4 == this.readyState) {
-																			if (this.status == 200) {
-																				/*NOI DUNG XML DA KY - SEND TO SERVER*/
-																				blob = new Blob([this.response], { type: "octet/stream" });
-																				showLoading();
-
-																				formData = new FormData();
-																				formData.append("XMLFileSigned", blob);
-																				formData.append('certificate', base64Cert.replace(/\+/g, "@"));
-																				formData.append('_id', $('#f-lbbdctt-crud').find('input[name="_id"]').val());
-
-																				xhrSign = new XMLHttpRequest();
-																				xhrSign.upload.addEventListener('progress', function (e) {
-
-																				});
-																				if (xhrSign.upload) {
-
-																				};
-																				xhrSign.onreadystatechange = function (e) {
-																					if (4 == this.readyState && this.status == 200) {
-																						var res = xhrSign.response;
-																						if (res) {
-																							if (res.errorCode == 0) {
-																								hideLoading();
-																								$('#f-lbbdctt-crud').find('button[data-action="back"]').trigger('click');
-																							} else {
-																								alertDLSuccess(createObjectError(res).html(), function () { });
-																								hideLoading();
-																							}
-																						} else {
-																							alertDLSuccess('unknown error!!!', function () { });
-																							hideLoading();
-																						}
-																					}
-																				}
-																				xhrSign.onerror = function () {
-
-																				}
-																				xhrSign.ontimeout = function () {
-
-																				}
-
-																				var urlPost = ROOT_PATH + '/main/tbhdssot-sign/signFile';
-																				xhrSign.open("POST", urlPost, true);
-																				xhrSign.responseType = 'json';
-																				xhrSign.setRequestHeader('X-CSRF-TOKEN', _csrf_value)
-																				xhrSign.setRequestHeader(HEADER_RESULT_TYPE_NAME, HEADER_RESULT_TYPE_JSON);
-
-																				xhrSign.setRequestHeader("Cache-Control", "no-cache");
-																				xhrSign.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-																				xhrSign.send(formData);
-																			} else {
-																				hideLoading();
-																				alertDLSuccess('<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>', function () { });
-																			}
-																		}
-																	}
-																	xhrSign.open('POST', urlPluginSign + signDLTK, true);
-																	xhrSign.timeout = 5 * 60 * 1000;
-																	xhrSign.responseType = 'blob';	//or arraybuffer
-																	xhrSign.send(postEnc);
-																} else {
-																	hideLoading();
-																	alertDLSuccess("Lỗi: Không ký được dữ liệu hóa đơn.", function () { });
-																}
-															},
-															error: function () {
-
-															}
-														});
-													} else {
-														alertDLSuccess(createObjectError(res).html(), function () { });
-													}
-												} else {
-													alertDLSuccess('unknown error!!!', function () { });
-													hideLoading();
-												}
-											},
-											error: function (xhr, ajaxOptions, thrownError) {
-												alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
-												hideLoading();
-											}
-										});
-
-									});
-								} else {
-									hideLoading();
-									alertDLSuccess(createObjectError(res).html(), function () { });
-								}
-							} else {
-								alertDLSuccess('unknown error!!!', function () { });
-								hideLoading();
-							}
-						},
-						error: function (xhr, ajaxOptions, thrownError) {
-							alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
-							hideLoading();
 						}
 					});
 					break;
@@ -907,6 +793,7 @@
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 		jQuery.each(objDataJson, function (index, item) {
 			obj = {
+				'_id': item['_id'],	
 				'MCQTCap': item['MCQTCap'],
 				'SHDon': item['SHDon'],
 				'MSHDon': item['MSHDon']
@@ -919,6 +806,7 @@
 		objDataJson = _gridSub.data("kendoGrid").dataSource.data();
 		jQuery.each(objDataJson, function (index, item) {
 			obj = {
+				'_id': item['_id'],	
 				'MCQTCap': item['MCQTCap_N'],
 				'SHDon': item['SHDon_N'],
 				'MSHDon': item['MSHDon_N']

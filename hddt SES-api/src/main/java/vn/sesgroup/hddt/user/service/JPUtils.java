@@ -5495,7 +5495,6 @@ else {
 					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
 					jp = JasperFillManager.fillReport(jr, reportParams, new JREmptyDataSource());
 				} catch (Exception e) {
-					System.out.println(e);
 				}
 				
 				Exporter exporter = new JRPdfExporter();
@@ -5813,6 +5812,178 @@ else {
 					jp = JasperFillManager.fillReport(jr, reportParams, new JREmptyDataSource());
 				} catch (Exception e) {
 					System.out.println(e);
+				}
+				
+				Exporter exporter = new JRPdfExporter();
+				exporter.setExporterInput(new SimpleExporterInput(jp));
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+				
+				SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+				configuration.setCreatingBatchModeBookmarks(true);
+				exporter.setConfiguration(configuration);
+				exporter.exportReport();
+				return out;
+			}
+			
+			public ByteArrayOutputStream printbb_multi(File fileJP, Document doc, Boolean isThaythe) throws Exception {
+				Map<String, Object> reportParams = new HashMap();
+				List<HashMap<String, Object>> arrayData = new ArrayList<>();
+				HashMap<String, Object> hItem = null;
+				
+				reportParams.put("IsThayThe", isThaythe);
+				
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				
+				Node nodeDLBBDCTThe = (Node) xPath.evaluate("/BBDCTThe/DLBBDCTThe", doc, XPathConstants.NODE);
+				if (nodeDLBBDCTThe != null) {
+					String ndsai = commons.getTextFromNodeXML((Element) xPath.evaluate("NDSai", nodeDLBBDCTThe, XPathConstants.NODE));
+			        String nddung = commons.getTextFromNodeXML((Element) xPath.evaluate("NDDung", nodeDLBBDCTThe, XPathConstants.NODE));
+			        String ndtnhat = commons.getTextFromNodeXML((Element) xPath.evaluate("NDTNhat", nodeDLBBDCTThe, XPathConstants.NODE));
+			        String sbban = commons.getTextFromNodeXML((Element) xPath.evaluate("SBBan", nodeDLBBDCTThe, XPathConstants.NODE));
+			        String ldo = commons.getTextFromNodeXML((Element) xPath.evaluate("LDo", nodeDLBBDCTThe, XPathConstants.NODE));
+			        
+			        reportParams.put("SBBan", sbban);
+			        reportParams.put("LDo", ldo);
+			        reportParams.put("NDSai", ndsai);
+			        reportParams.put("NDDung", nddung);
+			        reportParams.put("NDTNhat", ndtnhat);
+			        
+			        String NLap = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeDLBBDCTThe, XPathConstants.NODE));
+					if (NLap !=null) {
+						LocalDate date = LocalDate.parse(NLap);
+				        int day = date.getDayOfMonth();
+				        int month = date.getMonthValue();
+				        int year = date.getYear();
+				        reportParams.put("Day", String.valueOf(day));
+				        reportParams.put("Month", String.valueOf(month));
+				        reportParams.put("Year", String.valueOf(year));
+					}
+				}
+
+				//NB
+				Node nodeTTNBan = (Node) xPath.evaluate("TTNBan", nodeDLBBDCTThe, XPathConstants.NODE);
+				if (nodeTTNBan != null) {
+					String dvbhang = commons.getTextFromNodeXML((Element) xPath.evaluate("DVBHang", nodeTTNBan, XPathConstants.NODE));
+					String mst = commons.getTextFromNodeXML((Element) xPath.evaluate("MSThue", nodeTTNBan, XPathConstants.NODE));
+					String dc = commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTTNBan, XPathConstants.NODE));
+					String dd = commons.getTextFromNodeXML((Element) xPath.evaluate("DDien", nodeTTNBan, XPathConstants.NODE));
+					String sdt = commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTTNBan, XPathConstants.NODE));
+					String cv = commons.getTextFromNodeXML((Element) xPath.evaluate("CVu", nodeTTNBan, XPathConstants.NODE));
+					reportParams.put("DVBHang", dvbhang);
+			        reportParams.put("NB_MSThue", mst);
+			        reportParams.put("NB_DChi", dc);
+			        reportParams.put("NB_DDien", dd);
+			        reportParams.put("NB_SDThoai", sdt);
+			        reportParams.put("NB_CVu", cv);
+				}
+				
+				//NM
+				Node nodeTTNMua = (Node) xPath.evaluate("TTNMua", nodeDLBBDCTThe, XPathConstants.NODE);
+				if (nodeTTNMua != null) {
+					String dvmhang = commons.getTextFromNodeXML((Element) xPath.evaluate("DVMHang", nodeTTNMua, XPathConstants.NODE));
+					String mst = commons.getTextFromNodeXML((Element) xPath.evaluate("MSThue", nodeTTNMua, XPathConstants.NODE));
+					String dc = commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTTNMua, XPathConstants.NODE));
+					String dd = commons.getTextFromNodeXML((Element) xPath.evaluate("DDien", nodeTTNMua, XPathConstants.NODE));
+					String sdt = commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTTNMua, XPathConstants.NODE));
+					String cv = commons.getTextFromNodeXML((Element) xPath.evaluate("CVu", nodeTTNMua, XPathConstants.NODE));
+					reportParams.put("DVMHang", dvmhang);
+			        reportParams.put("NM_MSThue", mst);
+			        reportParams.put("NM_DChi", dc);
+			        reportParams.put("NM_DDien", dd);
+			        reportParams.put("NM_SDThoai", sdt);
+			        reportParams.put("NM_CVu", cv);
+				}
+				
+				
+				
+				NodeList nodeHDons = (NodeList) xPath.evaluate("DSHDon/HDon", nodeDLBBDCTThe, XPathConstants.NODESET);
+				Node nodeHDSSot = null;
+				Node nodeHDDCTThe = null;
+				for (int i = 0; i < nodeHDons.getLength(); i++) {
+				    Node nodeHDon = nodeHDons.item(i);
+				    hItem = new HashMap<String, Object>();
+				    hItem.put("STT",String.valueOf(i+1));
+				    nodeHDSSot = (Node) xPath.evaluate("HDSSot", nodeHDon, XPathConstants.NODE);
+					if (nodeHDSSot != null) {
+						String shd = commons.formatNumberBillInvoice(commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDSSot, XPathConstants.NODE)));
+						String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeHDSSot, XPathConstants.NODE));
+						String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeHDSSot, XPathConstants.NODE));
+						String nphanh = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeHDSSot, XPathConstants.NODE));
+						hItem.put("HDSS_SHDon", shd);
+						hItem.put("HDSS_MSHDon", khmshdon + khhdon);
+						hItem.put("HDSS_NPHanh", commons.convertLocalDateTimeStringToString(nphanh, "yyyy-MM-dd",
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					}
+					hItem.put("TChat", isThaythe ? "thay thế cho" :  "điều chỉnh cho");
+					nodeHDDCTThe = (Node) xPath.evaluate("HDDCTThe", nodeHDon, XPathConstants.NODE);
+					if (nodeHDDCTThe != null) {
+						String shd = commons.formatNumberBillInvoice(commons.getTextFromNodeXML((Element) xPath.evaluate("SHDon", nodeHDDCTThe, XPathConstants.NODE)));
+						String khmshdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHMSHDon", nodeHDDCTThe, XPathConstants.NODE));
+						String khhdon = commons.getTextFromNodeXML((Element) xPath.evaluate("KHHDon", nodeHDDCTThe, XPathConstants.NODE));
+						String nphanh = commons.getTextFromNodeXML((Element) xPath.evaluate("NLap", nodeHDDCTThe, XPathConstants.NODE));
+						hItem.put("HDDCTT_SHDon", shd);
+						hItem.put("HDDCTT_MSHDon", khmshdon + khhdon);
+						hItem.put("HDDCTT_NPHanh", commons.convertLocalDateTimeStringToString(nphanh, "yyyy-MM-dd",
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					}
+					arrayData.add(hItem);
+				}
+
+				Node nodeDSCKS = (Node) xPath.evaluate("/BBDCTThe/DSCKS/NBan", doc, XPathConstants.NODE);
+				Node nodeSignature = null;
+				if (null != nodeDSCKS)
+					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
+				if(null == nodeSignature) {
+					reportParams.put("SignDesc", "Chưa ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+				} else {
+					reportParams.put("SignDesc", "Đã ký");
+					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
+					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
+					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
+					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
+					reportParams.put("SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
+					reportParams.put("SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+				}
+				nodeDSCKS = null;
+				nodeSignature = null;
+				nodeDSCKS = (Node) xPath.evaluate("/BBDCTThe/DSCKS/NNT", doc, XPathConstants.NODE);
+				if (null != nodeDSCKS)
+					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
+				if(null == nodeSignature) {
+					reportParams.put("NM_SignDesc", "Chưa ký");
+					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+				} else {
+					reportParams.put("NM_SignDesc", "Đã ký");
+					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
+					String x509Certificate = commons.getTextFromNodeXML((Element) xPath.evaluate("KeyInfo/X509Data/X509Certificate", nodeSignature, XPathConstants.NODE));
+					String signingTime = commons.getTextFromNodeXML((Element) xPath.evaluate("Object[@Id='SigningTime']/SignatureProperties/SignatureProperty/SigningTime", nodeSignature, XPathConstants.NODE));
+					SignTypeInfo signTypeInfo = commons.parserCert(x509Certificate);
+					LocalDateTime dateTime = null;
+					if (signingTime.endsWith("Z")) {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+					} else {
+						dateTime = commons.convertStringToLocalDateTime(signingTime, "yyyy-MM-dd'T'HH:mm:ss");
+					}
+					reportParams.put("NM_SignName", null == signTypeInfo ? "" : signTypeInfo.getName());
+					reportParams.put("NM_SignDate", commons.convertLocalDateTimeToString(dateTime, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+				}
+
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				JasperReport jr =  null;
+				JasperPrint jp = null;
+				JRDataSource jds = null;
+				try {
+					jds = new JRBeanCollectionDataSource(arrayData);
+					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
+					jp = JasperFillManager.fillReport(jr, reportParams, jds);
+				} catch (Exception e) {
 				}
 				
 				Exporter exporter = new JRPdfExporter();

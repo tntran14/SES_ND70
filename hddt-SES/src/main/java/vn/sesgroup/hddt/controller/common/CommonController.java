@@ -2383,6 +2383,22 @@ public class CommonController extends AbstractController{
 		return "common/search-list-invoices-signed";
 	}
 	
+	@RequestMapping(value = {
+			"/common/show-search-invoices-signed"
+	}, method = {RequestMethod.POST})
+	public String showSearchInvicesSigned(Locale locale, HttpServletRequest req, HttpSession session) throws Exception{
+		req.setAttribute("_header_", "Danh sách hóa đơn đã ký");
+		
+		LocalDate now = LocalDate.now();
+		req.setAttribute("FromDate", commons.convertLocalDateTimeToString(now.with(ChronoField.DAY_OF_MONTH, 1), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		req.setAttribute("ToDate", commons.convertLocalDateTimeToString(now, Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+
+		LoadParameterFor_DSHDDKy(cup, locale, req, "DETAIL");
+		return "common/search-invoices-signed";
+	}
+	
 	private BaseDTO checkDataSearchEInvoiceSigned(Locale locale, HttpServletRequest req, HttpSession session) {
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);

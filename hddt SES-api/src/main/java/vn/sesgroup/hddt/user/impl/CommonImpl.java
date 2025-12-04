@@ -5656,6 +5656,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			String loai = docTmp.get("Loai", "");
 			String fileName = _id + ".xml";
 			String dir = docTmp.get("Dir", "");
+			boolean isMultiInvoice = docTmp.getBoolean("IsMultiInvoice", false);
 			if ("SIGNED".equals(signStatusCode)) {
 				fileName = _id + "_signed.xml";
 				if ("COMPLETE".equals(status)) {
@@ -5666,10 +5667,12 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			File file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
 				org.w3c.dom.Document doc = this.commons.fileToDocument(file);
-				String fileNameJP = "BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml";
+				String fileNameJP = isMultiInvoice ? "BIEN-BAN-DIEU-CHINH-THAY-THE-MULTI.jrxml" : "BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml";
 				
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-				ByteArrayOutputStream baosPDF = this.jpUtils.printbb(fileJP, doc, "1".equals(loai));
+				ByteArrayOutputStream baosPDF = isMultiInvoice
+						? this.jpUtils.printbb_multi(fileJP, doc, "1".equals(loai))
+						: this.jpUtils.printbb(fileJP, doc, "1".equals(loai));
 				fileInfo.setFileName("printbb.pdf");
 				fileInfo.setContentFile(baosPDF.toByteArray());
 				return fileInfo;

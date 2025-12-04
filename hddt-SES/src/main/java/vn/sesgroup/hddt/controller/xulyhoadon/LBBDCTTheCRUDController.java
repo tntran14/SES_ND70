@@ -54,7 +54,7 @@ import vn.sesgroup.hddt.utils.Json;
 import vn.sesgroup.hddt.utils.SystemParams;
 
 @Controller
-@RequestMapping({ "/lbbdctt-cre", "/lbbdctt-detail", "/lbbdctt-edit", "/lbbdctt-sign", "/lbbdctt-del" })
+@RequestMapping({ "/lbbdctt-cre", "/lbbdctt-detail", "/lbbdctt-edit", "/lbbdctt-sign", "/lbbdctt-del" , "/lbbdctt-cre-invs", "/lbbdctt-edit-invs"})
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class LBBDCTTheCRUDController extends AbstractController {
 	private static final Logger log = LogManager.getLogger(LBBDCTTheCRUDController.class);
@@ -119,6 +119,11 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			action = "CREATE";
 			isEdit = true;
 			break;
+		case "lbbdctt-cre-invs":
+			header = "Tạo biên bản điều chỉnh/thay thế nhiều hóa đơn";
+			action = "CREATE";
+			isEdit = true;
+			break;
 		case "lbbdctt-edit":
 			header = "Thay đổi biên bản điều chỉnh/thay thế";
 			action = "EDIT";
@@ -149,7 +154,10 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		req.setAttribute("map_loaibb", Constants.MAP_LOAIBB_LBBDCTT);
 		if (!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
-
+		Object isMultiInvoice = req.getAttribute("IsMultiInvoice");
+		if (transaction.contains("-invs") || isMultiInvoice != null && isMultiInvoice.equals(true)) {
+			return "bbdctthe/bbdctthe-crud-invs";
+		}
 		return "bbdctthe/bbdctthe-crud";
 	}
 
@@ -240,6 +248,59 @@ public class LBBDCTTheCRUDController extends AbstractController {
 				dshdon.add(hItem);
 				req.setAttribute("DSHDon1", commons.encodeStringBase64(Json.serializer().toString(dshdon)));
 			}
+			
+			if (!jsonData.at("/DSHDon").isMissingNode()) {
+				JsonNode jsonDSHDon = jsonData.at("/DSHDon");
+				List<Object> dshdssot = new ArrayList<Object>();
+				List<Object> dshddctthe = new ArrayList<Object>();
+
+				for (JsonNode jsonHDon : jsonDSHDon) {
+					if (!jsonHDon.at("/HDSSot").isMissingNode()) {
+						dshdon = new ArrayList<Object>();
+						hItem = new LinkedHashMap<String, String>();
+						hItem.put("_id", commons.getTextJsonNode(jsonHDon.at("/HDSSot/_id")));
+						hItem.put("MSHDon", commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHMSHDon"))
+								+ commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHHDon")));
+						hItem.put("SHDon",
+								commons.formatNumberBillInvoice(commons.getTextJsonNode(jsonHDon.at("/HDSSot/SHDon"))));
+						hItem.put("Ngay",
+								commons.convertLocalDateTimeToString(
+										commons.convertLongToLocalDate(jsonHDon.at("/HDSSot/NLap").asLong()),
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						hItem.put("MCQTCap", commons.getTextJsonNode(jsonHDon.at("/HDSSot/MCCQT")));
+//						hItem.put("TNMHang", commons.getTextJsonNode(jsonHDon.at("/HDSSot/TNMua")));
+//						hItem.put("TgTCThue", commons.getTextJsonNode(jsonHDon.at("/HDSSot/TgTCThue")));
+//						hItem.put("TgTThue", commons.getTextJsonNode(jsonHDon.at("/HDSSot/TgTThue")));
+						hItem.put("TgTTTBSo", commons.getTextJsonNode(jsonHDon.at("/HDSSot/TgTTTBSo")));
+						dshdssot.add(hItem);
+					}
+					
+					if (!jsonHDon.at("/HDDCTThe").isMissingNode()) {
+						dshdon = new ArrayList<Object>();
+						hItem = new LinkedHashMap<String, String>();
+						hItem.put("_id", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/_id")));
+						hItem.put("MSHDon_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/KHMSHDon"))
+								+ commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/KHHDon")));
+						hItem.put("SHDon_N",
+								commons.formatNumberBillInvoice(commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/SHDon"))));
+						hItem.put("Ngay_N",
+								commons.convertLocalDateTimeToString(
+										commons.convertLongToLocalDate(jsonHDon.at("/HDDCTThe/NLap").asLong()),
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						hItem.put("MCQTCap_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/MCCQT")));
+//						hItem.put("TNMHang_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/TNMua")));
+//						hItem.put("TgTCThue_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/TgTCThue")));
+//						hItem.put("TgTThue_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/TgTThue")));
+						hItem.put("TgTTTBSo_N", commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/TgTTTBSo")));
+						dshddctthe.add(hItem);
+					}
+				}
+				
+				req.setAttribute("DSHDon_Cu", commons.encodeStringBase64(Json.serializer().toString(dshdssot)));
+				req.setAttribute("DSHDon_Moi", commons.encodeStringBase64(Json.serializer().toString(dshddctthe)));
+			}
+			req.setAttribute("IsMultiInvoice", Boolean.parseBoolean(commons.getTextJsonNode(jsonData.at("/IsMultiInvoice"))));
+
 		} else {
 			errorDesc = rspStatus.getErrorDesc();
 		}
@@ -286,7 +347,9 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		dsHDNew = commons.getParameterFromRequest(req, "ds-hd-new").replaceAll("\\s", "");
 		switch (transaction) {
 		case "lbbdctt-cre":
+		case "lbbdctt-cre-invs":
 		case "lbbdctt-edit":
+		case "lbbdctt-edit-invs":
 			validateRequired(dto, nb_mst, "Vui lòng nhập MST người bán.");
 			validateRequired(dto, nb_dvbh, "Vui lòng nhập đơn vị bán hàng người bán.");
 			validateRequired(dto, nb_dc, "Vui lòng nhập địa chỉ người bán.");
@@ -299,15 +362,11 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			validateRequired(dto, nm_dc, "Vui lòng nhập địa chỉ người mua.");
 			validateRequired(dto, nm_dd, "Vui lòng nhập đại diện người mua.");
 			validateRequired(dto, nm_cv, "Vui lòng nhập chức vụ người mua.");
-//			validateRequired(dto, nm_email_send, "Vui lòng nhập email gửi.");
-
+ 
 			validateRequired(dto, loaibb, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, sbban, "Vui lòng chọn loại biên bản.");
 			validateRequired(dto, nlap, "Vui lòng chọn ngày lập biên bản.");
 			validateRequired(dto, ldo, "Vui lòng nhập lý do.");
-//			validateRequired(dto, ndsai, "Vui lòng nhập nội trước khi điều chỉnh/thay thế.");
-//			validateRequired(dto, nddung, "Vui lòng nhập nội dung đúng.");
-//			validateRequired(dto, ndtnhat, "Vui lòng nhập nội dung hai bên thống nhất điều chỉnh/thay thế.");
 			break;
 		default:
 			break;
@@ -330,9 +389,11 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		String messageConfirm = "Bạn có muốn tạo biên bản điều chỉnh/thay thế không?";
 		switch (transaction) {
 		case "lbbdctt-cre":
+		case "lbbdctt-cre-invs":
 			messageConfirm = "Bạn có muốn tạo biên bản điều chỉnh/thay thế không?";
 			break;
 		case "lbbdctt-edit":
+		case "lbbdctt-edit-invs":
 			messageConfirm = "Bạn có muốn thay đổi biên bản điều chỉnh/thay thế không?";
 			break;
 		default:
@@ -359,28 +420,14 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 		if (null == jsonNodeTmp || jsonNodeTmp.size() == 0) {
 			dto.setErrorCode(999);
-			dto.setResponseData("Vui lòng chọn danh sách hóa đơn để thực hiện.");
+			dto.setResponseData("Vui lòng chọn danh sách hóa đơn đã sai sót để thực hiện.");
 			return dto;
 		}
 
 		/* KIEM TRA THONG TIN */
-		boolean check = true;
-		JsonNode jsonNode = jsonNodeTmp.get(0);
-		if ("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap")))
-				|| "".equals(commons.getTextJsonNode(jsonNode.at("/SHDon")))
-				|| "".equals(commons.getTextJsonNode(jsonNode.at("/MSHDon")))) {
-			check = false;
-		}
-
-		if (!check) {
-			dto.setErrorCode(999);
-			dto.setResponseData("Vui lòng kiểm tra lại dữ liệu hóa đơn cần điều chỉnh/thay thế.");
-			return dto;
-		}
+		int total = jsonNodeTmp.size();
 
 		jsonNodeTmp = null;
-		jsonNode = null;
-		check = true;
 		try {
 			jsonNodeTmp = Json.serializer().nodeFromJson(commons.decodeBase64ToString(dsHDNew));
 		} catch (Exception e) {
@@ -389,20 +436,13 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 		if (null == jsonNodeTmp || jsonNodeTmp.size() == 0) {
 			dto.setErrorCode(999);
-			dto.setResponseData("Vui lòng chọn danh sách hóa đơn để thực hiện.");
+			dto.setResponseData("Vui lòng chọn danh sách hóa đơn điều chỉnh/thay thế để thực hiện.");
 			return dto;
 		}
 
-		jsonNode = jsonNodeTmp.get(0);
-		if ("".equals(commons.getTextJsonNode(jsonNode.at("/MCQTCap")))
-				|| "".equals(commons.getTextJsonNode(jsonNode.at("/SHDon")))
-				|| "".equals(commons.getTextJsonNode(jsonNode.at("/MSHDon")))) {
-			check = false;
-		}
-
-		if (!check) {
+		if (total != jsonNodeTmp.size()) {
 			dto.setErrorCode(999);
-			dto.setResponseData("Vui lòng kiểm tra lại dữ liệu hóa đơn mới.");
+			dto.setResponseData("Số lượng hóa đơn sai sót và hóa đơn điều chỉnh/thay thế phải bằng nhau.");
 			return dto;
 		}
 		/* END - KIEM TRA THONG TIN */
@@ -451,11 +491,6 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		} catch (Exception e) {
 			log.error(" >>>>> An exception occurred!", e);
 		}
-		if (null == jsonNodeTmp || jsonNodeTmp.size() == 0) {
-			dtoRes.setErrorCode(999);
-			dtoRes.setResponseData("Vui lòng chọn hóa đơn để thực hiện.");
-			return dtoRes;
-		}
 
 		JsonNode jsonNodeTmp1 = null;
 		try {
@@ -463,19 +498,20 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		} catch (Exception e) {
 			log.error(" >>>>> An exception occurred!", e);
 		}
-		if (null == jsonNodeTmp1 || jsonNodeTmp1.size() == 0) {
-			dtoRes.setErrorCode(999);
-			dtoRes.setResponseData("Vui lòng chọn hóa đơn để thực hiện.");
-			return dtoRes;
-		}
 
 		String actionCode = Constants.MSG_ACTION_CODE.CREATED;
 		switch (transaction) {
 		case "lbbdctt-cre":
 			actionCode = Constants.MSG_ACTION_CODE.CREATED;
 			break;
+		case "lbbdctt-cre-invs":
+			actionCode = Constants.MSG_ACTION_CODE.CREATE_BBDCTT;
+			break;
 		case "lbbdctt-edit":
 			actionCode = Constants.MSG_ACTION_CODE.MODIFY;
+			break;
+		case "lbbdctt-edit-invs":
+			actionCode = Constants.MSG_ACTION_CODE.MODIFY_BBDCTT;
 			break;
 		default:
 			dtoRes = new BaseDTO();
@@ -512,8 +548,8 @@ public class LBBDCTTheCRUDController extends AbstractController {
 		hData.put("NDDung", nddung);
 		hData.put("NDTNhat", ndtnhat);
 
-		hData.put("HDon", jsonNodeTmp.get(0));
-		hData.put("HDNew", jsonNodeTmp1.get(0));
+		hData.put("HDon", jsonNodeTmp);
+		hData.put("HDNew", jsonNodeTmp1);
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/lbbdctt/crud", cup.getLoginRes().getToken(), HttpMethod.POST, root);
@@ -522,6 +558,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			dtoRes.setErrorCode(0);
 			switch (transaction) {
 			case "lbbdctt-cre":
+			case "lbbdctt-cre-invs":
 				dtoRes.setResponseData("Tạo biên bản điều chỉnh/thay thế thành công.");
 				break;
 			case "lbbdctt-edit":

@@ -1,6 +1,9 @@
 package vn.sesgroup.hddt.controller.xulyhoadon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -121,51 +124,90 @@ public class LBBDCTTheSendMailController extends AbstractController {
 							+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp) + "</label><o:p></o:p></span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + ii.getName()
 					+ " xin trân trọng thông báo đến Quý Khách về việc lập biên bản điều chỉnh thay thế hóa đơn điện tử có sai sót</span></p>\n");
-			sb.append(
-					"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót:</label></span></p>\n");
 
-			_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDSSot/SHDon").doubleValue()), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
-					+ "</span></p>\n");
+			if (Boolean.valueOf(commons.getTextJsonNode(jsonData.at("/IsMultiInvoice")))) {
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin các hóa đơn có sai sót:</label></span></p>\n");
+				
+				if (!jsonData.at("/DSHDon").isMissingNode()) {
+					JsonNode jsonDSHDon = jsonData.at("/DSHDon");
+					int stt = 1;
+					for (JsonNode jsonHDon : jsonDSHDon) {
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>");
+						sb.append(stt++);
+						sb.append(".  Số hóa đơn:  ");
+						_tmp = commons.formatNumberBillInvoice(jsonHDon.at("/HDDCTThe/SHDon").doubleValue());
+						sb.append(_tmp);
+						sb.append(", ");
+						sb.append(commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/KHMSHDon")) + commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHHDon")));
+						sb.append(", ");
+						sb.append(commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonHDon.at("/HDDCTThe/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						sb.append("<label style='font-weight: bold;'> ");
+						_tmp = commons.getTextJsonNode(jsonData.at("/Loai"));
+						sb.append(("1".equals(_tmp) ? "thay thế cho " : "điều chỉnh cho "));
+						sb.append("</label>");
+						sb.append("Số hóa đơn:  ");
+						_tmp = commons.formatNumberBillInvoice(jsonHDon.at("/HDSSot/SHDon").doubleValue());
+						sb.append(_tmp);
+						sb.append(", ");
+						sb.append(commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHMSHDon")) + commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHHDon")));
+						sb.append(", ");
+						sb.append(commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonHDon.at("/HDSSot/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						sb.append("<label style='font-weight: bold;'> ");
+						sb.append("</p>\n");	
+					}
+				}
+			} else {
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót:</label></span></p>\n");
+				
+				_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDSSot/SHDon").doubleValue()), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
+						+ "</span></p>\n");
 
-			_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHMSHDon")), "")
-					+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHHDon")), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
-					+ "</span></p>\n");
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHMSHDon")), "")
+						+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHHDon")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
+						+ "</span></p>\n");
 
-			_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/MCCQT")), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: " + _tmp
-					+ " </span></p>\n");
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/MCCQT")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: " + _tmp
+						+ " </span></p>\n");
 
-			_tmp = commons.convertLocalDateTimeToString(
-					commons.convertLongToLocalDate(jsonData.at("/HDSSot/NLap").asLong()),
-					Constants.FORMAT_DATE.FORMAT_DATE_WEB);
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
-					+ "</span></p>\n");
+				_tmp = commons.convertLocalDateTimeToString(
+						commons.convertLongToLocalDate(jsonData.at("/HDSSot/NLap").asLong()),
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
+						+ "</span></p>\n");
 
-			_tmp = commons.getTextJsonNode(jsonData.at("/Loai"));
-			sb.append(
-					"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>"
-							+ ("1".equals("1") ? "Thay thế" : "Điều chỉnh") + " bằng hóa đơn:</label></span></p>\n");
-			_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDDCTThe/SHDon").doubleValue()), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
-					+ "</span></p>\n");
+				_tmp = commons.getTextJsonNode(jsonData.at("/Loai"));
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>"
+								+ ("1".equals(_tmp) ? "Thay thế" : "Điều chỉnh") + " bằng hóa đơn:</label></span></p>\n");
+				_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDDCTThe/SHDon").doubleValue()), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
+						+ "</span></p>\n");
 
-			_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHMSHDon")), "")
-					+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHHDon")), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
-					+ "</span></p>\n");
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHMSHDon")), "")
+						+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHHDon")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
+						+ "</span></p>\n");
 
-			_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/MCCQT")), "");
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: " + _tmp
-					+ " </span></p>\n");
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/MCCQT")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: " + _tmp
+						+ " </span></p>\n");
 
-			_tmp = commons.convertLocalDateTimeToString(
-					commons.convertLongToLocalDate(jsonData.at("/HDDCTThe/NLap").asLong()),
-					Constants.FORMAT_DATE.FORMAT_DATE_WEB);
-			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
-					+ "</span></p>\n");
-
+				_tmp = commons.convertLocalDateTimeToString(
+						commons.convertLongToLocalDate(jsonData.at("/HDDCTThe/NLap").asLong()),
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
+						+ "</span></p>\n");
+			}
+			
 			sb.append(
 					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG TRUY CẬP LINK ĐỂ THỰC HIỆN KÝ XÁC NHẬN BIÊN BẢN!</span></p>");
 
