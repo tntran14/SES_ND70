@@ -608,6 +608,11 @@
 										title="Xóa hàng loạt sản phẩm, dịch vụ" th:if="${_isedit_}">
 										<i class="mdi mdi-delete-forever fs-15"></i>
 									</button>
+									<button type="button" data-action="add-excel-to-grid"
+										class="btn-sm btn-success"
+										title="Thêm sản phẩm, dịch vụ từ file" th:if="${_isedit_}">
+										<i class="mdi mdi-file-excel fs-15"></i>
+									</button>
 									<button type="button" data-action="add-to-grid"
 										class="btn-sm btn-primary btn-ses"
 										title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}">
@@ -1303,7 +1308,7 @@
 			var checkRows = _gridSub01.find(' tbody tr input[type="checkbox"][data-check-item]:checked');
 			var deleteRows = null;
 			switch (dataAction) {
-				case 'delete-to-grid':				
+			case 'delete-to-grid':				
 			if(checkRows.length == 0){
 					alertDLSuccess("Vui lòng chọn sản phẩm, dịch vụ cần xóa!!!", function(){});
 			}else{
@@ -1332,6 +1337,20 @@
 				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 				objDataJson.push({});
 				_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
+				break;
+			case 'add-excel-to-grid':
+				objDataSend = {};
+				showPopupWithURLAndData(ROOT_PATH + '/main/einvoice-import-auto/init-products', objDataSend, true, function (e) {
+					if ($.type(e) == 'array') {
+						var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+						let filtered = objDataJson.filter(x => x.ProductName && x.ProductName.trim() !== "");
+						var items= [...filtered, ...e];
+						_gridSub01.data("kendoGrid").dataSource.data(items);
+						setSTTinGrid();
+						calcSTTInGrid();	
+						calcTotalAmount();
+					}
+				});
 				break;
 			case 'back':
 				$('#divMainContent').show();
@@ -1668,9 +1687,7 @@
 			break;
 		case 'VATRate':
 			_valTmp = null == data[key]? '': data[key];
-			if('' == _valTmp) _valTmp = defaultTaxAdmin;
-		//	var objVAT1 = {'0': ' ','1': '0%', '5': '5%', '7': '10%x70%', '8': '8%', '10': '10%', '-1': 'KCT', '-2': 'KKKNT'};
-	
+			if('' == _valTmp) _valTmp = defaultTaxAdmin;	
 			text += '<select class="input-grid form-control form-control-sm input-grid-vatrate"  name="' + key + '" style="height: 100%;"';	/*|| '4' == feature*/
 			$.each(TaxInvoice, function(k, v){
 				text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + '>' + v + '</option>';
@@ -1701,12 +1718,12 @@
 			// end hanghoadactrung
 		case 'STT':
 			text += '<div class="input-group">';
-			text += '	<div class="input-group-prepend">';		
-			text += '		<label class="custom-control custom-checkbox">';
-			text += '			<input type="checkbox" name="chkSTT" class="custom-control-input" ' + (null != data[key] && '' != data[key]? 'checked="checked"': '') + ' >';
-			text += '			<span class="custom-control-label">&nbsp;</span>';
-			text += '		</label>';		
-			text += '	</div>';
+// 			text += '	<div class="input-group-prepend">';		
+// 			text += '		<label class="custom-control custom-checkbox">';
+// 			text += '			<input type="checkbox" name="chkSTT" class="custom-control-input" ' + (null != data[key] && '' != data[key]? 'checked="checked"': '') + ' >';
+// 			text += '			<span class="custom-control-label">&nbsp;</span>';
+// 			text += '		</label>';		
+// 			text += '	</div>';
 			text += '	<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right" style="border: none;" >';
 			text += '</div>';
 			break;

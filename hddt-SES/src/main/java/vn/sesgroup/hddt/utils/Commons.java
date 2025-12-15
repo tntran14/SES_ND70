@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.poi.ss.usermodel.Cell;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -583,5 +584,22 @@ public class Commons {
 		    }
 		    return "";
 		  }
+		  
+		  public String getCellValueAsString(Cell cell) {
+				switch (cell.getCellType()) {
+				case STRING:
+					return cell.getStringCellValue();
+				case NUMERIC:
+					return String.valueOf(cell.getNumericCellValue());
+				case BOOLEAN:
+					return String.valueOf(cell.getBooleanCellValue());
+				case FORMULA:
+					return cell.getCellFormula();
+				case BLANK:
+					return "";
+				default:
+					return "";
+				}
+			}
 		
 }

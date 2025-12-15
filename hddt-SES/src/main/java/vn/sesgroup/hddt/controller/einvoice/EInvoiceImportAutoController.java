@@ -1,16 +1,28 @@
 package vn.sesgroup.hddt.controller.einvoice;
 
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
@@ -35,13 +47,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import vn.sesgroup.hddt.controller.AbstractController;
 import vn.sesgroup.hddt.dto.BaseDTO;
 import vn.sesgroup.hddt.dto.CurrentUserProfile;
+import vn.sesgroup.hddt.dto.LoginRes;
 import vn.sesgroup.hddt.resources.RestAPIUtility;
 import vn.sesgroup.hddt.utils.Constants;
 import vn.sesgroup.hddt.utils.Json;
 @Controller
 @RequestMapping({
 	"/einvoice-import-auto"
-
 })
 
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
@@ -224,5 +236,186 @@ public class EInvoiceImportAutoController extends AbstractController{
 		}
 		return dtoRes;
 	}
+	
+	@RequestMapping(value = "/init-products", method = {RequestMethod.POST})
+	public String importProdusts(Locale locale, HttpServletRequest req, HttpSession session
+			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction, String action) throws Exception{
+		req.setAttribute("_header_", "Import danh sách hàng hóa, dịch vụ");
+		return "einvoice/einvoice-import-products";
+	}
+	
+	public BaseDTO checkDataToImportProducts(HttpServletRequest req) throws Exception {
+		BaseDTO dto = new BaseDTO();
+		dto.setErrorCode(0);
+		dataFileName = commons.getParameterFromRequest(req, "dataFileName").replaceAll("\\s", "");
+		if ("".equals(dataFileName)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Vui lòng chọn tập tin chứa dữ liệu.");
+		}
+		return dto;
+	}
+	
+	@RequestMapping(value = "/import-products",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO importProducts(HttpServletRequest req) throws Exception{		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		LoginRes loginRes = cup.getLoginRes();
+		String issuerId = loginRes.getIssuerId();
+		BaseDTO dtoRes = checkDataToImportProducts(req);
+		if(0 != dtoRes.getErrorCode()) {
+			dtoRes.setErrorCode(999);
+			dtoRes.setResponseData(Constants.MAP_ERROR.get(999));
+			return dtoRes;
+		}
+		
+		Path path = Paths.get(vn.sesgroup.hddt.utils.SystemParams.DIR_E_INVOICE_TEMPORARY, issuerId, dataFileName);
+		File file = path.toFile();
+		if (!(file.exists() && file.isFile())) {
+			dtoRes.setErrorCode(999);
+			dtoRes.setResponseData("Tập tin import dữ liệu không tồn tại.");
+			return dtoRes;
+		}
+		
+		List<Map<String, String>> products = new ArrayList<>();
+		try (Workbook wb = WorkbookFactory.create(file)) {
+			Sheet sheet = wb.getSheetAt(0);
+			boolean skipHeader = true;
+			List<Cell> columnNames = new ArrayList<Cell>();
+			List<Cell> cells = null;
+			Cell cell = null;
+			for (Row row1 : sheet) {
+				int lastColumn = Math.max(row1.getLastCellNum(), 20);
+				if (skipHeader) {
+					for (int i = 0; i < lastColumn; i++) {
+						cell = row1.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						columnNames.add(cell);
+					}
+					skipHeader = false;
+					continue;
+				}
 
+				Cell firstCell = row1.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+				if (firstCell == null || "".equals(commons.getCellValueAsString(firstCell).trim())) {
+					break;
+				}
+
+				cells = new ArrayList<Cell>();
+				for (int i = 0; i < lastColumn; i++) {
+					cell = row1.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+					cells.add(cell);
+				}
+
+				Map<String, String> product = extractInfoProductFromCells(columnNames, cells);
+				products.add(product);
+			}
+		} catch (Exception e) {
+			dtoRes.setErrorCode(999);
+			dtoRes.setResponseData("Lỗi khi import dữ liệu.");
+			return dtoRes;
+		}
+
+		dtoRes.setResponseData(products);
+		return dtoRes;
+	}
+	
+	private Map<String, String> extractInfoProductFromCells(List<Cell> columnNames, List<Cell> cells) throws Exception {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+
+		for (int i = 0; i < columnNames.size(); i++) {
+			String key = "";
+			Cell cellColumnName = columnNames.get(i);
+			Cell cell = cells.get(i);
+
+			if (cellColumnName != null) {
+				String value = cellColumnName.getStringCellValue().trim();
+				switch (value) {
+				case "TenHangHoa(*)":
+					key = "ProductName";
+					break;
+				case "MaHangHoa":
+					key = "ProductCode";
+					break;
+				case "SoLo":
+					key = "SLo";
+					break;
+				case "HanSuDung":
+					key = "HanSD";
+					break;
+				case "DonViTinh":
+					key = "Unit";
+					break;
+				case "SoLuong":
+					key = "Quantity";
+					break;
+				case "DonGia":
+					key = "Price";
+					break;
+				case "ThanhTien(*)":
+					key = "Total";
+					break;
+				case "ThueSuat(*)":
+					key = "VATRate";
+					break;
+				case "TienThue(*)":
+					key = "VATAmount";
+					break;
+				case "TongTien(*)":
+					key = "Amount";
+					break;
+				case "TinhChat(*)":
+					key = "Feature";
+					break;
+				case "LoaiHangHoaDacTrung":
+					key = "LHHDTrung";
+					break;
+				case "SoKhung":
+					key = "SKhung";
+					break;
+				case "SoMay":
+					key = "SMay";
+					break;
+				case "BienKiemSoatPTVC":
+					key = "BKSPTVChuyen";
+					break;
+				case "TenNguoiGuiHang":
+					key = "TNGHang";
+					break;
+				case "DiaChiNguoiGuiHang":
+					key = "DCNGHang";
+					break;
+				case "MSTNguoiGuiHang":
+					key = "MSTNGHang";
+					break;
+				case "SoDinhDanhNguoiGuiHang":
+					key = "MDDNGHang";
+					break;
+				}
+			}
+
+			if (cell != null) {
+				CellType cellType = null;
+				if (cell.getCellType() == CellType.FORMULA) {
+					cellType = cell.getCachedFormulaResultType();
+				} else {
+					cellType = cell.getCellType();
+				}
+				
+				switch (cellType) {
+				case STRING:
+					map.put(key, cell.getStringCellValue());
+					break;
+				case NUMERIC:
+					map.put(key, (NumberToTextConverter.toText(cell.getNumericCellValue())));
+					break;
+				case BLANK:
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		return map;
+	}
+	
 }
