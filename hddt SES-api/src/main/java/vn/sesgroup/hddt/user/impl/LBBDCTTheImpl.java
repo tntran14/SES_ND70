@@ -567,6 +567,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				}
 			} catch (Exception e) {
 			}
+			secureKey = commons.csRandomNumbericString(6);
 			
 			dbf = DocumentBuilderFactory.newInstance();
 			db = dbf.newDocumentBuilder();
@@ -782,7 +783,6 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			
 			
 			taxCode = docTmp.getString("TaxCode");
-			secureKey = commons.csRandomNumbericString(6);
 			objectId = new ObjectId();
 			path = Paths.get(SystemParams.DIR_E_INVOICE_BBDCTT, taxCode, String.valueOf(LocalDate.now().getYear()));
 			pathDir = path.toString();
