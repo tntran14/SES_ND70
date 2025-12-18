@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -171,7 +173,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		String oldCollectionName = "";
 		String newCollectionName = "";
 		String collectionName = "";
-		List<ObjectId> listObjectId = null;
+		Set<ObjectId> listObjectId = null;
 		List<Document> dshdons = null;
 		ObjectId objectIdEInvoiceBBDCTT = null;
 		
@@ -524,7 +526,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		case Constants.MSG_ACTION_CODE.CREATE_BBDCTT:
-			listObjectId = new ArrayList<ObjectId>();
+			listObjectId = new HashSet<ObjectId>();
 			for (JsonNode json: jsonNodeHDons) {
 				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
 			}
@@ -1240,7 +1242,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			if(!file.exists()) 
 				file.mkdirs();
 
-			listObjectId = new ArrayList<ObjectId>();
+			listObjectId = new HashSet<ObjectId>();
 			for (JsonNode json: jsonNodeHDons) {
 				listObjectId.add(new ObjectId(commons.getTextJsonNode(json.at("/_id"))));
 			}
