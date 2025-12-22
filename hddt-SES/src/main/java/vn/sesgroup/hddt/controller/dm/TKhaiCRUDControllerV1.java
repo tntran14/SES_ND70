@@ -315,12 +315,12 @@ public class TKhaiCRUDControllerV1 extends AbstractController{
 			if(ht.equals("1")) {
 				ht = "Đăng ký mới";
 			}
-			if(ht.equals("2")) {
+			if(ht.equals("2") || action.equals("COPY")) {
 				ht = "Thay đổi thông tin";
 			}
 
 			req.setAttribute("HThuc", ht);
-			req.setAttribute("HTCode", commons.getTextJsonNode(jsonData.at("/HThuc")));
+			req.setAttribute("HTCode", action.equals("COPY") ? "2" : commons.getTextJsonNode(jsonData.at("/HThuc")));
 		
 			tinhThanh = commons.getTextJsonNode(jsonData.at("/TinhThanhInfo/code"));
 			req.setAttribute("TThanhCode", tinhThanh);
