@@ -226,7 +226,7 @@
 										<input id="ma-hd" name="ma-hd"
 											class="form-control form-control-sm c-f__textbox" type="text"
 											th:value="${MaHD}" autocomplete="off"
-											th:readonly="${!_isedit_}" />
+											th:readonly="${'DETAIL' == _action_ || 'EDIT' == _action_ }" />
 
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend">

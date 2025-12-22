@@ -471,10 +471,6 @@ public class EInvoiceCRUDController extends AbstractController{
 								+ commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")));
 						req.setAttribute("TCHDonTBN",
 								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon")));
-						String a = commons.convertLocalDateTimeStringToString(
-								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
-								"yyyy-MM-dd",
-								Constants.FORMAT_DATE.FORMAT_DATE_WEB);
 						req.setAttribute("NLapTBN",
 								commons.convertLocalDateTimeStringToString(
 										commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
@@ -512,7 +508,7 @@ public class EInvoiceCRUDController extends AbstractController{
 
 				}
 
-				if (!TCTBao.equals("") && !action.equals("CREATE") && action != "COPY") {
+				if (!action.equals("CREATE") && action != "COPY") {
 					req.setAttribute("MaHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MaHD")));
 				}
 
