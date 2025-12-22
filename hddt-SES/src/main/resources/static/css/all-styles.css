@@ -2760,3 +2760,7 @@ input.ovrr__checkbox {
   background-color: #eee;
   border-radius: 6px;
 }
+
+.SumoSelect > .optWrapper > .options{
+    padding-bottom: 45px; 
+}
