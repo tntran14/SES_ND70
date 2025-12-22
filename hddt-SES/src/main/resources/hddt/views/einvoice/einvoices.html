@@ -1262,17 +1262,17 @@
 												hideLoading();
 												if (res) {
 													if (res.errorCode == 0) {
-														$(
-																'#f-einvoices')
-																.find(
-																		"#grid")
-																.data(
-																		"kendoGrid").dataSource
-																.read();
+// 														$(
+// 																'#f-einvoices')
+// 																.find(
+// 																		"#grid")
+// 																.data(
+// 																		"kendoGrid").dataSource
+// 																.read();
 														hideLoading();
-														/* timeoutID = setTimeout(
+														 timeoutID = setTimeout(
 																callsend_cqtAll,
-																1000); */
+																1000); 
 													} else {
 														alertDLSuccess(
 																'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
@@ -1930,7 +1930,6 @@
 																			tokenTransaction = responseData['TOKEN'];
 																			
 																			objDataSend['tokenTransaction'] = tokenTransaction;
-
 																					$.ajax({
 																						type: "POST",
 																						datatype: "json",
