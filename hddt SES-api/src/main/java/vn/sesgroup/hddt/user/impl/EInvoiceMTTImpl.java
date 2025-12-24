@@ -6247,6 +6247,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							HTTToanCode = "5";
 							HTTToan = "Không thu tiền";
 							break;
+						case "6":
+							HTTToanCode = "6";
+							HTTToan = "";
+							break;
 						default:
 							break;
 						}
