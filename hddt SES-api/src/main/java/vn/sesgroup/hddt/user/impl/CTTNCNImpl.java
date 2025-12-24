@@ -3932,7 +3932,10 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "TCTu", tctu));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSCTu", msctu));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHCTu", khctu));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "SCTu", docTmp.getEmbedded(Arrays.asList("CTTNCNhan","SCTu"), "")));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "SCTu",
+					docTmp.getEmbedded(Arrays.asList("CTTNCNhan", "SCTu"), 0) != 0
+							? String.valueOf(docTmp.getEmbedded(Arrays.asList("CTTNCNhan", "SCTu"), 0))
+							: ""));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap", LocalDate.now().toString()));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
 			if (docTTCTLQuan != null) {
