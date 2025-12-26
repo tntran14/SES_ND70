@@ -3570,6 +3570,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		ObjectId objectIdCT = null;
 		ObjectId mstncnId = null;
 		ObjectId objectIdTT_DC = null;
+		String iddctt = "";
 		
 		Document docFind = null;
 		Document docTmp = null;
@@ -3598,7 +3599,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		
 		org.w3c.dom.Document rTCTN = null;
 		String maKetQua = "";
-		String moTaKetQua = "";
 		String codeTTTNhan = "";
 		String descTTTNhan = "";
 
@@ -3779,6 +3779,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					.append("MSCTu", msctu)
 					.append("KHCTu", khctu)
 					.append("NLap", LocalDate.now());
+			
 			if (docCTuTTDC != null) {
 				docInsert.append("TTCTLQuan",
 						new Document("TCCTu", _tcctu).append("_id", _id_tt_dc).append("LHCTLQuan", "1")
@@ -3816,21 +3817,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			try (MongoClient mongoClient = cfg.mongoClient()) {
 				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
 				collection.insertOne(docInsert);
-				if (objectIdTT_DC != null) {
-					docFind = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-							.append("_id", objectIdTT_DC)
-							.append("Status", new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.COMPLETE,
-									Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
-					options = new FindOneAndUpdateOptions();
-					options.upsert(true);
-					options.maxTime(5000, TimeUnit.MILLISECONDS);
-					options.returnDocument(ReturnDocument.AFTER);
-					String status = _tcctu.equals("1") ? Constants.INVOICE_STATUS.REPLACED:Constants.INVOICE_STATUS.ADJUSTED;
-					collection.findOneAndUpdate(docFind,
-							new Document("$set", new Document("Status", status)), options);		
-				}
 			} catch (Exception e) {
-				System.out.println(e);
+
 			}
 
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
@@ -3850,6 +3838,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					objectIdTT_DC = new ObjectId(_id_tt_dc);
 			} catch (Exception e) {
 			}
+			
 			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete",
 					new Document("$ne", true));
 			pipeline = new ArrayList<Document>();
@@ -4109,24 +4098,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			} catch (Exception e) {
 			}
 			
-			docTTCTLQuan = docTmp.getEmbedded(Arrays.asList("TTCTLQuan"),
-					Document.class);
-			if (docTTCTLQuan != null && docTTCTLQuan.get("_id") != null) {
-				ObjectId objectIdTTCTLQuan = new ObjectId(docTTCTLQuan.getString("_id"));
-				Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-						.append("_id", objectIdTTCTLQuan).append("Status", new Document("$in",
-								Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
-
-				try (MongoClient mongoClient = cfg.mongoClient()) {
-					MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
-					collection.findOneAndUpdate(find,
-							new Document("$set", new Document("Status", Constants.INVOICE_STATUS.COMPLETE)),
-							options);
-				} catch (Exception e) {
-				}
-			}
-
-			
 			int sctu = docTmp.getEmbedded(Arrays.asList("SCTu"), 0);
 			if (sctu != 0) {
 				String mstncn = docTmp.getEmbedded(Arrays.asList("MauSo"), "");
@@ -4343,8 +4314,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			Node nodeKetQuaTraCuu = (Node) xPath.evaluate("/KetQuaTraCuu", rTCTN, XPathConstants.NODE);
 			maKetQua = commons
 					.getTextFromNodeXML((Element) xPath.evaluate("MaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
-			moTaKetQua = commons
-					.getTextFromNodeXML((Element) xPath.evaluate("MoTaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
 			
 			
 			if ("2".equals(maKetQua)) {
@@ -4366,8 +4335,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				nodeKetQuaTraCuu = (Node) xPath.evaluate("/KetQuaTraCuu", rTCTN, XPathConstants.NODE);
 				maKetQua = commons.getTextFromNodeXML(
 						(Element) xPath.evaluate("MaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
-				moTaKetQua = commons.getTextFromNodeXML(
-						(Element) xPath.evaluate("MoTaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
 				
 				if ("2".equals(maKetQua)) {
 					responseStatus = new MspResponseStatus(9999, "Mã giao dịch không đúng.");
@@ -4468,7 +4435,65 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			} catch (Exception e) {
 			}
 			
-			// xử lý cho chứng từ điều chỉnh thay thế.... update lại trạng thái hóa đơn trước
+			iddctt = "";
+			try {
+				iddctt = docTmp.getEmbedded(Arrays.asList("TTCTLQuan", "_id"), "");
+			} catch (Exception e) {
+				iddctt = docTmp.getEmbedded(Arrays.asList("TTCTLQuan", "_id"), ObjectId.class)
+						.toString();
+			}
+			
+			if (!iddctt.equals("")) {
+				ObjectId objectIddc = null;
+				try {
+					objectIddc = new ObjectId(iddctt);
+				} catch (Exception e) {
+				}
+				ObjectId byId =  docTmp.getEmbedded(Arrays.asList("_id"), ObjectId.class);
+				docTTCTLQuan = new Document("_id", byId != null ? byId.toHexString():"")
+						.append("TCCTu", docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))
+						.append("LHCTLQuan", "1")
+						.append("KHMSCTCLQuan", docTmp.get("MSCTu", ""))
+						.append("KHCTCLQuan", docTmp.get("KHCTu", ""))
+						.append("SCTCLQuan", String.valueOf(docTmp.get("SCTu", 0)))
+						.append("NLCTCLQuan",
+								commons.convertLocalDateTimeToString(
+										commons.convertDateToLocalDateTime(
+												docTmp.getEmbedded(Arrays.asList("NLap"), Date.class)),
+										"yyyy-MM-dd"));
+
+				
+				docFind = new Document("IssuerId", header.getIssuerId())
+						.append("IsDelete", false)
+						.append("_id", objectIddc)
+						.append("SignStatus", Constants.INVOICE_SIGN_STATUS.SIGNED)
+						.append("Status", new Document("$in", 
+								Arrays.asList(
+								Constants.INVOICE_STATUS.COMPLETE,
+								Constants.INVOICE_STATUS.ADJUSTED,
+								Constants.INVOICE_STATUS.REPLACED)));
+				options = new FindOneAndUpdateOptions();
+				options.upsert(true);
+				options.maxTime(5000, TimeUnit.MILLISECONDS);
+				options.returnDocument(ReturnDocument.AFTER);
+				
+				
+				try (MongoClient mongoClient = cfg.mongoClient()) {
+					MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
+					if ("1".equals(docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))) {
+						collection.findOneAndUpdate(docFind,
+								new Document("$set", new Document("Status", Constants.INVOICE_STATUS.REPLACED)
+										.append("ReplacedBy", docTTCTLQuan)), options);
+					} else if ("2".equals(docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))) {
+						collection.findOneAndUpdate(docFind,
+								new Document("$set", new Document("Status", Constants.INVOICE_STATUS.ADJUSTED)), options);
+						collection.findOneAndUpdate(docFind,
+					            new Document("$push", new Document("AdjustedBy", docTTCTLQuan)), options);
+					}
+				} catch (Exception e) {
+				}
+			}
+			
 			responseStatus = new MspResponseStatus(0, "SUCCESS");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
@@ -4643,9 +4668,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				nodeKetQuaTraCuu = (Node) xPath.evaluate("/KetQuaTraCuu", rTCTN, XPathConstants.NODE);
 				maKetQua = commons
 						.getTextFromNodeXML((Element) xPath.evaluate("MaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
-				moTaKetQua = commons
-						.getTextFromNodeXML((Element) xPath.evaluate("MoTaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
-				
 				
 				if ("2".equals(maKetQua)) {
 					String dir1 = docTmp.get("Dir", "");
@@ -4665,8 +4687,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 					nodeKetQuaTraCuu = (Node) xPath.evaluate("/KetQuaTraCuu", rTCTN, XPathConstants.NODE);
 					maKetQua = commons.getTextFromNodeXML(
 							(Element) xPath.evaluate("MaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
-					moTaKetQua = commons.getTextFromNodeXML(
-							(Element) xPath.evaluate("MoTaKetQua", nodeKetQuaTraCuu, XPathConstants.NODE));
 					
 					if ("2".equals(maKetQua)) {
 						sctuError.append("SCTu: ").append(sctu).append(", Mã giao dịch không đúng.").append(", ");
@@ -4759,6 +4779,65 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 											.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 							options);
 				} catch (Exception e) {
+				}
+				
+				iddctt = "";
+				try {
+					iddctt = docTmp.getEmbedded(Arrays.asList("TTCTLQuan", "_id"), "");
+				} catch (Exception e) {
+					iddctt = docTmp.getEmbedded(Arrays.asList("TTCTLQuan", "_id"), ObjectId.class)
+							.toString();
+				}
+				
+				if (!iddctt.equals("")) {
+					ObjectId objectIddc = null;
+					try {
+						objectIddc = new ObjectId(iddctt);
+					} catch (Exception e) {
+					}
+					ObjectId byId =  docTmp.getEmbedded(Arrays.asList("_id"), ObjectId.class);
+					docTTCTLQuan = new Document("_id", byId != null ? byId.toHexString():"")
+							.append("TCCTu", docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))
+							.append("LHCTLQuan", "1")
+							.append("KHMSCTCLQuan", docTmp.get("MSCTu", ""))
+							.append("KHCTCLQuan", docTmp.get("KHCTu", ""))
+							.append("SCTCLQuan", String.valueOf(docTmp.get("SCTu", 0)))
+							.append("NLCTCLQuan",
+									commons.convertLocalDateTimeToString(
+											commons.convertDateToLocalDateTime(
+													docTmp.getEmbedded(Arrays.asList("NLap"), Date.class)),
+											"yyyy-MM-dd"));
+
+					
+					docFind = new Document("IssuerId", header.getIssuerId())
+							.append("IsDelete", false)
+							.append("_id", objectIddc)
+							.append("SignStatus", Constants.INVOICE_SIGN_STATUS.SIGNED)
+							.append("Status", new Document("$in", 
+									Arrays.asList(
+									Constants.INVOICE_STATUS.COMPLETE,
+									Constants.INVOICE_STATUS.ADJUSTED,
+									Constants.INVOICE_STATUS.REPLACED)));
+					options = new FindOneAndUpdateOptions();
+					options.upsert(true);
+					options.maxTime(5000, TimeUnit.MILLISECONDS);
+					options.returnDocument(ReturnDocument.AFTER);
+					
+					
+					try (MongoClient mongoClient = cfg.mongoClient()) {
+						MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
+						if ("1".equals(docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))) {
+							collection.findOneAndUpdate(docFind,
+									new Document("$set", new Document("Status", Constants.INVOICE_STATUS.REPLACED)
+											.append("ReplacedBy", docTTCTLQuan)), options);
+						} else if ("2".equals(docTmp.getEmbedded(Arrays.asList("TTCTLQuan","TCCTu"), ""))) {
+							collection.findOneAndUpdate(docFind,
+									new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.ADJUSTED)), options);
+							collection.findOneAndUpdate(docFind,
+						            new Document("$push", new Document("AdjustedBy", docTTCTLQuan)), options);
+						}
+					} catch (Exception e) {
+					}
 				}
 			}
 			
