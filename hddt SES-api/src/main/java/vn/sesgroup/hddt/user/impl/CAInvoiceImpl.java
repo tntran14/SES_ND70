@@ -82,22 +82,19 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
         Iterator<Document> iter = null;
         List<Document> pipeline = new ArrayList<Document>();
 
-
-        pipeline = new ArrayList<Document>();
-        pipeline.add(new Document("$match", new Document("ActiveFlag", true)));
-
-        Document docMatch = new Document("IsDelete", new Document("$ne", true));
-        buildDocMatch(name, mst, toDate, fromDate, docMatch);
-
+        Document docMatch = new Document("IsDelete", new Document("$ne", true))
+        		.append("TenNnt", new Document("$ne", null).append("$ne", ""));
+        buildDocMatch(name, mst, docMatch);
 
         pipeline = new ArrayList<Document>();
         pipeline.add(new Document("$match", docMatch));
-        pipeline.add(new Document("$match", new Document("TenNnt", new Document("$ne", null).append("$ne", ""))));
         //3. sort CA nhỏ -> Lớn
-    	pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", 1)));
+        pipeline.add(new Document("$unwind", "$DSCTSSDung"));
+    	pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", -1)));
     	pipeline.add(new Document("$group", new Document("_id", "$MST")
     		    .append("document", new Document("$first", "$$ROOT"))));
     	pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
+        pipeline.add(new Document("$match", new Document("DSCTSSDung.DNgay", getDateMatchDocument(toDate, fromDate))));
     	pipeline.add(new Document("$lookup",
     		    new Document("from", "Issuer")
     		        .append("let", new Document("issuerIdStr", "$IssuerId"))
@@ -114,6 +111,8 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
     		        ))
     		        .append("as", "IssuerInfo")
     		));
+    	pipeline.add(new Document("$unwind",
+				new Document("path", "$IssuerInfo").append("preserveNullAndEmptyArrays", true)));
     	pipeline.add(new Document("$lookup",
     		    new Document("from", "DMTKhai")
     		        .append("let", new Document("issuerIdStr", "$IssuerId"))
@@ -130,6 +129,8 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
     		        ))
     		        .append("as", "DMTKhaiInfo")
     		));
+    	pipeline.add(new Document("$unwind",
+				new Document("path", "$DMTKhaiInfo").append("preserveNullAndEmptyArrays", true)));
     	
         pipeline.addAll(createFacetForSearchNotSort(page));
         cursor = mongoTemplate.getCollection("DMCTSo").aggregate(pipeline).allowDiskUse(true);
@@ -160,50 +161,24 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
             for (Document doc : rows) {
                 ObjectId objectIdCTS = null;
                 objectIdCTS = (ObjectId) doc.get("_id");
-                List<Document> tempDoc = null;
-                if (doc.get("DSCTSSDung") != null && doc.get("DSCTSSDung") instanceof List) {
-                    tempDoc = doc.getList("DSCTSSDung", Document.class);
-                } 
                 hItem = new HashMap<String, Object>();
-                hItem.put("_id", objectIdCTS.toString());
-                hItem.put("TenNnt", doc.get("TenNnt"));
-                hItem.put("MST", doc.get("MST"));
-                if (null != tempDoc) {
-                    for (Document doc1 : tempDoc) {
-                        hItem.put("TenNCC", doc1.get("TTChuc"));
-                        hItem.put("TuNgay", doc1.get("TNgay"));
-                        hItem.put("DenNgay", doc1.get("DNgay"));
-                    }
-                }
-                
-                tempDoc = null;
-                if (doc.get("IssuerInfo") != null && doc.get("IssuerInfo") instanceof List) {
-                    tempDoc = doc.getList("IssuerInfo", Document.class);
-                }
-                if (null != tempDoc) {
-                    for (Document doc1 : tempDoc) {
-                    	hItem.put("IssuerPhone", doc1.get("Phone"));
-                        hItem.put("IssuerEmail", doc1.get("Email"));
-                        hItem.put("NameUser", doc1.getEmbedded(Arrays.asList("ContactUser","NameUser"), String.class));
-                        hItem.put("EmailUser", doc1.getEmbedded(Arrays.asList("ContactUser","EmailUser"), String.class));
-                        hItem.put("PhoneUser", doc1.getEmbedded(Arrays.asList("ContactUser","PhoneUser"), String.class));
-                        hItem.put("EmailUserLh", doc1.getEmbedded(Arrays.asList("ContactUser","EmailUserLh"), String.class));
-                    }
-                }
-                
-                tempDoc = null;
-                if (doc.get("DMTKhaiInfo") != null && doc.get("DMTKhaiInfo") instanceof List) {
-                    tempDoc = doc.getList("DMTKhaiInfo", Document.class);
-                }
-                if (null != tempDoc) {
-                    for (Document doc1 : tempDoc) {
-                        hItem.put("TKhaiName", doc1.get("NLHe"));
-                        hItem.put("TKhaiEmail", doc1.get("DCTDTu"));
-                        hItem.put("TKhaiPhone", doc1.get("DTLHe"));
-                    }
-                }
-                
-                rowsReturn.add(hItem);
+				hItem.put("_id", objectIdCTS.toString());
+				hItem.put("TenNnt", doc.get("TenNnt"));
+				hItem.put("MST", doc.get("MST"));
+				hItem.put("TenNCC", doc.getEmbedded(Arrays.asList("DSCTSSDung", "TTChuc"), ""));
+				hItem.put("TuNgay", doc.getEmbedded(Arrays.asList("DSCTSSDung", "TNgay"), ""));
+				hItem.put("DenNgay", doc.getEmbedded(Arrays.asList("DSCTSSDung", "DNgay"), ""));
+				hItem.put("IssuerPhone", doc.getEmbedded(Arrays.asList("IssuerInfo", "Phone"), ""));
+				hItem.put("IssuerEmail", doc.getEmbedded(Arrays.asList("IssuerInfo", "Email"), ""));
+				hItem.put("NameUser", doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "NameUser"), ""));
+				hItem.put("EmailUser", doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "EmailUser"), ""));
+				hItem.put("PhoneUser", doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "PhoneUser"), ""));
+				hItem.put("EmailUserLh",
+						doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "EmailUserLh"), ""));
+				hItem.put("TKhaiName", doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "DTLHe"), ""));
+				hItem.put("TKhaiEmail", doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "DCTDTu"), ""));
+				hItem.put("TKhaiPhone", doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "NLHe"), ""));
+				rowsReturn.add(hItem);
             }
         }
 
@@ -338,16 +313,18 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 
             int posRowData = 1;
 
-            Document docMatch = new Document("IsDelete", new Document("$ne", true));
-            buildDocMatch(name, mst, toDate, fromDate, docMatch);
+            Document docMatch = new Document("IsDelete", new Document("$ne", true))
+            		.append("TenNnt", new Document("$ne", null).append("$ne", ""));
+            buildDocMatch(name, mst, docMatch);
             pipeline = new ArrayList<>();
 
             pipeline.add(new Document("$match", docMatch));
-            pipeline.add(new Document("$match", new Document("TenNnt", new Document("$ne", null).append("$ne", ""))));
-			pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", 1)));
+            pipeline.add(new Document("$unwind", "$DSCTSSDung"));
+        	pipeline.add(new Document("$sort", new Document("DSCTSSDung.DNgay", -1)));
 			pipeline.add(new Document("$group",
 					new Document("_id", "$MST").append("document", new Document("$first", "$$ROOT"))));
 			pipeline.add(new Document("$replaceRoot", new Document("newRoot", "$document")));
+            pipeline.add(new Document("$match", new Document("DSCTSSDung.DNgay", getDateMatchDocument(toDate, fromDate))));
 			pipeline.add(new Document("$lookup",
 	    		    new Document("from", "Issuer")
 	    		        .append("let", new Document("issuerIdStr", "$IssuerId"))
@@ -364,6 +341,8 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 	    		        ))
 	    		        .append("as", "IssuerInfo")
 	    		));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$IssuerInfo").append("preserveNullAndEmptyArrays", true)));
 	    	pipeline.add(new Document("$lookup",
 	    		    new Document("from", "DMTKhai")
 	    		        .append("let", new Document("issuerIdStr", "$IssuerId"))
@@ -380,6 +359,8 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 	    		        ))
 	    		        .append("as", "DMTKhaiInfo")
 	    		));
+	    	pipeline.add(new Document("$unwind",
+					new Document("path", "$DMTKhaiInfo").append("preserveNullAndEmptyArrays", true)));
             cursor = mongoTemplate.getCollection("DMCTSo").aggregate(pipeline).allowDiskUse(true);
             iter = cursor.iterator();
             List<Document> rows = new ArrayList<>();
@@ -395,30 +376,18 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
 				for (Document doc : rows) {
 					String tenNnt = (String) doc.get("TenNnt");
 					String taxCode = (String) doc.get("MST");
-					List<Document> temp = null;
-					if (doc.get("DSCTSSDung") != null && doc.get("DSCTSSDung") instanceof List) {
-						temp = doc.getList("DSCTSSDung", Document.class);
-					}
-					Date fDate = (Date) temp.get(0).get("TNgay");
-					Date tDate = (Date) temp.get(0).get("DNgay");
-					String ncc = (String) temp.get(0).get("TTChuc");
-
-					if (doc.get("IssuerInfo") != null && doc.get("IssuerInfo") instanceof List) {
-						temp = doc.getList("IssuerInfo", Document.class);
-					}
-					String issuerPhone = (String) temp.get(0).getString("Phone");
-					String issuerEmail = (String) temp.get(0).getString("Email");
-					String nameUser = temp.get(0).getEmbedded(Arrays.asList("ContactUser","NameUser"), String.class);
-                    String emailUser = temp.get(0).getEmbedded(Arrays.asList("ContactUser","EmailUser"), String.class);
-                    String phoneUser = temp.get(0).getEmbedded(Arrays.asList("ContactUser","PhoneUser"), String.class);
-                    String mailUserLh = temp.get(0).getEmbedded(Arrays.asList("ContactUser","EmailUserLh"), String.class);
-
-					if (doc.get("DMTKhaiInfo") != null && doc.get("DMTKhaiInfo") instanceof List) {
-						temp = doc.getList("DMTKhaiInfo", Document.class);
-					}
-					String tkhaiPhone = (String) temp.get(0).getString("DTLHe");
-					String tkhaiEmail = (String) temp.get(0).getString("DCTDTu");
-					String tkhaiName = (String) temp.get(0).getString("NLHe");
+					Date fDate = doc.getEmbedded(Arrays.asList("DSCTSSDung", "TNgay"), Date.class);
+					Date tDate = doc.getEmbedded(Arrays.asList("DSCTSSDung", "DNgay"), Date.class);
+					String ncc = doc.getEmbedded(Arrays.asList("DSCTSSDung", "TTChuc"), "");
+					String issuerPhone = doc.getEmbedded(Arrays.asList("IssuerInfo", "Phone"), "");
+					String issuerEmail = doc.getEmbedded(Arrays.asList("IssuerInfo", "Email"), "");
+					String nameUser = doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "NameUser"), "");
+					String emailUser = doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "EmailUser"), "");
+					String phoneUser = doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "PhoneUser"), "");
+					String mailUserLh = doc.getEmbedded(Arrays.asList("IssuerInfo", "ContactUser", "EmailUserLh"), "");
+					String tkhaiPhone = doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "DTLHe"), "");
+					String tkhaiEmail = doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "DCTDTu"), "");
+					String tkhaiName = doc.getEmbedded(Arrays.asList("DMTKhaiInfo", "NLHe"), "");
 
 					row = sheet.getRow(posRowData);
 					if (null == row)
@@ -556,34 +525,30 @@ public class CAInvoiceImpl extends AbstractDAO implements CAInvoiceDAO {
         cellStyleNum.setBorderLeft(BorderStyle.THIN);
         cellStyleNum.setWrapText(false);
     }
+    private Document getDateMatchDocument(String toDate, String fromDate) {
+    	Document docMatchDateDN = null;
+    	 LocalDate dateTo = null;
+         LocalDate dateFrom = null;
+         dateTo = "".equals(toDate) || !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
+                 null : commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+         dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
+                 null : commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+         if (null != dateFrom || null != dateTo) {
+             docMatchDateDN = new Document();
+             if (null != dateFrom)
+             	docMatchDateDN.append("$gte", dateFrom);
+             if (null != dateTo)
+                 docMatchDateDN.append("$lte", dateTo.plusDays(1));
+         }
+    	return docMatchDateDN;
+    }
 
-    private void buildDocMatch(String name, String mst, String toDate, String fromDate, Document docMatch) {
-//        Document docMatchDateTN = null;
-        Document docMatchDateDN = null;
-        LocalDate dateTo = null;
-        LocalDate dateFrom = null;
-        dateTo = "".equals(toDate) || !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
-                null : commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
-        dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
-                null : commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
-        if (null != dateFrom || null != dateTo) {
-//            docMatchDateTN = new Document();
-            docMatchDateDN = new Document();
-            if (null != dateFrom)
-            	docMatchDateDN.append("$gte", dateFrom);
-            if (null != dateTo)
-                docMatchDateDN.append("$lte", dateTo);
-        }
-
+    private void buildDocMatch(String name, String mst, Document docMatch) {
         if (!"".equals(name))
             docMatch.append("TenNnt", new Document("$regex", commons.regexEscapeForMongoQuery(name)).append("$options", "i"));
 
         if (!"".equals(mst))
             docMatch.append("MST", commons.regexEscapeForMongoQuery(mst));
-//        if (null != docMatchDateTN)
-//            docMatch.append("DSCTSSDung.TNgay", docMatchDateTN);
-        if (null != docMatchDateDN)
-            docMatch.append("DSCTSSDung.DNgay", docMatchDateDN);
     }
 
 }
