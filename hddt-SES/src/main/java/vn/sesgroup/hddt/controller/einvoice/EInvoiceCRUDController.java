@@ -809,10 +809,6 @@ public class EInvoiceCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Ngày lập hóa đơn không đúng định dạng.");
 			}
-//			else if(commons.compareLocalDate(commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB), LocalDate.now()) > 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Ngày lập hóa đơn không được lớn hơn ngày hiện tại.");
-//			}
 			if("".equals(loaiTienTt)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn loại tiền thanh toán.");

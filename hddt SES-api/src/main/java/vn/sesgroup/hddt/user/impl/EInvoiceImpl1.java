@@ -4671,10 +4671,6 @@ public class EInvoiceImpl1 extends AbstractDAO implements EInvoiceDAO1 {
 							HTTToanCode = "5";
 							HTTToan1 = "Không thu tiền";
 							break;
-						case "6":
-							HTTToanCode = "6";
-							HTTToan1 = "";
-							break;
 						default:
 							break;
 						}
