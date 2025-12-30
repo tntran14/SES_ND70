@@ -614,7 +614,7 @@ else {
 						hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 						hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 						
-						hItem.put("THHDVu", productName);
+						hItem.put("THHDVu",  Normalizer.normalize(productName, Normalizer.Form.NFC));
 						
 						if(!"".equals(sLo)){
 							hItem.put("SLo", commons.getTextFromNodeXML((Element) xPath.evaluate("SLo", nodeTmp, XPathConstants.NODE)));
@@ -696,7 +696,7 @@ else {
 						hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 						hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 						
-						hItem.put("THHDVu", productName);
+						hItem.put("THHDVu",  Normalizer.normalize(productName, Normalizer.Form.NFC));
 						if(!"".equals(sLo)){
 							hItem.put("SLo", commons.getTextFromNodeXML((Element) xPath.evaluate("SLo", nodeTmp, XPathConstants.NODE)));
 						}
@@ -3221,7 +3221,7 @@ else {
 					hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 					hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 					
-					hItem.put("THHDVu", productName);
+					hItem.put("THHDVu", Normalizer.normalize(productName, Normalizer.Form.NFC));
 					
 					hItem.put("DVTinh", commons.getTextFromNodeXML((Element) xPath.evaluate("DVTinh", nodeTmp, XPathConstants.NODE)));
 					hItem.put("SLuong",
@@ -3319,7 +3319,7 @@ else {
 					hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 					hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 					
-					hItem.put("THHDVu", productName);
+					hItem.put("THHDVu", Normalizer.normalize(productName, Normalizer.Form.NFC));
 					
 					hItem.put("DVTinh", commons.getTextFromNodeXML((Element) xPath.evaluate("DVTinh", nodeTmp, XPathConstants.NODE)));
 					hItem.put("SLuong",
@@ -5146,7 +5146,7 @@ else {
 							hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 							hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 							
-							hItem.put("THHDVu", productName);
+							hItem.put("THHDVu", Normalizer.normalize(productName, Normalizer.Form.NFC));
 							
 							if(!"".equals(sLo)){
 								hItem.put("SLo", commons.getTextFromNodeXML((Element) xPath.evaluate("SLo", nodeTmp, XPathConstants.NODE)));
@@ -5256,7 +5256,7 @@ else {
 							hItem.put("STT", commons.getTextFromNodeXML((Element) xPath.evaluate("STT", nodeTmp, XPathConstants.NODE)));
 							hItem.put("MHHDVu", commons.getTextFromNodeXML((Element) xPath.evaluate("MHHDVu", nodeTmp, XPathConstants.NODE)));
 							
-							hItem.put("THHDVu", productName);
+							hItem.put("THHDVu", Normalizer.normalize(productName, Normalizer.Form.NFC));
 							if(!"".equals(sLo)){
 								hItem.put("SLo", commons.getTextFromNodeXML((Element) xPath.evaluate("SLo", nodeTmp, XPathConstants.NODE)));
 							}
