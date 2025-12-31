@@ -265,16 +265,18 @@ public class EInvoiceActionIDController extends AbstractController{
 		}
 		return dto;
 	}
+	
 	@RequestMapping(value = "/check-data-send",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public BaseDTO execCheckDataToSave(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
 		String token = "";
-		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
-			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+		String idReq = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq).toString();
 			session.removeAttribute(token);
 		}
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq);
 		
 		BaseDTO dto = new BaseDTO();
 			
@@ -286,7 +288,7 @@ public class EInvoiceActionIDController extends AbstractController{
 			return dto;
 		}
 		token = commons.csRandomAlphaNumbericString(30);
-		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq, token);
 		HashMap<String, String> hInfo = new HashMap<String, String>();
 		hInfo.put("TOKEN", token);
 		dto.setResponseData(hInfo);
@@ -299,7 +301,6 @@ public class EInvoiceActionIDController extends AbstractController{
 			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
 			, @RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction) throws Exception{
 		BaseDTO dtoRes = new BaseDTO();
-		
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 		dtoRes = checkDataToSend(req, session, transaction, cup);
 		if(0 != dtoRes.getErrorCode()) {
@@ -309,9 +310,10 @@ public class EInvoiceActionIDController extends AbstractController{
 		}
 		
 		/*CHECK TOKEN*/
-		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
-				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		String idReq = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq) == null ? ""
+				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq).toString();
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq);
 		if ("".equals(token) || !tokenTransaction.equals(token)) {
 			dtoRes.setErrorCode(1);
 			dtoRes.setResponseData("Token giao dịch không hợp lệ.");
@@ -344,11 +346,6 @@ public class EInvoiceActionIDController extends AbstractController{
 		
 		return dtoRes;
 	}
-	
-	
-	
-	
-	
 	
 	public BaseDTO checkDataAll(HttpServletRequest req, HttpSession session, String transaction
 			, CurrentUserProfile cup) throws Exception{
@@ -500,6 +497,7 @@ public class EInvoiceActionIDController extends AbstractController{
 		dto.setErrorCode(0);
 		return dto;
 	}
+	
 	@RequestMapping(value = "/send-mailAll",  produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public BaseDTO execSendMailAll(HttpServletRequest req, HttpSession session
@@ -548,11 +546,4 @@ public class EInvoiceActionIDController extends AbstractController{
 		
 		return dtoRes;
 	}
-	
-	
-	
-	
-	
-	
-	
 }

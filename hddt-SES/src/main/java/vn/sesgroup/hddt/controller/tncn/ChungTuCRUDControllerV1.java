@@ -951,24 +951,24 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 	@ResponseBody
 	public BaseDTO checkDataToRefreshCQTV1(Locale locale, HttpServletRequest req, HttpSession session,
 			@RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception {
-		String token = "";
-		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
-			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
-			session.removeAttribute(token);
-		}
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
-
 		BaseDTO dto = new BaseDTO(req);
 		_id = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
-
+		
 		if ("".equals(_id)) {
 			dto.setErrorCode(1);
 			dto.setResponseData("Không tìm chứng từ cần ký.");
 			return dto;
 		}
+		
+		String token = "";
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id).toString();
+			session.removeAttribute(token);
+		}
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id);
 
 		token = commons.csRandomAlphaNumbericString(30);
-		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id, token);
 
 		HashMap<String, String> hInfo = new HashMap<String, String>();
 		hInfo.put("TOKEN", token);
@@ -994,9 +994,9 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 		}
 
 		/* CHECK TOKEN */
-		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
-				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id) == null ? ""
+				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id).toString();
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + _id);
 		if ("".equals(token) || !tokenTransaction.equals(token)) {
 			dto.setErrorCode(1);
 			dto.setResponseData("Token giao dịch không hợp lệ.");

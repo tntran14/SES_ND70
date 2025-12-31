@@ -268,11 +268,12 @@ public class EInvoiceActionIDController1 extends AbstractController{
 	public BaseDTO execCheckDataToSave(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
 		String token = "";
-		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
-			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+		String idReq = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq)) {
+			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq).toString();
 			session.removeAttribute(token);
 		}
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq);
 		
 		BaseDTO dto = new BaseDTO();
 			
@@ -284,7 +285,7 @@ public class EInvoiceActionIDController1 extends AbstractController{
 			return dto;
 		}
 		token = commons.csRandomAlphaNumbericString(30);
-		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq, token);
 		HashMap<String, String> hInfo = new HashMap<String, String>();
 		hInfo.put("TOKEN", token);
 		dto.setResponseData(hInfo);
@@ -307,9 +308,10 @@ public class EInvoiceActionIDController1 extends AbstractController{
 		}
 		
 		/*CHECK TOKEN*/
-		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE) == null ? ""
-				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
-		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
+		String idReq = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+		String token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq) == null ? ""
+				: session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq).toString();
+		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE + idReq);
 		if ("".equals(token) || !tokenTransaction.equals(token)) {
 			dtoRes.setErrorCode(1);
 			dtoRes.setResponseData("Token giao dịch không hợp lệ.");
@@ -347,12 +349,5 @@ public class EInvoiceActionIDController1 extends AbstractController{
 			dtoRes.setResponseData("");
 			return dtoRes;
 		}
-		
-		
 	}	
-	
-	
-	
-	
-	
 }
