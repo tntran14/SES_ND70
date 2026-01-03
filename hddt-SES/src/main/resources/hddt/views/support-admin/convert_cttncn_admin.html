@@ -1,0 +1,332 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout/layout-admin}">
+<body>
+	<th:block layout:fragment="contentadmin">
+			<style>
+		.text-blue123{
+		color: #7753f8;
+		}
+		</style>
+		<div class="row page-titles">
+			<div class="col-md-12 col-12 align-self-center p-l-0">
+				<h3 class="text-themecolor m-b-0 m-t-0 text-uppercase">Danh
+					sách tất cả mẫu chứng từ TNCN</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form id="f-convertcttncnAdmin" name="f-convertcttncnAdmin" method="post"
+					enctype="multipart/form-data">
+					<div class="card">
+						<div class="card-body">
+							<div class="filter__list--erp">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="mst" name="mst" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mã số thuế</label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12">
+											<button
+												class=" btns btns-search_auto__ses hover-up__ses w-100p"
+												data-action="search" title="Tìm kiếm" type="button">
+												<i class="mdi mdi-file-find"></i><span
+													class="d-none d-md-inline">Tìm kiếm</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<hr style="margin: 0 0 10px 0" />
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row mT-0">
+									<div class="col-12 col-sm-6 p-l-0"></div>
+									<div class="col-12 col-sm-6 text-right p-r-0 p-l-0">
+										<div class="button-group text-right">
+											<button type="button" title="Cập nhật mẫu số"
+												data-action="convert-cttncn-edit"
+												class="btns btns-edit__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|convert-cttncn-edit|')}">
+												<i class="mdi mdi-tooltip-edit"> </i><span
+													class="d-none d-md-inline">Cập nhật mẫu số</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row m-b-5 m-t-7">
+								<div class="col-12 has-min-height-grid">
+									<div id="grid"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script type="text/javascript">
+			_gridMain = $('#f-convertcttncnAdmin').find('#grid');
+		</script>
+		
+		<script type="text/javascript">
+			$(function () {
+				_gridMain.kendoGrid({
+						dataSource: new kendo.data.DataSource(
+							{
+								transport: {
+									read: {
+										type: 'POST',
+										url: ROOT_PATH
+											+ '/main/convert-cttncn/search',
+										dataType: 'json',
+										data: function () {
+											return getDataSearch();
+										},
+										beforeSend: function (
+											req) {
+											initAjaxJsonGridRequest(req);
+										},
+									}
+								},
+								requestEnd: function (e) {
+									if (e.type === "read"
+										&& e.response) {
+										if (e.response.errorCode == 0) {
+										} else {
+											notificationDLSuccess(
+												createObjectError(
+													e.response)
+													.html(),
+												function () {
+												});
+										}
+									}
+								},
+								schema: {
+									data: "rows",
+									total: "total",
+									model: {
+										fields: {}
+									}
+								},
+								pageSize: KENDOUI_PAGESIZE_NO_SCROLL_Y,
+								serverPaging: true,
+								serverSorting: true,
+								serverFiltering: true,
+								change: function (e) {
+								},
+							}),
+						selectable: true,
+						scrollable: true,
+						sortable: {
+							mode: "single",
+							allowUnsort: true
+						},
+						sortable: true,
+						filterable: false,
+						resizable: true,
+						serverSorting: false,
+						pageable: {
+							refresh: true,
+							pageSizes: true,
+							buttonCount: KENDOUI_BUTTONCOUNT,
+							messages: {
+								itemsPerPage: kendoGridMessages.itemsPerPage,
+								previous: kendoGridMessages.previous,
+								next: kendoGridMessages.next,
+								refresh: kendoGridMessages.refresh,
+								last: kendoGridMessages.last,
+								first: kendoGridMessages.first,
+								empty: kendoGridMessages.empty,
+								display: kendoGridMessages.display
+							},
+							pageSizes: KENDOUI_PAGESIZES,
+							numeric: true
+						},
+						dataBinding: function () {
+							record = (this.dataSource.page() - 1)
+								* this.dataSource.pageSize();
+						},
+						columns: [
+							{
+								field: 'STT',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+								attributes: {
+									'class': 'table-cell text-center'
+								},
+								sortable: false,
+								headerAttributes: {
+									'class': 'table-header-cell text-center'
+								},
+								template: "#= ++record #",
+							},
+							{
+								field: 'TaxCode',
+								width: '200px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Mã số thuế</a>',
+								attributes: {
+									'class': 'table-cell text-left'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell text-center'
+								},
+							},
+							{
+								field: 'Name',
+								width: '350px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên công ty</a>',
+								attributes: {
+									'class': 'table-cell text-left'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell text-center'
+								},
+							},
+							{
+								field: 'KyHieu',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Ký hiệu</a>',
+								attributes: {
+									'class': 'table-cell text-center'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell text-center'
+								},
+							},
+							{
+								field: 'MauSo',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Mẫu số</a>',
+								attributes: {
+									'class': 'table-cell',
+									style: 'text-align: center;'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell',
+									style: 'text-align: center;',
+								},
+							},
+							{
+								field: 'Nam',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Năm</a>',
+								attributes: {
+									'class': 'table-cell',
+									style: 'text-align: center;'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell',
+									style: 'text-align: center;',
+								},
+							},
+							{
+								field: 'ChungTu',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Chứng từ</a>',
+								attributes: {
+									'class': 'table-cell',
+									style: 'text-align: center;'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell',
+									style: 'text-align: center;',
+								},
+							},
+							{
+								field: 'SoLuong',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng</a>',
+								attributes: {
+									'class': 'table-cell',
+									style: 'text-align: center;'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell',
+									style: 'text-align: center;',
+								},
+							},
+							{
+								field: 'ConLai',
+								width: '60px',
+								encoded: false,
+								headerTemplate: '<a class="k-link" href="javascript:void(0);">Còn lại</a>',
+								attributes: {
+									'class': 'table-cell',
+									style: 'text-align: center;'
+								},
+								headerAttributes: {
+									'class': 'table-header-cell',
+									style: 'text-align: center;',
+								},
+							},
+						],
+						dataBound: function (e) {
+
+						}
+					});
+
+				$("#f-convertcttncnAdmin")
+					.find('button[data-action]')
+					.click(
+						function (event) {
+							_gridMain
+								.find(
+									'tbody[role="rowgroup"]')
+								.find('tr')
+								.undelegate(
+									'i[data-sub-action]',
+									'click');
+							event.preventDefault();/*event.stopPropagation();*/
+							var dataAction = $(this).data('action');
+
+							var objData = {};
+							switch (dataAction) {
+								case 'convert-cttncn-edit':
+									showPopupWithURLAndData(ROOT_PATH + '/main/convert-cttncn-edit/init', objData, true, function (e) {});
+									break;
+								case 'search':
+									_gridMain.data("kendoGrid").dataSource.page(1);
+									break;
+								default:
+									break;
+							}
+						});
+			});
+
+			function getDataSearch() {
+				var dataPost = {};
+				dataPost['mst'] = $('#f-convertcttncnAdmin #mst').val() == null ? ''
+					: $('#f-convertcttncnAdmin #mst').val();
+				return dataPost;
+			}
+		</script>
+	</th:block>
+</body>
+</html>
