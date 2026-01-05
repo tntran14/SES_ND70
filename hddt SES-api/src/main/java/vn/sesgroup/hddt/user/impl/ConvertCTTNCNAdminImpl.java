@@ -195,8 +195,20 @@ public class ConvertCTTNCNAdminImpl extends AbstractDAO implements ConvertCTTNCN
 		for (Document doc: docTmps) {
 			oldObjectId = (ObjectId) doc.get("_id", ObjectId.class);
 			doc.remove("_id");
+			doc.remove("InfoDeleted");
+			doc.remove("InfoUpdated");
+			int oldQuantity = doc.get("SoLuong",0);
+			int oldCurrentInvoiceNumber = doc.get("SHDHT",0);
+			int oldRemmainInvoiceNumber = doc.get("ConLai",0);
+			
+			if (oldRemmainInvoiceNumber == 0) continue; 
+			
 			doc
 			.append("Nam", becomeYear)
+			.append("SoLuong", oldRemmainInvoiceNumber)
+			.append("DenSo", oldRemmainInvoiceNumber)
+			.append("ConLai", oldRemmainInvoiceNumber)
+			.append("SHDHT", 0)
 			.append("InfoCreated",
 					new Document("CreateDate", LocalDateTime.now())
 					.append("CreateUserID", header.getUserId())
@@ -206,13 +218,13 @@ public class ConvertCTTNCNAdminImpl extends AbstractDAO implements ConvertCTTNCN
 			mongoTemplate.getCollection("DMMSTNCN").insertOne(doc);
 			
 			docMatch = new Document("_id", oldObjectId).append("IsDelete", false).append("IsActive", true);
-			docUpdate = new Document("SHDHT", doc.get("SoLuong"))
+			docUpdate = new Document("SHDHT", oldQuantity)
 					.append("ConLai", 0)
 					.append("IsActive", false)
 					.append("InfoPhatHanhNam" + fromYear,
 							new Document("UpdatedDate", LocalDateTime.now())
-									.append("SLDaDung", doc.get("SHDHT"))
-									.append("SLConLai", doc.get("ConLai"))
+									.append("SLDaDung", oldCurrentInvoiceNumber)
+									.append("SLConLai", oldRemmainInvoiceNumber)
 									.append("UpdatedUserID", header.getUserId())
 									.append("UpdatedUserName", header.getUserName())
 									.append("UpdatedUserFullName", header.getUserFullName()));

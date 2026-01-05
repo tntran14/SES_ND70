@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -855,8 +857,9 @@ public class MauHD23AdminImpl extends AbstractDAO implements MauHD23AdminDAO{
 						new Document("IsDelete", new Document("$ne", true))
 						.append("IsActive", true)
 						.append("NamPhatHanh", commons.ToNumberInt(NamChuyenDoi))
-						),
-				new Document("$count", "pcount")
+						)
+//				,
+//				new Document("$count", "pcount")
 						)).append("as", "DMMauSoKyHieuNamChuyenDoi")));
 		
 		cursor = mongoTemplate.getCollection("ApiLicenseKey").aggregate(pipeline);
@@ -887,19 +890,25 @@ public class MauHD23AdminImpl extends AbstractDAO implements MauHD23AdminDAO{
 			return rsp;			
 		}
 		
-		if(docTmp.getList("DMMauSoKyHieuNamLienSau", Document.class).size() != 0) {
-			responseStatus = new MspResponseStatus(999, "Năm cần chuyển đổi đã được cập nhật!!!");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;			
-		}
+//		if(docTmp.getList("DMMauSoKyHieuNamLienSau", Document.class).size() != 0) {
+//			responseStatus = new MspResponseStatus(999, "Năm cần chuyển đổi đã được cập nhật!!!");
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;			
+//		}
+//		
+//		if(docTmp.getList("DMMauSoKyHieuNamChuyenDoi", Document.class).size() != 0) {
+//			responseStatus = new MspResponseStatus(999, "Năm chuyển đổi đã được cập nhật. Vui lòng kiểm tra lại!!!");
+//			rsp.setResponseStatus(responseStatus);
+//			return rsp;
+//		}
 		
-		if(docTmp.getList("DMMauSoKyHieuNamChuyenDoi", Document.class).size() != 0) {
-			responseStatus = new MspResponseStatus(999, "Năm chuyển đổi đã được cập nhật. Vui lòng kiểm tra lại!!!");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
-		
-	
+        Set<String> mskhncdoi = new HashSet<String>();
+        if (docTmp.get("DMMauSoKyHieuNamChuyenDoi") != null ) {
+            for (Document doc : docTmp.getList("DMMauSoKyHieuNamChuyenDoi", Document.class)) {
+                mskhncdoi.add(doc.get("KHHDon",""));
+            }
+        }
+        
 		List<Document> mskh = null;
 		if (docTmp.get("DMMauSoKyHieu") != null ) {
 			mskh = docTmp.getList("DMMauSoKyHieu", Document.class);
@@ -923,9 +932,10 @@ public class MauHD23AdminImpl extends AbstractDAO implements MauHD23AdminDAO{
 				String KHMSHDon = checkms.get("KHMSHDon", "");
 				String KHHDon_goc = checkms.get("KHHDon","");
 			
-				
 				String KHHDon = KHHDon_goc.trim().replace(kyTuCuoiNamCanChuyenDoi, kyTuCuoiNamChuyenDoi);
 				int ConLai = checkms.getInteger("ConLai", 0);
+				if (ConLai == 0 || mskhncdoi.contains(KHHDon)) continue;
+				
 //				int DenSo = checkms.getInteger("DenSo", 0);
 				int SoLuong = checkms.getInteger("SoLuong", 0);
 				
