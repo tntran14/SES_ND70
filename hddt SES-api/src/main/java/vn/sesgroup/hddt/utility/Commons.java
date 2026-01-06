@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -935,4 +936,71 @@ public class Commons {
 					return "";
 				}
 			}
+	
+	private static final String[] BELOW_20 = {
+        "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+        "sixteen", "seventeen", "eighteen", "nineteen"
+    };
+
+    private static final String[] TENS = {
+        "", "", "twenty", "thirty", "forty", "fifty",
+        "sixty", "seventy", "eighty", "ninety"
+    };
+	
+    public String moneyToEnglish(double amount, CurrencyUnit currency) {
+        BigDecimal value = BigDecimal.valueOf(amount)
+                .setScale(currency.getScale(), RoundingMode.HALF_UP);
+
+        long major = value.longValue();
+        int minor = currency.getScale() == 0 ? 0 :
+                value.remainder(BigDecimal.ONE)
+                        .movePointRight(currency.getScale())
+                        .intValue();
+
+        if (major == 0 && minor == 0) {
+            return "zero " + currency.major(0);
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        if (major > 0) {
+            result.append(numberToWords(major))
+                  .append(" ")
+                  .append(currency.major(major));
+        }
+
+        if (minor > 0) {
+            if (major > 0) result.append(" and ");
+            result.append(numberToWords(minor))
+                  .append(" ")
+                  .append(currency.minor(minor));
+        }
+
+        return capitalize(result.toString());
+    }
+
+    private String numberToWords(long num) {
+        if (num == 0) return "zero";
+        if (num < 20) return BELOW_20[(int) num];
+        if (num < 100)
+            return TENS[(int) num / 10] +
+                    ((num % 10 != 0) ? "-" + BELOW_20[(int) num % 10] : "");
+        if (num < 1000)
+            return BELOW_20[(int) num / 100] + " hundred" +
+                    ((num % 100 != 0) ? " " + numberToWords(num % 100) : "");
+        if (num < 1_000_000)
+            return numberToWords(num / 1000) + " thousand" +
+                    ((num % 1000 != 0) ? " " + numberToWords(num % 1000) : "");
+        if (num < 1_000_000_000)
+            return numberToWords(num / 1_000_000) + " million" +
+                    ((num % 1_000_000 != 0) ? " " + numberToWords(num % 1_000_000) : "");
+
+        return numberToWords(num / 1_000_000_000) + " billion" +
+                ((num % 1_000_000_000 != 0) ? " " + numberToWords(num % 1_000_000_000) : "");
+    }
+
+    private String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }

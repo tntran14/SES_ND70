@@ -26,7 +26,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
-import org.exolab.castor.types.DateTime;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,6 +47,7 @@ import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import vn.sesgroup.hddt.dto.SignTypeInfo;
 import vn.sesgroup.hddt.utility.Commons;
 import vn.sesgroup.hddt.utility.Constants;
+import vn.sesgroup.hddt.utility.CurrencyUnit;
 import vn.sesgroup.hddt.utility.SystemParams;
 
 @Service
@@ -427,9 +427,8 @@ else {
 			reportParams.put("TToanTgTThue", 
 				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTThue", nodeTToan, XPathConstants.NODE)))
 			);
-			reportParams.put("TToanTgTTTBSo", 
-				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBSo", nodeTToan, XPathConstants.NODE)))
-			);
+			double tgtttbso = commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBSo", nodeTToan, XPathConstants.NODE)));
+			reportParams.put("TToanTgTTTBSo", tgtttbso);
 			/*THONG TIN KHAC (NEU CO)*/
 			String TTruong = "";
 			String tienQuyDoi = "";
@@ -466,9 +465,14 @@ else {
 				double QuyDoiTien = Double.parseDouble(tienQuyDoi);
 				reportParams.put("TToanTgTTTQDoi", QuyDoiTien);
 			}
-			reportParams.put("TToanTgTTTBChu", 
-				commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBChu", nodeTToan, XPathConstants.NODE))
-			);
+			StringBuilder ttbchu = new StringBuilder();
+			ttbchu.append(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBChu", nodeTToan, XPathConstants.NODE)));
+			if (!DVTTe.equals("VND")) {
+				ttbchu.append(" (");
+				ttbchu.append(commons.moneyToEnglish(tgtttbso, CurrencyUnit.USD));
+				ttbchu.append(")");
+			}
+			reportParams.put("TToanTgTTTBChu", ttbchu.toString());
 			
 			/*LAY DANH SACH LAI SUAT*/
 			String tsuatTmp = "";
@@ -1201,9 +1205,17 @@ else {
 			reportParams.put("NoticeTTDC", noticeTTDC);
 			
 			reportParams.put("TTChungDVTTe", commons.getTextFromNodeXML((Element) xPath.evaluate("DVTTe", nodeTTChung, XPathConstants.NODE)));
+			reportParams.put("TTChungTGQDoi", 
+				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TGia", nodeTTChung, XPathConstants.NODE)))
+					);
 			reportParams.put("TToanTgTCThue", 
 				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTCThue", nodeTToan, XPathConstants.NODE)))
 			);
+			reportParams.put("TToanTgTTTQDoi", 
+					commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBSo", nodeTToan, XPathConstants.NODE)))
+				*
+				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TGia", nodeTTChung, XPathConstants.NODE)))
+					);
 			reportParams.put("TToanTgTThue", 
 				commons.ToNumber(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTThue", nodeTToan, XPathConstants.NODE)))
 			);
