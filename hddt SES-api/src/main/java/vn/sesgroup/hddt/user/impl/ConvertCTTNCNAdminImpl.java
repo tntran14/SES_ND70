@@ -3,8 +3,10 @@ package vn.sesgroup.hddt.user.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.bson.Document;
@@ -163,18 +165,17 @@ public class ConvertCTTNCNAdminImpl extends AbstractDAO implements ConvertCTTNCN
 		List<Document> docTmps = new ArrayList<Document>();
 		List<Document> pipeline = new ArrayList<Document>();
 		FindOneAndUpdateOptions options = null;
+		Set<String> set = new HashSet<String>();
 		
 		Document docMatch = new Document("IsActive", true).append("IsDelete", false);
-		
-		long count = mongoTemplate.getCollection("DMMSTNCN").countDocuments(docMatch.append("Nam", becomeYear));	
-		if (count != 0) {
-			responseStatus = new MspResponseStatus(999, "Năm chuyển đổi không hợp lệ, hoặc đã được chuyển đổi!!!");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;		
+
+		Iterator<Document> iter = mongoTemplate.getCollection("DMMSTNCN").find(docMatch.append("Nam", becomeYear)).iterator();	
+		while (iter.hasNext()) {
+			set.add(iter.next().get("IssuerId",""));
 		}
 		
 		pipeline.add(new Document("$match", docMatch.append("Nam", fromYear).append("KyHieu", "CT")));
-		Iterator<Document> iter = mongoTemplate.getCollection("DMMSTNCN").aggregate(pipeline).iterator();
+		iter = mongoTemplate.getCollection("DMMSTNCN").aggregate(pipeline).iterator();
 		while (iter.hasNext()) {
 			docTmps.add(iter.next());
 		}
@@ -201,7 +202,7 @@ public class ConvertCTTNCNAdminImpl extends AbstractDAO implements ConvertCTTNCN
 			int oldCurrentInvoiceNumber = doc.get("SHDHT",0);
 			int oldRemmainInvoiceNumber = doc.get("ConLai",0);
 			
-			if (oldRemmainInvoiceNumber == 0) continue; 
+			if (oldRemmainInvoiceNumber == 0 || set.contains(doc.get("IssuerId",""))) continue; 
 			
 			doc
 			.append("Nam", becomeYear)
