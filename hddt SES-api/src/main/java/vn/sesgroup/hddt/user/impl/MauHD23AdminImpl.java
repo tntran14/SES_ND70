@@ -905,7 +905,7 @@ public class MauHD23AdminImpl extends AbstractDAO implements MauHD23AdminDAO{
         Set<String> mskhncdoi = new HashSet<String>();
         if (docTmp.get("DMMauSoKyHieuNamChuyenDoi") != null ) {
             for (Document doc : docTmp.getList("DMMauSoKyHieuNamChuyenDoi", Document.class)) {
-                mskhncdoi.add(doc.get("KHHDon",""));
+                mskhncdoi.add(doc.get("IssuerId","") + doc.get("KHMSHDon","") + doc.get("KHHDon",""));
             }
         }
         
@@ -934,7 +934,7 @@ public class MauHD23AdminImpl extends AbstractDAO implements MauHD23AdminDAO{
 			
 				String KHHDon = KHHDon_goc.trim().replace(kyTuCuoiNamCanChuyenDoi, kyTuCuoiNamChuyenDoi);
 				int ConLai = checkms.getInteger("ConLai", 0);
-				if (ConLai == 0 || mskhncdoi.contains(KHHDon)) continue;
+				if (ConLai == 0 || mskhncdoi.contains(issuerId + KHMSHDon + KHHDon)) continue;
 				
 //				int DenSo = checkms.getInteger("DenSo", 0);
 				int SoLuong = checkms.getInteger("SoLuong", 0);
