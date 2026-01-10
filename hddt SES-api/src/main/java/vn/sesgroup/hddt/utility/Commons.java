@@ -963,8 +963,12 @@ public class Commons {
         }
 
         StringBuilder result = new StringBuilder();
-
-        if (major > 0) {
+        if (major < 0) {
+        	result.append("negative ");
+        	major = Math.abs(major);
+        }
+        
+        if (major != 0) {
             result.append(numberToWords(major))
                   .append(" ")
                   .append(currency.major(major));
