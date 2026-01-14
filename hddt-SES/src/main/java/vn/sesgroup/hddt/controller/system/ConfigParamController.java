@@ -55,6 +55,7 @@ public class ConfigParamController extends AbstractController{
 	private String footermail;
 	private String tax_invoice;
 	private String payment_invoice;
+	private String readMoneyInEnglish;
 
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
 		try {
@@ -120,36 +121,37 @@ public class ConfigParamController extends AbstractController{
 	
 	@SuppressWarnings("unlikely-arg-type")
 	@RequestMapping(value = "/init", method = {RequestMethod.POST, RequestMethod.GET})
-	public String init(Locale locale, Principal principal, HttpServletRequest req
-			, HttpSession session ) throws Exception{
+	public String init(Locale locale, Principal principal, HttpServletRequest req, HttpSession session)
+			throws Exception {
 		req.setAttribute("_TitleView_", Constants.PREFIX_TITLE + " - Cấu hình Tham số");
-		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();	
-		
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+
 		LoadParameter(cup, locale, req, "");
-		
+
 		BaseDTO baseDTO = new BaseDTO(req);
 		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.INQUIRY);
 		HashMap<String, String> hData = new HashMap<>();
 		msg.setObjData(hData);
+		
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/config-param/check", cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
-		if(rspStatus.getErrorCode() == 0) {
+		if (rspStatus.getErrorCode() == 0) {
 			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
 			req.setAttribute("NameCD", commons.getTextJsonNode(jsonData.at("/NameCD")));
 			req.setAttribute("VND", commons.getTextJsonNode(jsonData.at("/VND")));
 			req.setAttribute("USD", commons.getTextJsonNode(jsonData.at("/USD")));
-			
+
 			String check_tax = commons.getTextJsonNode(jsonData.at("/TaxInvoice"));
 			if (!check_tax.equals("")) {
 				req.setAttribute("DefaultTaxAdmin", check_tax);
 			}
-			
+
 			String check_payment = commons.getTextJsonNode(jsonData.at("/PaymentInvoice"));
 			if (!check_payment.equals("")) {
 				req.setAttribute("DefaultPayment", check_payment);
 			}
-			
+
 			String shd = jsonData.at("/viewshd").toString();
 			String viewmoney = jsonData.at("/viewmoney").toString();
 			String mail = jsonData.at("/footermail").toString();
@@ -162,8 +164,8 @@ public class ConfigParamController extends AbstractController{
 
 			} else {
 				req.setAttribute("CheckSHD", false);
-
 			}
+			
 			// FOOTER MAIL
 			if (!mail.equals("")) {
 				int index2 = mail.charAt(1);
@@ -172,12 +174,11 @@ public class ConfigParamController extends AbstractController{
 				String s2 = String.valueOf(check2);
 				if (s2.equals("Y")) {
 					req.setAttribute("CheckMail", true);
-
 				} else {
 					req.setAttribute("CheckMail", false);
-
 				}
 			}
+			
 			// view money
 			if (!viewmoney.equals("")) {
 				int index2 = viewmoney.charAt(1);
@@ -186,13 +187,12 @@ public class ConfigParamController extends AbstractController{
 				String s2 = String.valueOf(check2);
 				if (s2.equals("Y")) {
 					req.setAttribute("ViewMoney", true);
-
 				} else {
 					req.setAttribute("ViewMoney", false);
-
 				}
 			}
-
+			
+			req.setAttribute("ReadMoneyInEnglish", commons.getTextJsonNode(jsonData.at("/ReadMoneyInEnglish")).equals("Y") ? true : false);
 		}
 		return "system/config-param";
 	}
@@ -210,7 +210,7 @@ public class ConfigParamController extends AbstractController{
 		footermail = commons.getParameterFromRequest(req, "footermail");
 		tax_invoice = commons.getParameterFromRequest(req, "tax_invoice");
 		payment_invoice = commons.getParameterFromRequest(req, "payment_invoice");	
-		
+		readMoneyInEnglish = commons.getParameterFromRequest(req, "readmoneyinenglish");	
 		if(!commons.checkStringIsInt(VND)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Đơn vị tiền tệ phải là số nguyên.");
@@ -308,6 +308,7 @@ public class ConfigParamController extends AbstractController{
 		hData.put("footermail", footermail);
 		hData.put("TaxInvoice", tax_invoice);
 		hData.put("PaymentInvoice", payment_invoice);
+		hData.put("ReadMoneyInEnglish", readMoneyInEnglish);
 		
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);

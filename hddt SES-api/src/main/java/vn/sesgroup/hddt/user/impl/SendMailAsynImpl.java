@@ -106,6 +106,7 @@ public class SendMailAsynImpl extends AbstractDAO implements SendMailAsyncDAO {
 		String fileName = _id + ".xml";
 		File file = null;
 		String CheckView = "";
+		String readMoneyInEnglish = "";
 		String fileNameXML = _id + "_signed.xml";
 		String fileNamePDF = _id + ".pdf";
 		if (Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus))
@@ -189,7 +190,7 @@ public class SendMailAsynImpl extends AbstractDAO implements SendMailAsyncDAO {
 
 				ByteArrayOutputStream baosPDF = null;
 
-				baosPDF = jpUtils.createFinalInvoice(fileJP, doc,CheckView, secureKey, numberRowInPage, numberRowInPageMultiPage,
+				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, CheckView, readMoneyInEnglish, secureKey, numberRowInPage, numberRowInPageMultiPage,
 						numberCharsInRow, MST,link, ParamUSD,
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),

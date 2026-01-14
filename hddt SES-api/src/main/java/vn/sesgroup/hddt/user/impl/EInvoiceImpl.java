@@ -5076,7 +5076,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		}
 
 		String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
-
+		String readMoneyInEnglish = docTmp.getEmbedded(Arrays.asList("UserConFig", "ReadMoneyInEnglish"), "");
 		String MailJet = docTmp.getEmbedded(Arrays.asList("ConfigEmail", "MailJet"), "");
 
 		String dir = docTmp.getString("Dir");
@@ -5160,7 +5160,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 				ByteArrayOutputStream baosPDF = null;
 
-				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 						numberCharsInRow, MST, link, ParamUSD,
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),

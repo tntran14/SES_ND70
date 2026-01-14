@@ -334,6 +334,7 @@ db.getCollection('EInvoice').aggregate([
 		}
 		if(null != docTmp) {
 			String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
+			String readMoneyInEnglish = docTmp.getEmbedded(Arrays.asList("UserConFig", "ReadMoneyInEnglish"), "");
 			String _id = docTmp.getObjectId("_id").toString();
 			String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 			String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
@@ -456,7 +457,7 @@ db.getCollection('EInvoice').aggregate([
 			
 			ByteArrayOutputStream baosPDF = null;
 			
-			baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView
+			baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish
 					, numberRowInPage, numberRowInPageMultiPage, numberCharsInRow, MST, link, ParamUSD,
 					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(), 
 					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),

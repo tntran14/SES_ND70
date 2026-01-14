@@ -695,6 +695,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			String ImgQA = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgQA"), "");
 			String ImgVien = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgVien"), "");
 			String Checknamecd = docTmp.getEmbedded(Arrays.asList("UserConFig", "NameCD"), "");
+			String readMoneyInEnglish = docTmp.getEmbedded(Arrays.asList("UserConFig", "ReadMoneyInEnglish"), "");
 			String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "") + "," + Checknamecd;
 			String dir = docTmp.get("Dir", "");
 			String signStatusCode = docTmp.get("SignStatusCode", "");
@@ -728,7 +729,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 
 			ByteArrayOutputStream baosPDF = null;
 
-			baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+			baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 					numberCharsInRow, MST, link, ParamUSD,
 					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 					Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
@@ -899,6 +900,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				}
 
 				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
+				String readMoneyInEnglish = docTmp.getEmbedded(Arrays.asList("UserConFig", "ReadMoneyInEnglish"), "");
 				String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
 				String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"),
@@ -939,7 +941,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				int numberCharsInRow = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "CharsInRow"),
 						50);
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 						numberCharsInRow, MST, link, ParamUSD,
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
@@ -3038,6 +3040,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 					isDieuChinh = true;
 				}
 				String CheckView = docTmp.getEmbedded(Arrays.asList("UserConFig", "viewshd"), "");
+				String readMoneyInEnglish = docTmp.getEmbedded(Arrays.asList("UserConFig", "ReadMoneyInEnglish"), "");
 				String MST = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "MST"), "");
 				String ImgLogo = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgLogo"), "");
 				String ImgBackground = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "ImgBackground"),
@@ -3078,7 +3081,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				int numberCharsInRow = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "Templates", "CharsInRow"),
 						50);
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
-				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+				baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 						numberCharsInRow, MST, link, ParamUSD,
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 						Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),

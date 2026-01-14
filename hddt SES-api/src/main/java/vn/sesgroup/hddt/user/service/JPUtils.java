@@ -56,7 +56,7 @@ public class JPUtils {
 //	private static final String IMAGE_FILENAME_INV_CONVERT = "BLANK_ICON.png";
 	private Commons commons = new Commons();
 	
-	public ByteArrayOutputStream createFinalInvoice(File fileJP, Document doc, String secureKey, String CheckView
+	public ByteArrayOutputStream createFinalInvoice(File fileJP, Document doc, String secureKey, String CheckView, String readMoneyInEng
 			, int numberRowInPage, int numberRowInPageMultiPage, int numberCharsInRow
 			, String MST,String link, String ParamUSD, String pathLogo, String pathBackground,String pathQA, String pathVien
 			, boolean isConvert, boolean isDeleted
@@ -467,7 +467,7 @@ else {
 			}
 			StringBuilder ttbchu = new StringBuilder();
 			ttbchu.append(commons.getTextFromNodeXML((Element) xPath.evaluate("TgTTTBChu", nodeTToan, XPathConstants.NODE)));
-			if (!DVTTe.equals("VND")) {
+			if (!DVTTe.equals("VND") && readMoneyInEng.equals("Y")) {
 				ttbchu.append(" (");
 				ttbchu.append(commons.moneyToEnglish(tgtttbso, CurrencyUnit.USD));
 				ttbchu.append(")");

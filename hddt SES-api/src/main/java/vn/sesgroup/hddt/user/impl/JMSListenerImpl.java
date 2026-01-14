@@ -264,8 +264,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 			}
 			
 			String CheckView = o.getEmbedded(Arrays.asList("Data","UserConFig", "viewshd"), "");
-						
-			
+			String readMoneyInEnglish = o.getEmbedded(Arrays.asList("Data", "UserConFig", "ReadMoneyInEnglish"), "");	
 			String dir = o.getEmbedded(Arrays.asList("Data","Dir"), "");
 			String signStatusCode = o.getEmbedded(Arrays.asList("Data","SignStatusCode"), "");
 			String eInvoiceStatus = o.getEmbedded(Arrays.asList("Data","EInvoiceStatus"), "");
@@ -345,7 +344,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 
 					ByteArrayOutputStream baosPDF = null;
 
-					baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+					baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 							numberCharsInRow, MST,link, ParamUSD,
 							Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 							Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
@@ -661,8 +660,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				}
 				
 				String CheckView = o.getEmbedded(Arrays.asList("Data","UserConFig", "viewshd"), "");
-							
-				
+				String readMoneyInEnglish = o.getEmbedded(Arrays.asList("Data", "UserConFig", "ReadMoneyInEnglish"), "");	
 				String dir = o.getEmbedded(Arrays.asList("Data","Dir"), "");
 				String signStatusCode = o.getEmbedded(Arrays.asList("Data","SignStatusCode"), "");
 				String eInvoiceStatus = o.getEmbedded(Arrays.asList("Data","EInvoiceStatus"), "");
@@ -706,7 +704,7 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 
 						ByteArrayOutputStream baosPDF = null;
 
-						baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, numberRowInPage, numberRowInPageMultiPage,
+						baosPDF = jpUtils.createFinalInvoice(fileJP, doc, secureKey, CheckView, readMoneyInEnglish, numberRowInPage, numberRowInPageMultiPage,
 								numberCharsInRow, MST,link, ParamUSD,
 								Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgLogo).toString(),
 								Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgBackground).toString(),
