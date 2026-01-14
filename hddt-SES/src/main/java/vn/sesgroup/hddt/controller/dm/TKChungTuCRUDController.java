@@ -353,7 +353,11 @@ public class TKChungTuCRUDController extends AbstractController {
 							commons.convertLocalDateTimeToString(
 									commons.convertLongToLocalDateTime(o.at("/DNgay").asLong()),
 									Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB));
-					hItem.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
+					if ("DETAIL".equals(action) || "SIGN".equals(action)) {
+						hItem.put("HThuc", Constants.MAP_TKHAI_HTHUC.get(commons.getTextJsonNode(o.at("/HThuc"))));
+					} else {
+						hItem.put("HThuc", commons.getTextJsonNode(o.at("/HThuc")));
+					}
 					prds.add(hItem);
 				}
 			}
