@@ -6162,9 +6162,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					if (dem > 1) {
 						int stt = 1;
 
-						Double tongTienThue = 0.0;
-						Double tongThanhTien = 0.0;
-						Double total = 0.0;
+						double tongTienThue = 0.0;
+						double tongThanhTien = 0.0;
+						double total = 0.0;
 						for (int k = i; k <= end; k++) {
 							DSHHDVu dshhdVu = new DSHHDVu();
 							String STT = String.valueOf(stt++);
@@ -6212,6 +6212,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						// Clear BIEN GAN STT
 						stt = stt - (end + 1);
 
+						tongTienThue = Math.round(tongTienThue);
+						tongThanhTien = Math.round(tongThanhTien);
+						total = Math.round(total);
+						
 						String TTBChu = commons.formatNumberReal(total).replaceAll(",", "");
 						String TTBCHU = ChuyenSangChu(TTBChu);
 						String tongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
@@ -6659,9 +6663,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						int k = i;
 						DSHHDVu dshhdVu = new DSHHDVu();
 						String STT = String.valueOf(stt);
-						Double thanhTien = eInvoiceMTTExcelFormList.get(k).getThanhTien();
-						Double tienThue = eInvoiceMTTExcelFormList.get(k).getTienThue();
-						Double tongTien = eInvoiceMTTExcelFormList.get(k).getTongTien();
+						double thanhTien = eInvoiceMTTExcelFormList.get(k).getThanhTien();
+						double tienThue = eInvoiceMTTExcelFormList.get(k).getTienThue();
+						double tongTien = eInvoiceMTTExcelFormList.get(k).getTongTien();
 
 						dshhdVu.setSTT(STT);
 						dshhdVu.setProductName(eInvoiceMTTExcelFormList.get(k).getTenHangHoa());
@@ -6695,6 +6699,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						hItem1.put("Feature", dshhdVu.getFeature());
 						listHHDVus.add(hItem1);
 
+						thanhTien = Math.round(thanhTien);
+						tienThue = Math.round(tienThue);
+						tongTien = Math.round(tongTien);
 						String TTBChu = commons.formatNumberReal(tongTien).replaceAll(",", "");
 						String TTBCHU = ChuyenSangChu(TTBChu);
 						String tongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
@@ -6838,13 +6845,13 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 
 						/* ADD THONG TIN KHAC */
 						elementSubTmp = doc.createElement("TTKhac");
-						elementSubTmp.appendChild(
-								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
-
-						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
-						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
+//						elementSubTmp.appendChild(
+//								commons.createElementTTKhac(doc, "TenEN", "string", docTmp.get("NameEN", "")));
+//
+//						elementSubTmp
+//								.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp, "string", STKNHang));
+//						elementSubTmp
+//								.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string", TNHang));
 
 						elementTmp.appendChild(elementSubTmp);
 						elementSubContent.appendChild(elementTmp);
@@ -7959,7 +7966,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					int invoiceNumber = 0;
 					if (shdOfCurrentInvoice == 0) {
 						int maxInvoiceNumber = 0;
-						if (docInfo1.get("MaxSHDon") != null)
+						if (docInfo1 != null && docInfo1.get("MaxSHDon") != null)
 							maxInvoiceNumber = docInfo1.getEmbedded(Arrays.asList("MaxSHDon"), 0);
 						invoiceNumber = maxInvoiceNumber + 1;
 					}

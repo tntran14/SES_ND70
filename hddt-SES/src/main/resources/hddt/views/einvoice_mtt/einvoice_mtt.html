@@ -378,13 +378,13 @@
 													class="d-none d-md-inline">Ký hóa đơn</span>
 											</button>
 
-											<button type="button" title="Ký hàng loạt"
-												data-action="einvoice_mtt-signAll"
-												class="btns ky_hd hover-up__ses"
-												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-signAll|')}">
-												<i class="mdi mdi-account-check-outline"> </i><span
-													class="d-none d-md-inline">Ký hàng loạt</span>
-											</button>
+<!-- 											<button type="button" title="Ký hàng loạt" -->
+<!-- 												data-action="einvoice_mtt-signAll" -->
+<!-- 												class="btns ky_hd hover-up__ses" -->
+<!-- 												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-signAll|')}"> -->
+<!-- 												<i class="mdi mdi-account-check-outline"> </i><span -->
+<!-- 													class="d-none d-md-inline">Ký hàng loạt</span> -->
+<!-- 											</button> -->
 
 										</div>
 									</div>
@@ -1096,15 +1096,14 @@
 										success: function (res) {
 											if (res) {
 												if (res.errorCode == 0) {
-													_gridMain.data("kendoGrid").dataSource.read();
-													timeoutID = setTimeout(createTDsSendTax, 1000);
+													createTDsSendTax();
 												} else {
 													alertDLSuccess(createObjectError(res).html(), function () { });
 												}
 											} else {
 												alertDLSuccess('unknown error!!!', function () { });
-												hideLoading();
 											}
+											hideLoading();
 										},
 										error: function (xhr, ajaxOptions, thrownError) {
 											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
@@ -1125,12 +1124,11 @@
 										},
 										success: function (res) {
 											if (res.errorCode == 0) {
-												_gridMain.data("kendoGrid").dataSource.read();
-												timeoutID = setTimeout(signAllHD, 1000);
+												signAllHD();
 											} else {
 												alertDLSuccess(createObjectError(res).html(), function () { });
-												hideLoading();
 											}
+											hideLoading();
 										},
 										error: function (xhr, ajaxOptions, thrownError) {
 											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
@@ -1219,13 +1217,13 @@
 													});
 												} else {
 													$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
-													hideLoading();
 													alertDLSuccess(res.responseData, function myFunction() { });
+													hideLoading();
 												}
 											} else {
-												hideLoading();
-												alertDLSuccess("Lỗi khi thực hiện ký hóa đơn.",
+													alertDLSuccess("Lỗi khi thực hiện ký hóa đơn.",
 													function myFunction() { });
+													hideLoading();
 											}
 										},
 										error: function (xhr, ajaxOptions, thrownError) {
@@ -1255,17 +1253,15 @@
 												if (res.errorCode == 0) {
 													alertMS += res.responseData + " ";
 													callsend_cqtAll();
-													
 												} else {
 													alertDLSuccess(res.responseData,
 														function myFunction() { });
-													hideLoading();
 												}
 											} else {
 												alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 													function myFunction() { });
-												hideLoading();
 											}
+											hideLoading();
 										},
 										error: function (xhr, ajaxOptions, thrownError) {
 											alertDLSuccess('<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
@@ -1305,17 +1301,20 @@
 														},
 														success: function (res) {
 															if (res) {
-																if (res.errorCode == 0) {
-																	alertMS+=res.responseData + " ";
-																	sendMailAll();
-																} else {
+// 																if (res.errorCode == 0) {
+// 																	alertMS+=res.responseData + " ";
+// 																	sendMailAll();
+// 																} else {
 																	alertDLSuccess(alertMS + res.responseData,
 																		function () { });
-																}
+																	$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+// 																}
+// 																$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 															} else {
 																alertDLSuccess('Gửi hóa đơn đến cqt lỗi.', function () { });
+																$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 															}
-															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
+															hideLoading();
 														},
 														error: function (xhr, ajaxOptions, thrownError) {
 															$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
@@ -1323,19 +1322,13 @@
 															hideLoading();
 														}
 													});
-
-
-
-
 												} else {
 													alertDLSuccess(createObjectError(res).html(), function () { });
-													hideLoading();
 												}
 											} else {
 												alertDLSuccess('Kiểm tra dữ liệu gửi cqt lỗi.', function () { });
-												hideLoading();
 											}
-
+											hideLoading();
 										},
 										error: function (xhr, ajaxOptions, thrownError) {
 											alertDLSuccess(xhr.status + " - " + xhr.responseText, function () { });
@@ -1382,6 +1375,7 @@
 												                   alertDLSuccess('Lỗi trong quá trình gửi mail.',
 												                   function() {});
 												                 }
+												                 hideLoading();
 												               },
 												             error: function(xhr, ajaxOptions, thrownError) {
 												                 alertDLSuccess(xhr.status + " - " + xhr.responseText,
@@ -1393,6 +1387,7 @@
 													  } else {
 													        alertDLSuccess(createObjectError(res).html(),
 													                function() {});
+													        hideLoading();
 													              }
 											  } else {
 											      alertDLSuccess('Lỗi khi kiểm tra lúc gửi mail.',
@@ -1641,9 +1636,7 @@
 								hideLoading();
 								if(res) {
 									if(res.errorCode == 0) {
-										hideLoading();
-										_gridMain.data("kendoGrid").dataSource.read();		
-										timeoutID = setTimeout(createTDSendTax, 1000);							
+										createTDSendTax();							
 									}else{
 										alertDLSuccess(createObjectError(res).html(), function(){});
 									}
@@ -1661,29 +1654,29 @@
 						
 					function createTDSendTax(){	
 							$.ajax({
-											type: "POST",
-											datatype: "json",
-											url: ROOT_PATH + '/main/einvoice_mtt/createTDSendTax',
-											data: objDataSend,
-											beforeSend: function(req) {
-												initAjaxJsonRequest(req);
-									        	showLoading();
-											},
-											success:function(res) {
-												hideLoading();																		
-													if(res.errorCode == 0) {
-													_gridMain.data("kendoGrid").dataSource.read();	
-													timeoutID = setTimeout(callSignHD, 1000);															
-												}else{
-													alertDLSuccess('unknown error!!!', function(){});
-													hideLoading();
-												}
-											},
-											error:function (xhr, ajaxOptions, thrownError){
-												alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-									            hideLoading();
-									        }
-										});		
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/einvoice_mtt/createTDSendTax',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();																		
+										if(res.errorCode == 0) {
+										callSignHD();															
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										_gridMain.data("kendoGrid").dataSource.read();	
+										hideLoading();
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});		
 					}	
 						
 					function callSignHD(){																		
@@ -1783,10 +1776,8 @@
 																									if(res){
 																										if(res.errorCode == 0) { 
 																											hideLoading();
-																										     _gridMain.data("kendoGrid").dataSource.read();
-																												timeoutID = setTimeout(callsend_cqt, 1000);
-															 													timeoutID2 = setTimeout(callsend_mail, 3000);
-																										}else{
+																											callsend_cqt();	
+																											}else{
 																											alertDLSuccess(
 																													'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																													function myFunction() {
@@ -1795,9 +1786,9 @@
 																												
 																													);
 																					            			hideLoading();
-																					            			$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
-																					            		}
+																					            			_gridMain.data("kendoGrid").dataSource.read();																					            		}
 																									}else{
+																									     _gridMain.data("kendoGrid").dataSource.read();
 																										alertDLSuccess(
 																												'<span class="text-error">Lỗi khi thực hiện ký hóa đơn.<span>',
 																												function myFunction() {
@@ -1806,8 +1797,7 @@
 																											
 																												);
 																										hideLoading();
-																										 
-																					            	}
+																										_gridMain.data("kendoGrid").dataSource.read();																					            	}
 																								}
 																							}
 																							xhrSign.onerror = function() {
@@ -1827,6 +1817,7 @@
 																						
 																							xhrSign.send(formData);
 																	    				}else{
+																						     _gridMain.data("kendoGrid").dataSource.read();
 																							hideLoading();
 																							alertDLSuccess(
 																									'<span class="text-danger">Lỗi trong quá trình ký tập tin.</span>',
@@ -1839,7 +1830,7 @@
 																				xhrSign.responseType = 'blob';	//or arraybuffer
 																				xhrSign.send(postEnc);
 																	    	}else{
-																	    		
+																			     _gridMain.data("kendoGrid").dataSource.read();
 																	    		hideLoading();
 																	    		alertDLSuccess(
 																						'Lỗi: Không ký được dữ liệu hóa đơn.',
@@ -1965,13 +1956,11 @@
 						                                success:function(res) {
 						                                  hideLoading();
 						                                  if(res) {
-						                                    if(res.errorCode == 0) {
-						                                     _gridMain.data("kendoGrid").dataSource.read();
-																										 	
-														 timeoutID2 = setTimeout(callrefesh_cqt, 2000);
-															
+						                                    if(res.errorCode == 0) {																										 	
+																 timeoutID2 = setTimeout(callrefesh_cqt, 1000);
 						                                    }else{
 						                                      alertDLSuccess(createObjectError(res).html(), function(){});
+							                                     _gridMain.data("kendoGrid").dataSource.read();
 						                                    }
 						                                  }else{
 						                                	  alertDLSuccess(
@@ -1982,6 +1971,7 @@
 																	
 																		);
 						                                    hideLoading();
+						                                     _gridMain.data("kendoGrid").dataSource.read();
 						                                  }
 						                                },
 						                                error:function (xhr, ajaxOptions, thrownError){
@@ -2011,7 +2001,7 @@
 						                  });		
 										}
 										
-											function callsend_mail(){
+										function callsend_mail(){
 										var objURL1 = {};
 														objURL1['check'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send';
 														objURL1['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail';
@@ -2061,15 +2051,12 @@
 																			            hideLoading();
 																			        }
 																				});
-																		
-																			
-																	
 																	}else{
 																		alertDLSuccess(createObjectError(res).html(), function(){});
 																	}
 																}else{
 																	alertDLSuccess('unknown error!!!', function(){});
-																	hideLoading();
+																	hideLoading();	
 																}
 															},
 															error:function (xhr, ajaxOptions, thrownError){
@@ -2080,7 +2067,6 @@
 									}
 									
 										function callrefesh_cqt() {
-									
 										$.ajax({
 											type: "POST",
 											datatype: "json",
@@ -2091,74 +2077,11 @@
 									        	showLoading();
 											},
 											success:function(res) {
-												hideLoading();						
+												hideLoading();			
+												_gridMain.data("kendoGrid").dataSource.read();
 												if(res) {
 													if(res.errorCode == 0) {
-														var objURL1 = {};
-														objURL1['check'] = ROOT_PATH + '/main/einvoice-send-emailauto/check-data-send';
-														objURL1['exec'] = ROOT_PATH + '/main/einvoice-send-emailauto/send-mail';
-													
-														$.ajax({
-															type: "POST",
-															datatype: "json",
-															url: objURL1['check'],
-															data: objDataSend,
-															beforeSend: function(req) {
-																initAjaxJsonRequest(req);
-													        	showLoading();
-															},
-															success:function(res) {
-																hideLoading();
-																if(res) {
-																	if(res.errorCode == 0) {
-																		var responseData = res.responseData;
-																		tokenTransaction = responseData['TOKEN'];
-																		
-																		objDataSend['tokenTransaction'] = tokenTransaction;
-
-																				$.ajax({
-																					type: "POST",
-																					datatype: "json",
-																					url: objURL1['exec'],
-																					data: objDataSend,
-																					beforeSend: function(req) {
-																						initAjaxJsonRequest(req);
-																			        	showLoading();
-																					},
-																					success:function(res) {
-																						hideLoading();
-																						if(res) {
-																							if(res.errorCode == 0) {
-																								_gridMain.data("kendoGrid").dataSource.read();
-																							}else{
-																								alertDLSuccess(createObjectError(res).html(), function(){});
-																							}
-																						}else{
-																							alertDLSuccess('unknown error!!!', function(){});
-																							hideLoading();
-																						}
-																					},
-																					error:function (xhr, ajaxOptions, thrownError){
-																						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-																			            hideLoading();
-																			        }
-																				});
-																		
-																			
-																	
-																	}else{
-																		alertDLSuccess(createObjectError(res).html(), function(){});
-																	}
-																}else{
-																	alertDLSuccess('unknown error!!!', function(){});
-																	hideLoading();
-																}
-															},
-															error:function (xhr, ajaxOptions, thrownError){
-																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-													            hideLoading();
-													        }
-														});
+// 	 													callsend_mail();
 													}else{
 														alertDLSuccess(createObjectError(res).html(), function(){});
 													}
@@ -2173,8 +2096,6 @@
 									        }
 										});		
 										}	
-									
-						
 							break;
 						case 'einvoice_mtt-edit':
 						case 'einvoice_mtt-copy':
