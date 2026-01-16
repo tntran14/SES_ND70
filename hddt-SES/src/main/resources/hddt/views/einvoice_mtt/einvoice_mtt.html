@@ -378,13 +378,13 @@
 													class="d-none d-md-inline">Ký hóa đơn</span>
 											</button>
 
-<!-- 											<button type="button" title="Ký hàng loạt" -->
-<!-- 												data-action="einvoice_mtt-signAll" -->
-<!-- 												class="btns ky_hd hover-up__ses" -->
-<!-- 												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-signAll|')}"> -->
-<!-- 												<i class="mdi mdi-account-check-outline"> </i><span -->
-<!-- 													class="d-none d-md-inline">Ký hàng loạt</span> -->
-<!-- 											</button> -->
+											<button type="button" title="Ký hàng loạt"
+												data-action="einvoice_mtt-signAll"
+												class="btns ky_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-signAll|')}">
+												<i class="mdi mdi-account-check-outline"> </i><span
+													class="d-none d-md-inline">Ký hàng loạt</span>
+											</button>
 
 										</div>
 									</div>
@@ -1207,7 +1207,7 @@
 																		}
 																	}
 																}
-																xhrSignMulti.open('POST', urlPluginSign + signMultiXML, true);
+																xhrSignMulti.open('POST', urlPluginSign + signMultiXMLMTT, true);
 																xhrSignMulti.timeout = 5 * 60 * 1000;
 																xhrSignMulti.responseType = 'blob'; //or arraybuffer
 																xhrSignMulti.send(postEnc);
