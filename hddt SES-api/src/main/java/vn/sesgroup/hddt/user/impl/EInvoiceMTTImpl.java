@@ -73,6 +73,7 @@ import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -1998,28 +1999,6 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
-            
-//            docTTHDLQuan = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan"),
-//                    Document.class);
-//            if (docTTHDLQuan != null && docTTHDLQuan.get("_id") != null) {
-//                options = new FindOneAndUpdateOptions();
-//                options.upsert(false);
-//                options.maxTime(5000, TimeUnit.MILLISECONDS);
-//                options.returnDocument(ReturnDocument.AFTER);
-//                ObjectId objectIdTTHDLQuan = new ObjectId(docTTHDLQuan.getString("_id"));
-//                Document find = new Document("IssuerId", header.getIssuerId()).append("IsDelete", false)
-//                        .append("_id", objectIdTTHDLQuan).append("EInvoiceStatus", new Document("$in",
-//                                Arrays.asList(Constants.INVOICE_STATUS.ADJUSTED, Constants.INVOICE_STATUS.REPLACED)));
-//
-//                mongoClient = cfg.mongoClient();
-//                collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
-//
-//                collection.findOneAndUpdate(find,
-//                        new Document("$set", new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE)),
-//                        options);
-//
-//                mongoClient.close();
-//            }
 			
 			String MSKH = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "");
 
@@ -2070,41 +2049,54 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					rsp.setResponseStatus(responseStatus);
 					return rsp;
 				}
+				
 				int SHDHT = docTmp1.getInteger("SHDHT");
 				int SHDCL = docTmp1.getInteger("ConLai");
 				if (SHD == SHDHT) {
-					// CAP NHAT HOA DON DA XOA TRONG EINVOICE
+					String mccqt = docTmp.get("MCCQT", ""); //XX-XX-XXXXX-00000000266
+					String[] parts = mccqt.split("-");
 
+					String macqt = parts[2];
+					String seq = parts[3];
+					
 					int SHDHT_ = SHDHT - 1;
 					int SHDCL_ = SHDCL + 1;
 					options = new FindOneAndUpdateOptions();
 					options.upsert(false);
 					options.maxTime(5000, TimeUnit.MILLISECONDS);
 					options.returnDocument(ReturnDocument.AFTER);
-					// CAP NHAT EINVOICE
-
-					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceMTT");
-					collection.findOneAndUpdate(docFind, new Document("$set", new Document("IsDelete", true).append(
-							"InfoDeleted",
-							new Document("DeletedDate", LocalDateTime.now()).append("DeletedUserID", header.getUserId())
-									.append("DeletedUserName", header.getUserName())
-									.append("DeletedUserFullName", header.getUserFullName()))),
-							options);
-					mongoClient.close();
-					// CAP NHAT MAU SO KY HIEU TRA VE SO HOA DON
-
-					mongoClient = cfg.mongoClient();
-					collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMMauSoKyHieu");
-					collection.findOneAndUpdate(docFind1,
-							new Document("$set", new Document("ConLai", SHDCL_).append("SHDHT", SHDHT_)), options);
-					mongoClient.close();
-
-					name_company = removeAccent(header.getUserFullName());
-					format_time = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-					time_dem = LocalDateTime.now();
-					time = time_dem.format(format_time);
-					System.out.println(time + name_company + " Vua tao hoa don tu may tinh tien.");
+					
+					try (MongoClient mgClient = cfg.mongoClient()) {
+						MongoDatabase mongoDB = mgClient.getDatabase(cfg.dbName);
+						// update invoice
+						collection = mongoDB.getCollection("EInvoiceMTT");
+						collection.findOneAndUpdate(
+								docFind, 
+								new Document("$set",
+										new Document("IsDelete", true)
+										.append("InfoDeleted", new Document("DeletedDate", LocalDateTime.now())
+												.append("DeletedUserID", header.getUserId())
+												.append("DeletedUserName", header.getUserName())
+												.append("DeletedUserFullName", header.getUserFullName()))),
+								options);
+						
+						// update mskh
+						collection = mongoDB.getCollection("DMMauSoKyHieu");
+						collection.findOneAndUpdate(docFind1,
+								new Document("$set", new Document("ConLai", SHDCL_).append("SHDHT", SHDHT_)), options);
+						
+						// update LogNextSequence
+						Document docFind2 = new Document("IssuerId", header.getIssuerId())
+								.append("MaCQT", macqt)
+								.append("seq", Integer.valueOf(seq));
+						
+						collection = mongoDB.getCollection("LogNextSequence");
+						collection.findOneAndUpdate(
+								docFind2,
+								new Document("$set", new Document("seq", Integer.valueOf(seq)-1)), 
+								options);
+					}
+					
 					responseStatus = new MspResponseStatus(0, "SUCCESS");
 					rsp.setResponseStatus(responseStatus);
 					return rsp;
@@ -2115,19 +2107,6 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					return rsp;
 				}
 			}
-
-			// TRONG EINVOICE LẤY ĐƯỢC SỐ HÓA ĐƠN HIỆN TẠI ĐỂ CHECK TRONG BẢNG MẪU SỐ KÍ
-			// HIỆU
-
-			// DỰA VÀO HÓA ĐƠN LẤY RA ĐƯỢC MẪU SỐ KÍ HIỆU VÀ CHECK TRONG BẢNG MẪU SỐ KÍ HIỆU
-			// LẤY RA SHDHT
-
-			// SO SÁNH 2 SỐ HÓA ĐƠN NẾU BẰNG NHAU THÌ CÓ THỂ XÓA. NGƯỢC LẠI THÌ KHÔNG THỂ
-			// XÓA
-
-			// NẾU XÓA SỐ HÓA ĐƠN THÌ CẬP NHẬT LẠI MẪU SỐ KÍ HIỆU SỐ LƯỢNG CÒN LẠI VÀ TỔNG
-			// SỐ LƯỢNG ĐÃ SỬ DỤNG
-
 		case Constants.MSG_ACTION_CODE.SEND_CQT:
 			objectId = null;
 			try {
