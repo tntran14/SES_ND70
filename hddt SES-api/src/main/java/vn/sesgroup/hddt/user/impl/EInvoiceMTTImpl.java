@@ -3155,7 +3155,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			collection.findOneAndUpdate(docFind,
 					new Document("$set",
 							new Document("EInvoiceStatus", Constants.INVOICE_STATUS.ERROR_CQT)
-									.append("CQT_Date", LocalDate.now())
+									.append("CQT_Date", LocalDateTime.now())
 									.append("LDo", new Document("MLoi", MLoi).append("MTLoi", MTLoi))),
 					options);
 			mongoClient.close();
@@ -3202,7 +3202,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			collection.findOneAndUpdate(docFind,
 					new Document("$set",
 							new Document("EInvoiceStatus", Constants.INVOICE_STATUS.ERROR_CQT)
-									.append("CQT_Date", LocalDate.now())
+									.append("CQT_Date", LocalDateTime.now())
 									.append("LDo", new Document("MLoi", MLoi).append("MTLoi", MTLoi))),
 					options);
 			mongoClient1.close();
@@ -3242,7 +3242,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		collection.findOneAndUpdate(docFind,
 				new Document("$set",
 						new Document("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE).append("MTDTChieu", MTDTChieu)
-								.append("CQT_Date", LocalDate.now())
+								.append("CQT_Date", LocalDateTime.now())
 								.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 				options);
 		mongoClient1.close();
@@ -3415,7 +3415,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa", nodeTDiep, XPathConstants.NODE));
 				hItem = new HashMap<String, Object>();
 				hItem.put("STT", stt);
-				hItem.put("Date", LocalDate.now().toString());
+				hItem.put("Date", LocalDateTime.now().toString());
 				hItem.put("MLoi", loi);
 				hItem.put("MTLoi", MTLoi);
 				rowsReturn.add(hItem);
