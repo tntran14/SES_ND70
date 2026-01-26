@@ -3034,6 +3034,9 @@ else {
 		reportParams.put("NMuaCCCDan", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("CCCDan", nodeNMua, XPathConstants.NODE))
 			);
+		reportParams.put("NMuaMDVQHNSach", 
+				commons.getTextFromNodeXML((Element) xPath.evaluate("MDVQHNSach", nodeNMua, XPathConstants.NODE))
+			);
 		reportParams.put("NMuaSHChieu", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("SHChieu", nodeNMua, XPathConstants.NODE))
 			);
@@ -5089,7 +5092,8 @@ else {
 				reportParams.put("IsDeleted", isDeleted);
 				reportParams.put("UrlImageInvThayThe", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_INV_THAYTHE).toString());
 				reportParams.put("IsThayThe", isThayThe);
-				
+				reportParams.put("IsError", einvoiceStatus.equals("ERROR_CQT"));
+				reportParams.put("UrlImageInvError", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_INV_ERROR).toString());
 				
 				
 				if(!einvoiceStatus.equals("ERROR_CQT") && signStatusCode.equals("SIGNED")) {
@@ -5098,7 +5102,6 @@ else {
 
 				}
 				else {
-					
 					reportParams.put("IsSignedMTT", false);
 					reportParams.put("UrlImageMTTVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
 
