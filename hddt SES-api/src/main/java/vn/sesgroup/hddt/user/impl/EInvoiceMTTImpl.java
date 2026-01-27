@@ -399,8 +399,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			if ("true".equals(checkDiscount) && !"".equals(thueSuat) && "2".equals(loaiHoaDon)) {
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			}
 			elementSubContent.appendChild(elementTmp);
 
 			if (docEInvoiceTTDC != null) {
@@ -986,8 +988,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 			elementTmp
 					.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			if ("true".equals(checkDiscount) && !"".equals(thueSuat) && "2".equals(loaiHoaDon)) {
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			}
 			elementSubContent.appendChild(elementTmp);
 
 			if (docTTHDLQuan != null) {
@@ -1576,8 +1580,10 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 			elementTmp
 					.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
-			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			if ("true".equals(checkDiscount) && !"".equals(thueSuat) && "2".equals(loaiHoaDon)) {
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+				elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
+			}
 			elementSubContent.appendChild(elementTmp);
 
 			if (docTTHDLQuan != null) {
