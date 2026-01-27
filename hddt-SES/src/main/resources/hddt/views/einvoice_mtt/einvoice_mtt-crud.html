@@ -358,7 +358,40 @@
 							<div id="grid"></div>
 						</div>
 
-						<div class="col-md-6"></div>
+						<div class="col-md-6">
+							<div id="discount-div">
+								<div class="row m-b-16">
+									<div class="col-12">
+										<input type="checkbox" id="check-discount"
+											name="check-discount" th:checked="${CheckDiscount}">
+										<label for="check-discount">Giảm trừ thuế</label>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="c-f__wrapper">
+										<input class="form-control form-control-sm c-f__textbox"
+											th:value="${ThueSuat != '' ? ThueSuat + '%' : ''}"
+											type="text" autocomplete="off" th:if="${!_isedit_}"
+											th:readonly="true" /> <select id="thue-suat"
+											name="thue-suat"
+											class="form-control form-control-sm c-f__textbox"
+											th:if="${_isedit_}">
+											<option value=""></option>
+											<th:block th:if="${map_DMPTax != null}">
+												<option th:each="entry : ${map_DMPTax.entrySet()}"
+													th:value="${entry.key}" th:utext="${entry.value}"
+													th:selected="${ThueSuat == entry.key}"></option>
+											</th:block>
+										</select>
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend">
+												<label>Thuế suất</label>
+											</legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="col-md-6">
 							<div class="row m-b-16">
 								<div class="col-12">
@@ -471,31 +504,21 @@
 		var strJson = '[[${DSHHDVu}]]';
 		rowsTMP = [];
 		try{
-// 			var parser = new DOMParser;
-// 			var dom = parser.parseFromString('<!doctype html><body>' + strJson, 'text/html');
-// 			var decodedString = dom.body.textContent;
-			
-// 			rowsTMP = JSON.parse(decodedString);
 			rowsTMP = decodeBase64UTF8ToObj(strJson);
 		}catch(err){}
 		</script>
-	<!-- 	 <script th:src="@{/static/function/einvoice/einvoice-crud.js(v=1.37) }"></script>  -->
-	<script type="text/javascript">
-	/* for(var i=1; i<=lt; i++){
-	$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(i))
-	console.log(dblVATAmount);
-} */
-	</script>
-	
 		<script type="text/javascript" th:if="${null != userconfig_usd}">
 		var usd_ = '[[${userconfig_usd}]]';
 		
-	</script>
+		</script>
 		<script type="text/javascript" th:if="${null != userconfig_vnd}">
 		var vnd_ = '[[${userconfig_vnd}]]';
-	</script> 
+		</script> 
 	
 	<script type="text/javascript">
+	var addedRecordUID = null;
+	var sumAmount = 0;
+	var showDiscountDiv = '[[${ShowDiscountDiv}]]';
 	$(function(){
 		if(vIsEdit){
 			initInputNumber('#f-einvoice_mtt-crud .text-number');
@@ -591,6 +614,7 @@
 				if(check == "2"){
 				  	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(8);
 					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(9);
+					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(10);
 				}
 				initInputNumber('#f-einvoice_mtt-crud #grid .input-grid-number');	
 				autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('input[name="ProductName"]'), function(e){
@@ -682,6 +706,66 @@
 			}
 	        
 		});
+		
+		if (showDiscountDiv == 'true') {
+		    document.getElementById("discount-div").style.display = "block";
+		} else {
+		    document.getElementById("discount-div").style.display = "none";
+		}
+		
+		$('#check-discount').on('change', function () {
+	        checkDiscountAndAddRecord();
+	    });
+		
+		$('#thue-suat').on('change', function () {
+		    checkDiscountAndAddRecord();
+		});
+
+		function checkDiscountAndAddRecord() {
+		    var isChecked = $('#check-discount').is(':checked');
+		    var selectedThueSuat = $('#thue-suat').val();
+	    	removeRecordFromGrid();
+	        calcTotalAmount();
+		    if (isChecked && selectedThueSuat) {
+		       var tongtien = sumAmount.toFixed(4);
+	           var thueSuat = $('#f-einvoice_mtt-crud').find('#thue-suat').val();
+	           var soTienGiam = tongtien.replace(/,/g, '') * 20/100 * thueSuat/100;
+	           var loai_tien_tt = $('#f-einvoice_mtt-crud').find('#loai-tien-tt').val();
+	           if(loai_tien_tt == 'VND'){
+	        	  	soTienGiam = Math.abs(Math.round(soTienGiam));
+	           } else{
+	          		soTienGiam = Math.abs(soTienGiam);        	   
+	           }
+
+	           var don_vi_tien = getCurrencyCodeDes(loai_tien_tt)[0];
+	           var productName = "Đã giảm " + soTienGiam.toLocaleString() +" "+ don_vi_tien +" tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết 204/2025/QH15";
+	           var feature = "4";
+		       var grid = $("#grid").data("kendoGrid");
+		       var newRecord = grid.dataSource.add({
+		           ProductName: productName,
+		           Feature: feature
+		       });
+		        
+		        addedRecordUID = newRecord.uid;
+		    }
+		}
+		
+		function removeRecordFromGrid() {
+		    var grid = $("#grid").data("kendoGrid");
+		    var dataSource = grid.dataSource;
+
+		    // Find the record using the tracked UID and remove it
+		    var recordToRemove = dataSource.getByUid(addedRecordUID);
+		    if (recordToRemove) {
+		        dataSource.remove(recordToRemove);
+
+		        addedRecordUID = null;
+
+		        setSTTinGrid();
+		        calcTotalAmount();
+		    }
+		}
+		
 		
 		setReadonlyTGia();
 		$('#f-einvoice_mtt-crud').find('#loai-tien-tt').change(function(e){
@@ -1261,9 +1345,9 @@
 	function calcTotalAmount(){
 		var loai_tien_tt = $('#f-einvoice_mtt-crud').find('#loai-tien-tt').val();
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
-		
+		var loai_hoa_don = $('#f-einvoice_mtt-crud').find('#loai-hd').val();	
 		/*TINH TIEN TRUOC THUE - TIEN THUE - TONG TIEN SAU THUE*/
-		var sumAmount = 0;
+		sumAmount = 0;
 		var sumAmountVAT = 0;
 		var sumAmountAfterTax = 0;
 		var tmp = '';
@@ -1309,43 +1393,58 @@
 			}
 		});
 		
+		let checkDiscount = document.getElementById('check-discount');
+        let checkThueSuat = document.getElementById('thue-suat');
+        if (checkDiscount.checked && checkThueSuat.value !== '' && loai_hoa_don == '2') {
+        	$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+        	var tongtien = $('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val();
+
+        	var thueSuat = $('#f-einvoice_mtt-crud').find('#thue-suat').val();
+            soTienGiam = tongtien.replace(/,/g, '') * 20/100 * thueSuat/100;
+            if(loai_tien_tt == 'VND'){
+        	  	soTienGiam = Math.abs(Math.round(soTienGiam));
+           	} else{
+          		soTienGiam = Math.abs(soTienGiam);        	   
+           	}
+
+
+            $('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(tongtien.replace(/,/g, '') - soTienGiam);
+            FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+
+            $('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+            
+            sumAmountAfterTax = sumAmountAfterTax - soTienGiam;
+            $('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+           
+    		$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+        } else {
+        	$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
+
+    		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
+    		
+    		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
+    		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
+    		
+            $('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+        }
+        
 		
-		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
-		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-		
-		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
-		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-			
-		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
-		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
-			
-		$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
-		calcTienQuyDoi();
-		
-		
-// 		if(loai_tien_tt=="VND"){			
-// 		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
 // 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
 		
-// 		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
 // 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-			
-// 		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+			 
+// 		$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(loai_tien_tt=="VND" ? 4 : USD_))
 // 		FormatCurrency($('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
 			
 // 		$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
-			
-// 			calcTienQuyDoi();
-// 		}
-// 		if(loai_tien_tt=="USD"){
-	
-// 			$('#f-einvoice_mtt-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(USD_))
-// 			$('#f-einvoice_mtt-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(USD_))
-// 			$('#f-einvoice_mtt-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(USD_))
-// 			$('#f-einvoice_mtt-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
-			
-// 			calcTienQuyDoi();
-// 		}	
+		calcTienQuyDoi();
 	}
 	
 	$('#f-einvoice_mtt-crud #loai-hd').change(function (event) {
@@ -1357,13 +1456,13 @@
 		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(8);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(9);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(10);
-
+			    document.getElementById("discount-div").style.display = "none";
 		      break;
 		    case "2":  
 		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(8);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(9);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(10);
-				
+			    document.getElementById("discount-div").style.display = "block";
 		      break;
 		    default:
 		      // xử lý khi _val khác 1 và khác 2
@@ -1394,6 +1493,7 @@
 			error:function (xhr, ajaxOptions, thrownError){
 	        }
 		});
+		calcTotalAmount();
 	});
 	
 	function getDataToSave(){
@@ -1435,7 +1535,10 @@
 		dataPost['tong-tien-quy-doi'] = $('#f-einvoice_mtt-crud').find('#tong-tien-quy-doi').val();
 		
 		dataPost['tien-bang-chu'] = $('#f-einvoice_mtt-crud').find('#tien-bang-chu').val();
-
+		if ($('#f-einvoice_mtt-crud').find('#loai-hd').val() == '2') {
+			dataPost['check-discount'] = $('#check-discount').is(':checked');
+		    dataPost['thue-suat'] = $('#thue-suat').val();
+		}
 		var arrRows = [];
 		var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 		jQuery.each(objDataJson, function(index, item) {

@@ -5094,18 +5094,17 @@ else {
 				reportParams.put("IsThayThe", isThayThe);
 				reportParams.put("IsError", einvoiceStatus.equals("ERROR_CQT"));
 				reportParams.put("UrlImageInvError", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_INV_ERROR).toString());
-				
-				
-				if(!einvoiceStatus.equals("ERROR_CQT") && signStatusCode.equals("SIGNED")) {
-					reportParams.put("IsSignedMTT", true);
-					reportParams.put("UrlImageMTTVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
 
-				}
-				else {
-					reportParams.put("IsSignedMTT", false);
-					reportParams.put("UrlImageMTTVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
-
-				}
+//				if(!einvoiceStatus.equals("ERROR_CQT") && signStatusCode.equals("SIGNED")) {
+//					reportParams.put("IsSignedMTT", true);
+//					reportParams.put("UrlImageMTTVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
+//
+//				}
+//				else {
+//					reportParams.put("IsSignedMTT", false);
+//					reportParams.put("UrlImageMTTVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+//
+//				}
 				List<HashMap<String, Object>> arrayData = new ArrayList<>();
 				HashMap<String, Object> hItem = null;
 				

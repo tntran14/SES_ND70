@@ -130,6 +130,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 	private String _token;
 	private String checkProductExtension;
 	private String checkProductExtension1;
+	private String checkDiscount;
+	private String thueSuat;
 	private List<String> ids = null;
 	private String loaihd;
 	
@@ -137,82 +139,91 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		try {
 			BaseDTO baseDTO = new BaseDTO(req);
 			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
-			
-			/*DANH SACH THAM SO*/
+
+			/* DANH SACH THAM SO */
 			HashMap<String, String> hashConds = null;
 			ArrayList<HashMap<String, String>> conds = null;
 			MsgParam msgParam = null;
 			MsgParams msgParams = new MsgParams();
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param01");
 			msgParam.setParam("DMLoaiHD");
 			msgParams.getParams().add(msgParam);
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param02");
 			msgParam.setParam("DMMauSoKyHieuForCreate");
 			msgParams.getParams().add(msgParam);
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param03");
 			msgParam.setParam("DMCurrencies");
 			msgParams.getParams().add(msgParam);
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param04");
 			msgParam.setParam("UserConFig");
 			msgParams.getParams().add(msgParam);
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param05");
 			msgParam.setParam("DMPaymentType");
 			msgParams.getParams().add(msgParam);
-			
+
 			msgParam = new MsgParam();
 			msgParam.setId("param06");
 			msgParam.setParam("TaxInvoice");
 			msgParams.getParams().add(msgParam);
-			/*END: DANH SACH THAM SO*/
+
+			msgParam = new MsgParam();
+			msgParam.setId("param07");
+			msgParam.setParam("DMTaxRate");
+			msgParams.getParams().add(msgParam);
+			/* END: DANH SACH THAM SO */
 			msg.setObjData(msgParams);
-			
+
 			JSONRoot root = new JSONRoot(msg);
-			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+			MsgRsp rsp = restAPI.callAPINormal("/commons/get-full-params", cup.getLoginRes().getToken(),
+					HttpMethod.POST, root);
 			MspResponseStatus rspStatus = rsp.getResponseStatus();
 			String KHHDon = "";
-			if(rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
+			if (rspStatus.getErrorCode() == 0 && rsp.getObjData() != null) {
 				LinkedHashMap<String, String> hItem = null;
-				
+
 				JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
-				if(null != jsonData.at("/param05") && jsonData.at("/param05") instanceof ArrayNode) {
+				if (null != jsonData.at("/param05") && jsonData.at("/param05") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param05")) {
+					for (JsonNode o : jsonData.at("/param05")) {
 						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
 					}
-					req.setAttribute("HTTToanCode", commons.getTextJsonNode(jsonData.at("/param05").get(0).get("code")));
+					req.setAttribute("HTTToanCode",
+							commons.getTextJsonNode(jsonData.at("/param05").get(0).get("code")));
 					req.setAttribute("map_paymenttype", hItem);
 				}
-				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
+				if (null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param02")) {													
-						KHHDon = commons.getTextJsonNode(o.get("KHHDon"));	
-						char words=KHHDon.charAt(KHHDon.length() - 3);
-						String s=String.valueOf(words);  
-						if("M".equals(s)) {
-							hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));	
-						}	
-					
-				}
+					for (JsonNode o : jsonData.at("/param02")) {
+						KHHDon = commons.getTextJsonNode(o.get("KHHDon"));
+						char words = KHHDon.charAt(KHHDon.length() - 3);
+						String s = String.valueOf(words);
+						if ("M".equals(s)) {
+							hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon"))
+									+ commons.getTextJsonNode(o.get("KHHDon")));
+						}
+
+					}
 //					req.setAttribute("MauSoHD", commons.getTextJsonNode(jsonData.at("/param02").get(0).get("_id")));
 					req.setAttribute("map_mausokyhieu", hItem);
-					
+
 //					req.setAttribute("MauSoHD", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/MauSoHD")));
 				}
-				if(null != jsonData.at("/param03") && jsonData.at("/param03") instanceof ArrayNode) {
+				if (null != jsonData.at("/param03") && jsonData.at("/param03") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param03")) {
+					for (JsonNode o : jsonData.at("/param03")) {
 						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("code")));
-						if(action.equals("CREATE") && null != o.get("IsDefault") && o.get("IsDefault").asBoolean(false)) {
+						if (action.equals("CREATE") && null != o.get("IsDefault")
+								&& o.get("IsDefault").asBoolean(false)) {
 							loaiTienTt = commons.getTextJsonNode(o.get("code"));
 							req.setAttribute("DVTTe", loaiTienTt);
 						}
@@ -222,73 +233,81 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 				String TaxInvoice = "";
 				String defaultTaxAdmin = "";
 				String _taxInvoice = "";
-				
-				if(null != jsonData.at("/param04") && jsonData.at("/param04") instanceof ArrayNode) {
+
+				if (null != jsonData.at("/param04") && jsonData.at("/param04") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param04")) {
+					for (JsonNode o : jsonData.at("/param04")) {
 //					hItem.put(commons.getTextJsonNode(o.get("VND")), commons.getTextJsonNode(o.get("USD")));	
 						req.setAttribute("userconfig_vnd", commons.getTextJsonNode(o.get("VND")));
 						req.setAttribute("userconfig_usd", commons.getTextJsonNode(o.get("USD")));
 						req.setAttribute("HTTToanCode", commons.getTextJsonNode(o.get("PaymentInvoice")));
 						String check_Tax = commons.getTextJsonNode(o.get("TaxInvoice"));
-						if(check_Tax.equals("")) {
+						if (check_Tax.equals("")) {
 							req.setAttribute("DefaultTaxAdmin", _taxInvoice);
-						}else {
+						} else {
 							req.setAttribute("DefaultTaxAdmin", check_Tax);
 						}
 					}
-				}else {
+				} else {
 					req.setAttribute("userconfig_vnd", "2");
 					req.setAttribute("userconfig_usd", "2");
 					req.setAttribute("DefaultTaxAdmin", _taxInvoice);
 					req.setAttribute("HTTToanCode", "3");
 				}
-				
-				if(null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
+
+				if (null != jsonData.at("/param01") && jsonData.at("/param01") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param01")) {
+					for (JsonNode o : jsonData.at("/param01")) {
 						hItem.put(commons.getTextJsonNode(o.get("Code")), commons.getTextJsonNode(o.get("Name")));
 					}
 					req.setAttribute("map_loai_hd", hItem);
 				}
-				
-				if(null != jsonData.at("/param06")) {
-					ArrayList<HashMap<String, String>> rows = new ArrayList<HashMap<String,String>>();
-					ArrayList<HashMap<String, String>> rows1 = new ArrayList<HashMap<String,String>>();
+
+				if (null != jsonData.at("/param06")) {
+					ArrayList<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
+					ArrayList<HashMap<String, String>> rows1 = new ArrayList<HashMap<String, String>>();
 					LinkedHashMap<String, String> hItem1 = null;
-					for(JsonNode o: jsonData.at("/param06")) {						
+					for (JsonNode o : jsonData.at("/param06")) {
 						hItem = new LinkedHashMap<String, String>();
-					//	hItem.put("_id", commons.getTextJsonNode(o.at("/_id")));
+						// hItem.put("_id", commons.getTextJsonNode(o.at("/_id")));
 						hItem.put("Name", commons.getTextJsonNode(o.at("/Name")));
 						hItem.put("Code", commons.getTextJsonNode(o.at("/Code")));
-						
-						defaultTaxAdmin =  commons.getTextJsonNode(o.at("/DefaultAdmin"));
-						if(defaultTaxAdmin.equals("true")) {
+
+						defaultTaxAdmin = commons.getTextJsonNode(o.at("/DefaultAdmin"));
+						if (defaultTaxAdmin.equals("true")) {
 							_taxInvoice = commons.getTextJsonNode(o.at("/Code"));
 						}
-						
+
 						rows.add(hItem);
-						
+
 						hItem1 = new LinkedHashMap<String, String>();
 						hItem1.put(commons.getTextJsonNode(o.at("/Code")), commons.getTextJsonNode(o.at("/Name")));
 						rows1.add(hItem1);
-						
-						if(TaxInvoice.equals("")) {
-							
-							TaxInvoice = "{" + "0" + ":" +" " + "," ;
-							TaxInvoice += commons.getTextJsonNode(o.at("/Code")) + ":" + commons.getTextJsonNode(o.at("/Name")).toString();
-						}else {
-							TaxInvoice += "," + commons.getTextJsonNode(o.at("/Code")) + ":" + commons.getTextJsonNode(o.at("/Name")).toString();
-						}						
+
+						if (TaxInvoice.equals("")) {
+
+							TaxInvoice = "{" + "0" + ":" + " " + ",";
+							TaxInvoice += commons.getTextJsonNode(o.at("/Code")) + ":"
+									+ commons.getTextJsonNode(o.at("/Name")).toString();
+						} else {
+							TaxInvoice += "," + commons.getTextJsonNode(o.at("/Code")) + ":"
+									+ commons.getTextJsonNode(o.at("/Name")).toString();
+						}
 					}
 					req.setAttribute("ParamWareHouse", rows);
 					TaxInvoice = TaxInvoice + "}";
-					req.setAttribute("ParamTaxInvoiceSelect", TaxInvoice);			
+					req.setAttribute("ParamTaxInvoiceSelect", TaxInvoice);
 				}
-				
+				if (null != jsonData.at("/param07") && jsonData.at("/param07") instanceof ArrayNode) {
+					hItem = new LinkedHashMap<String, String>();
+					for (JsonNode o : jsonData.at("/param07")) {
+						hItem.put(commons.getTextJsonNode(o.get("code")), commons.getTextJsonNode(o.get("name")));
+					}
+					req.setAttribute("map_DMPTax", hItem);
+				}
 			}
-			
-		}catch(Exception e) {}
+		} catch (Exception e) {
+		}
 	}
 	
 	@RequestMapping(value = "/reset",  method = RequestMethod.POST)
@@ -563,6 +582,9 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 			);
 			req.setAttribute("TgTTTBChu", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TToan/TgTTTBChu")));
 			req.setAttribute("checkProductExtension", commons.getTextJsonNode(jsonData.at("/checkProductExtension")));
+			req.setAttribute("CheckDiscount", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/CheckDiscount")));
+			req.setAttribute("ThueSuat", commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/ThueSuat")));
+			req.setAttribute("ShowDiscountDiv", "2".equals(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/LoaiHD"))) ? true: false);
 		}else {
 			errorDesc = rspStatus.getErrorDesc();
 		}
@@ -612,6 +634,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		dsSanPham = commons.getParameterFromRequest(req, "ds-san-pham").replaceAll("\\s", "");
 		checkProductExtension = commons.getParameterFromRequest(req, "checkProductExtension").trim().replaceAll("\\s+", " ");
 		checkProductExtension1 = "".equals(checkProductExtension)? "false": "true";
+		checkDiscount = commons.getParameterFromRequest(req, "check-discount").trim().replaceAll("\\s+", " ");
+		thueSuat = commons.getParameterFromRequest(req, "thue-suat").trim().replaceAll("\\s+", " ");
 		if("einvoice_mtt-edit".equals(transaction)) {
 			if("".equals(_id)) {
 				dto.setErrorCode(1);
@@ -907,6 +931,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		hData.put("TongTienThueGtgt", tongTienThueGtgt);
 		hData.put("TongTienDaCoThue", tongTienDaCoThue);
 		hData.put("TienBangChu", tienBangChu);
+		hData.put("CheckDiscount", checkDiscount);
+		hData.put("ThueSuat", thueSuat);
 		hData.put("DSSanPham", jsonNodeTmp);
 
 		break;

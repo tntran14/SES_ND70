@@ -181,7 +181,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				" ");
 		String tongTienQuyDoi = commons.getTextJsonNode(jsonData.at("/TongTienQuyDoi")).trim().replaceAll("\\s+", " ");
 		String tienBangChu = commons.getTextJsonNode(jsonData.at("/TienBangChu")).trim().replaceAll("\\s+", " ");
-
+		String checkDiscount = commons.getTextJsonNode(jsonData.at("/CheckDiscount")).trim().replaceAll("\\s+", " ");
+		String thueSuat = commons.getTextJsonNode(jsonData.at("/ThueSuat")).trim().replaceAll("\\s+", " ");
 		String tmp = "";
 
 		MsgRsp rsp = new MsgRsp(header);
@@ -397,8 +398,9 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "HoaDon_Loai", "string", loaiHoaDon));
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
-			elementTmp
-					.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
 			elementSubContent.appendChild(elementTmp);
 
 			if (docEInvoiceTTDC != null) {
@@ -759,6 +761,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							.append("NLap",
 									commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
 							.append("DVTTe", loaiTienTt).append("TGia", tyGia).append("HTTToanCode", hinhThucThanhToan)
+							.append("CheckDiscount", checkDiscount)
+							.append("ThueSuat", thueSuat)
 							.append("HTTToan", hinhThucThanhToanText).append("TTHDLQuan", docTTHDLQuan))
 							.append("NDHDon", new Document("NBan", new Document("Ten", docTmp.get("Name", ""))
 									.append("MST", docTmp.get("TaxCode", "")).append("DChi", docTmp.get("Address", ""))
@@ -982,6 +986,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 			elementTmp
 					.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
 			elementSubContent.appendChild(elementTmp);
 
 			if (docTTHDLQuan != null) {
@@ -1346,6 +1352,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				    .append("DVTTe", loaiTienTt)
 				    .append("TGia", tyGia)
 				    .append("HTTToanCode", hinhThucThanhToan)
+				    .append("CheckDiscount", checkDiscount)
+					.append("ThueSuat", thueSuat)
 				    .append("HTTToan", hinhThucThanhToanText)
 				    .append("TTHDLQuan", docTTHDLQuan);
 
@@ -1568,6 +1576,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 			elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 			elementTmp
 					.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "CheckDiscount", "boolean", checkDiscount));
+			elementTmp.appendChild(commons.createElementTTKhac(doc, "ThueSuat", "decimal", thueSuat));
 			elementSubContent.appendChild(elementTmp);
 
 			if (docTTHDLQuan != null) {
@@ -1921,6 +1931,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							.append("NLap",
 									commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
 							.append("DVTTe", loaiTienTt).append("TGia", tyGia).append("HTTToanCode", hinhThucThanhToan)
+							.append("CheckDiscount", checkDiscount)
+							.append("ThueSuat", thueSuat)
 							.append("HTTToan", hinhThucThanhToanText).append("TTHDLQuan", docTTHDLQuan))
 							.append("NDHDon", new Document("NBan", new Document("Ten", docTmp.get("Name", ""))
 									.append("MST", docTmp.get("TaxCode", "")).append("DChi", docTmp.get("Address", ""))
