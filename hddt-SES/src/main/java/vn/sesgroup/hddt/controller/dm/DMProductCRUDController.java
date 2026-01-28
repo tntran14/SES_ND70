@@ -295,21 +295,9 @@ public class DMProductCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập vào tên sản phẩm.");
 			}
-//			if("".equals(stock)) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Vui lòng chọn kho hàng.");
-//			}
-			if("".equals(unit)) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng nhập vào đơn vị tính.");
-			}
 			if(commons.ToNumber(price) < 0) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập đơn giá lớn hơn 0.");
-			}
-			if("".equals(vatRate) || Constants.MAP_VAT.get(vatRate) == null) {
-				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Vui lòng kiểm tra lại thuế VAT.");
 			}
 			break;
 		case "dmproduct-del":
