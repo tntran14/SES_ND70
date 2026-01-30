@@ -5839,9 +5839,9 @@ else {
 				return out;
 			}
 			
-			public ByteArrayOutputStream printbb_multi(File fileJP, Document doc, Boolean isThaythe) throws Exception {
+			public ByteArrayOutputStream printbb_multi(File fileJP, Document doc, Boolean isThaythe, List<org.bson.Document> invoicesReturn) throws Exception {
 				Map<String, Object> reportParams = new HashMap();
-				List<HashMap<String, Object>> arrayData = new ArrayList<>();
+				List<Map<String, Object>> arrayData = new ArrayList<>();
 				HashMap<String, Object> hItem = null;
 				
 				reportParams.put("IsThayThe", isThaythe);
@@ -5913,6 +5913,7 @@ else {
 				NodeList nodeHDons = (NodeList) xPath.evaluate("DSHDon/HDon", nodeDLBBDCTThe, XPathConstants.NODESET);
 				Node nodeHDSSot = null;
 				Node nodeHDDCTThe = null;
+				
 				for (int i = 0; i < nodeHDons.getLength(); i++) {
 				    Node nodeHDon = nodeHDons.item(i);
 				    hItem = new HashMap<String, Object>();
@@ -5941,6 +5942,38 @@ else {
 								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 					}
 					arrayData.add(hItem);
+				}
+				
+				if (invoicesReturn.size() > 0) {
+					arrayData.clear();
+					int stt = 1;
+					for (org.bson.Document invoice : invoicesReturn) {
+						org.bson.Document invoiceDetail = invoice.get("EInvoiceDetail", org.bson.Document.class);
+						List<org.bson.Document> items = invoiceDetail.getList("DSHHDVu", org.bson.Document.class);
+						for (org.bson.Document item : items) {
+							hItem = new HashMap<String, Object>();
+							hItem.put("stt", "" + stt++);
+							hItem.put("invoiceNo", commons.formatNumberBillInvoice(
+									String.valueOf(invoiceDetail.getEmbedded(Arrays.asList("TTChung", "SHDon"), 0))));
+							hItem.put("invoiceSymbol",
+									invoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
+											+ invoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHHDon"), ""));
+							try {
+								hItem.put("invoiceDate",
+										commons.convertLocalDateTimeToString(
+												commons.convertDateToLocalDate(invoiceDetail
+														.getEmbedded(Arrays.asList("TTChung", "NLap"), Date.class)),
+												Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+							} catch (Exception e) {
+								hItem.put("invoiceDate", "");
+							}
+							hItem.put("productName", item.get("ProductName", ""));
+							hItem.put("unit", item.get("Unit", ""));
+							hItem.put("quantity", (int) item.get("Quantity", 0.0).doubleValue());
+							hItem.put("amount", item.get("Amount", 0.0).doubleValue());
+							arrayData.add(hItem);
+						}
+					}
 				}
 
 				Node nodeDSCKS = (Node) xPath.evaluate("/BBDCTThe/DSCKS/NBan", doc, XPathConstants.NODE);
@@ -5998,6 +6031,7 @@ else {
 					jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
 					jp = JasperFillManager.fillReport(jr, reportParams, jds);
 				} catch (Exception e) {
+					System.out.println();
 				}
 				
 				Exporter exporter = new JRPdfExporter();

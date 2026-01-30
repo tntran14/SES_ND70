@@ -1,7 +1,10 @@
 package vn.sesgroup.hddt.utility;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import io.jsonwebtoken.Header;
 
@@ -210,4 +213,9 @@ public class Constants {
 		{put("2", "Mã thông điệp đã tồn tại");}
 		{put("3", "Thất bại, lỗi Exception");}
 	};
+	
+	public static final List<String> TAXCODE_USING_RETURN_REPORT = Arrays.asList(
+			"0401486901-999", 
+			"0304559632"
+			);
 }

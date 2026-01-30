@@ -5621,30 +5621,14 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 			String _id = this.commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
 			
 			ObjectId objectId = null;
-			ObjectId objectIdIssu = null;
 			try {
 				objectId = new ObjectId(_id);
-				objectIdIssu = new ObjectId(header.getIssuerId());
-			} catch (Exception var29) {
+			} catch (Exception e) {
 			}
 
-			List<Document> pipeline = new ArrayList<>();
-			pipeline.add(new Document("$match",
-					(new Document("_id", objectId)).append("IsDelete", new Document("$ne", true))));
-			pipeline.add(
-					new Document("$lookup",
-							(new Document("from", "Issuer"))
-									.append("pipeline",
-											Arrays.asList(
-													new Document("$match",
-															(new Document("_id", objectIdIssu)).append("IsDelete",
-																	new Document("$ne", true)))))
-									.append("as", "Issuer")));
-			pipeline.add(new Document("$unwind",
-					(new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
+			Document docFind =  new Document("_id", objectId).append("IsDelete", false).append("IssuerId", header.getIssuerId());
 			Document docTmp = null;
-			Iterable<Document> cursor = this.mongoTemplate.getCollection("EInvoiceBBDCTT").aggregate(pipeline)
-					.allowDiskUse(true);
+			Iterable<Document> cursor = this.mongoTemplate.getCollection("EInvoiceBBDCTT").find(docFind).allowDiskUse(true);
 			Iterator<Document> iter = cursor.iterator();
 			if (iter.hasNext()) {
 				docTmp = (Document) iter.next();
@@ -5667,14 +5651,55 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				}
 			}
 			
+			String fileNameJP = isMultiInvoice ? "BIEN-BAN-DIEU-CHINH-THAY-THE-MULTI.jrxml" : "BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml";
+			List<Document> invoicesReturn = new ArrayList<Document>();
+			if (isMultiInvoice && 
+					Constants.TAXCODE_USING_RETURN_REPORT.contains(docTmp.getEmbedded(Arrays.asList("TTNBan", "MSThue"), ""))) {
+				fileNameJP ="BIEN-BAN-DIEU-CHINH-THAY-THE-MULTI-101.jrxml";
+
+				List<ObjectId> ids = new ArrayList<ObjectId>();
+				List<Document> dshDon = docTmp.getList("DSHDon", Document.class);
+				for (Document hdPair: dshDon) {
+						String id = hdPair.getEmbedded(Arrays.asList("HDDCTThe","_id"),"");
+						ids.add(new ObjectId(id));		
+				}
+				
+				docFind = new Document("_id", new Document("$in", ids)).append("IsDelete", false).append("IssuerId", header.getIssuerId());
+				Document projection = new Document("EInvoiceDetail.DSHHDVu", 1).append("EInvoiceDetail.TTChung", 1);
+				docTmp = null;
+				cursor = this.mongoTemplate.getCollection("EInvoice").find(docFind).projection(projection).allowDiskUse(true);
+				iter = cursor.iterator();
+				while (iter.hasNext()) {
+					invoicesReturn.add(iter.next());
+				}
+				if (invoicesReturn.size() == 0) {
+					cursor = this.mongoTemplate.getCollection("EInvoice").find(docFind).allowDiskUse(true);
+					iter = cursor.iterator();
+					while (iter.hasNext()) {
+						invoicesReturn.add(iter.next());
+					}
+				}
+				if (invoicesReturn.size() == 0) {
+					cursor = this.mongoTemplate.getCollection("EInvoiceBH").find(docFind).allowDiskUse(true);
+					iter = cursor.iterator();
+					while (iter.hasNext()) {
+						invoicesReturn.add(iter.next());
+					}
+				}
+				if (invoicesReturn.size() == 0) {
+					cursor = this.mongoTemplate.getCollection("EInvoiceMTT").find(docFind).allowDiskUse(true);
+					iter = cursor.iterator();
+					while (iter.hasNext()) {
+						invoicesReturn.add(iter.next());
+					}
+				}
+			}
 			File file = new File(dir, fileName);
 			if (file.exists() && file.isFile()) {
 				org.w3c.dom.Document doc = this.commons.fileToDocument(file);
-				String fileNameJP = isMultiInvoice ? "BIEN-BAN-DIEU-CHINH-THAY-THE-MULTI.jrxml" : "BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml";
-				
 				File fileJP = new File(SystemParams.DIR_E_INVOICE_TEMPLATE, fileNameJP);
 				ByteArrayOutputStream baosPDF = isMultiInvoice
-						? this.jpUtils.printbb_multi(fileJP, doc, "1".equals(loai))
+						? this.jpUtils.printbb_multi(fileJP, doc, "1".equals(loai), invoicesReturn)
 						: this.jpUtils.printbb(fileJP, doc, "1".equals(loai));
 				fileInfo.setFileName("printbb.pdf");
 				fileInfo.setContentFile(baosPDF.toByteArray());

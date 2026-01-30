@@ -315,10 +315,9 @@ public class EInvoiceCRUDController extends AbstractController{
 		if(rspStatus.getErrorCode() == 0) {		
 			mauso =  rsp.getResponseStatus().getErrorDesc();
 		}
-		
-		
+
 		if("einvoice-cre".equals(transaction) && (!"init-dc".equals(method) || !"init-tt".equals(method))) {
-			if(!mauso.equals("")) {
+			if(!"".equals(mauso) ) {
 				req.setAttribute("MauSoHD", mauso);
 			}
 		}
