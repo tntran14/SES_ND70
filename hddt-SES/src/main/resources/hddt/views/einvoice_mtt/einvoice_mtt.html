@@ -1992,72 +1992,6 @@
 						                        }
 						                  });		
 										}
-										
-										function callsend_mail(objData){
-										var objURL1 = {};
-											objURL1['check'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send';
-											objURL1['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail';
-										
-											$.ajax({
-												type: "POST",
-												datatype: "json",
-												url: objURL1['check'],
-												data: objData,
-												beforeSend: function(req) {
-													initAjaxJsonRequest(req);
-										        	showLoading();
-												},
-												success:function(res) {
-													hideLoading();
-													if(res) {
-														if(res.errorCode == 0) {
-															var responseData = res.responseData;
-															tokenTransaction = responseData['TOKEN'];
-															
-															objDataSend['tokenTransaction'] = tokenTransaction;
-
-																	$.ajax({
-																		type: "POST",
-																		datatype: "json",
-																		url: objURL1['exec'],
-																		data: objData,
-																		beforeSend: function(req) {
-																			initAjaxJsonRequest(req);
-																        	showLoading();
-																		},
-																		success:function(res) {
-																			hideLoading();
-																			if(res) {
-																				if(res.errorCode == 0) {
-// 																					_gridMain.data("kendoGrid").dataSource.read();
-																				}else{
-																					alertDLSuccess(createObjectError(res).html(), function(){});
-																				}
-																				_gridMain.data("kendoGrid").dataSource.read();
-																			}else{
-																				alertDLSuccess('unknown error!!!', function(){});
-																				hideLoading();
-																			}
-																		},
-																		error:function (xhr, ajaxOptions, thrownError){
-																			alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-																            hideLoading();
-																        }
-																	});
-														}else{
-															alertDLSuccess(createObjectError(res).html(), function(){});
-														}
-													}else{
-														alertDLSuccess('unknown error!!!', function(){});
-														hideLoading();	
-													}
-												},
-												error:function (xhr, ajaxOptions, thrownError){
-													alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-										            hideLoading();
-										        }
-											});
-									}
 									
 										function callrefesh_cqt() {
 										$.ajax({
@@ -2445,7 +2379,71 @@
 
 				});
 
-				
+				function callsend_mail(objData){
+					var objURL1 = {};
+						objURL1['check'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send';
+						objURL1['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail';
+					
+						$.ajax({
+							type: "POST",
+							datatype: "json",
+							url: objURL1['check'],
+							data: objData,
+							beforeSend: function(req) {
+								initAjaxJsonRequest(req);
+					        	showLoading();
+							},
+							success:function(res) {
+								hideLoading();
+								if(res) {
+									if(res.errorCode == 0) {
+										var responseData = res.responseData;
+										tokenTransaction = responseData['TOKEN'];
+										
+										objData['tokenTransaction'] = tokenTransaction;
+
+												$.ajax({
+													type: "POST",
+													datatype: "json",
+													url: objURL1['exec'],
+													data: objData,
+													beforeSend: function(req) {
+														initAjaxJsonRequest(req);
+											        	showLoading();
+													},
+													success:function(res) {
+														hideLoading();
+														if(res) {
+															if(res.errorCode == 0) {
+// 																	_gridMain.data("kendoGrid").dataSource.read();
+															}else{
+																alertDLSuccess(createObjectError(res).html(), function(){});
+															}
+															_gridMain.data("kendoGrid").dataSource.read();
+														}else{
+															alertDLSuccess('unknown error!!!', function(){});
+															hideLoading();
+														}
+													},
+													error:function (xhr, ajaxOptions, thrownError){
+														alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+											            hideLoading();
+											        }
+												});
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
+									}
+								}else{
+									alertDLSuccess('unknown error!!!', function(){});
+									hideLoading();	
+								}
+							},
+							error:function (xhr, ajaxOptions, thrownError){
+								alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+					            hideLoading();
+					        }
+						});
+				}
 		    
 				
 				function getDataSearch(){
