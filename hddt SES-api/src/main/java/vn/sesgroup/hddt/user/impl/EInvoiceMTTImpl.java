@@ -3178,7 +3178,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					options);
 			mongoClient.close();
 
-			responseStatus = new MspResponseStatus(0,
+			responseStatus = new MspResponseStatus(9999,
 					"".equals(MTLoi) ? "CQT chưa có thông báo kết quả trả về." : MTLoi);
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
@@ -3225,7 +3225,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 					options);
 			mongoClient1.close();
 
-			responseStatus = new MspResponseStatus(0,
+			responseStatus = new MspResponseStatus(9999,
 					"".equals(MTLoi) ? "CQT chưa có thông báo kết quả trả về." : MTLoi);
 			rsp.setResponseStatus(responseStatus);
 			return rsp;

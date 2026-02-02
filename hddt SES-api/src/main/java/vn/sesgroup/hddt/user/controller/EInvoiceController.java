@@ -174,15 +174,7 @@ public class EInvoiceController {
 				.cacheControl(CacheControl.noCache())
 				.body(dao.signSingle(is, jsonRoot));
 	}
-	
 
-	
-	
-	
-	
-	
-	
-	
 	@RequestMapping(value = "/refresh-status-cqt", method = RequestMethod.POST,
 			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
 			produces = {MediaType.APPLICATION_JSON_VALUE})

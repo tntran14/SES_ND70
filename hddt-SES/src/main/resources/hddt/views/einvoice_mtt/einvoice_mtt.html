@@ -367,9 +367,6 @@
 												<i class="mdi mdi-tooltip-edit"> </i><span
 													class="d-none d-md-inline">Thay đổi</span>
 											</button>
-											<!--	<button type="button" title="Phát hành hóa đơn" data-action="einvoice_mtt-publish" class="btns ctiet_hd hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-publish|')}" >
-                            					<i class="mdi mdi-publish"> </i><span class="d-none d-md-inline">Phát hành hóa đơn</span>
-                            				</button>-->
 											<button type="button" title="Ký hóa đơn"
 												data-action="einvoice_mtt-sign"
 												class="btns ky_hd hover-up__ses"
@@ -610,7 +607,7 @@
 											hideLoading();								
 											if(res) {
 												if(res.errorCode == 0) {
-													_gridMain.data("kendoGrid").dataSource.read();												
+													callsend_mail(objData);				
 												}else{
 													alertDLSuccess(createObjectError(res).html(), function(){});
 												}
@@ -1301,15 +1298,10 @@
 														},
 														success: function (res) {
 															if (res) {
-// 																if (res.errorCode == 0) {
-// 																	alertMS+=res.responseData + " ";
 // 																	sendMailAll();
-// 																} else {
 																	alertDLSuccess(alertMS + res.responseData,
 																		function () { });
 																	$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
-// 																}
-// 																$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
 															} else {
 																alertDLSuccess('Gửi hóa đơn đến cqt lỗi.', function () { });
 																$("#f-einvoice_mtt").find('#grid').find(".k-pager-refresh").trigger('click');
@@ -1336,7 +1328,7 @@
 										}
 									});
 								}
-								
+								 
 								function sendMailAll() {
 									var objURL = {};
 									objURL['check'] = ROOT_PATH + '/main/einvoice_mtt-sendAll-email-auto/check-data-sendAll';
@@ -2001,69 +1993,70 @@
 						                  });		
 										}
 										
-										function callsend_mail(){
+										function callsend_mail(objData){
 										var objURL1 = {};
-														objURL1['check'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send';
-														objURL1['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail';
-													
-														$.ajax({
-															type: "POST",
-															datatype: "json",
-															url: objURL1['check'],
-															data: objDataSend,
-															beforeSend: function(req) {
-																initAjaxJsonRequest(req);
-													        	showLoading();
-															},
-															success:function(res) {
-																hideLoading();
-																if(res) {
-																	if(res.errorCode == 0) {
-																		var responseData = res.responseData;
-																		tokenTransaction = responseData['TOKEN'];
-																		
-																		objDataSend['tokenTransaction'] = tokenTransaction;
+											objURL1['check'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send';
+											objURL1['exec'] = ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail';
+										
+											$.ajax({
+												type: "POST",
+												datatype: "json",
+												url: objURL1['check'],
+												data: objData,
+												beforeSend: function(req) {
+													initAjaxJsonRequest(req);
+										        	showLoading();
+												},
+												success:function(res) {
+													hideLoading();
+													if(res) {
+														if(res.errorCode == 0) {
+															var responseData = res.responseData;
+															tokenTransaction = responseData['TOKEN'];
+															
+															objDataSend['tokenTransaction'] = tokenTransaction;
 
-																				$.ajax({
-																					type: "POST",
-																					datatype: "json",
-																					url: objURL1['exec'],
-																					data: objDataSend,
-																					beforeSend: function(req) {
-																						initAjaxJsonRequest(req);
-																			        	showLoading();
-																					},
-																					success:function(res) {
-																						hideLoading();
-																						if(res) {
-																							if(res.errorCode == 0) {
-																								_gridMain.data("kendoGrid").dataSource.read();
-																							}else{
-																								alertDLSuccess(createObjectError(res).html(), function(){});
-																							}
-																						}else{
-																							alertDLSuccess('unknown error!!!', function(){});
-																							hideLoading();
-																						}
-																					},
-																					error:function (xhr, ajaxOptions, thrownError){
-																						alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-																			            hideLoading();
-																			        }
-																				});
-																	}else{
-																		alertDLSuccess(createObjectError(res).html(), function(){});
-																	}
-																}else{
-																	alertDLSuccess('unknown error!!!', function(){});
-																	hideLoading();	
-																}
-															},
-															error:function (xhr, ajaxOptions, thrownError){
-																alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
-													            hideLoading();
-													        }
-														});
+																	$.ajax({
+																		type: "POST",
+																		datatype: "json",
+																		url: objURL1['exec'],
+																		data: objData,
+																		beforeSend: function(req) {
+																			initAjaxJsonRequest(req);
+																        	showLoading();
+																		},
+																		success:function(res) {
+																			hideLoading();
+																			if(res) {
+																				if(res.errorCode == 0) {
+// 																					_gridMain.data("kendoGrid").dataSource.read();
+																				}else{
+																					alertDLSuccess(createObjectError(res).html(), function(){});
+																				}
+																				_gridMain.data("kendoGrid").dataSource.read();
+																			}else{
+																				alertDLSuccess('unknown error!!!', function(){});
+																				hideLoading();
+																			}
+																		},
+																		error:function (xhr, ajaxOptions, thrownError){
+																			alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+																            hideLoading();
+																        }
+																	});
+														}else{
+															alertDLSuccess(createObjectError(res).html(), function(){});
+														}
+													}else{
+														alertDLSuccess('unknown error!!!', function(){});
+														hideLoading();	
+													}
+												},
+												error:function (xhr, ajaxOptions, thrownError){
+													alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+										            hideLoading();
+										        }
+											});
 									}
 									
 										function callrefesh_cqt() {
@@ -2078,16 +2071,17 @@
 											},
 											success:function(res) {
 												hideLoading();			
-												_gridMain.data("kendoGrid").dataSource.read();
 												if(res) {
 													if(res.errorCode == 0) {
-// 	 													callsend_mail();
+	 													callsend_mail(objData);
 													}else{
 														alertDLSuccess(createObjectError(res).html(), function(){});
+														_gridMain.data("kendoGrid").dataSource.read();
 													}
 												}else{
 													alertDLSuccess('unknown error!!!', function(){});
 													hideLoading();
+													_gridMain.data("kendoGrid").dataSource.read();
 												}
 											},
 											error:function (xhr, ajaxOptions, thrownError){
@@ -2508,59 +2502,59 @@
 						});
 					}
 
-					// 				function checkDataSend(objData) {
-					// 				    return new Promise(function(resolve, reject) {
-					// 				        $.ajax({
-					// 				            type: "POST",
-					// 				            datatype: "json",
-					// 				            url: ROOT_PATH + '/main/einvoice-send-emailauto/check-data-send',
-					// 				            data: objData,
-					// 				            beforeSend: function(req) {
-					// 				                initAjaxJsonRequest(req);
-					// 				            },
-					// 				            success: function(res) {
-					// 				                if (res && res.errorCode == 0) {
-					// 				                    resolve(res.responseData);
-					// 				                } else {
-					// 				                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
-					// 				                }
-					// 				            },
-					// 				            error: function(xhr, ajaxOptions, thrownError) {
-					// 				                reject({ 
-					// 				                    errorCode: xhr.status, 
-					// 				                    message: xhr.responseText || thrownError 
-					// 				                });
-					// 				            }
-					// 				        });
-					// 				    });
-					// 				}
+					function checkDataSend(objData) {
+					    return new Promise(function(resolve, reject) {
+					        $.ajax({
+					            type: "POST",
+					            datatype: "json",
+					            url: ROOT_PATH + '/main/einvoice_mtt-send-emailauto/check-data-send',
+					            data: objData,
+					            beforeSend: function(req) {
+					                initAjaxJsonRequest(req);
+					            },
+					            success: function(res) {
+					                if (res && res.errorCode == 0) {
+					                    resolve(res.responseData);
+					                } else {
+					                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
+					                }
+					            },
+					            error: function(xhr, ajaxOptions, thrownError) {
+					                reject({ 
+					                    errorCode: xhr.status, 
+					                    message: xhr.responseText || thrownError 
+					                });
+					            }
+					        });
+					    });
+					}
 
-					// 				function sendMail(objData) {
-					// 				    return new Promise(function(resolve, reject) {
-					// 				        $.ajax({
-					// 				            type: "POST",
-					// 				            datatype: "json",
-					// 				            url: ROOT_PATH + '/main/einvoice-send-emailauto/send-mail',
-					// 				            data: objData,
-					// 				            beforeSend: function(req) {
-					// 				                initAjaxJsonRequest(req);
-					// 				            },
-					// 				            success: function(res) {
-					// 				                if (res && res.errorCode == 0) {
-					// 				                    resolve(res);
-					// 				                } else {
-					// 				                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
-					// 				                }
-					// 				            },
-					// 				            error: function(xhr, ajaxOptions, thrownError) {
-					// 				                reject({ 
-					// 				                    errorCode: xhr.status, 
-					// 				                    message: xhr.responseText || thrownError 
-					// 				                });
-					// 				            }
-					// 				        });
-					// 				    });
-					// 				}
+					function sendMail(objData) {
+					    return new Promise(function(resolve, reject) {
+					        $.ajax({
+					            type: "POST",
+					            datatype: "json",
+					            url: ROOT_PATH + '/main/einvoice_mtt-send-emailauto/send-mail',
+					            data: objData,
+					            beforeSend: function(req) {
+					                initAjaxJsonRequest(req);
+					            },
+					            success: function(res) {
+					                if (res && res.errorCode == 0) {
+					                    resolve(res);
+					                } else {
+					                    reject(res || { errorCode: -1, message: 'unknown error!!!' });
+					                }
+					            },
+					            error: function(xhr, ajaxOptions, thrownError) {
+					                reject({ 
+					                    errorCode: xhr.status, 
+					                    message: xhr.responseText || thrownError 
+					                });
+					            }
+					        });
+					    });
+					}
 
 					function autoRefreshStatusFromCQT(rowData) {
 						return new Promise(async function (resolve, reject) {
@@ -2571,13 +2565,13 @@
 
 								var res1 = await refreshStatusFromCQT(objData);
 
-								// 						var res2 = await checkDataSend(objData);
-								// 						var tokenTransaction = res2['TOKEN'];
+								var res2 = await checkDataSend(objData);
+								var tokenTransaction = res2['TOKEN'];
 
-								// 						objData['tokenTransaction'] = tokenTransaction;
-								// 						var res3 = await sendMail(objData);
+								objData['tokenTransaction'] = tokenTransaction;
+								var res3 = await sendMail(objData);
 
-								resolve(res1);
+								resolve(res3);
 							}
 							catch (e) {
 								reject(e);
