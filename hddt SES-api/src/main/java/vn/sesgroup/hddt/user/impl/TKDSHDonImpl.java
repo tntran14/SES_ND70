@@ -391,7 +391,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 
 			List<String> headers = Arrays.asList(new String[] { "Mã khách hàng\r\n(ma_kh)",
 					"Người mua hàng\r\n(ong_ba)", "Quyển sổ\r\n(ma_qs)", "Số seri\r\n(so_seri)",
-					"Số chứng từ\r\n(so_ct)", "Ngày chứng từ\r\n(ngay_ct)", "Số lượng:Q\r\n(so_luong)",
+					"Số chứng từ\r\n(so_ct)", "Ngày chứng từ\r\n(ngay_ct)", "MCCQT" , "Số lượng:Q\r\n(so_luong)",
 					"Giá bán n.tệ:P1\r\n(gia_nt2)", "Tiền bán n.tệ:N1\r\n(tien_nt2)", "Giá vốn n.tệ:P1\r\n(gia_nt)",
 					"Tiền vốn n.tệ:N1\r\n(tien_nt)", "Mã n.tệ\r\n(ma_nt)", "Tỷ giá:R\r\n(ty_gia)",
 					"Giá bán:P0\r\n(gia2)", "Tiền bán:N0\r\n(tien2)", "Giá vốn:P0\r\n(gia)", "Tiền vốn:N0\r\n(tien)",
@@ -403,7 +403,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					"Tk chiết khấu\r\n(tk_ck)", "Tài khoản thuế\r\n(tk_thue_co)", "Mã kho\r\n(ma_kho)",
 					"Mã vật tư\r\n(ma_vt)", "Diễn giải\r\n(dien_giai)", "Hạn thanh toán:N\r\n(han_tt)",
 					"Loại hoá đơn\r\n(ma_gd)", "Mã dự án\r\n(ma_vv_i)", "Mã phí\r\n(ma_phi_i)", "Khuyến mại\r\n(km_ck)",
-					"Tk cp km\r\n(tk_km_i)", "Mã ĐVCS\r\n(ma_dvcs)", "Hình thức TT\r\n(ht_tt)" });
+					"Tk cp km\r\n(tk_km_i)", "Mã ĐVCS\r\n(ma_dvcs)", "Hình thức TT\r\n(ht_tt)"});
 			row = sheet.getRow(0);
 			if (null == row)
 				row = sheet.createRow(0);
@@ -414,10 +414,12 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					cell = row.createCell(i);
 				cell.setCellStyle(styleHeader);
 				cell.setCellValue(headers.get(i));
-				if (i == 18)
+				if (i == 19)
 					sheet.setColumnWidth(i, 0);
 				else
 					sheet.setColumnWidth(i, 5000);
+				if (i == 6)
+					sheet.setColumnWidth(i, 10000);
 			}
 			Iterable<Document> cursor = null;
 			Iterator<Document> iter = null;
@@ -515,13 +517,15 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						cell = row.getCell(6);
 						if (cell == null)
 							cell = row.createCell(6);
-						cell.setCellStyle(styleInfoR);
-						cell.setCellValue(oo.get("Quantity", 0D));
-
+						cell.setCellStyle(styleInfoL);
+						cell.setCellValue(docTmp.get("MCCQT", ""));
+						
 						cell = row.getCell(7);
 						if (cell == null)
 							cell = row.createCell(7);
-						cell.setCellStyle(styleInfoL);
+						cell.setCellStyle(styleInfoR);
+						cell.setCellValue(oo.get("Quantity", 0D));
+
 						cell = row.getCell(8);
 						if (cell == null)
 							cell = row.createCell(8);
@@ -542,23 +546,23 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						if (cell == null)
 							cell = row.createCell(12);
 						cell.setCellStyle(styleInfoL);
-
 						cell = row.getCell(13);
 						if (cell == null)
 							cell = row.createCell(13);
-						cell.setCellStyle(styleInfoR);
-						cell.setCellValue(oo.get("Price", 0D));
+						cell.setCellStyle(styleInfoL);
 
 						cell = row.getCell(14);
 						if (cell == null)
 							cell = row.createCell(14);
 						cell.setCellStyle(styleInfoR);
-						cell.setCellValue(oo.get("Total", 0D));
+						cell.setCellValue(oo.get("Price", 0D));
 
 						cell = row.getCell(15);
 						if (cell == null)
 							cell = row.createCell(15);
-						cell.setCellStyle(styleInfoL);
+						cell.setCellStyle(styleInfoR);
+						cell.setCellValue(oo.get("Total", 0D));
+
 						cell = row.getCell(16);
 						if (cell == null)
 							cell = row.createCell(16);
@@ -575,10 +579,14 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						if (cell == null)
 							cell = row.createCell(19);
 						cell.setCellStyle(styleInfoL);
-
 						cell = row.getCell(20);
 						if (cell == null)
 							cell = row.createCell(20);
+						cell.setCellStyle(styleInfoL);
+
+						cell = row.getCell(21);
+						if (cell == null)
+							cell = row.createCell(21);
 						cell.setCellStyle(styleInfoR);
 
 						Double VATRate = oo.get("VATRate", 0D);
@@ -593,66 +601,66 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 
 						cell.setCellValue(TSuat);
 
-						cell = row.getCell(21);
-						if (cell == null)
-							cell = row.createCell(21);
-						cell.setCellStyle(styleInfoR);
-						cell.setCellValue(TSuat);
-
 						cell = row.getCell(22);
 						if (cell == null)
 							cell = row.createCell(22);
-						cell.setCellStyle(styleInfoL);
+						cell.setCellStyle(styleInfoR);
+						cell.setCellValue(TSuat);
 
 						cell = row.getCell(23);
 						if (cell == null)
 							cell = row.createCell(23);
-						cell.setCellStyle(styleInfoR);
-						cell.setCellValue(oo.get("VATAmount", 0D));
+						cell.setCellStyle(styleInfoL);
 
 						cell = row.getCell(24);
 						if (cell == null)
 							cell = row.createCell(24);
 						cell.setCellStyle(styleInfoR);
-						cell.setCellValue("131111");
+						cell.setCellValue(oo.get("VATAmount", 0D));
 
 						cell = row.getCell(25);
 						if (cell == null)
 							cell = row.createCell(25);
-						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkdt"));
+						cell.setCellStyle(styleInfoR);
+						cell.setCellValue("131111");
 
 						cell = row.getCell(26);
 						if (cell == null)
 							cell = row.createCell(26);
 						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkvt"));
+						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkdt"));
 
 						cell = row.getCell(27);
 						if (cell == null)
 							cell = row.createCell(27);
 						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkgv"));
+						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkvt"));
 
 						cell = row.getCell(28);
 						if (cell == null)
 							cell = row.createCell(28);
 						cell.setCellStyle(styleInfoL);
+						cell.setCellValue(docPrd == null ? "" : docPrd.getString("tkgv"));
 
 						cell = row.getCell(29);
 						if (cell == null)
 							cell = row.createCell(29);
-						cell.setCellStyle(styleInfoR);
-						cell.setCellValue("33311");
+						cell.setCellStyle(styleInfoL);
 
 						cell = row.getCell(30);
 						if (cell == null)
 							cell = row.createCell(30);
-						cell.setCellStyle(styleInfoL);
+						cell.setCellStyle(styleInfoR);
+						cell.setCellValue("33311");
 
 						cell = row.getCell(31);
 						if (cell == null)
 							cell = row.createCell(31);
+						cell.setCellStyle(styleInfoL);
+
+						cell = row.getCell(32);
+						if (cell == null)
+							cell = row.createCell(32);
 						cell.setCellStyle(styleInfoL);
 						cell.setCellValue(oo.get("ProductName", ""));
 //						tmp = oo.get("ProductName", "");
@@ -661,16 +669,12 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 //							cell.setCellValue(tmp.substring(pos + 1).replaceAll("\\s", ""));
 //						}
 
-						cell = row.getCell(32);
-						if (cell == null)
-							cell = row.createCell(32);
-						cell.setCellStyle(styleInfoL);
-						cell.setCellValue("Bán Hàng");
-
 						cell = row.getCell(33);
 						if (cell == null)
 							cell = row.createCell(33);
 						cell.setCellStyle(styleInfoL);
+						cell.setCellValue("Bán Hàng");
+
 						cell = row.getCell(34);
 						if (cell == null)
 							cell = row.createCell(34);
@@ -695,10 +699,14 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						if (cell == null)
 							cell = row.createCell(39);
 						cell.setCellStyle(styleInfoL);
-
 						cell = row.getCell(40);
 						if (cell == null)
 							cell = row.createCell(40);
+						cell.setCellStyle(styleInfoL);
+
+						cell = row.getCell(41);
+						if (cell == null)
+							cell = row.createCell(41);
 						cell.setCellStyle(styleInfoL);
 						cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "HTTToan"), ""));
 
@@ -867,64 +875,70 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						? ""
 						: commons.formatNumberBillInvoice(
 								docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "SHDon"), Integer.class)));
-
+				
 				cell = row.getCell(3);
 				if (cell == null)
 					cell = row.createCell(3);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MST"), ""));
+				cell.setCellValue(docTmp.get("MCCQT", ""));
 
 				cell = row.getCell(4);
 				if (cell == null)
 					cell = row.createCell(4);
-				cell.setCellStyle(styleInfoC);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MKHang"), ""));
-				
+				cell.setCellStyle(styleInfoL);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MST"), ""));
+
 				cell = row.getCell(5);
 				if (cell == null)
 					cell = row.createCell(5);
 				cell.setCellStyle(styleInfoC);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MDVQHNSach"), ""));
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MKHang"), ""));
 				
 				cell = row.getCell(6);
 				if (cell == null)
 					cell = row.createCell(6);
-				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "HVTNMHang"), ""));
+				cell.setCellStyle(styleInfoC);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MDVQHNSach"), ""));
 				
 				cell = row.getCell(7);
 				if (cell == null)
 					cell = row.createCell(7);
-				cell.setCellStyle(styleInfoC);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "CCCDan"), ""));
+				cell.setCellStyle(styleInfoL);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "HVTNMHang"), ""));
 				
 				cell = row.getCell(8);
 				if (cell == null)
 					cell = row.createCell(8);
 				cell.setCellStyle(styleInfoC);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "SHChieu"), ""));
-
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "CCCDan"), ""));
+				
 				cell = row.getCell(9);
 				if (cell == null)
 					cell = row.createCell(9);
-				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "Ten"), ""));
-				
+				cell.setCellStyle(styleInfoC);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "SHChieu"), ""));
+
 				cell = row.getCell(10);
 				if (cell == null)
 					cell = row.createCell(10);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "DCTDTu"), ""));
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "Ten"), ""));
 				
 				cell = row.getCell(11);
 				if (cell == null)
 					cell = row.createCell(11);
-				cell.setCellStyle(styleInfoC);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "SDThoai"), ""));
-
+				cell.setCellStyle(styleInfoL);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "DCTDTu"), ""));
+				
 				cell = row.getCell(12);
 				if (cell == null)
 					cell = row.createCell(12);
+				cell.setCellStyle(styleInfoC);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "SDThoai"), ""));
+
+				cell = row.getCell(13);
+				if (cell == null)
+					cell = row.createCell(13);
 				cell.setCellStyle(styleInfoC);
 				if (null != docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "NLap"), Object.class)
 						&& docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "NLap"),
@@ -934,69 +948,69 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 									docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "NLap"), Date.class)),
 							Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				}
-				cell = row.getCell(13);
-				if (cell == null)
-					cell = row.createCell(13);
-				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(status);
-
 				cell = row.getCell(14);
 				if (cell == null)
 					cell = row.createCell(14);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "DChi"), ""));
+				cell.setCellValue(status);
 
 				cell = row.getCell(15);
 				if (cell == null)
 					cell = row.createCell(15);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "HTTToan"), ""));
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "DChi"), ""));
 
 				cell = row.getCell(16);
 				if (cell == null)
 					cell = row.createCell(16);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "STKNHang"), ""));
-				
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "HTTToan"), ""));
+
 				cell = row.getCell(17);
 				if (cell == null)
 					cell = row.createCell(17);
 				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "TNHang"), ""));
-
-				cell = row.getCell(27);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "STKNHang"), ""));
+				
+				cell = row.getCell(18);
 				if (cell == null)
-					cell = row.createCell(27);
-				cell.setCellStyle(cellStyleNum);
-				cell.setCellValue(
-						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTCThue"), Object.class) == null ? 0
-								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTCThue"), Double.class));
+					cell = row.createCell(18);
+				cell.setCellStyle(styleInfoL);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "TNHang"), ""));
 
 				cell = row.getCell(28);
 				if (cell == null)
 					cell = row.createCell(28);
 				cell.setCellStyle(cellStyleNum);
 				cell.setCellValue(
-						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTThue"), Object.class) == null ? 0
-								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTThue"), Double.class));
+						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTCThue"), Object.class) == null ? 0
+								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTCThue"), Double.class));
 
 				cell = row.getCell(29);
 				if (cell == null)
 					cell = row.createCell(29);
 				cell.setCellStyle(cellStyleNum);
 				cell.setCellValue(
-						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBSo"), Object.class) == null ? 0
-								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBSo"), Double.class));
+						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTThue"), Object.class) == null ? 0
+								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTThue"), Double.class));
 
 				cell = row.getCell(30);
 				if (cell == null)
 					cell = row.createCell(30);
-				cell.setCellStyle(styleInfoL);
-				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBChu"), ""));
-				
+				cell.setCellStyle(cellStyleNum);
+				cell.setCellValue(
+						docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBSo"), Object.class) == null ? 0
+								: docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBSo"), Double.class));
+
 				cell = row.getCell(31);
 				if (cell == null)
 					cell = row.createCell(31);
+				cell.setCellStyle(styleInfoL);
+				cell.setCellValue(docEInvoiceDetail.getEmbedded(Arrays.asList("TToan", "TgTTTBChu"), ""));
+				
+				cell = row.getCell(32);
+				if (cell == null)
+					cell = row.createCell(32);
 				cell.setCellStyle(styleInfoL);
 				cell.setCellValue(docTmp.getEmbedded(Arrays.asList("InfoCreated", "CreateUserFullName"), ""));
 
@@ -1007,40 +1021,40 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						if (null == row)
 							row = sheet.createRow(posRowData);
 
-						cell = row.getCell(18);
-						if (cell == null)
-							cell = row.createCell(18);
-						cell.setCellStyle(styleInfoL);
-						cell.setCellValue("");
-
 						cell = row.getCell(19);
 						if (cell == null)
 							cell = row.createCell(19);
 						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(o.get("ProductName", ""));
+						cell.setCellValue("");
 
 						cell = row.getCell(20);
 						if (cell == null)
 							cell = row.createCell(20);
 						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(o.get("ProductCode", ""));
+						cell.setCellValue(o.get("ProductName", ""));
 
 						cell = row.getCell(21);
 						if (cell == null)
 							cell = row.createCell(21);
 						cell.setCellStyle(styleInfoL);
-						cell.setCellValue(o.get("Unit", ""));
+						cell.setCellValue(o.get("ProductCode", ""));
 
 						cell = row.getCell(22);
 						if (cell == null)
 							cell = row.createCell(22);
-						cell.setCellStyle(cellStyleNum);
-						cell.setCellValue(
-								o.get("Quantity", Object.class) == null ? 0 : o.get("Quantity", Double.class));
+						cell.setCellStyle(styleInfoL);
+						cell.setCellValue(o.get("Unit", ""));
 
 						cell = row.getCell(23);
 						if (cell == null)
 							cell = row.createCell(23);
+						cell.setCellStyle(cellStyleNum);
+						cell.setCellValue(
+								o.get("Quantity", Object.class) == null ? 0 : o.get("Quantity", Double.class));
+
+						cell = row.getCell(24);
+						if (cell == null)
+							cell = row.createCell(24);
 						cell.setCellStyle(cellStyleNum);
 						cell.setCellValue(o.get("Price", Object.class) == null ? 0 : o.get("Price", Double.class));
 
@@ -1051,22 +1065,22 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 
 							String check_total = commons.formatNumberReal(total);
 							String total_ = "(" + check_total + ")";
-							cell = row.getCell(24);
+							cell = row.getCell(25);
 							if (cell == null)
-								cell = row.createCell(24);
+								cell = row.createCell(25);
 							cell.setCellStyle(cellStyleCheck);
 							cell.setCellValue(total_);
 						} else {
-							cell = row.getCell(24);
+							cell = row.getCell(25);
 							if (cell == null)
-								cell = row.createCell(24);
+								cell = row.createCell(25);
 							cell.setCellStyle(cellStyleNum);
 							cell.setCellValue(o.get("Total", Object.class) == null ? 0 : o.get("Total", Double.class));
 						}
 
-						cell = row.getCell(25);
+						cell = row.getCell(26);
 						if (cell == null)
-							cell = row.createCell(25);
+							cell = row.createCell(26);
 						cell.setCellStyle(cellStyleNum);
 
 						Double VATRate = o.get("VATRate", 0D);
@@ -1087,16 +1101,16 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 									: o.get("VATAmount", Double.class);
 							String check_VATAmount = commons.formatNumberReal(VATAmount);
 							String VATAmount_ = "(" + check_VATAmount + ")";
-							cell = row.getCell(26);
+							cell = row.getCell(27);
 							if (cell == null)
-								cell = row.createCell(26);
+								cell = row.createCell(27);
 							cell.setCellStyle(cellStyleCheck);
 							cell.setCellValue(VATAmount_);
 
 						} else {
-							cell = row.getCell(26);
+							cell = row.getCell(27);
 							if (cell == null)
-								cell = row.createCell(26);
+								cell = row.createCell(27);
 							cell.setCellStyle(cellStyleNum);
 							cell.setCellValue(
 									o.get("VATAmount", Object.class) == null ? 0 : o.get("VATAmount", Double.class));
