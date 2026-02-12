@@ -569,11 +569,11 @@ public class EInvoiceCRUDController extends AbstractController{
 //								);
 //							break;
 						default:
-							hItem.put("Quantity", o.at("/Quantity").isMissingNode() ? ""
+							hItem.put("Quantity", o.at("/Quantity").isMissingNode() || o.at("/Quantity").doubleValue() == 0.0 ? ""
 									: commons.formatNumberReal(o.at("/Quantity").doubleValue()));
-							hItem.put("Price", o.at("/Price").isMissingNode() ? ""
+							hItem.put("Price", o.at("/Price").isMissingNode() || o.at("/Price").doubleValue() == 0.0 ? ""
 									: commons.formatNumberReal(o.at("/Price").doubleValue()));
-							hItem.put("Total", o.at("/Total").isMissingNode() ? ""
+							hItem.put("Total", o.at("/Total").isMissingNode() || o.at("/Total").doubleValue() == 0.0 ? ""
 									: commons.formatNumberReal(o.at("/Total").doubleValue()));
 							if ("DETAIL".equals(action))
 								hItem.put("VATRate",

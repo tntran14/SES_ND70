@@ -405,15 +405,15 @@ public class EInvoiceCRUDController1 extends AbstractController{
 					hItem.put("ProductCode", commons.getTextJsonNode(o.at("/ProductCode")));
 					hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 					hItem.put("Quantity", 
-						o.at("/Quantity").isMissingNode()? "":
+						o.at("/Quantity").isMissingNode() || o.at("/Quantity").doubleValue() == 0.0 ? "":
 						commons.formatNumberReal(o.at("/Quantity").doubleValue())
 					);
 					hItem.put("Price", 
-						o.at("/Price").isMissingNode()? "":
+						o.at("/Price").isMissingNode() || o.at("/Price").doubleValue() == 0.0 ? "":
 						commons.formatNumberReal(o.at("/Price").doubleValue())
 					);
 					hItem.put("Total", 
-						o.at("/Total").isMissingNode()? "":
+						o.at("/Total").isMissingNode() || o.at("/Total").doubleValue() == 0.0 ? "":
 						commons.formatNumberReal(o.at("/Total").doubleValue())
 					);
 					if("DETAIL".equals(action))

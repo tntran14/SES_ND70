@@ -507,19 +507,19 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 						break;
 					default:
 						hItem.put("Quantity", 
-							o.at("/Quantity").isMissingNode()? "":
+							o.at("/Quantity").isMissingNode() || o.at("/Quantity").doubleValue() == 0.0 ? "":
 							commons.formatNumberReal(o.at("/Quantity").doubleValue())
 						);
 						hItem.put("Price", 
-							o.at("/Price").isMissingNode()? "":
+							o.at("/Price").isMissingNode() || o.at("/Price").doubleValue() == 0.0 ? "":
 							commons.formatNumberReal(o.at("/Price").doubleValue())
 						);
 						hItem.put("DiscountRate", 
-								o.at("/DiscountRate").isMissingNode()? "":
+								o.at("/DiscountRate").isMissingNode() || o.at("/DiscountRate").doubleValue() == 0.0 ? "":
 								commons.formatNumberReal(o.at("/DiscountRate").doubleValue())
 							);
 						hItem.put("Total", 
-							o.at("/Total").isMissingNode()? "":
+							o.at("/Total").isMissingNode() || o.at("/Total").doubleValue() == 0.0 ? "":
 							commons.formatNumberReal(o.at("/Total").doubleValue())
 						);
 						if("DETAIL".equals(action))
