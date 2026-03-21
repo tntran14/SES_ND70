@@ -71,6 +71,22 @@ public class CommonsController {
 				.body(SerializationUtils.serialize(fileInfo));
 	}
 	
+	@RequestMapping(value = "/print-einvoice_mttAll", method = RequestMethod.POST,
+			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
+			produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+	public ResponseEntity<?> printEinvoiceMTTAll(@RequestBody JSONRoot jsonRoot) throws Exception{
+		FileInfo fileInfo = dao.printEinvoiceMTTAll(jsonRoot);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "einvoice_mtt.pdf");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+		
+		return ResponseEntity.ok()
+				.headers(headers)
+				.cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
+	
 	@RequestMapping(value = "/print-cttncnAllV1", method = RequestMethod.POST,
 			consumes = {MediaType.APPLICATION_JSON_VALUE},		//MediaType.TEXT_PLAIN_VALUE, 
 			produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})

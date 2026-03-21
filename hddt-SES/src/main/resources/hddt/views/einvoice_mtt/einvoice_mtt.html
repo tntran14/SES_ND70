@@ -307,6 +307,13 @@
 												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
 													XML</span>
 											</button>
+											<button type="button" title="Xuất PDF hàng loạt"
+												data-action="einvoice_mtt-pdfAll"
+												class="btns send_mail_hl hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-pdfAll|')}">
+												<i class="mdi mdi-file-pdf"> </i><span
+													class="d-none d-md-inline">Xuất PDF hàng hoạt</span>
+											</button>
 											<button type="button" title="Thêm mới HĐ Điều chỉnh"
 												data-action="einvoice_mtt-cre-dc"
 												class="btns dc_tt_hd hover-up__ses"
@@ -382,7 +389,6 @@
 												<i class="mdi mdi-account-check-outline"> </i><span
 													class="d-none d-md-inline">Ký hàng loạt</span>
 											</button>
-
 										</div>
 									</div>
 								</div>
@@ -560,7 +566,7 @@
 				    	],
 						dataBound: function(e) {
 							processCurrentPage(e.sender);
-							$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-detail"], button[data-action="einvoice_mtt-edit"],button[data-action="einvoice_mtt-copy"], button[data-action="einvoice_mtt-sign"], button[data-action="einvoice_mtt-cre-dc"], button[data-action="einvoice_mtt-cre-tt"], button[data-action="einvoice_mtt-signAll"], button[data-action="einvoice_mtt-sendAll-email-auto"], button[data-action="einvoice_mtt-send-cqtAll"],button[data-action="einvoice_mtt-xml"]').prop('disabled', true);
+							$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-detail"], button[data-action="einvoice_mtt-edit"],button[data-action="einvoice_mtt-copy"], button[data-action="einvoice_mtt-sign"], button[data-action="einvoice_mtt-cre-dc"], button[data-action="einvoice_mtt-cre-tt"], button[data-action="einvoice_mtt-signAll"], button[data-action="einvoice_mtt-sendAll-email-auto"], button[data-action="einvoice_mtt-send-cqtAll"],button[data-action="einvoice_mtt-xml"],button[data-action="einvoice_mtt-pdfAll"]').prop('disabled', true);
 							
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 							_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -747,7 +753,7 @@
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-copy"]').prop('disabled', false);
 						$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-sendAll-email-auto"]').prop('disabled', false);
 			            $("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-xml"]').prop('disabled', false);
-
+			            $("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-pdfAll"]').prop('disabled', false);
 						var $tr = $(this).closest("tr");
 
 						var rowData = _gridMain.data("kendoGrid").dataItem($tr);
@@ -776,17 +782,15 @@
 						}
 						
 						if('Đã phát hành' == rowData['StatusDesc'] || 'Đã thay thế' == rowData['StatusDesc'] || 'Đã điều chỉnh' == rowData['StatusDesc'] || 'Đã xóa bỏ' == rowData['StatusDesc']){
-				              $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfAll"]').prop('disabled', false);
 				              $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfCD"]').prop('disabled', false);
 				              
 				            }else{
-				              $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfAll"]').prop('disabled', true);
 				              $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfCD"]').prop('disabled', true);
 				              
 				            }		
 						
 						if('Đã xóa bỏ' == rowData['StatusDesc']){
-						    $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfAll"]').prop('disabled', true);
+						    $("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-pdfAll"]').prop('disabled', true);
 						    $("#f-einvoice_mtt").find('button[data-action="einvoice-pdfCD"]').prop('disabled', true);
 				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-edit"]').prop('disabled', true);
 				          	$("#f-einvoice_mtt").find('button[data-action="einvoice_mtt-sign"]').prop('disabled', true);
@@ -875,7 +879,7 @@
 							var signDate = '';
 						//////////////////////////////
 						var rowData = null;
-						var actionCheck = '|einvoice_mtt-edit|einvoice_mtt-copy|einvoice_mtt-delete|einvoice_mtt-delete_|einvoice-pdfAll|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice_mtt-sign|einvoice_mtt-signAll|einvoice-detail|einvoice-refreshAll|einvoice_mtt-send-cqt|einvoice_mtt-sendAll-email-auto|einvoice_mtt-xml|';
+						var actionCheck = '|einvoice_mtt-edit|einvoice_mtt-copy|einvoice_mtt-delete|einvoice_mtt-delete_|einvoice_mtt-pdfAll|einvoice-pdfCD|einvoice-xml|einvoice-signAll|einvoice_mtt-sign|einvoice_mtt-signAll|einvoice-detail|einvoice-refreshAll|einvoice_mtt-send-cqt|einvoice_mtt-sendAll-email-auto|einvoice_mtt-xml|';
 						var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 						var ids = null;
 						var idx = -1;
@@ -935,6 +939,52 @@
 						            hideLoading();
 						        }
 							});	
+							break;
+						case 'einvoice_mtt-pdfAll':
+							var objData = null;
+							var ids = null;
+							ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							
+							objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var idData = responseData['ID'];										
+											  window.open(ROOT_PATH + '/common/print-einvoice_mttAll/' + idData,'_blank');
+											  
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+								            hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
 							break;
 							
 						case 'einvoice_mtt-xml':
@@ -2471,6 +2521,7 @@
 					$('#f-einvoice_mtt').find('button[data-action="einvoice_mtt-delete"]').prop('disabled', checkRows.length == 0);
 					$('#f-einvoice_mtt').find('button[data-action="einvoice-delete_"]').prop('disabled', checkRows.length == 0);
 					$('#f-einvoice_mtt').find('button[data-action="einvoice_mtt-xml"]').prop('disabled', checkRows.length == 0);
+					$('#f-einvoice_mtt').find('button[data-action="einvoice_mtt-pdfAll"]').prop('disabled', checkRows.length == 0);
 				}
 				
 				function refreshStatusFromCQT(objData) {
