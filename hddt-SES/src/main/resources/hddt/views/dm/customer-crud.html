@@ -144,7 +144,7 @@
 						</div>
 						<div class="col-md-6">
 							<div class="row m-b-15">
-								<div class="col-12 ">
+								<div class="col-12" style="height: 35px;">
 									<div class="c-f__wrapper">
 										<select class="form-control form-control-sm c-f__textbox" id="province" name="province" th:disabled="${!_isedit_}" >
 											<option value=""></option>
@@ -155,6 +155,16 @@
 										</select>
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Tỉnh/Thành phố </label></legend>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<div class="row m-b-15">
+								<div class="col-12 ">
+									<div class="c-f__wrapper">
+										<input id="cccd" name="cccd" class="form-control form-control-sm c-f__textbox" th:value="${CCCD}" th:readonly="${!_isedit_}" type="text" autocomplete="off"  />
+										<fieldset aria-hidden="true" class="c-f__set">
+											<legend class="c-f__legend"><label>CCCD</label></legend>
 										</fieldset>
 									</div>
 								</div>
@@ -254,5 +264,5 @@
 	<button type="button" data-action="accept" class="btn btn-sm btn-primary btn-ses" th:if="${null == messageError && ('CREATE' == _action_ || 'EDIT' == _action_)}" ><i class="mdi mdi-check-bold"> </i> Chấp nhận</button>
 	<button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal"><i class="mdi mdi-power"></i> Đóng</button>					
 </div>
-<script th:src="@{/static/function/dm/customer-crud.js(v=1.4) }"></script>
+<script th:src="@{/static/function/dm/customer-crud.js(v=1.5) }"></script>
 </html>

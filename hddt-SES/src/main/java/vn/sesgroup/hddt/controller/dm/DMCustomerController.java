@@ -123,7 +123,7 @@ public class DMCustomerController extends AbstractController{
 					hItem.put("Address", commons.getTextJsonNode(row.at("/Address")));
 					hItem.put("Email", commons.getTextJsonNode(row.at("/Email")));
 					hItem.put("EmailCC", commons.getTextJsonNode(row.at("/EmailCC")));
-					
+					hItem.put("CCCD", commons.getTextJsonNode(row.at("/CCCD")));
 					hItem.put("ProvinceName", commons.getTextJsonNode(row.at("/Province/Name")));
 					hItem.put("CustomerGroup1Name", commons.getTextJsonNode(row.at("/CustomerGroup1/Name")));
 					hItem.put("CustomerGroup2Name", commons.getTextJsonNode(row.at("/CustomerGroup2/Name")));

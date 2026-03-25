@@ -913,6 +913,8 @@
 								$('#f-einvoice_mtt-crud').find('#kh-so-dt').val(responseData['sdt']);
 								$('#f-einvoice_mtt-crud').find('#kh-so-tk').val(responseData['stk']);
 								$('#f-einvoice_mtt-crud').find('#kh-tk-tai-ngan-hang').val(responseData['tnh']);
+								$('#f-einvoice_mtt-crud').find('#kh-cccd').val(responseData['cccd']);
+
 							}else{
 								alertDLSuccess("Không tìm thấy khách hàng", function(){});
 								$('#f-einvoice_mtt-crud').find('#kh-makhachhang,#kh-ho-ten-nguoi-mua,#kh-ten-don-vi').val('');
@@ -940,6 +942,8 @@
 				dataMST['kh-email'] = $('#f-einvoice_mtt-crud').find('#kh-email').val();
 				dataMST['kh-cancuoccongdan'] = $('#f-einvoice_mtt-crud').find('#kh-cancuoccongdan').val();
 				dataMST['kh-so-dt'] = $('#f-einvoice_mtt-crud').find('#kh-so-dt').val();
+				dataMST['kh-cccd'] = $('#f-einvoice_mtt-crud').find('#kh-cccd').val();
+
 				$.ajax({
 					type: "POST",
 					datatype: "json",

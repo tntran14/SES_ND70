@@ -117,7 +117,7 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 			docMatch.append("CustomerName", new Document("$regex", commons.regexEscapeForMongoQuery(customerName)).append("$options", "i"));
 
 		Document fillter = new Document("_id", 1).append("TaxCode", 1).append("CustomerCode", 1)
-				.append("CompanyName", 1).append("CustomerName", 1).append("Address", 1).append("Email", 1).append("EmailCC", 1)
+				.append("CompanyName", 1).append("CustomerName", 1).append("Address", 1).append("Email", 1).append("EmailCC", 1).append("CCCD", 1)
 				.append("Province", 1).append("CustomerGroup1", 1).append("CustomerGroup2", 1).append("CustomerGroup3", 1).append("InfoCreated", 1);
 		
 		pipeline = new ArrayList<Document>();
@@ -172,6 +172,7 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 				hItem.put("Address", doc.get("Address"));
 				hItem.put("Email", doc.get("Email"));
 				hItem.put("EmailCC", doc.get("EmailCC"));
+				hItem.put("CCCD", doc.get("CCCD"));
 				hItem.put("Province", doc.get("Province"));
 				hItem.put("CustomerGroup1", doc.get("CustomerGroup1"));
 				hItem.put("CustomerGroup2", doc.get("CustomerGroup2"));
@@ -222,6 +223,7 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 		String province = commons.getTextJsonNode(jsonData.at("/Province")).trim().replaceAll("\\s+", " ");
 		String provinceName = commons.getTextJsonNode(jsonData.at("/ProvinceName")).trim().replaceAll("\\s+", " ");
 		String roleId =  commons.getTextJsonNode(jsonData.at("/RoleId")).replaceAll("\\s", "");
+		String cccd = commons.getTextJsonNode(jsonData.at("/CCCD")).trim().replaceAll("\\s+", " ");
 		String accountNumber = commons.getTextJsonNode(jsonData.at("/AccountNumber")).trim().replaceAll("\\s+", " ");
 		String accountBankName = commons.getTextJsonNode(jsonData.at("/AccountBankName")).trim().replaceAll("\\s+", " ");
 		String customerGroup1 = commons.getTextJsonNode(jsonData.at("/CustomerGroup1")).trim().replaceAll("\\s+", " ");
@@ -390,6 +392,7 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 					.append("Province", 
 						new Document("Code", province).append("Name", provinceName)
 					)
+					.append("CCCD", cccd)
 					.append("AccountNumber", accountNumber)
 					.append("AccountBankName", accountBankName)
 					.append("CustomerGroup1", 
@@ -853,6 +856,7 @@ public class DMCustomerImpl extends AbstractDAO implements DMCustomerDAO{
 						.append("Phone", phone)
 						.append("Fax", fax)
 						.append("Website", website)
+						.append("CCCD", cccd)
 						.append("Province", 
 							new Document("Code", province).append("Name", provinceName)
 						)
@@ -1225,7 +1229,7 @@ db.getCollection('DMCustomer').find({
 
 			setCellStyle(wb);
 			List<String> headers = Arrays.asList(new String[] { "STT", "Mã số thuế", "Mã khách hàng", "Tên đơn vị",
-					"Tỉnh/Thành phố", "Tên người mua hàng", "Địa chỉ", "Số tài khoản", "Tại ngân hàng", "Email",
+					"Tỉnh/Thành phố", "Tên người mua hàng", "CCCD","Địa chỉ", "Số tài khoản", "Tại ngân hàng", "Email",
 					"EmailCC", "Điện thoại", "Ngày lập", "Người cập nhật", "Ngày cập nhật" });
 			row = sheet.getRow(0);
 			if (null == row)
@@ -1248,6 +1252,7 @@ db.getCollection('DMCustomer').find({
 					sheet.setColumnWidth(i, 4000);
 					break;
 				case 2:
+				case 6:
 					sheet.setColumnWidth(i, 6000);
 					break;
 				case 4:
@@ -1276,7 +1281,7 @@ db.getCollection('DMCustomer').find({
 				String email = doc.get("Email", "");
 				String emailcc = doc.get("EmailCC", "");
 				String phone = doc.get("Phone", "");
-
+				String cccd = doc.get("CCCD", "");
 				Date dateTmp = doc.getEmbedded(Arrays.asList("InfoCreated", "CreateDate"), Date.class);
 				String createDate = dateTmp == null ? ""
 						: commons.convertLocalDateTimeToString(commons.convertDateToLocalDate(dateTmp),
@@ -1298,15 +1303,16 @@ db.getCollection('DMCustomer').find({
 				setCellValue(3, row, styleInfoL, unitName);
 				setCellValue(4, row, styleInfoL, province);
 				setCellValue(5, row, styleInfoL, buyerName);
-				setCellValue(6, row, styleInfoL, address);
-				setCellValue(7, row, styleInfoL, bankAccountNumber);
-				setCellValue(8, row, styleInfoL, bankAccountName);
-				setCellValue(9, row, styleInfoL, email);
-				setCellValue(10, row, styleInfoL, emailcc);
-				setCellValue(11, row, styleInfoC, phone);
-				setCellValue(12, row, styleInfoC, createDate);
-				setCellValue(13, row, styleInfoL, updateByName);
-				setCellValue(14, row, styleInfoC, updateDate);
+				setCellValue(6, row, styleInfoC, cccd);
+				setCellValue(7, row, styleInfoL, address);
+				setCellValue(8, row, styleInfoL, bankAccountNumber);
+				setCellValue(9, row, styleInfoL, bankAccountName);
+				setCellValue(10, row, styleInfoL, email);
+				setCellValue(11, row, styleInfoL, emailcc);
+				setCellValue(12, row, styleInfoC, phone);
+				setCellValue(13, row, styleInfoC, createDate);
+				setCellValue(14, row, styleInfoL, updateByName);
+				setCellValue(15, row, styleInfoC, updateDate);
 
 				posRowData++;
 			}

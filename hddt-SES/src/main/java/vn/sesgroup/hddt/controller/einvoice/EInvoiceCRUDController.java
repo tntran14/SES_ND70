@@ -1735,6 +1735,7 @@ public class EInvoiceCRUDController extends AbstractController{
 			String email = split[4];
 			String sdt = split[5];
 			String dchi = split[6];
+			String cccd = split[7];
 			
 			dto.setErrorCode(0);
 			HashMap<String, Object> hR = new HashMap<String, Object>();
@@ -1745,6 +1746,7 @@ public class EInvoiceCRUDController extends AbstractController{
 			hR.put("email",email);
 			hR.put("sdt", sdt);
 			hR.put("emailcc", emailcc);		
+			hR.put("cccd", cccd);	
 			dto.setResponseData(hR);
 			return dto;
 		}
@@ -1787,7 +1789,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		String email = commons.getParameterFromRequest(req, "kh-email").replaceAll("\\s", "");
 		String emailcc = commons.getParameterFromRequest(req, "kh-emailcc").replaceAll("\\s", "");
 		String sdt = commons.getParameterFromRequest(req, "kh-so-dt").replaceAll("\\s", "");
-
+		String cccd = commons.getParameterFromRequest(req, "kh-cccd").replaceAll("\\s", "");
 
 		BaseDTO baseDTO = new BaseDTO(req);
 		JsonGridDTO grid = new JsonGridDTO();
@@ -1801,6 +1803,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		hData.put("EMAIL", email);
 		hData.put("EMAILCC", emailcc);
 		hData.put("SDT", sdt);
+		hData.put("CCCD", cccd);
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);
 		MsgRsp rsp = restAPI.callAPINormal("/einvoice/save_nmua", cup.getLoginRes().getToken(), HttpMethod.POST, root);

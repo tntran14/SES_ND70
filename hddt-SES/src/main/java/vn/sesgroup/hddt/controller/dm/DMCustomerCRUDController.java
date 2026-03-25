@@ -67,6 +67,7 @@ public class DMCustomerCRUDController extends AbstractController{
 	private String website;
 	private String province;
 	private String provinceName;	
+	private String cccd;
 	private String accountNumber;
 	private String accountBankName;
 	private String customerGroup1;
@@ -225,6 +226,7 @@ public class DMCustomerCRUDController extends AbstractController{
 			req.setAttribute("Fax", commons.getTextJsonNode(jsonData.at("/Fax")));
 			req.setAttribute("Website", commons.getTextJsonNode(jsonData.at("/Website")));
 			req.setAttribute("TThanhCode", commons.getTextJsonNode(jsonData.at("/Province/Code")));
+			req.setAttribute("CCCD", commons.getTextJsonNode(jsonData.at("/CCCD")));
 			req.setAttribute("AccountNumber", commons.getTextJsonNode(jsonData.at("/AccountNumber")));
 			req.setAttribute("AccountBankName", commons.getTextJsonNode(jsonData.at("/AccountBankName")));
 			req.setAttribute("CustomerGroup1", commons.getTextJsonNode(jsonData.at("/CustomerGroup1/Code")));
@@ -257,6 +259,7 @@ public class DMCustomerCRUDController extends AbstractController{
 		province = commons.getParameterFromRequest(req, "province").trim().replaceAll("\\s+", " ");
 		provinceName = commons.getParameterFromRequest(req, "province-name").trim().replaceAll("\\s+", " ");
 		roleId = commons.getParameterFromRequest(req, "roleId").replaceAll("\\s", "");
+		cccd = commons.getParameterFromRequest(req, "cccd").trim().replaceAll("\\s+", " ");
 		accountNumber = commons.getParameterFromRequest(req, "account-number").trim().replaceAll("\\s+", " ");
 		accountBankName = commons.getParameterFromRequest(req, "account-bank-name").trim().replaceAll("\\s+", " ");
 		customerGroup1 = commons.getParameterFromRequest(req, "customer-group-1").trim().replaceAll("\\s+", " ");
@@ -431,6 +434,7 @@ public class DMCustomerCRUDController extends AbstractController{
 			hData.put("Website", website);
 			hData.put("Province", province);
 			hData.put("ProvinceName", provinceName);
+			hData.put("CCCD", cccd);
 			hData.put("AccountNumber", accountNumber);
 			hData.put("AccountBankName", accountBankName);
 			hData.put("CustomerGroup1", customerGroup1);

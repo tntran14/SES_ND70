@@ -9975,8 +9975,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String email = docTmp.getString("Email");
 		String sdt = docTmp.getString("Phone");
 		String emailcc = docTmp.getString("EmailCC");
-
-		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt + ";" + dchi;
+		String cccd = docTmp.getString("CCCD");
+		
+		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt + ";" + dchi + ";" + cccd;
 		responseStatus = new MspResponseStatus(0, TH);
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
@@ -10007,7 +10008,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String email = commons.getTextJsonNode(jsonData.at("/EMAIL")).replaceAll("\\s", "");
 		String emailcc = commons.getTextJsonNode(jsonData.at("/EMAILCC")).replaceAll("\\s", "");
 		String sdt = commons.getTextJsonNode(jsonData.at("/SDT")).replaceAll("\\s", "");
-
+		String cccd = commons.getTextJsonNode(jsonData.at("/CCCD")).replaceAll("\\s", "");
+		
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
 		MspResponseStatus responseStatus = null;
@@ -10037,7 +10039,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			objectId = new ObjectId();
 			docUpsert = new Document("_id", objectId).append("IssuerId", header.getIssuerId()).append("TaxCode", mst)
 					.append("CustomerCode", mkh).append("CompanyName", tdv).append("CustomerName", hvtnm)
-					.append("Address", dchi).append("Email", email).append("EmailCC", emailcc).append("Phone", sdt)
+					.append("Address", dchi).append("Email", email).append("EmailCC", emailcc).append("Phone", sdt).append("CCCD", cccd)
 					.append("InfoCreated",
 							new Document("CreateDate", LocalDateTime.now()).append("CreateUserID", header.getUserId())
 									.append("CreateUserName", header.getUserName())
@@ -10067,7 +10069,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								new Document("IssuerId", header.getIssuerId()).append("TaxCode", mst)
 										.append("CustomerCode", mkh).append("CompanyName", tdv)
 										.append("CustomerName", hvtnm).append("Address", dchi).append("Email", email)
-										.append("EmailCC", emailcc).append("Phone", sdt).append("InfoUpdated",
+										.append("EmailCC", emailcc).append("Phone", sdt).append("CCCD", cccd).append("InfoUpdated",
 												new Document("UpdatedDate", LocalDateTime.now())
 														.append("UpdatedUserID", header.getUserId())
 														.append("UpdatedUserName", header.getUserName())

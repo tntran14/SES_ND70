@@ -106,6 +106,7 @@ function getPopupDataToSave(){
 	dataPost['province'] = $('#f-cus-crud').find('#province').val();
 	dataPost['province-name'] = $('#f-cus-crud').find('#province').find('option:selected').text();
 	dataPost['LHDSDung_HDBTSCong'] = $('#f-cus-crud').find('input[name="LHDSDung_HDBTSCong"]:checked').val();
+	dataPost['cccd'] = $('#f-cus-crud').find('#cccd').val();
 	dataPost['account-number'] = $('#f-cus-crud').find('#account-number').val();
 	dataPost['account-bank-name'] = $('#f-cus-crud').find('#account-bank-name').val();
 	dataPost['customer-group-1'] = $('#f-cus-crud').find('#customer-group-1').val();
