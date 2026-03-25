@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -7430,8 +7431,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							DSHHDVu dshhdVu = new DSHHDVu();
 							TT = stt + a;
 							String STT = String.valueOf(TT);
-							tong = eInvoiceExcelFormList.get(k).getThanhTien();
-							tthue = eInvoiceExcelFormList.get(k).getTienThue();
+							tong = Optional.ofNullable(eInvoiceExcelFormList.get(k).getThanhTien()).orElse(0.0);
+							tthue = Optional.ofNullable(eInvoiceExcelFormList.get(k).getTienThue()).orElse(0.0);
 							Total = tong + tthue;
 							Tongtien = Tongtien + Total;
 							TongTienTThue = TongTienTThue + tong;
