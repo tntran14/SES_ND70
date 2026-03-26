@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -93,6 +94,7 @@ import vn.sesgroup.hddt.user.dao.SendMailAsyncDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
 import vn.sesgroup.hddt.user.service.TCTNService;
 import vn.sesgroup.hddt.utility.Constants;
+import vn.sesgroup.hddt.utility.CurrencyUnit;
 import vn.sesgroup.hddt.utility.Json;
 import vn.sesgroup.hddt.utility.MailUtils;
 import vn.sesgroup.hddt.utility.MailjetSender;
@@ -7492,18 +7494,26 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						stt = stt - (end + 1);
 
 						String TTTien = "";
-						Double TTT = 0.0;
+						Double TTT = Double.parseDouble(new DecimalFormat("#.##").format(TongTienThue));
 						String TTTTien = "";
-						Double TTTT = 0.0;
-						TTTTien = String.format("%.0f", TongTienTThue);
-						TTTT = Double.parseDouble(TTTTien);
-						TTTien = String.format("%.0f", TongTienThue);
-						TTT = Double.parseDouble(TTTien);
-
+						Double TTTT = Double.parseDouble(new DecimalFormat("#.##").format(TongTienTThue));
+						String DVTTe = eInvoiceExcelFormList.get(i).getLoaiTien();
+						
 						TTDCThue = TTTT + TTT;
-						String TTBChu = commons.formatNumberReal(TTDCThue).replaceAll(",", "");
-						String TTBCHU = ChuyenSangChu(TTBChu);
-						String TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+						String TongTienBangchu = "";
+						if ("VND".equals(DVTTe)) {
+							TTTTien = String.format("%.0f", TongTienTThue);
+							TTTT = Double.parseDouble(TTTTien);
+							TTTien = String.format("%.0f", TongTienThue);
+							TTT = Double.parseDouble(TTTien);
+							
+							String TTBChu = String.format("%.0f", TTDCThue);
+							String TTBCHU = ChuyenSangChu(TTBChu);
+							TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+						} else {
+							TongTienBangchu = commons.moneyToVietnamese(TTDCThue, CurrencyUnit.USD);
+						}
+						
 //	            	        System.out.println(currencyFormat(tien));
 
 						// Thông tin hóa đơn - TTChung
@@ -7514,7 +7524,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
 						String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
 						LocalDateTime NLap = LocalDateTime.now();
-						String DVTTe = eInvoiceExcelFormList.get(i).getLoaiTien();
 						String TGia = TyGiaForm;
 						String HTTToanCode = "";
 						String HTTToan1 = "";
@@ -8071,18 +8080,25 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							listHHDVus.add(hItem1);
 
 							String TTTien = "";
-							Double TTT = 0.0;
+							Double TTT = Double.parseDouble(new DecimalFormat("#.##").format(TongTienThue));
 							String TTTTien = "";
-							Double TTTT = 0.0;
-							TTTTien = String.format("%.0f", TongTienTThue);
-							TTTT = Double.parseDouble(TTTTien);
-							TTTien = String.format("%.0f", TongTienThue);
-							TTT = Double.parseDouble(TTTien);
-
+							Double TTTT = Double.parseDouble(new DecimalFormat("#.##").format(TongTienTThue));
+							String DVTTe = eInvoiceExcelFormList.get(i).getLoaiTien();
+							
 							TTDCThue = TTTT + TTT;
-							String TTBChu = commons.formatNumberReal(TTDCThue).replaceAll(",", "");
-							String TTBCHU = ChuyenSangChu(TTBChu);
-							String TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+							String TongTienBangchu = "";
+							if ("VND".equals(DVTTe)) {
+								TTTTien = String.format("%.0f", TongTienTThue);
+								TTTT = Double.parseDouble(TTTTien);
+								TTTien = String.format("%.0f", TongTienThue);
+								TTT = Double.parseDouble(TTTien);
+								
+								String TTBChu = String.format("%.0f", TTDCThue);
+								String TTBCHU = ChuyenSangChu(TTBChu);
+								TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
+							} else {
+								TongTienBangchu = commons.moneyToVietnamese(TTDCThue, CurrencyUnit.USD);
+							}
 							// Thông tin hóa đơn - TTChung
 							String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
 							String THDon = "Hóa đơn giá trị gia tăng TT 78";
@@ -8093,7 +8109,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									.toString();
 							String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
 							LocalDateTime NLap = LocalDateTime.now();
-							String DVTTe = eInvoiceExcelFormList.get(i).getLoaiTien();
 							String TGia = TyGiaForm;
 							String HTTToanCode = "";
 							String HTTToan1 = "";
@@ -9976,9 +9991,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String email = docTmp.getString("Email");
 		String sdt = docTmp.getString("Phone");
 		String emailcc = docTmp.getString("EmailCC");
-		String cccd = docTmp.getString("CCCD");
+		String cccd = docTmp.get("CCCD","");
 		
-		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt + ";" + dchi + ";" + cccd;
+		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt+ ";" + cccd + ";" + dchi ;
 		responseStatus = new MspResponseStatus(0, TH);
 		rsp.setResponseStatus(responseStatus);
 		return rsp;

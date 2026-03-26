@@ -5893,9 +5893,9 @@ public class EInvoiceImpl1 extends AbstractDAO implements EInvoiceDAO1 {
 		String email = docTmp.getString("Email");
 		String sdt = docTmp.getString("Phone");
 		String emailcc = docTmp.getString("EmailCC");
-		String cccd = docTmp.getString("CCCD");
+		String cccd = docTmp.get("CCCD","");
 
-		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt + ";" + dchi+ ";" +cccd;
+		String TH = ma_kh + ";" + hvtnmh + ";" + tendv + ";" + emailcc + ";" + email + ";" + sdt + ";" +cccd + ";" + dchi;
 		responseStatus = new MspResponseStatus(0, TH);
 		rsp.setResponseStatus(responseStatus);
 		return rsp;

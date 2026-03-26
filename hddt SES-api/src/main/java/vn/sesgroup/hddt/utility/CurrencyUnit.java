@@ -30,4 +30,15 @@ public enum CurrencyUnit {
 	public int getScale() {
 		return scale;
 	}
+	
+    public String majorVi(long amount) {
+        switch (this) {
+            case USD: return "đô la";
+            case EUR: return "euro";
+            case GBP: return "bảng";
+            case JPY: return "yên";
+            case VND: return "đồng";
+            default: return major;
+        }
+    }
 }

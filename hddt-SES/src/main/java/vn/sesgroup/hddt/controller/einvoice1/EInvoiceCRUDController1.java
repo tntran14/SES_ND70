@@ -1109,8 +1109,8 @@ public class EInvoiceCRUDController1 extends AbstractController{
 			String emailcc = split[3];
 			String email = split[4];
 			String sdt = split[5];
-			String dchi = split[6];
-			String cccd = split[7];
+			String cccd = split[6];
+			String dchi = split[7];
 			
 			dto.setErrorCode(0);
 			HashMap<String, Object> hR = new HashMap<String, Object>();

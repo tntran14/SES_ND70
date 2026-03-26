@@ -1007,4 +1007,95 @@ public class Commons {
     private String capitalize(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+    
+    private static final String[] VIET_DIGITS = {
+            "không", "một", "hai", "ba", "bốn",
+            "năm", "sáu", "bảy", "tám", "chín"
+    };
+    
+    private String readThreeDigits(int num) {
+        int hundred = num / 100;
+        int ten = (num % 100) / 10;
+        int unit = num % 10;
+
+        StringBuilder sb = new StringBuilder();
+
+        if (hundred > 0) {
+            sb.append(VIET_DIGITS[hundred]).append(" trăm");
+            if (ten == 0 && unit > 0) sb.append(" lẻ");
+        }
+
+        if (ten > 1) {
+            sb.append(" ").append(VIET_DIGITS[ten]).append(" mươi");
+            if (unit == 1) sb.append(" mốt");
+            else if (unit == 5) sb.append(" lăm");
+            else if (unit > 0) sb.append(" ").append(VIET_DIGITS[unit]);
+        } else if (ten == 1) {
+            sb.append(" mười");
+            if (unit == 5) sb.append(" lăm");
+            else if (unit > 0) sb.append(" ").append(VIET_DIGITS[unit]);
+        } else if (ten == 0 && unit > 0) {
+            sb.append(" ").append(VIET_DIGITS[unit]);
+        }
+
+        return sb.toString().trim();
+    }
+    
+    private String numberToVietnamese(long num) {
+        if (num == 0) return "không";
+
+        String[] units = {"", " nghìn", " triệu", " tỷ"};
+        StringBuilder result = new StringBuilder();
+
+        int unitIndex = 0;
+
+        while (num > 0) {
+            int part = (int) (num % 1000);
+            if (part != 0) {
+                result.insert(0, readThreeDigits(part) + units[unitIndex] + " ");
+            }
+            num /= 1000;
+            unitIndex++;
+        }
+
+        return result.toString().trim();
+    }
+    
+    public String moneyToVietnamese(double amount, CurrencyUnit currency) {
+        BigDecimal value = BigDecimal.valueOf(amount)
+                .setScale(currency.getScale(), RoundingMode.HALF_UP);
+
+        long major = value.longValue();
+        int minor = currency.getScale() == 0 ? 0 :
+                value.remainder(BigDecimal.ONE)
+                        .movePointRight(currency.getScale())
+                        .intValue();
+
+        if (major == 0 && minor == 0) {
+            return "Không " + currency.majorVi(0);
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        if (amount < 0) {
+            result.append("Âm ");
+            major = Math.abs(major);
+        }
+
+        if (major != 0) {
+            result.append(numberToVietnamese(major))
+                  .append(" ")
+                  .append(currency.majorVi(major));
+        }
+
+        if (minor > 0) {
+            if (major > 0) result.append(" ");
+            result.append(numberToVietnamese(minor))
+                  .append(" ")
+                  .append(currency.minor(minor));
+        }
+
+        return capitalize(result.toString().trim());
+    }
+    
 }
