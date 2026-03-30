@@ -791,6 +791,11 @@ public class EInvoiceCRUDController extends AbstractController{
 		case "einvoice-cre":
 		case "einvoice-copy":
 		case "einvoice-edit":
+			if (!khMst.matches("[0-9-]*")) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add(
+						"Mã số thuế người mua không hợp lệ.");
+			}
 			if (madvqhns.length() > 0 && (madvqhns.length() > 7 || !madvqhns.matches("\\d+"))) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add(

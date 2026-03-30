@@ -155,8 +155,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		String hinhThucThanhToan = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToan")).replaceAll("\\s", "");
 		String hinhThucThanhToanText = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToanText")).trim()
 				.replaceAll("\\s+", " ");
-		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "")
-				.replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
+		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "").replaceAll("[^0-9-]", "");
 		String khMaSoDVQHNS = commons.getTextJsonNode(jsonData.at("/KhMaSoDVQHNS")).trim().replaceAll("\\s+", " ");
 		String khCCCDan = commons.getTextJsonNode(jsonData.at("/KhCCCDan")).trim().replaceAll("\\s+", " ");
 		String khSoHoChieu = commons.getTextJsonNode(jsonData.at("/KhSoHoChieu")).trim().replaceAll("\\s+", " ");

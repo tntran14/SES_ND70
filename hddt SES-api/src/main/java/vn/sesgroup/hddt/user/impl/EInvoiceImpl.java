@@ -166,8 +166,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			khhdclquan  = mshdontbn.substring(1); 
 		}
 
-		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "")
-				.replaceAll("[+^%$#@&*]*", "").replaceAll("[a-z][A-Z]*", "");
+		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "").replaceAll("[^0-9-]", "");
 		String khMKHang = commons.getTextJsonNode(jsonData.at("/KhMKHang")).trim().replaceAll("\\s+", " ");
 		String khHoTenNguoiMua = commons.getTextJsonNode(jsonData.at("/KhHoTenNguoiMua")).trim().replaceAll("\\s+",
 				" ");

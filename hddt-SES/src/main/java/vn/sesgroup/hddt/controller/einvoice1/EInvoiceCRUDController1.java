@@ -514,6 +514,11 @@ public class EInvoiceCRUDController1 extends AbstractController{
 		case "einvoice1-cre":
 		case "einvoice1-copy":
 		case "einvoice1-edit":
+			if (!khMst.matches("[0-9-]*")) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add(
+						"Mã số thuế người mua không hợp lệ.");
+			}
 			if("".equals(mauSoHdon)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn mẫu số hóa đơn.");
