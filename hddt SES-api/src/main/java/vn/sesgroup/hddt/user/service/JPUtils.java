@@ -5461,8 +5461,8 @@ else {
 				if (null != nodeDSCKS)
 					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
 				if(null == nodeSignature) {
-					reportParams.put("SignDesc", "Chưa ký");
-					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+//					reportParams.put("SignDesc", "Chưa ký");
+//					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
 				} else {
 					reportParams.put("SignDesc", "Đã ký");
 					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -5484,8 +5484,8 @@ else {
 				if (null != nodeDSCKS)
 					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
 				if(null == nodeSignature) {
-					reportParams.put("NM_SignDesc", "Chưa ký");
-					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+//					reportParams.put("NM_SignDesc", "Chưa ký");
+//					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
 				} else {
 					reportParams.put("NM_SignDesc", "Đã ký");
 					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -5981,8 +5981,8 @@ else {
 				if (null != nodeDSCKS)
 					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
 				if(null == nodeSignature) {
-					reportParams.put("SignDesc", "Chưa ký");
-					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+//					reportParams.put("SignDesc", "Chưa ký");
+//					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
 				} else {
 					reportParams.put("SignDesc", "Đã ký");
 					reportParams.put("UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
@@ -6004,8 +6004,8 @@ else {
 				if (null != nodeDSCKS)
 					nodeSignature = (Node) xPath.evaluate("Signature", nodeDSCKS, XPathConstants.NODE);
 				if(null == nodeSignature) {
-					reportParams.put("NM_SignDesc", "Chưa ký");
-					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
+//					reportParams.put("NM_SignDesc", "Chưa ký");
+//					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_INVALID).toString());
 				} else {
 					reportParams.put("NM_SignDesc", "Đã ký");
 					reportParams.put("NM_UrlImageVerify", Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, Constants.TEMPLATE_FILE_NAME.IMG_SIGNATURE_VALID).toString());
