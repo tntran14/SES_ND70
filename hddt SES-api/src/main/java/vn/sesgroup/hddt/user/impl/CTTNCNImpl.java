@@ -4047,7 +4047,8 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 																new Document("$eq", Arrays.asList("$IssuerId", "$$vIssuerId")),
 																new Document("$eq",Arrays.asList("$MauSo", "$$vMauSo")),
 																new Document("$eq", Arrays.asList("$SignStatus", Constants.INVOICE_SIGN_STATUS.NOSIGN)),
-					                                            new Document("$eq", Arrays.asList("$Status", Constants.INVOICE_STATUS.PENDING))
+					                                            new Document("$eq", Arrays.asList("$Status", Constants.INVOICE_STATUS.PENDING)),
+					                                            new Document("$eq", Arrays.asList("$IsDelete", false)) 
 																)
 																)
 														)
@@ -4348,13 +4349,14 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			String LTBao = "";
 			NodeList tDiepNodes = (NodeList) xPath.evaluate("DuLieu/TDiep", nodeKetQuaTraCuu, XPathConstants.NODESET);
 			for (int i = 0; i < tDiepNodes.getLength(); i++) {
-				nodeTDiep = (Node) tDiepNodes.item(i);
+				Node nodeTDiep_temp = (Node) tDiepNodes.item(i);
 				checkMLTDiep = commons
-						.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+						.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep_temp, XPathConstants.NODE));
 				if (checkMLTDiep.equals("213")) {
 					LTBao = commons.getTextFromNodeXML(
-							(Element) xPath.evaluate("DLieu/TBao/DLTBao/LTBao", nodeTDiep, XPathConstants.NODE));
-					break;
+							(Element) xPath.evaluate("DLieu/TBao/DLTBao/LTBao", nodeTDiep_temp, XPathConstants.NODE));
+					nodeTDiep = nodeTDiep_temp;
+					break; 
 				}
 				if (checkMLTDiep.equals("-1")) {
 					break;
