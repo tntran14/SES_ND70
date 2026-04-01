@@ -5975,7 +5975,7 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DThang", cttncnFrom.getDenthang()));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "Nam", cttncnFrom.getNam()));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "BHiem", cttncnFrom.getBaohiem()));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "TThien", cttncnFrom.getBaohiem()));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "TThien", cttncnFrom.getKhoantuthien()));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TTNCThue", cttncnFrom.getTongthunhapchiuthue()));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TTNTThue", cttncnFrom.getTongthunhaptinhthue()));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SThue", cttncnFrom.getSothue()));
