@@ -2199,7 +2199,7 @@
 		sumAmountAfterTax = $numeral.value() == null? 0: $numeral.value();
 		
 		tienQuiDoi = tyGia * sumAmountAfterTax;
-		$('#f-einvoice-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(4))
+		$('#f-einvoice-crud').find('#tong-tien-quy-doi').val(tienQuiDoi.toFixed(0))
 		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-quy-doi')[0], loai_tien_tt);
 	}
 	

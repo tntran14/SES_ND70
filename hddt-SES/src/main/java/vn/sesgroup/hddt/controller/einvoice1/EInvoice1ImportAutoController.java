@@ -97,7 +97,7 @@ public class EInvoice1ImportAutoController extends AbstractController{
 				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
 					for(JsonNode o: jsonData.at("/param02")) {
-						if("2".equals(commons.getTextJsonNode(o.get("KHMSHDon")))){
+						if("2".equals(commons.getTextJsonNode(o.get("KHMSHDon"))) && !commons.getTextJsonNode(o.get("KHHDon")).startsWith("M", 3)){
 						hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));
 						}
 					}

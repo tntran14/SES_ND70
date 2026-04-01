@@ -7513,8 +7513,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							TongTienBangchu = commons.moneyToVietnamese(TTDCThue, CurrencyUnit.USD);
 						}
 						
-//	            	        System.out.println(currencyFormat(tien));
-
+						String TGia = TyGiaForm;
+						Double tgtqdoi = TTDCThue * Integer.parseInt(TGia);
+						double TgTQDoi = Math.round(Math.abs(tgtqdoi)) * (tgtqdoi < 0 ? -1 : 1);
+						
 						// Thông tin hóa đơn - TTChung
 						String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
 						String THDon = "Hóa đơn giá trị gia tăng TT 78";
@@ -7522,8 +7524,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						String MauSoHD = mauSoHdon;
 						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
 						String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
-						LocalDateTime NLap = LocalDateTime.now();
-						String TGia = TyGiaForm;
+						LocalDateTime NLap = LocalDateTime.now();						
 						String HTTToanCode = "";
 						String HTTToan1 = "";
 						switch (HTTToanForm) {
@@ -7988,8 +7989,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 																.append("TNHang", TNHangNM)))
 
 										.append("DSHHDVu", listHHDVu)
-										.append("TToan", new Document("TgTCThue", TTTT).append("TgTThue", TTT)
-												.append("TgTTTBSo", TTDCThue).append("TgTTTBChu", TongTienBangchu)))
+										.append("TToan", 
+												new Document("TgTCThue", TTTT)
+												.append("TgTThue", TTT)
+												.append("TgTTTBSo", TTDCThue)
+												.append("TgTQDoi", TgTQDoi)
+												.append("TgTTTBChu", TongTienBangchu)))
 								.append("SignStatusCode", SignStatusCode).append("EInvoiceStatus", EInvoiceStatus)
 								.append("IsDelete", false).append("SecureKey", SecureKey).append("Dir", Dir)
 								.append("FileNameXML", FileNameXML).append("InfoCreated",
@@ -8098,6 +8103,11 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							} else {
 								TongTienBangchu = commons.moneyToVietnamese(TTDCThue, CurrencyUnit.USD);
 							}
+							
+							String TGia = TyGiaForm;
+							Double tgtqdoi = TTDCThue * Integer.parseInt(TGia);
+							double TgTQDoi = Math.round(Math.abs(tgtqdoi)) * (tgtqdoi < 0 ? -1 : 1);
+							
 							// Thông tin hóa đơn - TTChung
 							String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
 							String THDon = "Hóa đơn giá trị gia tăng TT 78";
@@ -8108,7 +8118,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 									.toString();
 							String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
 							LocalDateTime NLap = LocalDateTime.now();
-							String TGia = TyGiaForm;
 							String HTTToanCode = "";
 							String HTTToan1 = "";
 							switch (HTTToanForm) {
@@ -8564,8 +8573,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 															.append("STKNHang", STKNHangNM).append("TNHang", TNHangNM)))
 
 											.append("DSHHDVu", listHHDVus)
-											.append("TToan", new Document("TgTCThue", TTTT).append("TgTThue", TTT)
-													.append("TgTTTBSo", TTDCThue).append("TgTTTBChu", TongTienBangchu)))
+											.append("TToan", 
+													new Document("TgTCThue", TTTT)
+													.append("TgTThue", TTT)
+													.append("TgTTTBSo", TTDCThue)
+													.append("TgTQDoi", TgTQDoi)
+													.append("TgTTTBChu", TongTienBangchu)))
 									.append("SignStatusCode", SignStatusCode).append("EInvoiceStatus", EInvoiceStatus)
 									.append("IsDelete", false).append("SecureKey", SecureKey).append("Dir", Dir)
 									.append("FileNameXML", FileNameXML).append("InfoCreated",
