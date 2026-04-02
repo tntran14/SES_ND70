@@ -1863,16 +1863,18 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 	public BaseDTO signAll(Locale locale, HttpServletRequest req, HttpSession session,
 			@RequestAttribute(name = "transaction", value = "", required = false) String transaction) throws Exception {
 		List<String> ids = new ArrayList<String>();
+		BaseDTO dto = new BaseDTO(req);
 		String _ids = commons.getParameterFromRequest(req, "_ids").replaceAll("\\s", "");
 		try {
 			ids = Json.serializer().fromJson(commons.decodeBase64ToString(_ids), new TypeReference<List<String>>() {
 			});
 		} catch (Exception e) {
-
+			dto.setErrorCode(999);
+			dto.setResponseData("Lỗi parse ids");
+			return dto;
 		}
 
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-		BaseDTO dto = new BaseDTO(req);
 
 		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNALL);
 		HashMap<String, Object> hData = new HashMap<>();
@@ -1887,7 +1889,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		MspResponseStatus rspStatus = rsp.getResponseStatus();
 		if (rspStatus.getErrorCode() != 0) {
 			dto.setErrorCode(999);
-			dto.setResponseData(rsp.getResponseStatus().getErrorDesc());
+			dto.setResponseData(rsp.getResponseStatus().getErrorDesc() + "check-shd-list");
 			return dto;
 		}
 
@@ -1896,7 +1898,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 				cup.getLoginRes().getToken(), HttpMethod.POST, root);
 		if (fileInfo.getCheck() != "") {
 			dto.setErrorCode(999);
-			dto.setResponseData(fileInfo.getCheck());
+			dto.setResponseData(fileInfo.getCheck() + "get-file-for-signAll");
 			return dto;
 		}
 
@@ -1939,7 +1941,8 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 				hR.put("FormIssueInvoiceID", fileInfo.getFormIssueInvoiceID());
 				dto.setResponseData(hR);
 			} catch (Exception e) {
-				System.out.println(e);
+				dto.setErrorCode(999);
+				dto.setResponseData("Lỗi tạo file zip");
 			}
 
 		} else {
