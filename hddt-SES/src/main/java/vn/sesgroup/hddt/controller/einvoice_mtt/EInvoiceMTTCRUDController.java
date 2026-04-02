@@ -1895,7 +1895,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		// Get file for sign
 		FileInfo fileInfo = restAPI.callAPIGetFileInfo("/einvoice_mtt/get-file-for-signAll",
 				cup.getLoginRes().getToken(), HttpMethod.POST, root);
-		if ("".equals(fileInfo.getCheck())) {
+		if (fileInfo.getCheck() != null && !fileInfo.getCheck().trim().isEmpty()) {
 			dto.setErrorCode(999);
 			dto.setResponseData(fileInfo.getCheck() + "get-file-for-signAll");
 			return dto;
