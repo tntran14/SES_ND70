@@ -1873,7 +1873,6 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 			dto.setResponseData("Lỗi parse ids");
 			return dto;
 		}
-
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
 
 		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SIGNALL);
@@ -1896,7 +1895,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		// Get file for sign
 		FileInfo fileInfo = restAPI.callAPIGetFileInfo("/einvoice_mtt/get-file-for-signAll",
 				cup.getLoginRes().getToken(), HttpMethod.POST, root);
-		if (fileInfo.getCheck() != "") {
+		if ("".equals(fileInfo.getCheck())) {
 			dto.setErrorCode(999);
 			dto.setResponseData(fileInfo.getCheck() + "get-file-for-signAll");
 			return dto;
