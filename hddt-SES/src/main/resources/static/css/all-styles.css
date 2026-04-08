@@ -2764,3 +2764,17 @@ input.ovrr__checkbox {
 .SumoSelect > .optWrapper > .options{
     padding-bottom: 45px; 
 }
+.vndCur {
+	padding: 0px;
+		padding-right: 15px;
+	
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+.vndCur span{
+ 	color: red;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+ 	font-weight: 400;
+  	font-size: 0.9rem;
+}
