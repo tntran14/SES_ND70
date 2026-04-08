@@ -7507,6 +7507,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							TTT = Double.parseDouble(TTTien);
 							
 							String TTBChu = String.format("%.0f", TTDCThue);
+							TTDCThue = Double.parseDouble(TTBChu);
 							String TTBCHU = ChuyenSangChu(TTBChu);
 							TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
 						} else {
@@ -8098,6 +8099,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								TTT = Double.parseDouble(TTTien);
 								
 								String TTBChu = String.format("%.0f", TTDCThue);
+								TTDCThue = Double.parseDouble(TTBChu);
 								String TTBCHU = ChuyenSangChu(TTBChu);
 								TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
 							} else {
