@@ -222,6 +222,14 @@
 												<i class="mdi mdi-file-pdf"> </i><span
 													class="d-none d-md-inline">Xuất PDF hàng loạt</span>
 											</button>
+											<button type="button" title="Xuất PDF chuyển đổi hàng loạt"
+												data-action="einvoice1-pdfCD"
+												class="btns in_cd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice1-pdfCD|')}">
+												<i class="mdi mdi-folder-move"></i><span
+													class="d-none d-md-inline">Xuất PDF
+													Chuyển Đổi</span>
+											</button>
 											<button type="button" title="Thêm mới"
 												data-action="einvoice1-cre"
 												class="btns tmoi_hd hover-up__ses"
@@ -473,7 +481,7 @@
 				dataBound: function(e) {
 				    processCurrentPage(e.sender);
 					
-					$("#f-einvoices").find('button[data-action="einvoice1-detail"],button[data-action="einvoice1-copy"], button[data-action="einvoice1-edit"], button[data-action="einvoice1-delete"],button[data-action="einvoice1-sign"], button[data-action="einvoice1-cre-dc"], button[data-action="einvoice1-cre-tt"]').prop('disabled', true);
+					$("#f-einvoices").find('button[data-action="einvoice1-detail"],button[data-action="einvoice1-copy"], button[data-action="einvoice1-edit"], button[data-action="einvoice1-delete"],button[data-action="einvoice1-sign"], button[data-action="einvoice1-cre-dc"], button[data-action="einvoice1-cre-tt"], button[data-action="einvoice1-pdfCD"]').prop('disabled', true);
 					
 					_gridMain.find('tbody[role="rowgroup"]').find('tr').undelegate('i[data-sub-action]', 'click');
 					_gridMain.find('tbody[role="rowgroup"]').find('tr').delegate('i[data-sub-action]', 'click', function(e){
@@ -511,7 +519,10 @@
 							rowData = _gridMain.data("kendoGrid").dataItem($tr);
 							window.open(ROOT_PATH + '/main/common/print-einvoice1/' + rowData['_id'],'_blank');
 							break;
-					
+						case 'print-convert':
+							rowData = _gridMain.data("kendoGrid").dataItem($tr);
+							window.open(ROOT_PATH + '/main/common/print-einvoice1-convert/' + rowData['_id'],'_blank');
+							break;
 						case 'refresh':
 							rowData = _gridMain.data("kendoGrid").dataItem($tr);
 							objData['_id'] = rowData['_id'];
@@ -725,13 +736,16 @@
 		          	$("#f-einvoices").find('button[data-action="einvoice1-delete"]').prop('disabled', true);
 		            $("#f-einvoices").find('button[data-action="einvoice1-xml"]').prop('disabled', false);
 		            $("#f-einvoices").find('button[data-action="einvoice1-pdfAll"]').prop('disabled', true);
+				    $("#f-einvoices").find('button[data-action="einvoice1-pdfCD"]').prop('disabled', true);
 				}
 				if('Đã phát hành' == rowData['StatusDesc'] || 'Đã thay thế' == rowData['StatusDesc'] || 'Đã điều chỉnh' == rowData['StatusDesc'] || 'Đã xóa bỏ' == rowData['StatusDesc']){
 		              $("#f-einvoices").find('button[data-action="einvoice1-cre-dc"]').prop('disabled', false);
 		              $("#f-einvoices").find('button[data-action="einvoice1-cre-tt"]').prop('disabled', false);
+		              $("#f-einvoices").find('button[data-action="einvoice1-pdfCD"]').prop('disabled', false);
 		            }else{
 		              $("#f-einvoices").find('button[data-action="einvoice1-cre-dc"]').prop('disabled', true);
 		              $("#f-einvoices").find('button[data-action="einvoice1-cre-tt"]').prop('disabled', true);
+		              $("#f-einvoices").find('button[data-action="einvoice1-pdfCD"]').prop('disabled', true);
 		            }		
 // 				if('2' == rowData['HDSS_TCTBao'] || '3' == rowData['HDSS_TCTBao']){
 // 		              $("#f-einvoices").find('button[data-action="einvoice1-cre-dc-tt"]').prop('disabled', false);
@@ -791,7 +805,7 @@
 				var $obj = $(this);
 				
 				var rowData = null;
-				var actionCheck = '|einvoice1-edit|einvoice1-delete|einvoice1-sign|einvoice1-detail|einvoice1-copy|einvoice1-pdfAll|einvoice1-xml|';
+				var actionCheck = '|einvoice1-edit|einvoice1-delete|einvoice1-sign|einvoice1-detail|einvoice1-copy|einvoice1-pdfAll|einvoice1-xml|einvoice1-pdfCD|';
 				var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 				var ids = null;
 				var idx = -1;
@@ -857,6 +871,51 @@
 					
 /* 					objData =  encodeObjJsonBase64UTF8(ids);
 					window.open(ROOT_PATH + '/common/print-einvoice1All/' + objData,'_blank'); */
+					break;
+				case 'einvoice1-pdfCD':
+					var objData = null;
+					var ids = null;
+					ids = [];
+					checkRows.each(function(i, v) {
+					    idx = $(checkRows[i].closest("tr")).index();
+					    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+					    ids.push(rowData['_id']);
+					});	
+					
+					objData = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
+					
+					$.ajax({
+						type: "POST",
+						datatype: "json",
+						url: ROOT_PATH + '/common/saveDataBas64',
+						data: objData,
+						beforeSend: function(req) {
+							initAjaxJsonRequest(req);
+				        	showLoading();
+						},
+						success:function(res) {
+							hideLoading();
+							if(res) {
+								if(res.errorCode == 0) {
+									  var responseData = res.responseData;
+									  var idData = responseData['ID'];										
+									  window.open(ROOT_PATH + '/common/print-einvoice1CD/' + idData,'_blank');
+									  
+								}else{
+									alertDLSuccess(createObjectError(res).html(), function(){});
+						            hideLoading();
+								}
+							}else{
+								alertDLSuccess('unknown error!!!', function(){});
+								hideLoading();
+							}
+							
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alertDLSuccess("Không tìm thấy thông tin", function(){});
+				            hideLoading();
+				        }
+					});
 					break;
 				case 'einvoice1-xml':
 					var objData = null;

@@ -2191,11 +2191,8 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 	@Override
 	public FileInfo printEInvoiceBH(JSONRoot jsonRoot) throws Exception {
 		FileInfo fileInfo = new FileInfo();
-
 		Msg msg = jsonRoot.getMsg();
 		MsgHeader header = msg.getMsgHeader();
-		MsgPage page = msg.getMsgPage();
-
 		Object objData = msg.getObjData();
 
 		JsonNode jsonData = null;
@@ -2207,20 +2204,6 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 
 		String _id = commons.getTextJsonNode(jsonData.at("/_id")).replaceAll("\\s", "");
 		String isConvert = commons.getTextJsonNode(jsonData.at("/IsConvert")).replaceAll("\\s", "");
-		/*
-		 * db.getCollection('EInvoice').find( { IssuerId: '61b851ebb0228bba71fca2ec',
-		 * _id: ObjectId("61c7cad6f8b593616ce03cc7"),IsDelete: {$ne: true} } )
-		 * 
-		 * db.getCollection('EInvoice').aggregate([ {$match: { IssuerId:
-		 * '61b851ebb0228bba71fca2ec', _id:
-		 * ObjectId("61c7cad6f8b593616ce03cc7"),IsDelete: {$ne: true} } }, {$lookup: {
-		 * from: 'DMMauSoKyHieu', let: {vIssuerId: '$IssuerId', vMauSoHD:
-		 * '$EInvoiceDetail.TTChung.MauSoHD'}, pipeline: [ {$match: { $expr: { $and: [
-		 * {$eq: ['$$vIssuerId', '$IssuerId']}, {$eq: [{$toString: '$_id'},
-		 * '$$vMauSoHD']} ] } } } ], as: 'DMMauSoKyHieu' } }, {$unwind: {path:
-		 * '$DMMauSoKyHieu', preserveNullAndEmptyArrays: true}} ])
-		 * 
-		 */
 
 		ObjectId objectId = null;
 		try {
@@ -2296,20 +2279,14 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 		String fileName = _id + ".xml";
 		if ("SIGNED".equals(signStatusCode) && "COMPLETE".equals(eInvoiceStatus) && !"".equals(MCCQT)) {
 			fileName = _id + "_" + MCCQT + ".xml";
-		} else {
-			if ("SIGNED".equals(signStatusCode)) {
+		} else if ("SIGNED".equals(signStatusCode)) {
 				fileName = _id + "_signed.xml";
-			}
 		}
-//				else if("PENDING".equals(eInvoiceStatus))
-//					fileName = _id + "_signed.xml";
-
+		
 		File file = new File(dir, fileName);
 		if (!file.exists() || !file.isFile()) {
 			return new FileInfo();
 		}
-
-//				file = new File("D:\\WORKING\\WEB\\HDDT-NEW\\_TTP\\_temp", "61d058d11b9b8d400da33da7_00276F25B531ED4541B4D1C69B06E60AE2.xml");
 
 		org.w3c.dom.Document doc = commons.fileToDocument(file);
 		/* TEST REPORT TO PDF */
@@ -2331,23 +2308,6 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				Paths.get(SystemParams.DIR_E_INVOICE_TEMPLATE, "images", MST, ImgVien).toString(),
 
 				"Y".equals(isConvert), Constants.INVOICE_STATUS.DELETED.equals(eInvoiceStatus), isThayThe, isDieuChinh);
-
-//				Map<String, Object> reportParams = new HashMap<String, Object>();
-//				
-//				ByteArrayOutputStream out = new ByteArrayOutputStream();
-//				JasperReport jr = JasperCompileManager.compileReport(new FileInputStream(fileJP));
-//				JasperPrint jp = JasperFillManager.fillReport(jr, reportParams);
-//				
-//				Exporter exporter = null;
-//				
-//				exporter = new JRPdfExporter();
-//				exporter.setExporterInput(new SimpleExporterInput(jp));
-//				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-//		        SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
-//		        configuration.setCreatingBatchModeBookmarks(true);
-//		        exporter.setConfiguration(configuration);
-//		        exporter.exportReport();
-//				
 		fileInfo.setFileName("EInvoiceBH.pdf");
 		fileInfo.setContentFile(baosPDF.toByteArray());
 
@@ -3058,6 +3018,7 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				String eInvoiceStatus = docTmp.get("EInvoiceStatus", "");
 				String secureKey = docTmp.get("SecureKey", "");
 				String MCCQT = docTmp.get("MCCQT", "");
+				String mtdiep = docTmp.get("MTDiep", "");
 				String fileName = _id + ".xml";
 				if ("SIGNED".equals(signStatusCode) && !"".equals(MCCQT)) {
 					fileName = _id + "_" + MCCQT + ".xml";
@@ -3102,6 +3063,9 @@ public class CommonImpl extends AbstractDAO implements CommonDAO {
 				}
 
 				String namepdf = mskh + "_" + shd + ".pdf";
+				if (shd == 0) {
+					namepdf = mskh + "_" + mtdiep + ".pdf";
+				} 
 				File tam = new File(dir, namepdf);
 				copyFileUsingStream(file, tam);
 

@@ -301,7 +301,7 @@ public class LoginController extends AbstractController{
           	sbRights.append("param-admin|");
         	sbRights.append("qlnvtncn-import|dmproduct-copy|einvoice-pdfAll1|cttncn-xmlV1|cttncn-importV1|cttncn-pdfAllV1|cttncn-send-mail-allV1|cttncn-signAllV1|cttncn-refreshAllFromCQTV1|cttncn-sendAllToCQTV1|");
 			sbRights.append("issu-grant|issu-ungrant|einvoice-cre-dctt-tbn|statistic-tcgp-tctn|call_recieve_message_statistic|call_recieve_message_statistic-export|lbbdctt-cre-invs|lbbdctt-edit-invs|");
-			sbRights.append("convert-cttncn-edit|convert-cttncn|einvoice_mtt-pdfAll|");
+			sbRights.append("convert-cttncn-edit|convert-cttncn|einvoice_mtt-pdfAll|einvoice1-pdfCD|");
 			}
         	cup.setUsername(userName);
         	cup.setPassword(password);
