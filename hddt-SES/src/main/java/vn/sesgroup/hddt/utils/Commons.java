@@ -3,6 +3,7 @@ package vn.sesgroup.hddt.utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.time.Instant;
@@ -601,5 +603,32 @@ public class Commons {
 					return "";
 				}
 			}
-		
+		  
+	public String normalizeNumberCTTNCN(String input) {
+		if (input == null || input.isBlank())
+			return input;
+
+		String cleaned = input.trim();
+
+		// Xóa dấu phân cách nghìn (. hoặc space)
+		cleaned = cleaned.replaceAll("[.\\s]", "");
+
+		if (!cleaned.matches("\\d+")) {
+			throw new IllegalArgumentException("Chuỗi không hợp lệ: " + input);
+		}
+		return cleaned;
+	}
+  
+  public String formatNumberCTTNCN(String input) {
+	  if (input == null || input.isBlank()) return input;
+
+	    String cleaned = input.trim();
+
+	    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ROOT);
+	    symbols.setGroupingSeparator('.'); // dấu phân cách nghìn
+
+	    DecimalFormat df = new DecimalFormat("#,##0", symbols);
+
+	    return df.format(new BigDecimal(cleaned));
+	}
 }

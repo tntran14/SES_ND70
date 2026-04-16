@@ -243,11 +243,11 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 			req.setAttribute("DThang", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/DThang")));
 
 			req.setAttribute("KTNhap", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/KTNhap")));
-			req.setAttribute("BHiem", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/BHiem")));
-			req.setAttribute("TThien", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TThien")));
-			req.setAttribute("TTNCThue", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TTNCThue")));
-			req.setAttribute("TTNTThue", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TTNTThue")));
-			req.setAttribute("SThue", commons.getTextJsonNode(jsonData.at("/TTNCNKTru/SThue")));
+			req.setAttribute("BHiem", commons.formatNumberCTTNCN(commons.getTextJsonNode(jsonData.at("/TTNCNKTru/BHiem"))));
+			req.setAttribute("TThien", commons.formatNumberCTTNCN(commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TThien"))));
+			req.setAttribute("TTNCThue", commons.formatNumberCTTNCN(commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TTNCThue"))));
+			req.setAttribute("TTNTThue", commons.formatNumberCTTNCN(commons.getTextJsonNode(jsonData.at("/TTNCNKTru/TTNTThue"))));
+			req.setAttribute("SThue", commons.formatNumberCTTNCN(commons.getTextJsonNode(jsonData.at("/TTNCNKTru/SThue"))));
 
 			String notice = "";
 			if (("init-dc".equals(method) || "init-tt".equals(method))) {
@@ -386,6 +386,18 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng nhập Số thuế (Số thuế thu nhập cá nhân đã khấu trừ).");
 			}
+			
+			try {
+				bhiem = commons.normalizeNumberCTTNCN(bhiem);
+				tthien = commons.normalizeNumberCTTNCN(tthien);
+				ttncthue = commons.normalizeNumberCTTNCN(ttncthue);
+				ttntthue = commons.normalizeNumberCTTNCN(ttntthue);
+				sthue = commons.normalizeNumberCTTNCN(sthue);
+			} catch (Exception e) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Vui lòng kiểm tra lại định dạng dữ liệu (THÔNG TIN THUẾ THU NHẬP CÁ NHÂN KHẤU TRỪ). </br> - " + e.getMessage());
+			}
+			
 			break;
 		case "cttncn-delV1":
 			if ("".equals(_id)) {
