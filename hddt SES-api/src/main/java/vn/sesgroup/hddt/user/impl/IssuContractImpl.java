@@ -899,7 +899,8 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 
 		String shd = "";
 		String mst = "";
-//		String gh = "";
+		String toDate = "";
+		String fromDate = "";
 		String acti = "";
 		JsonNode jsonData = null;
 		if (objData != null) {
@@ -907,6 +908,8 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 			shd = commons.getTextJsonNode(jsonData.at("/SHDon")).replaceAll("\\s", "");
 			mst = commons.getTextJsonNode(jsonData.at("/TaxCode")).replaceAll("\\s", "");
 			acti = commons.getTextJsonNode(jsonData.at("/IsActive")).replaceAll("\\s", "");
+			toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+			fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
 		}	
 		
 		MsgRsp rsp = new MsgRsp(header);
@@ -939,8 +942,9 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 			
 			}
 		}
-	
-
+		if (!"".equals(toDate) || !"".equals(fromDate)) {
+			docMatch.append("Contract.NgayKy", getDateMatchDocument(toDate, fromDate));
+		}
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docMatch));
 		pipeline.add(new Document("$sort", new Document("_id", -1)));
@@ -991,6 +995,24 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 		rsp.setObjData(mapDataR);
 		return rsp;
 	}
+	
+	private Document getDateMatchDocument(String toDate, String fromDate) {
+    	Document docMatchDateDN = null;
+    	 LocalDate dateTo = null;
+         LocalDate dateFrom = null;
+         dateTo = "".equals(toDate) || !commons.checkLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
+                 null : commons.convertStringToLocalDate(toDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+         dateFrom = "".equals(fromDate) || !commons.checkLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB) ?
+                 null : commons.convertStringToLocalDate(fromDate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+         if (null != dateFrom || null != dateTo) {
+             docMatchDateDN = new Document();
+             if (null != dateFrom)
+             	docMatchDateDN.append("$gte", dateFrom);
+             if (null != dateTo)
+                 docMatchDateDN.append("$lte", dateTo.plusDays(1));
+         }
+    	return docMatchDateDN;
+    }
 
 	@Override
 	public MsgRsp detail(JSONRoot jsonRoot, String _id) throws Exception {

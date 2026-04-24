@@ -44,8 +44,8 @@ public class IssuContractController extends AbstractController {
 	private String shd;
 	private String mst;
 	private String acti;
-	
-
+	private String toDate;
+	private String fromDate;
 
 	@RequestMapping(value = "/init", method = { RequestMethod.POST, RequestMethod.GET })
 	public String init(Locale locale, Principal principal, HttpServletRequest req) throws Exception {
@@ -78,6 +78,8 @@ public class IssuContractController extends AbstractController {
 		shd = commons.getParameterFromRequest(req, "shd").replaceAll("\\s", "");
 		mst = commons.getParameterFromRequest(req, "mst").replaceAll("\\s", "");
 		acti = commons.getParameterFromRequest(req, "acti").replaceAll("\\s", "");
+		toDate = commons.getParameterFromRequest(req, "to-date").replaceAll("\\s", "");
+		fromDate = commons.getParameterFromRequest(req, "from-date").replaceAll("\\s", "");
 		return dto;
 	}
 	
@@ -103,7 +105,9 @@ public class IssuContractController extends AbstractController {
 		hData.put("TaxCode", mst);
 		hData.put("SHDon", shd);
 		hData.put("IsActive", acti);
-
+		hData.put("ToDate", toDate);
+		hData.put("FromDate", fromDate);
+		
 		msg.setObjData(hData);
 		
 		JSONRoot root = new JSONRoot(msg);

@@ -63,7 +63,27 @@
 									</div>
 									
 								</div>
-									<div class="col-erp-5">
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="from-date" name="from-date" th:value="${FromDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Từ ngày (Ngày ký)</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox" type="text" id="to-date" name="to-date" th:value="${ToDate}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set"><legend class="c-f__legend"><label>Đến ngày (Ngày ký)</label></legend></fieldset>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-erp-5">
 									<div class="row">
 										<div class="col-12">
 											<button class=" btns btns-search_auto__ses hover-up__ses w-100p" data-action="search" title="Tìm kiếm" type="button" > <i class="mdi mdi-file-find"></i><span class="d-none d-md-inline">Tìm kiếm</span></button>
@@ -128,6 +148,8 @@
 				
 				<script type="text/javascript">
 				$(function(){
+					dateInputFormat($('#f-issu-contract').find('#to-date'));
+					dateInputFormat($('#f-issu-contract').find('#from-date'));
 					_gridMain.kendoGrid({
 						autoBind: false,
 						dataSource: new kendo.data.DataSource({
@@ -141,6 +163,8 @@
 				    					dataPost['mst'] = $('#f-issu-contract #mst').val() == null? '': $('#f-issu-contract #mst').val();
 				    					dataPost['shd'] = $('#f-issu-contract #shd').val() == null? '': $('#f-issu-contract #shd').val();
 				    					dataPost['acti'] = $('#f-issu-contract #acti').val() == null? '': $('#f-issu-contract #acti').val();
+				    					dataPost['from-date'] = $('#f-issu-contract #from-date').val() == null? '': $('#f-issu-contract #from-date').val();
+				    					dataPost['to-date'] = $('#f-issu-contract #to-date').val() == null? '': $('#f-issu-contract #to-date').val();
 				                    	return dataPost;
 				                    	},
 				                    beforeSend: function(req){
@@ -549,6 +573,8 @@
 					var dataPost = {};
 					dataPost['mst'] = $('#f-issu-contract #mst').val() == null? '': $('#f-issu-contract #mst').val();
 					dataPost['shd'] = $('#f-issu-contract #shd').val() == null? '': $('#f-issu-contract #shd').val();
+					dataPost['from-date'] = $('#f-issu-contract #from-date').val() == null? '': $('#f-issu-contract #from-date').val();
+					dataPost['to-date'] = $('#f-issu-contract #to-date').val() == null? '': $('#f-issu-contract #to-date').val();
 					dataPost['acti'] = $('#f-issu-contract #acti').val() == null? '': $('#f-issu-contract #acti').val();		
 					return dataPost;
 				}
@@ -587,8 +613,6 @@
 				</script>			
 			</div>
 		</div>		
-		
-		
 	</th:block>
 </body>
 </html>
