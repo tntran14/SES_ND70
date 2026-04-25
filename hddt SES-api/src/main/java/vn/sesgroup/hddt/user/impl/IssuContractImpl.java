@@ -1,5 +1,6 @@
 package vn.sesgroup.hddt.user.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +13,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +44,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.UpdateOptions;
 
+import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.IssuContractDao;
 import vn.sesgroup.hddt.user.service.TCTNService;
@@ -1647,4 +1662,302 @@ public class IssuContractImpl extends AbstractDAO implements IssuContractDao {
 		return rsp;
 	}
 
+	@Override
+	public FileInfo exportExcel(JSONRoot jsonRoot) throws Exception {
+		Msg msg = jsonRoot.getMsg();
+        Object objData = msg.getObjData();
+
+        String shd = "";
+		String mst = "";
+		String toDate = "";
+		String fromDate = "";
+		String acti = "";
+		JsonNode jsonData = null;
+		if (objData != null) {
+			jsonData = Json.serializer().nodeFromObject(objData);
+			shd = commons.getTextJsonNode(jsonData.at("/SHDon")).replaceAll("\\s", "");
+			mst = commons.getTextJsonNode(jsonData.at("/TaxCode")).replaceAll("\\s", "");
+			acti = commons.getTextJsonNode(jsonData.at("/IsActive")).replaceAll("\\s", "");
+			toDate = commons.getTextJsonNode(jsonData.at("/ToDate")).replaceAll("\\s", "");
+			fromDate = commons.getTextJsonNode(jsonData.at("/FromDate")).replaceAll("\\s", "");
+		}	
+
+        Document docTmp = null;
+        Iterable<Document> cursor = null;
+        Iterator<Document> iter = null;
+        List<Document> pipeline = new ArrayList<>();
+
+        ByteArrayOutputStream out = null;
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+        SXSSFSheet sheet = null;
+        try {
+            sheet = wb.createSheet("Sheet 1");
+            SXSSFRow row = null;
+            SXSSFCell cell = null;
+
+            Font fontHeader = wb.createFont();
+            fontHeader.setFontHeightInPoints((short) 13);
+            fontHeader.setFontName("Times New Roman");
+            fontHeader.setItalic(false);
+            fontHeader.setBold(true);
+            fontHeader.setColor(IndexedColors.BLACK.index);
+
+            CellStyle styleHeader = null;
+            styleHeader = wb.createCellStyle();
+            styleHeader.setLocked(false);
+            setStyleInfo(styleHeader);
+            styleHeader.setFont(fontHeader);
+
+            styleHeader.setFillForegroundColor(IndexedColors.GREEN.index);
+            styleHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            Font fontDetail = wb.createFont();
+            fontDetail.setFontHeightInPoints((short) 13);
+            fontDetail.setFontName("Times New Roman");
+            fontDetail.setItalic(false);
+
+            CellStyle styleInfoL = null;
+            styleInfoL = wb.createCellStyle();
+            styleInfoL.setFont(fontDetail);
+            styleInfoL.setLocked(false);
+            setStyleInfo(styleInfoL);
+            styleInfoL.setAlignment(HorizontalAlignment.LEFT);
+
+            CellStyle styleInfoC = null;
+            styleInfoC = wb.createCellStyle();
+            styleInfoC.setFont(fontDetail);
+            styleInfoC.setLocked(false);
+            setStyleInfo(styleInfoC);
+
+            CellStyle styleInfoR = null;
+            styleInfoR = wb.createCellStyle();
+            styleInfoR.setFont(fontDetail);
+            styleInfoR.setLocked(false);
+            setStyleInfo(styleInfoR);
+            
+            CreationHelper createHelper = wb.getCreationHelper();
+            CellStyle dateCellStyle = wb.createCellStyle();
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+            dateCellStyle.setAlignment(HorizontalAlignment.CENTER); 
+            dateCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            setStyleInfo(dateCellStyle);
+            
+            setCellStyle(wb);
+            int countRow =1;
+			List<String> headers = Arrays.asList(
+					new String[] { "STT", "Tên khách hàng", "Mã số thuế", "Địa chỉ", "Số hợp đồng", "Ngày ký",
+							"Số lượng", "Tiền trước thuế", "Tiền thuế", "Tổng tiền", "Trạng thái", "Người lập"});
+			row = sheet.getRow(0);
+			if (null == row)
+				row = sheet.createRow(0);
+			row.setHeight((short) 500);
+			for (int i = 0; i < headers.size(); i++) {
+				cell = row.getCell(i);
+				if (cell == null)
+					cell = row.createCell(i);
+				cell.setCellStyle(styleHeader);
+				cell.setCellValue(headers.get(i));
+				switch (i) {
+				case 0:
+					sheet.setColumnWidth(i, 2000);
+					break;
+				case 1:
+				case 3:
+				case 11:
+					sheet.setColumnWidth(i, 12000);
+					break;
+				case 6:
+					sheet.setColumnWidth(i, 3000);
+					break;
+				default:
+					 sheet.setColumnWidth(i, 5000);
+					break;
+				}
+            }
+
+            int posRowData = 1;
+
+            Document docMatch = new Document("IsDelete", new Document("$ne", true));
+    		if (!"".equals(shd))
+    			docMatch.append("Contract.SHDon", commons.regexEscapeForMongoQuery(shd));
+    		if (!"".equals(mst))
+    			docMatch.append("NMUA.TaxCode", commons.regexEscapeForMongoQuery(mst));
+    		if (!"".equals(acti)) {
+    			if(acti.equals("true")) {
+    				docMatch.append("$or", Arrays.asList(		
+    						new Document("IsActive", true).append("IsActiveApprove", true),
+    						new Document("IsActive", true).append("IsActiveApprove", false),
+    						new Document("IsActive", false).append("IsActiveApprove", true),
+    						new Document("IsActive", true).append("IsActiveApprove", null)			
+    						));
+    			}else {
+    				docMatch.append("$or", Arrays.asList(		
+    						new Document("IsActive", false).append("IsActiveApprove", false),
+    						new Document("IsActive", false).append("IsActiveApprove", null)						
+    						));
+    			
+    			}
+    		}
+    		if (!"".equals(toDate) || !"".equals(fromDate)) {
+    			docMatch.append("Contract.NgayKy", getDateMatchDocument(toDate, fromDate));
+    		}
+    		pipeline = new ArrayList<Document>();
+    		pipeline.add(new Document("$match", docMatch));
+    		pipeline.add(new Document("$sort", new Document("_id", -1)));
+    		
+    		cursor = mongoTemplate.getCollection("Contract").aggregate(pipeline).allowDiskUse(true);
+    		iter = cursor.iterator();
+    		
+            List<Document> rows = new ArrayList<>();
+
+            while (iter.hasNext()) {
+                docTmp = iter.next();
+                if (docTmp != null) {
+                    rows.add(docTmp);
+                }
+            }
+
+			if (null != rows) {
+				try {
+				for (Document doc : rows) {
+					String name = doc.getEmbedded(Arrays.asList("NMUA", "Name"), "");
+					String taxCode = doc.getEmbedded(Arrays.asList("NMUA", "TaxCode"), "");
+					String address = doc.getEmbedded(Arrays.asList("NMUA", "Address"), "");
+					String contractNo = doc.getEmbedded(Arrays.asList("Contract", "SHDon"), "");
+					Date signDate = doc.getEmbedded(Arrays.asList("Contract", "NgayKy"), Date.class);
+					Integer quality = doc.getEmbedded(Arrays.asList("Contract", "SLHDon"), 0);
+					Double preTaxMoney = doc.getEmbedded(Arrays.asList("TToan", "TgTCThue"), 0.0);
+					Double taxMoney = doc.getEmbedded(Arrays.asList("TToan", "TgTThue"), 0.0);
+					Double totalMoney = doc.getEmbedded(Arrays.asList("TToan", "TgTTTBSo"), 0.0);
+					Boolean isActive = doc.getBoolean("IsActive", false);
+					Boolean isActiveApprove = doc.getBoolean("IsActiveApprove", false);
+					String nameIssuer = doc.getEmbedded(Arrays.asList("InfoCreated", "CreateUserFullName"), "");
+
+					row = sheet.getRow(posRowData);
+					if (null == row)
+						row = sheet.createRow(posRowData);
+
+					cell = row.getCell(0);
+					if (cell == null)
+						cell = row.createCell(0);
+					cell.setCellStyle(styleInfoR);
+					cell.setCellValue(countRow);
+
+					cell = row.getCell(1);
+					if (cell == null)
+						cell = row.createCell(1);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(name);
+
+					cell = row.getCell(2);
+					if (cell == null)
+						cell = row.createCell(2);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(taxCode);
+					
+					cell = row.getCell(3);
+					if (cell == null)
+						cell = row.createCell(3);
+					cell.setCellStyle(styleInfoC);
+					cell.setCellValue(address);
+					
+					cell = row.getCell(4);
+					if (cell == null)
+						cell = row.createCell(4);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(contractNo);
+					
+					cell = row.getCell(5);
+					if (cell == null)
+						cell = row.createCell(5);
+					cell.setCellStyle(dateCellStyle);
+					if (signDate != null) {
+						cell.setCellValue(commons.convertDateToLocalDateTime(signDate));
+					}
+					
+					cell = row.getCell(6);
+					if (cell == null)
+						cell = row.createCell(6);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(quality);
+					
+					cell = row.getCell(7);
+					if (cell == null)
+						cell = row.createCell(7);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(preTaxMoney);
+
+					cell = row.getCell(8);
+					if (cell == null)
+						cell = row.createCell(8);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(taxMoney);
+					
+					cell = row.getCell(9);
+					if (cell == null)
+						cell = row.createCell(9);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(totalMoney);
+					
+					cell = row.getCell(10);
+					if (cell == null)
+						cell = row.createCell(10);
+					cell.setCellStyle(styleInfoL);
+					if(isActive || isActiveApprove) {
+						cell.setCellValue("Đã kích hoạt");
+					}else {
+						cell.setCellValue("Chưa kích hoạt");
+					}
+					
+					cell = row.getCell(11);
+					if (cell == null)
+						cell = row.createCell(11);
+					cell.setCellStyle(styleInfoL);
+					cell.setCellValue(nameIssuer);
+
+					posRowData++;
+					countRow++;
+                }
+				}
+				catch (Exception e) {
+//					System.out.println(e.getMessage());
+				}
+            }
+            out = new ByteArrayOutputStream();
+            wb.write(out);
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setFileName("DANH-SACH-HOP-DONG.xlsx");
+            fileInfo.setContentFile(out.toByteArray());
+            return fileInfo;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                wb.dispose();
+                wb.close();
+            } catch (Exception ex) {
+            }
+        }
+	}
+	
+    static void setCellStyle(SXSSFWorkbook wb) {
+        DataFormat format = wb.createDataFormat();
+        Short df = format.getFormat(wb.createDataFormat().getFormat(wb.createDataFormat().getFormat("#,##0")));
+        CellStyle cellStyleNum = wb.createCellStyle();
+        cellStyleNum.setDataFormat(df);
+        cellStyleNum.setBorderBottom(BorderStyle.THIN);
+        cellStyleNum.setBorderTop(BorderStyle.THIN);
+        cellStyleNum.setBorderRight(BorderStyle.THIN);
+        cellStyleNum.setBorderLeft(BorderStyle.THIN);
+        cellStyleNum.setWrapText(false);
+    }
+    static void setStyleInfo(CellStyle styleInfoR) {
+        styleInfoR.setAlignment(HorizontalAlignment.CENTER);
+        styleInfoR.setVerticalAlignment(VerticalAlignment.CENTER);
+        styleInfoR.setBorderBottom(BorderStyle.THIN);
+        styleInfoR.setBorderTop(BorderStyle.THIN);
+        styleInfoR.setBorderRight(BorderStyle.THIN);
+        styleInfoR.setBorderLeft(BorderStyle.THIN);
+        styleInfoR.setWrapText(true);
+    }
 }

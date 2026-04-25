@@ -99,34 +99,71 @@
 										
                             		</div>
                             		<div class="col-12 col-sm-10 text-right p-r-0 p-l-0">
-                            			<div class="button-group text-right">
-                 
-                            				<button type="button" title="Thêm mới" data-action="issu-contract-cre"class="btns btns-add__ses hover-up__ses" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-cre|')}">
-                            					<i class="mdi mdi mdi-plus-circle-outline"> </i><span class="d-none d-md-inline"></span>Thêm mới</button>                           				
-                            				<button type="button" title="Chi tiết" data-action="issu-contract-detail" class="btns btns-detail__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-detail|')}">
-                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Chi tiết</span>
-                            				</button>
-                            				<button type="button" title="Thay đổi" data-action="issu-contract-edit" class="btns btns-edit__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-edit|')}">
-                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Thay đổi</span>
-                            				</button>
-                           <!-- 				<button type="button" title="Hủy/Duyệt hợp đồng" data-action="issu-contract-approve" class="btns btns-detail__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-approve|')}">
+										<div class="button-group text-right">
+
+											<button type="button" title="Thêm mới"
+												data-action="issu-contract-cre"
+												class="btns btns-add__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-cre|')}">
+												<i class="mdi mdi mdi-plus-circle-outline"> </i><span
+													class="d-none d-md-inline"></span>Thêm mới
+											</button>
+											<button type="button" title="Chi tiết"
+												data-action="issu-contract-detail"
+												class="btns btns-detail__ses hover-up__ses"
+												th:disabled="true"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-detail|')}">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Chi tiết</span>
+											</button>
+											<button type="button" title="Thay đổi"
+												data-action="issu-contract-edit"
+												class="btns btns-edit__ses hover-up__ses" th:disabled="true"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-edit|')}">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Thay đổi</span>
+											</button>
+											<!-- 				<button type="button" title="Hủy/Duyệt hợp đồng" data-action="issu-contract-approve" class="btns btns-detail__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-approve|')}">
                             					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Hủy/Duyệt hợp đồng</span>
-                            				</button> -->       
-                            					<button type="button" title="Kích hoạt" data-action="issu-contract-active" class="btns btns-export__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-active|')}">
-                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Kích hoạt</span>
-                            				</button>
-                            					<button type="button" title="Hủy kích hoạt" data-action="issu-contract-deactive" class="btns btns-add__ses hover-up__ses"  th:disabled="true" th:if="${#strings.contains(UserFullPathRight,'|issu-contract-deactive|')}">
-                            					<i class="mdi mdi-information-outline"> </i><span class="d-none d-md-inline">Hủy kích hoạt</span>
-                            				</button>                   				                            			
-                            				<button type="button" title="Đồng bộ hợp đồng" data-action="issu-contract-db" class="btns btns-detail__ses hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|issu-contract-db|')}">
-                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Đồng bộ hợp đồng</span>
-                            				</button> 
-                            				<button type="button" title="Xóa hợp đồng" data-action="issu-contract-del" class="btns btns-delete__ses hover-up__ses"  th:if="${#strings.contains(UserFullPathRight,'|issu-contract-del|')}">
-                            					<i class="mdi mdi-tooltip-edit"> </i><span class="d-none d-md-inline">Xóa</span>
-                            				</button>             
-                            			
-                            			</div>
-                            		</div>
+                            				</button> -->
+											<button type="button" title="Kích hoạt"
+												data-action="issu-contract-active"
+												class="btns btns-export__ses hover-up__ses"
+												th:disabled="true"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-active|')}">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Kích hoạt</span>
+											</button>
+											<button type="button" title="Hủy kích hoạt"
+												data-action="issu-contract-deactive"
+												class="btns btns-add__ses hover-up__ses" th:disabled="true"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-deactive|')}">
+												<i class="mdi mdi-information-outline"> </i><span
+													class="d-none d-md-inline">Hủy kích hoạt</span>
+											</button>
+											<button type="button" title="Đồng bộ hợp đồng"
+												data-action="issu-contract-db"
+												class="btns btns-detail__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-db|')}">
+												<i class="mdi mdi-tooltip-edit"> </i><span
+													class="d-none d-md-inline">Đồng bộ hợp đồng</span>
+											</button>
+											<button type="button" title="Xóa hợp đồng"
+												data-action="issu-contract-del"
+												class="btns btns-delete__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-del|')}">
+												<i class="mdi mdi-tooltip-edit"> </i><span
+													class="d-none d-md-inline">Xóa</span>
+											</button>
+											<button type="button" title="Xuất danh sách excel"
+												data-action="issu-contract-export"
+												class="btns btns-export__ses hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|issu-contract-export|')}">
+												<i class="mdi mdi-microsoft-excel"> </i><span
+													class="d-none d-md-inline"> Xuất danh sách excel</span>
+											</button>
+										</div>
+									</div>
                             	</div>
                             </div>
                             
@@ -551,7 +588,34 @@
 						case 'search':
                             _gridMain.data("kendoGrid").dataSource.page(1);
 							break;
-						
+						case 'issu-contract-export':	
+							objData = getDataSearch();
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/main/issu-contract/check-data-export',
+								  data: objData,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res.errorCode == 0) {
+										var responseData = res.responseData;
+										
+										tokenTransaction = responseData['TOKEN'];															
+											window.open(ROOT_PATH + '/main/issu-contract/export-excel/' + tokenTransaction,'_blank');													
+									}else{
+										alertDLSuccess(createObjectError(res).html(), function(){});
+									}
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+						            hideLoading();
+						        }
+							});
+							break;
 						default:
 							break;
 						}
