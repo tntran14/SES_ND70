@@ -59,6 +59,20 @@
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-12 custom-field m-b-16">
+											<div class="c-f__wrapper">
+												<input class="form-control form-control-sm c-f__textbox"
+													type="text" id="invoice-code" name="invoice-code"
+													th:value="${InvoiceCode}" autocomplete="off" />
+												<fieldset aria-hidden="true" class="c-f__set">
+													<legend class="c-f__legend">
+														<label>Mã hóa đơn </label>
+													</legend>
+												</fieldset>
+											</div>
+										</div>
+									</div>
 								</div>
 								<div class="col-erp-5">
 									<div class="row m-b-16">
@@ -193,7 +207,7 @@
 									</div>
 								</div>
 
-								<div class="col-erp-5 col-erp__cta">
+								<div class="col-erp-5">
 									<div class="row">
 										<div class="col-12 m-b-16">
 											<button
@@ -2052,7 +2066,7 @@
 							_gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						case 'deletesearch':
-							$('#f-einvoices').find('#mau-so-hdon,#so-hoa-don,#status,#sign-status,#nban-mst,#nban-ten,#nmua-ten').val('');
+							$('#f-einvoices').find('#mau-so-hdon,#so-hoa-don,#status,#sign-status,#nban-mst,#nban-ten,#nmua-ten,#invoice-code').val('');
 							_gridMain.data("kendoGrid").dataSource.page(1);
 							break;
 						case 'einvoice-sign---':
@@ -2984,7 +2998,7 @@
 					dataPost['nban-ten'] = $('#f-einvoices #nban-ten').val() == null? '': $('#f-einvoices #nban-ten').val();
 					dataPost['nameProd'] = $('#f-einvoices #nameProd').val() == null? '': $('#f-einvoices #nameProd').val();
 					dataPost['nmua-ten'] = $('#f-einvoices #nmua-ten').val() == null? '': $('#f-einvoices #nmua-ten').val();
-					
+					dataPost['ma-hoa-don'] = $('#f-einvoices #invoice-code').val() == null? '': $('#f-einvoices #invoice-code').val();
 					return dataPost;
 				}
 

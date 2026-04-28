@@ -3557,7 +3557,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String nbanTen = "";
 		String nameProd = "";
 		String nmuaTen = "";
-
+		String maHDon = "";
+		
 		JsonNode jsonData = null;
 		if (objData != null) {
 			jsonData = Json.serializer().nodeFromObject(objData);
@@ -3571,7 +3572,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			nbanTen = commons.getTextJsonNode(jsonData.at("/NbanTen")).trim().replaceAll("\\s+", " ");
 			nameProd = commons.getTextJsonNode(jsonData.at("/NameProd")).trim().replaceAll("\\s+", " ");
 			nmuaTen = commons.getTextJsonNode(jsonData.at("/NmuaTen")).trim().replaceAll("\\s+", " ");
-
+			maHDon = commons.getTextJsonNode(jsonData.at("/MaHDon")).trim().replaceAll("\\s+", " ");
 		}
 
 		MsgRsp rsp = new MsgRsp(header);
@@ -3663,6 +3664,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			if(!"".equals(nameProd))			
 				docMatch.append("EInvoiceDetail.DSHHDVu.ProductName",
 						new Document("$regex", commons.regexEscapeForMongoQuery(nameProd)).append("$options", "i"));
+			if(!"".equals(maHDon)) {
+				docMatch.append("EInvoiceDetail.TTChung.MaHD", maHDon);
+			}
 								
 			pipeline = new ArrayList<Document>();
 			pipeline.add(new Document("$match", docMatch));
