@@ -189,7 +189,7 @@
 								</div>
 								<div class="col-12 col-sm-6 col-md-6 custom-field m-b-16">
 									<div class="c-f__wrapper">
-										<input id="ty-gia" name="ty-gia"
+										<input id="ip-loai-tien-tt" name="ip-loai-tien-tt"
 											class="form-control form-control-sm c-f__textbox text-number text-left"
 											th:if="${!_isedit_}" th:value="${DVTTe}"
 											th:readonly="${!_isedit_}" type="text" autocomplete="off" />
@@ -2138,13 +2138,14 @@
 		
 		var isAccept = $('#f-einvoice-crud').find('button[data-action="accept"]').length > 0;
 		var loaiTien = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+		if (loaiTien == undefined) loaiTien = $('#f-einvoice-crud').find('#ip-loai-tien-tt').val();
 		if(loaiTien == '') loaiTien = 'VND';
 		
-		if(isAccept && loaiTien != 'VND'){
+		if (isAccept && loaiTien != 'VND'){
 			$('#f-einvoice-crud').find('#ty-gia').prop('readonly', false);
 			$('#f-einvoice-crud').find('#tong-tien-quy-doi').prop('readonly', false);
 		}
-		if(loaiTien != 'VND'){
+		if (loaiTien != 'VND'){
 			$('#f-einvoice-crud').find('div.quidoingoaite').removeClass('d-none');
 		}
 			
