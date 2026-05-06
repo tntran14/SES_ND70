@@ -307,6 +307,12 @@
 									rowData = _gridMain.data("kendoGrid").dataItem($tr);
 									window.open(ROOT_PATH + '/common/printbb/' + rowData['_id'], '_blank');
 									break;
+								case 'copy':
+									rowData = _gridMain.data("kendoGrid").dataItem($tr);
+									navigator.clipboard.writeText("https://hoadon78.sesgroup.vn/hddt/lbbdctt-client" 
+											+ "/" + rowData['SecureKey'] +"/"+ rowData['MTDiep'] + "/init");
+									notificationDLSuccess('Sao chép link thành công', function () { });
+									break;
 								case 'delete':
 									rowData = _gridMain.data("kendoGrid").dataItem($tr);
 									objData['_id'] = rowData['_id'];
@@ -515,9 +521,7 @@
 											tokenTransaction = responseData['TOKEN'];
 											objDataSend['tokenTransaction'] = tokenTransaction;
 
-
 											$.ajax({
-
 												url: "http://localhost:11284/getCert",
 												type: 'POST',
 												cors: true,
@@ -604,14 +608,14 @@
 																											var res = xhrSign.response;
 																											if (res) {
 																												if (res.errorCode == 0) {
-																													hideLoading();
-																													_gridMain.data("kendoGrid").dataSource.read();
-																													
+																													sendMailAuto(objData);
 																												} else {
+																													_gridMain.data("kendoGrid").dataSource.read();
 																													alertDLSuccess(createObjectError(res).html(), function () { });
 																													hideLoading();
 																												}
 																											} else {
+																												_gridMain.data("kendoGrid").dataSource.read();
 																												alertDLSuccess('unknown error!!!', function () { });
 																												hideLoading();
 																											}
@@ -707,6 +711,31 @@
 								}
 
 							});
+							
+							function sendMailAuto(data) {
+								$.ajax({
+									type: "POST",
+									datatype: "json",
+									url: ROOT_PATH + '/main/lbbdctt-sendMail/send-mail-auto',
+									data: data,
+									beforeSend: function(req) {
+										initAjaxJsonRequest(req);
+							        	showLoading();
+									},
+									success:function(res) {
+										hideLoading();
+										if(res && res.errorCode != 0) {
+											console.log("Gửi mail cho người bán không thành công!" + res);
+										}
+										_gridMain.data("kendoGrid").dataSource.read();
+										hideLoading();
+									},
+									error:function (xhr, ajaxOptions, thrownError){
+										alertDLSuccess(xhr.status + " - " + xhr.responseText, function(){});
+							            hideLoading();
+							        }
+								});
+							}
 
 							break;
 						default:
@@ -743,6 +772,7 @@
 						} else if (('PENDING' == eInvoiceStatus|| 'PROCESSING' == eInvoiceStatus) && 'SIGNED' == signStatusCode) {
 							text += '<i title="In PDF" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="printbb" ></i>';
 							text += '<i title="Gửi email hóa đơn" class="mdi mdi-email fs-25 text-warning c-pointer" id="send-email" name="send-email" data-sub-action="send-email" ></i>';
+							text += '<i title="Copy URL" class="mdi mdi-content-copy fs-25 text-primary c-pointer" id="copy" name="copy" data-sub-action="copy" ></i>';
 						} 
 						else if ('COMPLETE' == eInvoiceStatus && 'SIGNED' == signStatusCode) {
 							text += '<i title="In PDF" class="mdi mdi-file-pdf fs-25 text-red c-pointer" data-sub-action="printbb" ></i>';

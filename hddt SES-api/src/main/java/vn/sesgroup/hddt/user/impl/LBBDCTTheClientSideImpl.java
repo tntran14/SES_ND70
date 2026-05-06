@@ -88,11 +88,17 @@ public class LBBDCTTheClientSideImpl extends AbstractDAO implements LBBDCTTheCli
 			throw new Exception("Lỗi dữ liệu đầu vào");
 		}
 
-		String mst = commons.getTextJsonNode(jsonData.at("/mst")).replaceAll("\\s", "");
+		String secureKey = commons.getTextJsonNode(jsonData.at("/secureKey")).replaceAll("\\s", "");
 		String mtdiep = commons.getTextJsonNode(jsonData.at("/mtdiep")).replaceAll("\\s+", "");
-		Document docFind = new Document("TTNMua.MSThue", mst).append("MTDiep", mtdiep).append("IsDelete", false)
-				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED).append("Status", new Document("$in",
-						Arrays.asList(Constants.INVOICE_STATUS.PROCESSING, Constants.INVOICE_STATUS.COMPLETE)));
+		Document docFind = new Document("SecureKey", secureKey)
+				.append("MTDiep", mtdiep)
+				.append("IsDelete", false)
+				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
+				.append("Status", new Document("$in", 
+						Arrays.asList(Constants.INVOICE_STATUS.PENDING,
+						Constants.INVOICE_STATUS.PROCESSING, 
+						Constants.INVOICE_STATUS.COMPLETE))
+						);
 		Document docTmp = null;
 		try (MongoClient mongoClient = cfg.mongoClient();) {
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
@@ -141,7 +147,7 @@ public class LBBDCTTheClientSideImpl extends AbstractDAO implements LBBDCTTheCli
 		}
 
 		Document docFind = new Document("_id", objectId).append("IsDelete", false)
-				.append("Status", Constants.INVOICE_STATUS.PROCESSING)
+				.append("Status", new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.PENDING, Constants.INVOICE_STATUS.PROCESSING)))
 				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
 				.append("ClientSignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN);
 
@@ -196,7 +202,7 @@ public class LBBDCTTheClientSideImpl extends AbstractDAO implements LBBDCTTheCli
 		}
 
 		Document docFind = new Document("_id", objectId).append("IsDelete", false)
-				.append("Status", Constants.INVOICE_STATUS.PROCESSING)
+				.append("Status",new Document("$in", Arrays.asList(Constants.INVOICE_STATUS.PENDING, Constants.INVOICE_STATUS.PROCESSING)))
 				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
 				.append("ClientSignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN);
 

@@ -126,6 +126,8 @@ public class LBBDCTTheController extends AbstractController {
 						commons.convertLocalDateTimeStringToString(commons.getTextJsonNode(jsonData.at("/NLap")),
 								"yyyy-MM-dd", Constants.FORMAT_DATE.FORMAT_DATE_WEB));
 				hItem.put("NDSai", commons.getTextJsonNode(jsonData.at("/NDSai")));
+				hItem.put("MTDiep", commons.getTextJsonNode(jsonData.at("/MTDiep")));
+				hItem.put("SecureKey", commons.getTextJsonNode(jsonData.at("/SecureKey")));
 				grid.getRows().add(hItem);
 			}
 		} else {

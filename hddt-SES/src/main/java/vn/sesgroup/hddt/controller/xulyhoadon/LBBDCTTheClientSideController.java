@@ -76,13 +76,13 @@ public class LBBDCTTheClientSideController extends AbstractController {
 	@Autowired
 	RestTemplate restTemplate;
 
-	@RequestMapping(value = "/{mst}/{mtdiep}/init", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/{secureKey}/{mtdiep}/init", method = { RequestMethod.POST, RequestMethod.GET })
 	public String init(Locale locale, Principal principal, HttpServletRequest req,
-			@PathVariable(value = "mst") String mst, @PathVariable(value = "mtdiep") String mtdiep) throws Exception {
+			@PathVariable(value = "secureKey") String secureKey, @PathVariable(value = "mtdiep") String mtdiep) throws Exception {
 		req.setAttribute("_TitleView_",
-				Constants.PREFIX_TITLE + " - Danh sách biên bản điều chỉnh/thay thế của khách hàng");
+				Constants.PREFIX_TITLE + " - Biên bản điều chỉnh/thay thế của khách hàng");
 		req.setAttribute("_mtdiep", mtdiep);
-		req.setAttribute("_mst", mst);
+		req.setAttribute("_secureKey", secureKey);
 		return "bbdctthe/bbdctthe-client";
 	}
 
@@ -94,10 +94,10 @@ public class LBBDCTTheClientSideController extends AbstractController {
 
 		Msg msg = baseDTO.createMsgPass();
 		String mtdiep = commons.getParameterFromRequest(req, "_mtdiep").replaceAll("\\s", "");
-		String mst = commons.getParameterFromRequest(req, "_mst").replaceAll("\\s", "");
+		String secureKey = commons.getParameterFromRequest(req, "_secureKey").replaceAll("\\s", "");
 
 		HashMap<String, Object> hData = new HashMap<>();
-		hData.put("mst", mst);
+		hData.put("secureKey", secureKey);
 		hData.put("mtdiep", mtdiep);
 		msg.setObjData(hData);
 
@@ -302,8 +302,7 @@ public class LBBDCTTheClientSideController extends AbstractController {
 		return dtoRes;
 	}
 
-	@RequestMapping(value = {
-			"/check-certcks" }, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = {"/check-certcks" }, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public BaseDTO execCheckCertcks(Locale locale, HttpServletRequest req, HttpSession session,
 			@RequestParam(value = "cert", required = false, defaultValue = "") String cert) throws Exception {

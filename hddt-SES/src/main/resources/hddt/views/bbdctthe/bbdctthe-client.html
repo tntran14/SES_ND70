@@ -46,7 +46,7 @@
 						</div>
 					</div>
 					<input type="hidden" name="_mtdiep" th:value="${_mtdiep}">
-					<input type="hidden" name="_mst" th:value="${_mst}">
+					<input type="hidden" name="_secureKey" th:value="${_secureKey}">
 				</form>
 				<style>
 				.text-red {
@@ -585,7 +585,7 @@
 				var dataPost = {};
 				dataPost['_mtdiep'] = $('#f-lbbdctt').find(
 						'input[name="_mtdiep"]').val();
-				dataPost['_mst'] = $('#f-lbbdctt').find('input[name="_mst"]')
+				dataPost['_secureKey'] = $('#f-lbbdctt').find('input[name="_secureKey"]')
 						.val();
 				return dataPost;
 			}

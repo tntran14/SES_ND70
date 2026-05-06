@@ -1747,6 +1747,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("ClientSignStatusCode", 1)
 					.append("IsDelete", 1)
 					.append("SecureKey", 1)
+					.append("MTDiep", 1)
 				)
 			);
 		page.setFieldSort("NLap");
@@ -1797,6 +1798,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				hItem.put("Status", doc.get("Status"));
 				hItem.put("IsDelete", doc.get("IsDelete"));
 				hItem.put("SecureKey", doc.get("SecureKey"));
+				hItem.put("MTDiep", doc.get("MTDiep"));
 				rowsReturn.add(hItem);
 			}
 		}

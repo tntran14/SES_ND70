@@ -1,9 +1,6 @@
 package vn.sesgroup.hddt.controller.xulyhoadon;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -212,7 +209,7 @@ public class LBBDCTTheSendMailController extends AbstractController {
 					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG TRUY CẬP LINK ĐỂ THỰC HIỆN KÝ XÁC NHẬN BIÊN BẢN!</span></p>");
 
 			String url = "https://hoadon78.sesgroup.vn/hddt/lbbdctt-client";
-			_tmp = commons.getTextJsonNode(jsonData.at("/TTNMua/MSThue"));
+			_tmp = commons.getTextJsonNode(jsonData.at("/SecureKey"));
 			url += "/" + _tmp;
 			_tmp = commons.getTextJsonNode(jsonData.at("/MTDiep"));
 			url += "/" + _tmp;
@@ -301,7 +298,7 @@ public class LBBDCTTheSendMailController extends AbstractController {
 
 	@RequestMapping(value = "/send-mail", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
-	public BaseDTO execSendMail(HttpServletRequest req, HttpSession session,
+	public BaseDTO sendMail(HttpServletRequest req, HttpSession session,
 			@RequestAttribute(name = "transaction", value = "", required = false) String transaction,
 			@RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction)
 			throws Exception {
@@ -348,6 +345,215 @@ public class LBBDCTTheSendMailController extends AbstractController {
 			dtoRes.setResponseData(rspStatus.getErrorDesc());
 		}
 		return dtoRes;
-	}
+	}	
 
+	@RequestMapping(value = "/send-mail-auto", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@ResponseBody
+	public BaseDTO sendMailAutoExecute(HttpServletRequest req, HttpSession session,
+			@RequestAttribute(name = "transaction", value = "", required = false) String transaction,
+			@RequestParam(value = "tokenTransaction", required = false, defaultValue = "") String tokenTransaction)
+			throws Exception {
+		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
+		BaseDTO dto = new BaseDTO(req);
+		_id = commons.getParameterFromRequest(req, "_id").replaceAll("\\s", "");
+		if ("".equals(_id)) {
+			dto.setErrorCode(1);
+			dto.getErrorMessages().add("Không tìm thấy thông tin biên bản.");
+			return dto;
+		}
+
+		if (!loadMailInfo(cup, req, _id)) {
+			dto.setErrorCode(404);
+			dto.getErrorMessages().add(errorCode + "|" + errorDesc);
+			return dto;
+		}
+		
+		Msg msg = dto.createMsg(cup, Constants.MSG_ACTION_CODE.SEND);
+		HashMap<String, Object> hData = new HashMap<>();
+		hData.put("_id", _id);
+		hData.put("_title", _title);
+		hData.put("_email", _email);
+		hData.put("_content", _content);
+
+		msg.setObjData(hData);
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/lbbdctt/send-mail", cup.getLoginRes().getToken(), HttpMethod.POST, root);
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if (rspStatus.getErrorCode() == 0) {
+			dto.setErrorCode(0);
+			dto.setResponseData("Gửi email hóa đơn thành công.");
+		} else {
+			dto.setErrorCode(rspStatus.getErrorCode());
+			dto.setResponseData(rspStatus.getErrorDesc());
+		}
+		return dto;
+	}
+	
+	private boolean loadMailInfo(CurrentUserProfile cup, HttpServletRequest req, String _id) throws Exception {
+		BaseDTO baseDTO = new BaseDTO(req);
+		Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.INQUIRY);
+		JSONRoot root = new JSONRoot(msg);
+		MsgRsp rsp = restAPI.callAPINormal("/lbbdctt/detail/" + _id, cup.getLoginRes().getToken(), HttpMethod.POST,
+				root);
+		
+		MspResponseStatus rspStatus = rsp.getResponseStatus();
+		if (rspStatus.getErrorCode() == 0) {
+			JsonNode jsonData = Json.serializer().nodeFromObject(rsp.getObjData());
+			IssuerInfo ii = cup.getLoginRes().getIssuerInfo();
+
+			StringBuilder title = new StringBuilder();
+			title.append(ii.getTaxCode());
+			title.append(" ");
+			title.append(ii.getName());
+			title.append(" Thông báo lập biên bản điều chỉnh thay thế hóa đơn điện tử có sai sót");
+
+			String _tmp = "";
+
+			_tmp = commons.getTextJsonNode(jsonData.at("/TTNMua/MSThue"));
+			if (!"".equals(_tmp)) {
+				title.append(" ");
+				title.append(_tmp);
+			}
+			_tmp = commons.getTextJsonNode(jsonData.at("/TTNMua/DVMHang"));
+			if ("".equals(_tmp)) {
+				title.append(" ");
+				title.append(_tmp);
+			}
+			title.append(" - Số HĐ ");
+			title.append(commons.formatNumberBillInvoice(jsonData.at("/HDSSot/SHDon").doubleValue()));
+			title.append(" (No reply)");
+
+			String emailReceive = commons.getTextJsonNode(jsonData.at("/TTNMua/ESend"));
+			if ("".equals(emailReceive)) {
+				errorCode = "EMAIL_NOT_FOUND";
+				errorDesc = "Không tìm thấy email người nhận.";
+				return false;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			_tmp = commons.getTextJsonNode(jsonData.at("/TTNMua/DVMHang")).toUpperCase();
+			sb.setLength(0);
+			sb.append(
+					"<p><span style='font-family: Times New Roman;font-size: 13px;'>Kính gửi: <label style='font-weight: bold;'>"
+							+ ("".equals(_tmp) ? "Quý khách hàng" : _tmp) + "</label><o:p></o:p></span></p>\n");
+			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>" + ii.getName()
+					+ " xin trân trọng thông báo đến Quý Khách về việc lập biên bản điều chỉnh thay thế hóa đơn điện tử có sai sót</span></p>\n");
+
+			if (Boolean.valueOf(commons.getTextJsonNode(jsonData.at("/IsMultiInvoice")))) {
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin các hóa đơn có sai sót:</label></span></p>\n");
+
+				if (!jsonData.at("/DSHDon").isMissingNode()) {
+					JsonNode jsonDSHDon = jsonData.at("/DSHDon");
+					int stt = 1;
+					for (JsonNode jsonHDon : jsonDSHDon) {
+						sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>");
+						sb.append(stt++);
+						sb.append(".  Số hóa đơn:  ");
+						_tmp = commons.formatNumberBillInvoice(jsonHDon.at("/HDDCTThe/SHDon").doubleValue());
+						sb.append(_tmp);
+						sb.append(", ");
+						sb.append(commons.getTextJsonNode(jsonHDon.at("/HDDCTThe/KHMSHDon"))
+								+ commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHHDon")));
+						sb.append(", ");
+						sb.append(commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonHDon.at("/HDDCTThe/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						sb.append("<label style='font-weight: bold;'> ");
+						_tmp = commons.getTextJsonNode(jsonData.at("/Loai"));
+						sb.append(("1".equals(_tmp) ? "thay thế cho " : "điều chỉnh cho "));
+						sb.append("</label>");
+						sb.append("Số hóa đơn:  ");
+						_tmp = commons.formatNumberBillInvoice(jsonHDon.at("/HDSSot/SHDon").doubleValue());
+						sb.append(_tmp);
+						sb.append(", ");
+						sb.append(commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHMSHDon"))
+								+ commons.getTextJsonNode(jsonHDon.at("/HDSSot/KHHDon")));
+						sb.append(", ");
+						sb.append(commons.convertLocalDateTimeToString(
+								commons.convertLongToLocalDate(jsonHDon.at("/HDSSot/NLap").asLong()),
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						sb.append("<label style='font-weight: bold;'> ");
+						sb.append("</p>\n");
+					}
+				}
+			} else {
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>Thông tin hóa đơn có sai sót:</label></span></p>\n");
+
+				_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDSSot/SHDon").doubleValue()),
+						"");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
+						+ "</span></p>\n");
+
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHMSHDon")), "")
+						+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/KHHDon")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
+						+ "</span></p>\n");
+
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDSSot/MCCQT")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+						+ _tmp + " </span></p>\n");
+
+				_tmp = commons.convertLocalDateTimeToString(
+						commons.convertLongToLocalDate(jsonData.at("/HDSSot/NLap").asLong()),
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
+						+ "</span></p>\n");
+
+				_tmp = commons.getTextJsonNode(jsonData.at("/Loai"));
+				sb.append(
+						"<p><span style='font-family: Times New Roman;font-size: 13px;'><label style='font-weight: bold;'>"
+								+ ("1".equals(_tmp) ? "Thay thế" : "Điều chỉnh")
+								+ " bằng hóa đơn:</label></span></p>\n");
+				_tmp = Objects.toString(commons.formatNumberBillInvoice(jsonData.at("/HDDCTThe/SHDon").doubleValue()),
+						"");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>1.  Số hóa đơn:  " + _tmp
+						+ "</span></p>\n");
+
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHMSHDon")), "")
+						+ Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/KHHDon")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>2.  Mẫu hoá đơn: " + _tmp
+						+ "</span></p>\n");
+
+				_tmp = Objects.toString(commons.getTextJsonNode(jsonData.at("/HDDCTThe/MCCQT")), "");
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "
+						+ _tmp + " </span></p>\n");
+
+				_tmp = commons.convertLocalDateTimeToString(
+						commons.convertLongToLocalDate(jsonData.at("/HDDCTThe/NLap").asLong()),
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+				sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Ngày lập: " + _tmp
+						+ "</span></p>\n");
+			}
+
+			sb.append(
+					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG TRUY CẬP LINK ĐỂ THỰC HIỆN KÝ XÁC NHẬN BIÊN BẢN!</span></p>");
+
+			String url = "https://hoadon78.sesgroup.vn/hddt/lbbdctt-client";
+			_tmp = commons.getTextJsonNode(jsonData.at("/SecureKey"));
+			url += "/" + _tmp;
+			_tmp = commons.getTextJsonNode(jsonData.at("/MTDiep"));
+			url += "/" + _tmp;
+			url += "/init";
+			sb.append(
+					"<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Link truy cập: <a target='_blank' href='"
+							+ url + "'>" + url + "</a></span></p>\n");
+
+			sb.append(
+					"<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
+			sb.append("<hr style='margin: 5px 0 5px 0;'>");
+			sb.append(
+					"<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");
+
+			_title = title.toString();
+			_email = emailReceive;
+			_content = sb.toString();
+		} else {
+			errorCode = "NON_ZERO_ERROR_CODE";
+			errorDesc = "Không tìm thấy email người nhận.";
+			return false;
+		}
+		return true;
+	}
 }
