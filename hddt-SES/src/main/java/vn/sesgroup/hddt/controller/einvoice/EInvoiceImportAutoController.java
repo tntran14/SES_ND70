@@ -417,5 +417,4 @@ public class EInvoiceImportAutoController extends AbstractController{
 
 		return map;
 	}
-	
 }

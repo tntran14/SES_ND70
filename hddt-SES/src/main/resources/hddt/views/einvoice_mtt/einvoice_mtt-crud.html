@@ -355,6 +355,11 @@
 										title="Xóa hàng loạt sản phẩm, dịch vụ" th:if="${_isedit_}">
 										<i class="mdi mdi-delete-forever fs-15"></i>
 									</button>
+									<button type="button" data-action="add-excel-to-grid"
+										class="btn-sm btn-success"
+										title="Thêm sản phẩm, dịch vụ từ file" th:if="${_isedit_}">
+										<i class="mdi mdi-file-excel fs-15"></i>
+									</button>
 									<button type="button" data-action="add-to-grid"
 										class="btn-sm btn-primary btn-ses"
 										title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}">
@@ -828,6 +833,20 @@
 						}
 						,function(e){})
 				}
+				break;
+			case 'add-excel-to-grid':
+				objDataSend = {'invoiceType':$('#f-einvoice_mtt-crud').find('#loai-hd').val()};
+				showPopupWithURLAndData(ROOT_PATH + '/main/einvoice_mtt-import-auto/init-products', objDataSend, true, function (e) {
+					if ($.type(e) == 'array') {
+						let objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
+						let filtered = objDataJson.filter(x => x.ProductName && x.ProductName.trim() !== "");
+						let items= [...filtered, ...e];
+						_gridSub01.data("kendoGrid").dataSource.data(items);
+						setSTTinGrid();
+						calcSTTInGrid();	
+						calcTotalAmount();
+					}
+				});
 				break;
 			case 'add-to-grid':
 				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
@@ -1492,15 +1511,15 @@
 		check_loai_hoa_don = _val;
 		  switch(_val) {
 		    case "1":
-		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(8);
-				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(9);
+		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(9);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(10);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(11);
 			    document.getElementById("discount-div").style.display = "none";
 		      break;
 		    case "2":  
-		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(8);
-				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(9);
+		    	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(9);
 				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(10);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(11);
 			    document.getElementById("discount-div").style.display = "block";
 		      break;
 		    default:
