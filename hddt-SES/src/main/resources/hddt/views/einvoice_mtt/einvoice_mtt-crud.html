@@ -350,7 +350,16 @@
 									<span class="text-middle fw-800 text-uppercase text-decoration-underline color-ses ">Danh mục hàng hóa, dịch vụ</span>
 								</div>
 								<div class="col-3 col-sm-6 text-right">
-									<button type="button" data-action="add-to-grid" class="btn-sm btn-primary btn-ses" title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}" ><i class="mdi mdi-plus fs-15"></i></button>
+									<button type="button" data-action="delete-to-grid"
+										class="btn-sm btn-danger"
+										title="Xóa hàng loạt sản phẩm, dịch vụ" th:if="${_isedit_}">
+										<i class="mdi mdi-delete-forever fs-15"></i>
+									</button>
+									<button type="button" data-action="add-to-grid"
+										class="btn-sm btn-primary btn-ses"
+										title="Thêm sản phẩm, dịch vụ" th:if="${_isedit_}">
+										<i class="mdi mdi-plus fs-15"></i>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -550,18 +559,20 @@
 				{field: 'STT', title: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
 	  				attributes: {'class': 'table-cell', style: 'text-align: right;'}, sortable: false, 
 	  				headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-//	  				, template: '<input type="text" name="STT" value="' + '#: ++record #' + '" class="input-grid k-input form-control form-control-sm text-right input-grid-number" style="border: none;" >',
 	  				, template: '#= window.setTemplateForGrid("STT", data) #'
 	  				
 	  			},
 	  			{field: 'func', title: '', width: '30px', encoded: false, hidden: !vIsEdit
-//					, headerTemplate: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
 	  				, headerTemplate: '&nbsp;'
 					, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
 					, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
-//					, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
-//					, template: '<i class="mdi mdi-close-box fs-25 text-black"></i>'
 					, template: '#= window.setTemplateForGrid("func", data) #'
+				},
+				{field: 'isCheck', title: '', width: '35px', encoded: false
+					, headerTemplate: '<label class="custom-control custom-checkbox  m-b-0"><input type="checkbox" class="custom-control-input Check-All" data-check-all ><span class="custom-control-label"></span></label>'
+					, attributes: {'class': 'table-cell', style: 'text-align: center;'}, sortable: false
+					, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
+					, template: '<label class="custom-control custom-checkbox p-l-30 m-b-0"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 				},
 				{field: 'ProductName', title: '', width: '350px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên hàng hóa, dịch vụ</a>',
 					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
@@ -657,6 +668,28 @@
 					}
 				});
 				
+				_gridSub01.find('table[role="grid"]').find('thead').undelegate('input[type="checkbox"][data-check-all]', 'click');
+				_gridSub01.find('table[role="grid"]').find('thead').delegate('input[type="checkbox"][data-check-all]', 'click', function(e){
+					var _obj = this;
+					_gridSub01.find('table[role="grid"] tbody input[type="checkbox"][data-check-item]').prop('checked', $(_obj).prop('checked'));
+					if ($(_obj).prop('checked')) {
+						_gridSub01.find('tbody tr').addClass("k-state-selected");
+					}else{
+						_gridSub01.find('tbody tr').removeClass("k-state-selected");
+					}
+				});
+
+				_gridSub01.find('table[role="grid"]').find('tbody').undelegate('input[type="checkbox"][data-check-item]', 'click');
+				_gridSub01.find('table[role="grid"]').find('tbody').delegate('input[type="checkbox"][data-check-item]', 'click', function(e){
+					var checked = $(this).prop('checked');
+					if(checked){
+						$(this).closest("tr").addClass("k-state-selected");
+					}else{
+						$(this).closest("tr").removeClass("k-state-selected");
+					}
+					_gridSub01.find('table[role="grid"]').find('thead input[type="checkbox"]').prop('checked', _gridSub01.find(' tbody tr input[type="checkbox"]:not(:checked)').length == 0);		
+				});
+				
 				_gridSub01.find('tbody[role="rowgroup"]').undelegate('input[type="checkbox"][name="chkSTT"]', 'click');
 				_gridSub01.find('tbody[role="rowgroup"]').delegate('input[type="checkbox"][name="chkSTT"]', 'click', function(e){
 					setSTTinGrid();
@@ -680,29 +713,6 @@
 					calcTotalAmount();
 				});
 				/*END - ACTION IN GRID*/
-				
-// 				_gridSub01.find('textarea[name="ProductName"]').each(function () {
-// 					this.setAttribute('style',
-// 						'height:' + (this.scrollHeight) + 'px;' +
-// 						'overflow:hidden;' +
-// 						'resize:none;' +
-// 						'padding-top:5px;' +
-// 						'padding-bottom:5px;'
-// 					);
-// 					if (vIsEdit) {
-// 						this.setAttribute('style', 'border:1px solid #ccc;');
-
-// 					} else {
-// 						this.setAttribute('readonly', '');
-// 					}
-
-// 					this.style.height = (this.scrollHeight) + 'px';
-
-// 					$(this).on('input', function () {
-// 						this.style.height = 'auto';
-// 						this.style.height = (this.scrollHeight) + 'px';
-// 					});
-// 				});
 			}
 	        
 		});
@@ -792,8 +802,33 @@
 			
 			var $obj = $(this);
 			var objDataSend = null;
-			
 			switch (dataAction) {
+			case 'delete-to-grid':		
+				let checkRows = _gridSub01.find(' tbody tr input[type="checkbox"][data-check-item]:checked');
+				
+				if(checkRows.length == 0){
+						alertDLSuccess("Vui lòng chọn sản phẩm, dịch vụ cần xóa!!!", function(){});
+				} else {
+					alertConfirm('Bạn có muốn xóa hàng loạt sản phẩm, dịch vu không?',
+						function(e){
+							let deleteRows = [];
+							var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();									
+									checkRows.each(function(i, v) {
+											var idx = -1;							
+										    idx = $(checkRows[i].closest("tr")).index();							   
+										    deleteRows.push(idx);							
+										});
+							var newArray = objDataJson.filter(function(element, index) {
+								  return !deleteRows.includes(index);
+								});				
+								_gridSub01.data("kendoGrid").dataSource.data(newArray);			
+								setSTTinGrid();
+								calcSTTInGrid();	
+								calcTotalAmount();
+						}
+						,function(e){})
+				}
+				break;
 			case 'add-to-grid':
 				var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 				objDataJson.push({});
