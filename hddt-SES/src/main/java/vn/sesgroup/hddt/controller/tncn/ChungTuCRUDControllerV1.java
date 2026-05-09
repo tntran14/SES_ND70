@@ -282,8 +282,7 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 		}
 	}
 
-	public BaseDTO checkDataToAccept(HttpServletRequest req, HttpSession session, String transaction,
-			CurrentUserProfile cup) throws Exception {
+	public BaseDTO checkDataToAccept(HttpServletRequest req, String transaction) throws Exception {
 		BaseDTO dto = new BaseDTO();
 		dto.setErrorCode(0);
 
@@ -425,10 +424,10 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 	public BaseDTO execCheckDataToSave(Locale locale, HttpServletRequest req, HttpSession session,
 			@RequestAttribute(name = "transaction", required = false, value = "") String transaction) throws Exception {
 		String token = "";
-		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
-			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
-			session.removeAttribute(token);
-		}
+//		if (null != session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE)) {
+//			token = session.getAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE).toString();
+//			session.removeAttribute(token);
+//		}
 		session.removeAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE);
 
 		BaseDTO dto = new BaseDTO();
@@ -451,8 +450,7 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 			return dto;
 		}
 
-		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-		dto = checkDataToAccept(req, session, transaction, cup);
+		dto = checkDataToAccept(req, transaction);
 		if (0 != dto.getErrorCode()) {
 			dto.setErrorCode(999);
 			dto.setResponseData(Constants.MAP_ERROR.get(999));
@@ -480,7 +478,7 @@ public class ChungTuCRUDControllerV1 extends AbstractController {
 		BaseDTO dtoRes = new BaseDTO();
 
 		CurrentUserProfile cup = getCurrentlyAuthenticatedPrincipal();
-		dtoRes = checkDataToAccept(req, session, transaction, cup);
+		dtoRes = checkDataToAccept(req, transaction);
 		if (0 != dtoRes.getErrorCode()) {
 			dtoRes.setErrorCode(999);
 			dtoRes.setResponseData(Constants.MAP_ERROR.get(999));
