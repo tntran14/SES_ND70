@@ -185,7 +185,7 @@
 				            record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
 				        },
 				        columns: [
-				        	{field: 'STT', width: '60px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
+				        	{field: 'STT', width: '35px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">STT</a>',
 				  				attributes: {'class': 'table-cell text-center'}, sortable: false, 
 				  				headerAttributes: {'class': 'table-header-cell text-center'}, template: "#= ++record #",
 				  			},
@@ -195,17 +195,17 @@
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 								, template: '<label class="custom-control custom-checkbox p-l-30 m-b-3"><input type="checkbox" class="custom-control-input Check-Item" data-check-item ><span class="custom-control-label"></span></label>'
 							},
-				  			{field: 'func', title: '', width: '65px', encoded: false
+				  			{field: 'func', title: '', width: '85px', encoded: false
 				  				, headerTemplate: '&nbsp;'
 								, attributes: {'class': 'table-cell', style: 'text-align: left;'}, sortable: false
 								, headerAttributes: {'class': 'table-header-cell', style: 'text-align: center;',}
 							, template: '#= window.setTemplateForGridMAIN("func", data) #'
 							},
-							{field: 'loaihd_ma', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Loại hóa đơn</a>',
+							{field: 'loaihd_ma', width: '120px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Loại hóa đơn</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
-							{field: 'Name', width: '70px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên Mẫu</a>',
+							{field: 'Name', width: '230px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên Mẫu</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
@@ -219,7 +219,7 @@
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},
 					
-							{field: 'IsActive', width: '70px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng Thái</a>',
+							{field: 'IsActive', width: '85px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Trạng Thái</a>',
 								attributes: {'class': 'table-cell text-left'}, sortable: false, 
 								headerAttributes: {'class': 'table-header-cell text-center'},
 							},

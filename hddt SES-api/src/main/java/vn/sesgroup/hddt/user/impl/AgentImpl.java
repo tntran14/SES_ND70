@@ -525,6 +525,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			double chietKhauTMTotal	= 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -596,9 +597,11 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
-
 				}
 			}
 			elementSubContent.appendChild(elementTmp);
@@ -624,7 +627,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1166,6 +1169,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			double chietKhauTMTotal1	= 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -1237,7 +1241,9 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal1 += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
 
 				}
@@ -1265,7 +1271,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal1)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1733,6 +1739,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 
 			mapVATAmount = new LinkedHashMap<String, Double>();
 			mapAmount = new LinkedHashMap<String, Double>();
+			double chietKhauTMTotal2	= 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
@@ -1804,7 +1811,9 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal2 += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
 
 				}
@@ -1832,7 +1841,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal2)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));

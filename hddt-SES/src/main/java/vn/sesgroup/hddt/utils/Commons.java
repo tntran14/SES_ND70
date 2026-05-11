@@ -605,7 +605,7 @@ public class Commons {
 			}
 		  
 	public String normalizeNumberCTTNCN(String input) {
-		if (input == null || input.isBlank())
+		if (input == null || input.trim().isEmpty())
 			return input;
 
 		String cleaned = input.trim();
@@ -620,7 +620,7 @@ public class Commons {
 	}
   
   public String formatNumberCTTNCN(String input) {
-	  if (input == null || input.isBlank()) return input;
+	  if (input == null || input.trim().isEmpty()) return input;
 
 	    String cleaned = input.trim();
 
