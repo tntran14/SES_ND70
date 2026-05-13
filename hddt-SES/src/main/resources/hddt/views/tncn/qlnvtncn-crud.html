@@ -19,7 +19,7 @@
 							<div class="row m-b-15">
 								<div class="col-12">
 									<div class="c-f__wrapper">
-										<input id="tax-code" name="tax-code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${TaxCode}" type="text" autocomplete="off" th:readonly="${'CREATE' != _action_}" />
+										<input id="tax-code" name="tax-code" class="form-control form-control-sm c-f__textbox text-uppercase" th:value="${TaxCode}" type="text" autocomplete="off" th:readonly="${_action_ != 'CREATE' and _action_ != 'EDIT'}" />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend"><label>Mã số thuế </label></legend>
 										</fieldset>
