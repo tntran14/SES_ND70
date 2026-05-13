@@ -6600,7 +6600,6 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 				.append("SCTus", new Document("$push", "$SCTu"))
 				));
 		
-		
 		Document docTmp = null;
 
 		try (MongoClient mongoClient = cfg.mongoClient()){
@@ -6622,22 +6621,21 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 
 		StringBuffer sb = new StringBuffer();
 		List<Integer> sctus = docTmp.getList("SCTus", Integer.class);
-		for (int i = minSCTu; i<=maxSCTu; i++) {
+		for (int i = minSCTu; i <= maxSCTu; i++) {
 			if (!sctus.contains(i)) {
 				sb.append(i);
 				sb.append(", ");
 			}
 		}
-		
+
 		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 2);
 			rsp.setResponseStatus(new MspResponseStatus(9999,
-					"Ký các chứng từ không thành công.\n Vui lòng ký các chứng từ liền kề. (thiếu chứng từ " + sb.toString()
-							+ ")"));
+					"Ký các chứng từ không thành công.\n Vui lòng ký các chứng từ liền kề. (thiếu chứng từ "
+							+ sb.toString() + ")"));
 			return rsp;
 		}
-		
-		
+
 		docFind = new Document("IssuerId", header.getIssuerId())
 				.append("IsDelete", false)
 				.append("MauSo", idMauSo)
@@ -6663,44 +6661,41 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		pipeline.add(new Document("$limit", 1));
 		docTmp = null;
 
-		try (MongoClient mongoClient = cfg.mongoClient()){
+		try (MongoClient mongoClient = cfg.mongoClient()) {
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
 			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 		} catch (Exception e) {
 
 		}
 
-		if (null == docTmp) {
-			responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn.");
-			rsp.setResponseStatus(responseStatus);
-			return rsp;
-		}
-		
-		int largestSCTu = docTmp.get("SCTu", 0);
 		LocalDate latestNLap = null;
-		if (docTmp.get("NLap") != null) {
-			latestNLap = commons
-					.convertDateToLocalDate(docTmp.get("NLap", Date.class));
-		}
-		
-		if (minSCTu - largestSCTu > 1) {
-			sb.setLength(0);
-			for (int i = largestSCTu+1; i < minSCTu; i++) {
-				sb.append(i);
-				sb.append(", ");
+		if (null != docTmp) {
+			int largestSCTu = docTmp.get("SCTu", 0);
+			if (docTmp.get("NLap") != null) {
+				latestNLap = commons.convertDateToLocalDate(docTmp.get("NLap", Date.class));
+			}
+
+			if (minSCTu - largestSCTu > 1) {
+				sb.setLength(0);
+				for (int i = largestSCTu + 1; i < minSCTu; i++) {
+					sb.append(i);
+					sb.append(", ");
+				}
+			}
+
+			if (sb.length() > 0) {
+				sb.setLength(sb.length() - 2);
+				rsp.setResponseStatus(new MspResponseStatus(9999,
+						"Ký các chứng từ không thành công.\n  Vui lòng ký trước hoặc ký bao gồm chứng từ "
+								+ sb.toString()));
+				return rsp;
 			}
 		}
 		
-		if (sb.length() > 0) {
-			sb.setLength(sb.length() - 2);
-			rsp.setResponseStatus(new MspResponseStatus(9999,
-					"Ký các chứng từ không thành công.\n  Vui lòng ký trước hoặc ký bao gồm chứng từ " + sb.toString()));
-			return rsp;
-		}
-
 		docFind = new Document("IssuerId", header.getIssuerId())
 				.append("IsDelete", false)
 				.append("_id", new Document("$in", objectIds));
+		
 		pipeline.clear();
 		pipeline.add(new Document("$match", docFind));
 		pipeline.add(new Document("$project",
@@ -6709,33 +6704,34 @@ public class CTTNCNImpl extends AbstractDAO implements CTTNCNDAO {
 		                .append("NLap", 1)
 		));
 		
-		List<Document> docTmps= new ArrayList<Document>();
-		try (MongoClient mongoClient = cfg.mongoClient()){
+		List<Document> docTmps = new ArrayList<Document>();
+		try (MongoClient mongoClient = cfg.mongoClient()) {
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("CTTNCNhan");
 			MongoCursor<Document> cursor = collection.aggregate(pipeline).allowDiskUse(true).iterator();
-			
+
 			while (cursor.hasNext()) {
 				docTmps.add(cursor.next());
 			}
 		} catch (Exception e) {
 
 		}
-		
+
 		sb.setLength(0);
-		for (Document doc: docTmps) {
+		for (Document doc : docTmps) {
 			LocalDate nlap = null;
 			if (doc.get("NLap") != null) {
 				nlap = commons.convertDateToLocalDate(doc.get("NLap", Date.class));
 			}
-			if (commons.compareLocalDate(nlap, latestNLap) < 0) {
+			if (nlap != null && latestNLap != null && commons.compareLocalDate(nlap, latestNLap) < 0) {
 				sb.append(doc.get("SCTu", 0));
 				sb.append(", ");
 			}
 		}
+
 		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 2);
 			rsp.setResponseStatus(new MspResponseStatus(9999, "Tồn tại chứng từ " + sb.toString()
-			+ " có ngày lập nhỏ hơn ngày lập của hóa đơn đã ký gần nhất " + latestNLap));
+					+ " có ngày lập nhỏ hơn ngày lập của hóa đơn đã ký gần nhất " + latestNLap));
 			return rsp;
 		}
 
