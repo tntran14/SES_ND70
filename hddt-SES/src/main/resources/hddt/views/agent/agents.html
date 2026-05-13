@@ -192,6 +192,12 @@
 												<i class="mdi mdi-file-excel"> </i><span
 													class="d-none d-md-inline"> Import danh sách</span>
 											</button>
+											<button type="button" title="Xuất XML"
+												data-action="agent-xml" class="btns xuat_xml hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|agent-xml|')}">
+												<i class="mdi mdi-xml"> </i><span class="d-none d-md-inline">Xuất
+													XML</span>
+											</button>
 											<button type="button" title="Thêm mới"
 												data-action="agent-cre" class="btns tmoi_hd hover-up__ses"
 												th:if="${#strings.contains(UserFullPathRight,'|agent-cre|')}">
@@ -796,15 +802,15 @@
 					var $obj = $(this);
 					
 					var rowData = null;
-					var actionCheck = '|agent-edit|agent-sign|agent-detail|agent-copy|agent-delete|';
+					var actionCheck = '|agent-edit|agent-sign|agent-detail|agent-copy|agent-delete|agent-xml|';
 					
 					var checkRows = _gridMain.find(' tbody tr input[type="checkbox"]:checked');
 					var ids = null;
 					var idx = -1;
 					if(actionCheck.indexOf('|' + dataAction + '|') != -1 && 0 == checkRows.length){
-				alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
-				return;
-			}
+						alertDLSuccess('<span class="required">Vui lòng chọn dòng dữ liệu để thực hiện.</span>', function(){});
+						return;
+					}
 			
 					
 					var objData = {};
@@ -814,6 +820,50 @@
 							showPopupWithURLAndData(ROOT_PATH + '/main/agent-import/init', objData, true, function(e){
 							});
 						break;
+						case 'agent-xml':
+							let ids = [];
+							checkRows.each(function(i, v) {
+							    idx = $(checkRows[i].closest("tr")).index();
+							    rowData = _gridMain.data("kendoGrid").dataItem(_gridMain.find(' tbody tr').eq(idx));
+							    ids.push(rowData['_id']);
+							});	
+							
+							objDataSend = {'ArrayData' : encodeObjJsonBase64UTF8(ids)};
+							
+							$.ajax({
+								type: "POST",
+								datatype: "json",
+								url: ROOT_PATH + '/common/saveDataBas64',
+								data: objDataSend,
+								beforeSend: function(req) {
+									initAjaxJsonRequest(req);
+						        	showLoading();
+								},
+								success:function(res) {
+									hideLoading();
+									if(res) {
+										if(res.errorCode == 0) {
+											  var responseData = res.responseData;
+											  var idData = responseData['ID'];										
+											  window.open(ROOT_PATH + '/common/agentXml/' + idData,'_blank');
+											  
+										}else{
+											alertDLSuccess(createObjectError(res).html(), function(){});
+								            hideLoading();
+										}
+									}else{
+										alertDLSuccess('unknown error!!!', function(){});
+										hideLoading();
+									}
+									
+								},
+								error:function (xhr, ajaxOptions, thrownError){
+									alertDLSuccess("Không tìm thấy thông tin", function(){});
+						            hideLoading();
+						        }
+							});
+							
+							break;
 						case 'agent-sign':
 							objDataSend = {};
 							idx = $(checkRows[0].closest("tr")).index();

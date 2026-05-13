@@ -639,4 +639,17 @@ public class CommonsController {
 		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
 				.body(SerializationUtils.serialize(fileInfo));
 	}
+	
+	@RequestMapping(value = "/agentXml", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, // MediaType.TEXT_PLAIN_VALUE,
+			produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	public ResponseEntity<?> agentXml(@RequestBody JSONRoot jsonRoot) throws Exception {
+		FileInfo fileInfo = dao.agentXml(jsonRoot);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + "bill.data");
+		headers.add("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+		return ResponseEntity.ok().headers(headers).cacheControl(CacheControl.noCache())
+				.body(SerializationUtils.serialize(fileInfo));
+	}
 }
