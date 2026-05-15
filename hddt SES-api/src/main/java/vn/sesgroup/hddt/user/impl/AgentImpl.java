@@ -64,6 +64,7 @@ import com.mongodb.client.model.UpdateOptions;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
+import vn.sesgroup.hddt.model.CTTNCNExcelForm;
 import vn.sesgroup.hddt.model.DSHHDVu;
 import vn.sesgroup.hddt.model.EInvoicePXKDLExcelForm;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
@@ -71,6 +72,7 @@ import vn.sesgroup.hddt.user.dao.AgentDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
 import vn.sesgroup.hddt.user.service.TCTNService;
 import vn.sesgroup.hddt.utility.Constants;
+import vn.sesgroup.hddt.utility.CurrencyUnit;
 import vn.sesgroup.hddt.utility.Json;
 import vn.sesgroup.hddt.utility.MailUtils;
 import vn.sesgroup.hddt.utility.MailjetSender;
@@ -485,16 +487,16 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "HDKTNgay", commons.convertLocalDateTimeStringToString(HDKTNgay,
 							Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", docTmp.get("HDSo", "")));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 //			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang", "string",
@@ -523,39 +525,11 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp.appendChild(elementSubTmp);
 			elementSubContent.appendChild(elementTmp);
 
-			mapVATAmount = new LinkedHashMap<String, Double>();
-			mapAmount = new LinkedHashMap<String, Double>();
 			double chietKhauTMTotal	= 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
-
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
 								commons.getTextJsonNode(o.at("/Feature"))));
@@ -573,16 +547,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -607,20 +571,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
@@ -691,12 +641,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 													.append("DCTDTu", khEmail).append("HVTNMHang", khHoTenNguoiXuat)
 													.append("STKNHang", khSoTk).append("TNHang", khTkTaiNganHang)))
 							.append("DSHHDVu", listDSHHDVu)
-//					.append("DSHHDVu", 
-//						jsonData.at("/DSSanPham").isMissingNode()?
-//						new ArrayList<Object>():
-//						Json.serializer().fromNode(jsonData.at("/DSSanPham"), new TypeReference<List<?>>() {
-//						})
-//					)
 							.append("TToan",
 									new Document("TgTCThue", commons.ToNumber(tongTienTruocThue))
 											.append("TgTThue", commons.ToNumber(tongTienThueGtgt))
@@ -1126,16 +1070,16 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "HDKTNgay", commons.convertLocalDateTimeStringToString(HDKTNgay,
 							Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", docTmp.get("HDSo", "")));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 //			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang", "string",
@@ -1167,38 +1111,11 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp.appendChild(elementSubTmp);
 			elementSubContent.appendChild(elementTmp);
 
-			mapVATAmount = new LinkedHashMap<String, Double>();
-			mapAmount = new LinkedHashMap<String, Double>();
 			double chietKhauTMTotal1	= 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
 
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
@@ -1217,16 +1134,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -1251,20 +1158,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
@@ -1696,16 +1589,16 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "HDKTNgay", commons.convertLocalDateTimeStringToString(HDKTNgay,
 							Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", docTmp.get("HDSo", "")));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 //			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang", "string",
@@ -1744,32 +1637,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
-
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
 								commons.getTextJsonNode(o.at("/Feature"))));
@@ -1787,16 +1654,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -1821,20 +1678,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
@@ -3859,7 +3702,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				}
 				
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 25);
+				int lastColumn = Math.max(row1.getLastCellNum(), 27);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -3884,7 +3727,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 		boolean checkNullMaHD = false;
 		if (eInvoicePXKDLExcelFormList != null) {
 			for (int tam = 0; tam < eInvoicePXKDLExcelFormList.size(); tam++) {
-				if (eInvoicePXKDLExcelFormList.get(tam).getMaHD() == null) {
+				if (eInvoicePXKDLExcelFormList.get(tam).getMphieu() == null) {
 					checkNullMaHD = true;
 				}
 			}
@@ -3895,27 +3738,25 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
-//			String tempTenHH = "";
-			String tempDChiXuat = "";
-			String tempDChiNhap = "";
-			String tempHDKTSo = "";
-			String tempHDKTNgay = "";
-			String tempPTVChuyen = "";
-			String tempTenNDDien = "";
-			String tempDCTDTu = "";
-			String tempNDNKho = "";
-			String tempNLap = "";
-			String tempMSTNNhap = "";
-			String tempTDVNNhap = "";
-			String tempHVTNVChuyen = "";
-			String tempHVTNXHang = "";
-			String tempHDSo = "";
-//			Double tempTgTCThue = 0.0;
-//			Double tempTgTThue = 0.0;
-			Double tempTTien = 0.0;
-			String tempTgTTTBChu = "";
-//			String tempHTTToan = "";
-			List<DSHHDVu> dshhdVuList = new ArrayList<>();
+			String tempdcxkho = "";
+			String tempnlap = "";
+			String temphvtnxkho = "";
+			String templtien = "";
+			String temptnvchuyen = "";
+			String temphdktso = "";
+			String temphdktngay = "";
+			String tempptvchuyen = "";
+			String tempmstnnhap = "";
+			String temphvtnnhap = "";
+			String temptdvnhap = "";
+			String tempdcnkho = "";
+			String tempndnkho = "";
+			String tempemail = "";
+			String tempsdthoai = "";
+			String tempstkhoan = "";
+			String temptnhang = "";
+			String temptgia = "";
+//			List<DSHHDVu> dshhdVuList = new ArrayList<>();
 			List<Object> listHHDVu = new ArrayList<Object>();
 			int i = 0;
 			int start = 0;
@@ -3926,27 +3767,28 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 			for (; i < eInvoicePXKDLExcelFormList.size();) {
 				dem = 0;
 				for (int j = i; j < eInvoicePXKDLExcelFormList.size(); j++) {
-					if (eInvoicePXKDLExcelFormList.get(i).getMaHD() == eInvoicePXKDLExcelFormList.get(j).getMaHD()) {
+					if (eInvoicePXKDLExcelFormList.get(i).getMphieu() == eInvoicePXKDLExcelFormList.get(j).getMphieu()) {
 						// Xu ly
 						dem++;
 						start = j + 1;
-						tempNLap = eInvoicePXKDLExcelFormList.get(i).getNHDon();
-//						tempTenHH = eInvoicePXKDLExcelFormList.get(i).getTHHoa();
-						tempDCTDTu = eInvoicePXKDLExcelFormList.get(i).getEmailKNhan();
-						tempHDKTSo = eInvoicePXKDLExcelFormList.get(i).getHDKTSo();
-						tempHDKTNgay = eInvoicePXKDLExcelFormList.get(i).getHDKTNgay();
-						tempDChiXuat = eInvoicePXKDLExcelFormList.get(i).getXTKho();
-						tempDChiNhap = eInvoicePXKDLExcelFormList.get(i).getNTkho();
-						tempPTVChuyen = eInvoicePXKDLExcelFormList.get(i).getPTVChuyen();
-						tempTenNDDien = eInvoicePXKDLExcelFormList.get(i).getCua();
-						tempNDNKho = eInvoicePXKDLExcelFormList.get(i).getVViec();
-						tempHVTNVChuyen = eInvoicePXKDLExcelFormList.get(i).getHVTNVChuyen();
-						tempHVTNXHang = eInvoicePXKDLExcelFormList.get(i).getHVTNNHang();
-						tempMSTNNhap = eInvoicePXKDLExcelFormList.get(i).getMSTNNhap();
-						tempTDVNNhap = eInvoicePXKDLExcelFormList.get(i).getTenDV();
-						// tempHDSo = eInvoicePXKDLExcelFormList.get(i).getHDso();
-						tempTTien = eInvoicePXKDLExcelFormList.get(i).getTTien();
-						tempTgTTTBChu = eInvoicePXKDLExcelFormList.get(i).getTBchu();
+						tempdcxkho = eInvoicePXKDLExcelFormList.get(i).getDcxkho();
+						tempnlap = eInvoicePXKDLExcelFormList.get(i).getNlap();
+						temphvtnxkho = eInvoicePXKDLExcelFormList.get(i).getHvtnxkho();
+						templtien = eInvoicePXKDLExcelFormList.get(i).getLtien();
+						temptnvchuyen = eInvoicePXKDLExcelFormList.get(i).getTnvchuyen();
+						temphdktso = eInvoicePXKDLExcelFormList.get(i).getHdktso();
+						temphdktngay = eInvoicePXKDLExcelFormList.get(i).getHdktngay();
+						tempptvchuyen = eInvoicePXKDLExcelFormList.get(i).getPtvchuyen();
+						tempmstnnhap = eInvoicePXKDLExcelFormList.get(i).getMstnnhap();
+						temphvtnnhap = eInvoicePXKDLExcelFormList.get(i).getHvtnnhap();
+						temptdvnhap = eInvoicePXKDLExcelFormList.get(i).getTdvnhap();
+						tempdcnkho = eInvoicePXKDLExcelFormList.get(i).getDcnkho();
+						tempndnkho = eInvoicePXKDLExcelFormList.get(i).getNdnkho();
+						tempemail = eInvoicePXKDLExcelFormList.get(i).getEmail();
+						tempsdthoai = eInvoicePXKDLExcelFormList.get(i).getSdthoai();
+						tempstkhoan = eInvoicePXKDLExcelFormList.get(i).getStkhoan();
+						temptnhang = eInvoicePXKDLExcelFormList.get(i).getTnhang();
+						temptgia = eInvoicePXKDLExcelFormList.get(i).getTgia();
 						end = j;
 						if (eInvoicePXKDLExcelFormList.size() == j + 1) {
 							checkMaHD = true;
@@ -3960,149 +3802,68 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 					end = i;
 					checkMaHD = true;
 				}
-				String TenForm = tempTDVNNhap;
-				String DCTDTuNMForm = tempDCTDTu;
-				String HDKTSoForm = tempHDKTSo;
-				String HDKTNgayForm = tempHDKTNgay;
-				String XTKhoForm = tempDChiXuat;
-				String NTKhoForm = tempDChiNhap;
-				String HVTNVChuyenNMForm = tempHVTNVChuyen;
-				String NLapForm = tempNLap;
-				String tempHVTNXHangForm = tempHVTNXHang;
-				String tempHDSoForm = tempHDSo;
-				String PTVChuyenForm = tempPTVChuyen;
-				String TenNDDienForm = tempTenNDDien;
-				String NDNKhoForm = tempNDNKho;
-				Double tempTTienForm = tempTTien;
-				String MSTNhap = tempMSTNNhap;
-
-				String tempTgTTTBChuForm = tempTgTTTBChu;
-
+				String dcxkho = tempdcxkho;
+				String nlap = tempnlap;
+				String hvtnxkho = temphvtnxkho;
+				String ltien = templtien;
+				String tnvchuyen = temptnvchuyen;
+				String hdktso = temphdktso;
+				String hdktngay = temphdktngay;
+				String ptvchuyen = tempptvchuyen;
+				String mstnnhap = tempmstnnhap;
+				String hvtnnhap = temphvtnnhap;
+				String tdvnhap = temptdvnhap;
+				String dcnkho = tempdcnkho;
+				String ndnkho = tempndnkho;
+				String email = tempemail;
+				String sdthoai = tempsdthoai;
+				String stkhoan = tempstkhoan;
+				String tnhang = temptnhang;
+				String tgia = temptgia;
+				String ttbchu = "";
+				CurrencyUnit currencyUnit = CurrencyUnit.VND;
+				if ("USD".equals(ltien)) {
+					currencyUnit = CurrencyUnit.USD;
+				}
+				
 				if (checkMaHD == true) {
 					if (dem > 1) {
 
 						for (int k = i; k <= end; k++) {
-							DSHHDVu dshhdVu = new DSHHDVu();
-							dshhdVu.setSTT(eInvoicePXKDLExcelFormList.get(k).getSTT());
-							dshhdVu.setProductName(eInvoicePXKDLExcelFormList.get(k).getTHHoa());
-							dshhdVu.setProductCode(eInvoicePXKDLExcelFormList.get(k).getMaHHoa());
-							dshhdVu.setUnit(eInvoicePXKDLExcelFormList.get(k).getDVTinh());
-							dshhdVu.setQuantity(eInvoicePXKDLExcelFormList.get(k).getTXuat());
-							dshhdVu.setPrice(eInvoicePXKDLExcelFormList.get(k).getDGia());
-							dshhdVu.setTTien(eInvoicePXKDLExcelFormList.get(k).getTTien());
-							dshhdVu.setTotal(eInvoicePXKDLExcelFormList.get(k).getTgTien());
-							String TinhChat = eInvoicePXKDLExcelFormList.get(k).getLHHoa();
-							switch (TinhChat) {
-							case "1":
-								dshhdVu.setFeature("1");
-								break;
-							case "2":
-								dshhdVu.setFeature("2");
-								break;
-							case "3":
-								dshhdVu.setFeature("3");
-								break;
-							case "4":
-								dshhdVu.setFeature("4");
-								break;
-							default:
-								break;
-							}
-							dshhdVuList.add(dshhdVu);
 							HashMap<String, Object> hItem1 = null;
 							hItem1 = new LinkedHashMap<String, Object>();
-							hItem1.put("STT", dshhdVu.getSTT());
-							hItem1.put("ProductName", dshhdVu.getProductName());
-							hItem1.put("ProductCode", dshhdVu.getProductCode());
-							hItem1.put("Unit", dshhdVu.getUnit());
-							hItem1.put("Quantity", dshhdVu.getQuantity());
-							hItem1.put("Price", dshhdVu.getPrice());
-							hItem1.put("Amount", dshhdVu.getTTien());
-							hItem1.put("Total", dshhdVu.getTotal());
-							hItem1.put("Feature", dshhdVu.getFeature());
+							hItem1.put("STT", eInvoicePXKDLExcelFormList.get(k).getStt());
+							hItem1.put("ProductName", eInvoicePXKDLExcelFormList.get(k).getTchat());
+							hItem1.put("ProductCode", eInvoicePXKDLExcelFormList.get(k).getMahhoa());
+							hItem1.put("Unit", eInvoicePXKDLExcelFormList.get(k).getDvtinh());
+							hItem1.put("Quantity", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getSluong()));
+							hItem1.put("Price", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getDgia()));
+							hItem1.put("Amount", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Total", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Feature", eInvoicePXKDLExcelFormList.get(k).getTchat());
 							listHHDVu.add(hItem1);
 
 						}
 
 						// Thông tin hóa đơn - TTChung
-//						String MaHD = eInvoicePXKDLExcelFormList.get(i).getMaHD();
-						String THDon = "PHIẾU XUẤT KHO HÀNG GỬI BÁN ĐẠI LÝ ĐIỆN TỬ";
-						LocalDateTime NLap = LocalDateTime.now();
-						String DVTTe = "VND";
-						String TGia = "1";
+						String thdon = "PHIẾU XUẤT KHO HÀNG GỬI BÁN ĐẠI LÝ ĐIỆN TỬ";
 
-//                        TTChung ttChung = new TTChung(MaHD, THDon, MauSoHD, KHMSHDon, KHHDon, NLap, DVTTe, TGia);
-
-						// Thông tin người bán - Thông tin người mua - NDHDon
-
-						String HDKTSo = HDKTSoForm;
-						String HDKTNgay = HDKTNgayForm;
-
-						String HVTNVChuyen = HVTNVChuyenNMForm;
-						String HVTNXHang = tempHVTNXHangForm;
-						String HDSo = tempHDSoForm;
-						String NLap1 = NLapForm;
-						String PTVChuyen = PTVChuyenForm;
-						String TNDDien = TenNDDienForm;
-						String NDNKho = NDNKhoForm;
-						String XTKho = XTKhoForm;
-
-						String TenNM = TenForm;
-						String DChiNM = NTKhoForm;
-						String MSTNM = MSTNhap;
-						String DCTDTuNM = DCTDTuNMForm;
-
-						String HDSoCheck = "";
-						if (HDSo == null) {
-							HDSoCheck = "";
-						} else {
-							HDSoCheck = HDSo;
-						}
-
-						String EmailNM = "";
-						if (DCTDTuNM == null) {
-							EmailNM = "";
-						} else {
-							EmailNM = DCTDTuNM;
-						}
-						// Thông tin thanh toán
-//						Double TgTCThue = 0.0;
-						Double TgTThue = 0.0;
-						Double TgTTTBSo = tempTTienForm;
-						String TgTTTBChu = tempTgTTTBChuForm;
-						String TBChu = "";
-						if (TgTTTBChu == null) {
-							TBChu = "Không đồng!";
-						} else {
-							TBChu = TgTTTBChu;
-						}
-
-						// Một số thông tin khác
-						String MTDiep = "";
-						String SecureKey = "";
-
-						// Setting
-						String codeMTD = "0315382923";
-
-						String pathDir = "";
-						File file1 = null;
-						Path path1 = null;
-						ObjectId objectIdEInvoice = null;
-						SecureKey = commons.csRandomNumbericString(6);
+						ObjectId objectIdEInvoice = new ObjectId();
 						String fileNameXML = "";
-						objectIdEInvoice = new ObjectId();
 						String taxCode = "";
 						taxCode = docTmp.getString("TaxCode");
-						path1 = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode,
+						path = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode,
 								docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString());
-						pathDir = path1.toString();
-						file1 = path1.toFile();
-						if (!file1.exists())
-							file1.mkdirs();
+						String pathDir = path.toString();
+						file = path.toFile();
+						if (!file.exists())
+							file.mkdirs();
 						fileNameXML = objectIdEInvoice.toString() + ".xml";
 
-						MTDiep = codeMTD + commons.csRandomAlphaNumbericString(46 - codeMTD.length()).toUpperCase();
-						SecureKey = commons.csRandomNumbericString(6);
+						String mtdiep = SystemParams.MSTTCGP
+								+ commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+						String secureKey = commons.csRandomNumbericString(6);
+
 						// XML
 
 						dbf = DocumentBuilderFactory.newInstance();
@@ -4124,7 +3885,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 
 						elementSubContent
 								.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_PXK));
-						elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", THDon));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", thdon));
 						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
 								docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "")));
 						elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
@@ -4133,19 +3894,18 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 																											// KHI KY
 						// Ngày lập
 						elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-								commons.convertLocalDateTimeStringToString(NLap1, Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-										Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+								commons.convertLocalDateTimeStringToString(nlap, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
 						// Đơn vị tiền tệ
-						elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", DVTTe));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", ltien));
 						// Tỷ giá
-						elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", TGia));
+						elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", tgia));
 						// MST tổ chức cung cấp giải pháp HĐĐT
 						elementSubContent
 								.appendChild(commons.createElementWithValue(doc, "MSTTCGP", SystemParams.MSTTCGP));
 
 						elementTmp = doc.createElement("TTKhac"); // THONG TIN KHAC
 						elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
-						elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", SecureKey));
+						elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
 						elementTmp.appendChild(
 								commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
 
@@ -4157,110 +3917,57 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", docTmp.get("Name", "")));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
 						// lệnh điều động nội bộ
-						elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTSo", HDKTSo));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTSo", hdktso));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTNgay",
-								commons.convertLocalDateTimeStringToString(HDKTNgay,
-										Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-										Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+								commons.convertLocalDateTimeStringToString(hdktngay,Constants.FORMAT_DATE.FORMAT_DATE_WEB,Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", dcxkho));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", ""));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", HVTNXHang));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", HVTNVChuyen));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
-//            			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", hvtnxkho));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", tnvchuyen));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", ptvchuyen));
 
 						/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 						elementSubTmp = doc.createElement("TTKhac");
-						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", XTKho));
+						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 						elementSubTmp.appendChild(
 								commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 						elementSubTmp.appendChild(
 								commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 
-						if (docTmp.get("BankAccountExt") != null
-								&& docTmp.getList("BankAccountExt", Document.class).size() > 0) {
-							intTmp = 1;
-							for (Document oo : docTmp.getList("BankAccountExt", Document.class)) {
-								elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp,
-										"string", oo.get("AccountNumber", "")));
-								elementSubTmp.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp, "string",
-										oo.get("BankName", "")));
-								elementTmp.appendChild(elementSubTmp);
-								intTmp++;
-							}
-							elementTmp.appendChild(elementSubTmp);
-						}
 						elementSubTmp.appendChild(
 								commons.createElementTTKhac(doc, "ComFax", "string", docTmp.get("Fax", "")));
-						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "PostBy", "string", TNDDien));
+						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "PostBy", "string", hvtnxkho));
 						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "PostDescription", "string", NDNKho));
+								.appendChild(commons.createElementTTKhac(doc, "PostDescription", "string", ndnkho));
 						elementTmp.appendChild(elementSubTmp);
 
 						elementSubContent.appendChild(elementTmp);
 
 						elementTmp = doc.createElement("NMua"); // NGUOI MUA
-						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", TenNM));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MSTNM));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", HVTNXHang));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", tdvnhap));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", mstnnhap));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", dcnkho));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", hvtnnhap));
 
 						elementSubTmp = doc.createElement("TTKhac"); // THONG TIN KHAC
-						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveNo", "string", HDKTSo));
+						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveNo", "string", hdktso));
 						elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveDate", "string",
-								commons.convertLocalDateTimeStringToString(HDKTNgay,
+								commons.convertLocalDateTimeStringToString(hdktngay,
 										Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-										Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+										Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
 						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "TransportDivice", "string", PTVChuyen));
+								.appendChild(commons.createElementTTKhac(doc, "TransportDivice", "string", ptvchuyen));
 						elementSubTmp
-								.appendChild(commons.createElementTTKhac(doc, "TransportName", "string", HVTNVChuyen));
+								.appendChild(commons.createElementTTKhac(doc, "TransportName", "string", tnvchuyen));
 						elementTmp.appendChild(elementSubTmp);
 						elementSubContent.appendChild(elementTmp);
 
-						mapVATAmount = new LinkedHashMap<String, Double>();
-						mapAmount = new LinkedHashMap<String, Double>();
 						elementTmp = doc.createElement("DSHHDVu"); // HH-DV
-
+						double total_cktmai	= 0.0;
+						double total_ttien	= 0.0;
 						for (Object o : listHHDVu) {
 							if (!"".equals(o.equals("/ProductName"))) {
 								JsonNode h = Json.serializer().nodeFromObject(o);
-								tmp = commons.getTextJsonNode(h.at("/VATRate")).replaceAll(",", "");
-								switch (tmp) {
-								case "0":
-								case "5":
-								case "8":
-								case "10":
-									tmp += "%";
-									break;
-								case "-1":
-									tmp = "KCT";
-									break;
-								case "-2":
-									tmp = "KKKNT";
-									break;
-								default:
-									break;
-								}
-								if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
-										|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
-									mapAmount.compute(tmp, (f, v) -> {
-										return (v == null ? commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
-												* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
-												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
-														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
-																: 1));
-									});
-									mapVATAmount.compute(tmp, (f, v) -> {
-										return (v == null
-												? commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
-														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
-																: 1)
-												: v + commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
-														* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1
-																: 1));
-									});
-								}
 
 								elementSubTmp = doc.createElement("HHDVu");
 								elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
@@ -4279,44 +3986,27 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 										commons.getTextJsonNode(h.at("/Price")).replaceAll(",", "")));
 								elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 										commons.getTextJsonNode(h.at("/Total")).replaceAll(",", "")));
-								elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-								elementSubTmp01 = doc.createElement("TTKhac");
-								elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-										commons.getTextJsonNode(h.at("/Total")).replaceAll(",", "")));
-								elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-										commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
-								elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-										commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
-								elementSubTmp.appendChild(elementSubTmp01);
-
+								
 								elementTmp.appendChild(elementSubTmp);
-
+								total_ttien += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+								if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									total_cktmai += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+								}
 							}
 						}
 						elementSubContent.appendChild(elementTmp);
 						elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-						elementSubTmp = doc.createElement("THTTLTSuat");
-						/* DANH SACH CAC LOAI THUE SUAT */
-
-//            			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-
-						elementSubTmp01 = doc.createElement("LTSuat");
-						elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-						elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-								commons.formatNumberReal(TgTTTBSo).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-								commons.formatNumberReal(TgTThue).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
-
-						elementTmp.appendChild(elementSubTmp);
-
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue", "0"));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue", "0"));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-								commons.formatNumberReal(TgTTTBSo).replaceAll(",", "")));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", TBChu));
+						
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue", String.valueOf(total_ttien)));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue", "0.0"));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(total_cktmai)));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", String.valueOf(total_ttien)));
+						
+						
+						ttbchu = commons.moneyToVietnamese(total_ttien, currencyUnit);
+						
+						
+						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", ttbchu));
 
 						elementContent.appendChild(elementSubContent);
 						elementSubContent.appendChild(elementTmp);
@@ -4327,34 +4017,28 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 							throw new Exception("Lưu dữ liệu không thành công.");
 						}
 						/* END - TAO XML HOA DON */
-						// END XML"_id", objectIdEInvoice
-						// lookup data
-						MTDiep = SystemParams.MSTTCGP
-								+ commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
 						docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
-								.append("MTDiep", MTDiep)
-//            					.append("EInvoiceNumber", null)				//PHAT SINH KHI THUC HIEN KY
-								.append("EInvoiceDetail", new Document("TTChung", new Document("THDon", THDon)
+								.append("MTDiep", mtdiep)
+								.append("EInvoiceDetail", new Document("TTChung", new Document("THDon", thdon)
 										.append("MauSoHD", mauSoHdon)
-										.append("KHMSHDon",
-												docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), ""))
-										.append("KHHDon",
-												docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), ""))
-										.append("NLap", NLap).append("DVTTe", DVTTe).append("TGia", TGia)
+										.append("KHMSHDon",docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), ""))
+										.append("KHHDon",docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), ""))
+										.append("NLap", commons.convertStringToLocalDate(nlap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+										.append("DVTTe", ltien)
+										.append("TGia", tgia)
 										.append("HTTToanCode", "").append("HTTToan", ""))
 										.append("NDHDon",
 												new Document("NBan",
 														new Document("Ten", docTmp.get("Name", ""))
 																.append("MST", docTmp.get("TaxCode", ""))
-																.append("HDKTSo", HDKTSo)
+																.append("HDKTSo", hdktso)
 																.append("HDKTNgay",
-																		commons.convertStringToLocalDate(HDKTNgay,
-																				Constants.FORMAT_DATE.FORMAT_DATE_WEB))
-																.append("DChi", XTKho)
+																		commons.convertStringToLocalDate(hdktngay,Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+																.append("DChi", dcxkho)
 																.append("SDThoai", docTmp.get("Phone", ""))
-																.append("TNVChuyen", HVTNVChuyen)
-																.append("PTVChuyen", PTVChuyen)
-																.append("TNDDien", TNDDien)
+																.append("TNVChuyen", tnvchuyen)
+																.append("PTVChuyen", ptvchuyen)
+																.append("TNDDien", hvtnxkho)
 																.append("DCTDTu", docTmp.get("Email", ""))
 																.append("STKNHang",
 																		docTmp.getEmbedded(Arrays.asList("BankAccount",
@@ -4365,19 +4049,28 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 																.append("Fax", docTmp.get("Fax", ""))
 																.append("Website", docTmp.get("Website", "")))
 														.append("NMua",
-																new Document("Ten", TenForm).append("MST", MSTNM)
-																		.append("DChi", NTKhoForm)
-																		.append("NDXKho", NDNKho).append("HDSo", "")
-																		.append("MKHang", "").append("SDThoai", "")
-																		.append("DCTDTu", EmailNM)
-																		.append("HVTNMHang", HVTNXHang)
-																		.append("STKNHang", "").append("TNHang", "")))
-										.append("DSHHDVu", listHHDVu).append("TToan",
-												new Document("TgTCThue", 0.0).append("TgTThue", 0.0)
-														.append("TgTTTBSo", TgTTTBSo).append("TgTTTBChu", TBChu)))
+																new Document("Ten", tdvnhap)
+																.append("MST", mstnnhap)
+																.append("DChi", dcnkho)
+																.append("NDXKho", ndnkho)
+																.append("HDSo", "")
+																.append("MKHang", "")
+																.append("SDThoai", sdthoai)
+																.append("DCTDTu", email)
+																.append("HVTNMHang", hvtnnhap)
+																.append("STKNHang", stkhoan)
+																.append("TNHang", tnhang)))
+										.append("DSHHDVu", listHHDVu)
+										.append("TToan", 
+												new Document("TgTCThue", total_ttien)
+												.append("TgTThue", 0.0)
+												.append("TgTTTBSo", total_ttien)
+												.append("TgTTTBChu", ttbchu)))
 								.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
-								.append("EInvoiceStatus", Constants.INVOICE_STATUS.CREATED).append("IsDelete", false)
-								.append("SecureKey", SecureKey).append("Dir", pathDir)
+								.append("EInvoiceStatus", Constants.INVOICE_STATUS.CREATED)
+								.append("IsDelete", false)
+								.append("SecureKey", secureKey)
+								.append("Dir", pathDir)
 								.append("FileNameXML", fileNameXML).append("InfoCreated",
 										new Document("CreateDate", LocalDateTime.now())
 												.append("CreateUserID", header.getUserId())
@@ -4390,127 +4083,46 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						collection.insertOne(docUpsert);
 						mongoClient.close();
 
-						dshhdVuList.clear();
+//						dshhdVuList.clear();
 						listHHDVu.clear();
 						checkMaHD = false;
 					} else {
 						if (dem == 1) {
 							int k = i;
-							DSHHDVu dshhdVu = new DSHHDVu();
-							dshhdVu.setSTT(eInvoicePXKDLExcelFormList.get(k).getSTT());
-							dshhdVu.setProductName(eInvoicePXKDLExcelFormList.get(k).getTHHoa());
-							dshhdVu.setProductCode(eInvoicePXKDLExcelFormList.get(k).getMaHHoa());
-							dshhdVu.setUnit(eInvoicePXKDLExcelFormList.get(k).getDVTinh());
-							dshhdVu.setQuantity(eInvoicePXKDLExcelFormList.get(k).getTXuat());
-							dshhdVu.setPrice(eInvoicePXKDLExcelFormList.get(k).getDGia());
-							dshhdVu.setTTien(eInvoicePXKDLExcelFormList.get(k).getTTien());
-							dshhdVu.setTotal(eInvoicePXKDLExcelFormList.get(k).getTgTien());
-							String TinhChat = eInvoicePXKDLExcelFormList.get(k).getLHHoa();
-							switch (TinhChat) {
-							case "1":
-								dshhdVu.setFeature("1");
-								break;
-							case "2":
-								dshhdVu.setFeature("2");
-								break;
-							case "3":
-								dshhdVu.setFeature("3");
-								break;
-							case "4":
-								dshhdVu.setFeature("4");
-								break;
-							default:
-								break;
-							}
-							dshhdVuList.add(dshhdVu);
-							List<Object> listHHDVus = new ArrayList<Object>();
+							listHHDVu.clear();
 							HashMap<String, Object> hItem1 = null;
 							hItem1 = new LinkedHashMap<String, Object>();
-							hItem1.put("STT", dshhdVu.getSTT());
-							hItem1.put("ProductName", dshhdVu.getProductName());
-							hItem1.put("ProductCode", dshhdVu.getProductCode());
-							hItem1.put("Unit", dshhdVu.getUnit());
-							hItem1.put("Quantity", dshhdVu.getQuantity());
-							hItem1.put("Price", dshhdVu.getPrice());
-							hItem1.put("Amount", dshhdVu.getTTien());
-							hItem1.put("Total", dshhdVu.getTotal());
-							hItem1.put("Feature", dshhdVu.getFeature());
-							listHHDVus.add(hItem1);
+							hItem1.put("STT", eInvoicePXKDLExcelFormList.get(k).getStt());
+							hItem1.put("ProductName", eInvoicePXKDLExcelFormList.get(k).getTchat());
+							hItem1.put("ProductCode", eInvoicePXKDLExcelFormList.get(k).getMahhoa());
+							hItem1.put("Unit", eInvoicePXKDLExcelFormList.get(k).getDvtinh());
+							hItem1.put("Quantity", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getSluong()));
+							hItem1.put("Price", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getDgia()));
+							hItem1.put("Amount", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Total", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Feature", eInvoicePXKDLExcelFormList.get(k).getTchat());
+							listHHDVu.add(hItem1);
 
 							// Thông tin hóa đơn - TTChung
-//							String MaHD = eInvoicePXKDLExcelFormList.get(i).getMaHD();
-							String THDon = "PHIẾU XUẤT KHO HÀNG GỬI BÁN ĐẠI LÝ ĐIỆN TỬ";
-//                            String MauSoHD = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();          
-							LocalDateTime NLap = LocalDateTime.now();
-							String DVTTe = "VND";
-							String TGia = "1";
+							String thdon = "PHIẾU XUẤT KHO HÀNG GỬI BÁN ĐẠI LÝ ĐIỆN TỬ";
 
-							// Thông tin người bán - Thông tin người mua - NDHDon
-							String HDKTSo = HDKTSoForm;
-							String HDKTNgay = HDKTNgayForm;
-							String HVTNVChuyen = HVTNVChuyenNMForm;
-							String HVTNXHang = tempHVTNXHangForm;
-							String HDSo = tempHDSoForm;
-							String NLap1 = NLapForm;
-							String PTVChuyen = PTVChuyenForm;
-							String TNDDien = TenNDDienForm;
-							String NDNKho = NDNKhoForm;
-							String XTKho = XTKhoForm;
-
-							String TenNM = TenForm;
-							String DChiNM = NTKhoForm;
-							String MSTNM = MSTNhap;
-							String DCTDTuNM = DCTDTuNMForm;
-							String HDSoCheck = "";
-							if (HDSo == null) {
-								HDSoCheck = "";
-							} else {
-								HDSoCheck = HDSo;
-							}
-							String EmailNM = "";
-							if (DCTDTuNM == null) {
-								EmailNM = "";
-							} else {
-								EmailNM = DCTDTuNM;
-							}
-
-							// Thông tin thanh toán
-//							Double TgTCThue = 0.0;
-							Double TgTThue = 0.0;
-							Double TgTTTBSo = tempTTienForm;
-							String TgTTTBChu = tempTgTTTBChuForm;
-							String TBChu = "";
-							if (TgTTTBChu == null) {
-								TBChu = "Không đồng!";
-							} else {
-								TBChu = TgTTTBChu;
-							}
-
-							// Một số thông tin khác
-
-							String MTDiep = "";
-							String SecureKey = "";
-							// Setting
-							String codeMTD = "0315382923";
 							String pathDir = "";
-							File file1 = null;
-							Path path1 = null;
-							ObjectId objectIdEInvoice = null;
-							SecureKey = commons.csRandomNumbericString(6);
+							ObjectId objectIdEInvoice = new ObjectId();
 							String fileNameXML = "";
-							objectIdEInvoice = new ObjectId();
 							String taxCode = "";
 							taxCode = docTmp.getString("TaxCode");
-							path1 = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode, docTmp
-									.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString());
-							pathDir = path1.toString();
-							file1 = path1.toFile();
-							if (!file1.exists())
-								file1.mkdirs();
+							path = Paths.get(SystemParams.DIR_E_INVOICE_DATA, taxCode,
+									docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString());
+							pathDir = path.toString();
+							file = path.toFile();
+							if (!file.exists())
+								file.mkdirs();
 							fileNameXML = objectIdEInvoice.toString() + ".xml";
 
-							MTDiep = codeMTD + commons.csRandomAlphaNumbericString(46 - codeMTD.length()).toUpperCase();
-							SecureKey = commons.csRandomNumbericString(6);
+							String mtdiep = SystemParams.MSTTCGP
+									+ commons.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+							String secureKey = commons.csRandomNumbericString(6);
+							
 							// XML
 
 							dbf = DocumentBuilderFactory.newInstance();
@@ -4530,35 +4142,31 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 							elementSubContent = doc.createElement("TTChung");
 							elementTmp = null;
 
-							elementSubContent.appendChild(
-									commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_PXK));
-							elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", THDon));
+							elementSubContent
+									.appendChild(commons.createElementWithValue(doc, "PBan", SystemParams.VERSION_XML_PXK));
+							elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon", thdon));
 							elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
 									docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "")));
 							elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
 									docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "")));
-							elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon", "")); // SE PHAT
-																												// SINH
-																												// KHI
-																												// KY
+							elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon", "")); // SE PHAT SINH
+																												// KHI KY
 							// Ngày lập
 							elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-									commons.convertLocalDateTimeStringToString(NLap1,
-											Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-											Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
+									commons.convertLocalDateTimeStringToString(nlap, Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
 							// Đơn vị tiền tệ
-							elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", DVTTe));
+							elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe", ltien));
 							// Tỷ giá
-							elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", TGia));
+							elementSubContent.appendChild(commons.createElementWithValue(doc, "TGia", tgia));
 							// MST tổ chức cung cấp giải pháp HĐĐT
 							elementSubContent
 									.appendChild(commons.createElementWithValue(doc, "MSTTCGP", SystemParams.MSTTCGP));
 
 							elementTmp = doc.createElement("TTKhac"); // THONG TIN KHAC
 							elementTmp.appendChild(commons.createElementTTKhac(doc, "PortalLink", "string", link));
-							elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", SecureKey));
-							elementTmp.appendChild(commons.createElementTTKhac(doc, "SystemKey", "string",
-									objectIdEInvoice.toString()));
+							elementTmp.appendChild(commons.createElementTTKhac(doc, "SecureKey", "string", secureKey));
+							elementTmp.appendChild(
+									commons.createElementTTKhac(doc, "SystemKey", "string", objectIdEInvoice.toString()));
 
 							elementSubContent.appendChild(elementTmp);
 							elementContent.appendChild(elementSubContent);
@@ -4566,116 +4174,59 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 							elementSubContent = doc.createElement("NDHDon");
 							elementTmp = doc.createElement("NBan"); // NGUOI BAN
 							elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", docTmp.get("Name", "")));
-							elementTmp
-									.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
 							// lệnh điều động nội bộ
-							elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTSo", HDKTSo));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTSo", hdktso));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "HDKTNgay",
-									commons.convertLocalDateTimeStringToString(HDKTNgay,
-											Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-											Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-							elementTmp.appendChild(
-									commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+									commons.convertLocalDateTimeStringToString(hdktngay,Constants.FORMAT_DATE.FORMAT_DATE_WEB,Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", dcxkho));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", ""));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", HVTNXHang));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", HVTNVChuyen));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
-//                			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", hvtnxkho));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", tnvchuyen));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", ptvchuyen));
 
 							/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 							elementSubTmp = doc.createElement("TTKhac");
-							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", XTKho));
+							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 							elementSubTmp.appendChild(
 									commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 							elementSubTmp.appendChild(
 									commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 
-							if (docTmp.get("BankAccountExt") != null
-									&& docTmp.getList("BankAccountExt", Document.class).size() > 0) {
-								intTmp = 1;
-								for (Document oo : docTmp.getList("BankAccountExt", Document.class)) {
-									elementSubTmp.appendChild(commons.createElementTTKhac(doc, "STKNHang" + intTmp,
-											"string", oo.get("AccountNumber", "")));
-									elementSubTmp.appendChild(commons.createElementTTKhac(doc, "TNHang" + intTmp,
-											"string", oo.get("BankName", "")));
-									elementTmp.appendChild(elementSubTmp);
-									intTmp++;
-								}
-								elementTmp.appendChild(elementSubTmp);
-							}
 							elementSubTmp.appendChild(
 									commons.createElementTTKhac(doc, "ComFax", "string", docTmp.get("Fax", "")));
-							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "PostBy", "string", TNDDien));
+							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "PostBy", "string", hvtnxkho));
 							elementSubTmp
-									.appendChild(commons.createElementTTKhac(doc, "PostDescription", "string", NDNKho));
+									.appendChild(commons.createElementTTKhac(doc, "PostDescription", "string", ndnkho));
 							elementTmp.appendChild(elementSubTmp);
 
 							elementSubContent.appendChild(elementTmp);
 
 							elementTmp = doc.createElement("NMua"); // NGUOI MUA
-							elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", TenNM));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MSTNM));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", HVTNXHang));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", tdvnhap));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "MST", mstnnhap));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", dcnkho));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNMHang", hvtnnhap));
 
 							elementSubTmp = doc.createElement("TTKhac"); // THONG TIN KHAC
-							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveNo", "string", HDKTSo));
+							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveNo", "string", hdktso));
 							elementSubTmp.appendChild(commons.createElementTTKhac(doc, "MoveDate", "string",
-									commons.convertLocalDateTimeStringToString(HDKTNgay,
+									commons.convertLocalDateTimeStringToString(hdktngay,
 											Constants.FORMAT_DATE.FORMAT_DATE_WEB,
-											Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
-							elementSubTmp.appendChild(
-									commons.createElementTTKhac(doc, "TransportDivice", "string", PTVChuyen));
-							elementSubTmp.appendChild(
-									commons.createElementTTKhac(doc, "TransportName", "string", HVTNVChuyen));
+											Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE)));
+							elementSubTmp
+									.appendChild(commons.createElementTTKhac(doc, "TransportDivice", "string", ptvchuyen));
+							elementSubTmp
+									.appendChild(commons.createElementTTKhac(doc, "TransportName", "string", tnvchuyen));
 							elementTmp.appendChild(elementSubTmp);
 							elementSubContent.appendChild(elementTmp);
 
-							mapVATAmount = new LinkedHashMap<String, Double>();
-							mapAmount = new LinkedHashMap<String, Double>();
 							elementTmp = doc.createElement("DSHHDVu"); // HH-DV
-
-							for (Object o : listHHDVus) {
+							double total_cktmai	= 0.0;
+							double total_ttien	= 0.0;
+							for (Object o : listHHDVu) {
 								if (!"".equals(o.equals("/ProductName"))) {
 									JsonNode h = Json.serializer().nodeFromObject(o);
-									tmp = commons.getTextJsonNode(h.at("/VATRate")).replaceAll(",", "");
-									switch (tmp) {
-									case "0":
-									case "5":
-									case "8":
-									case "10":
-										tmp += "%";
-										break;
-									case "-1":
-										tmp = "KCT";
-										break;
-									case "-2":
-										tmp = "KKKNT";
-										break;
-									default:
-										break;
-									}
-									if ("1".equals(commons.getTextJsonNode(h.at("/Feature")))
-											|| "3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
-										mapAmount.compute(tmp, (f, v) -> {
-											return (v == null ? commons
-													.ToNumber(commons.getTextJsonNode(h.at("/Total")))
-													* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
-													: v + commons.ToNumber(commons.getTextJsonNode(h.at("/Total")))
-															* ("3".equals(commons.getTextJsonNode(h.at("/Feature")))
-																	? -1
-																	: 1));
-										});
-										mapVATAmount.compute(tmp, (f, v) -> {
-											return (v == null ? commons
-													.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
-													* ("3".equals(commons.getTextJsonNode(h.at("/Feature"))) ? -1 : 1)
-													: v + commons.ToNumber(commons.getTextJsonNode(h.at("/VATAmount")))
-															* ("3".equals(commons.getTextJsonNode(h.at("/Feature")))
-																	? -1
-																	: 1));
-										});
-									}
 
 									elementSubTmp = doc.createElement("HHDVu");
 									elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
@@ -4694,44 +4245,25 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 											commons.getTextJsonNode(h.at("/Price")).replaceAll(",", "")));
 									elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 											commons.getTextJsonNode(h.at("/Total")).replaceAll(",", "")));
-									elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-									elementSubTmp01 = doc.createElement("TTKhac");
-									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-											commons.getTextJsonNode(h.at("/Total")).replaceAll(",", "")));
-									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-											commons.getTextJsonNode(h.at("/VATAmount")).replaceAll(",", "")));
-									elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-											commons.getTextJsonNode(h.at("/Amount")).replaceAll(",", "")));
-									elementSubTmp.appendChild(elementSubTmp01);
-
+									
 									elementTmp.appendChild(elementSubTmp);
-
+									total_ttien += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+									if ("3".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+										total_cktmai += commons.ToNumber(commons.getTextJsonNode(h.at("/Total")));
+									}
 								}
 							}
 							elementSubContent.appendChild(elementTmp);
 							elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-							elementSubTmp = doc.createElement("THTTLTSuat");
-							/* DANH SACH CAC LOAI THUE SUAT */
-
-//                			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-
-							elementSubTmp01 = doc.createElement("LTSuat");
-							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-									commons.formatNumberReal(TgTTTBSo).replaceAll(",", "")));
-							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-									commons.formatNumberReal(TgTThue).replaceAll(",", "")));
-							elementSubTmp.appendChild(elementSubTmp01);
-
-							elementTmp.appendChild(elementSubTmp);
-
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue", "0"));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue", "0"));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", "0"));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-									commons.formatNumberReal(TgTTTBSo).replaceAll(",", "")));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", TBChu));
+							
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTCThue", String.valueOf(total_ttien)));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTThue", "0.0"));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(total_cktmai)));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", String.valueOf(total_ttien)));
+							
+							ttbchu = commons.moneyToVietnamese(total_ttien, currencyUnit);
+							
+							elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", ttbchu));
 
 							elementContent.appendChild(elementSubContent);
 							elementSubContent.appendChild(elementTmp);
@@ -4742,53 +4274,61 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 								throw new Exception("Lưu dữ liệu không thành công.");
 							}
 							/* END - TAO XML HOA DON */
-							// END XML"_id", objectIdEInvoice
-							// lookup data
-							MTDiep = SystemParams.MSTTCGP + commons
-									.csRandomAlphaNumbericString(46 - SystemParams.MSTTCGP.length()).toUpperCase();
+							
 							docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
-									.append("MTDiep", MTDiep)
-//                					.append("EInvoiceNumber", null)				//PHAT SINH KHI THUC HIEN KY
-									.append("EInvoiceDetail", new Document("TTChung", new Document("THDon", THDon)
+									.append("MTDiep", mtdiep)
+									.append("EInvoiceDetail", new Document("TTChung", new Document("THDon", thdon)
 											.append("MauSoHD", mauSoHdon)
-											.append("KHMSHDon",
-													docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), ""))
-											.append("KHHDon",
-													docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), ""))
-											.append("NLap", NLap).append("DVTTe", DVTTe).append("TGia", TGia)
+											.append("KHMSHDon",docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), ""))
+											.append("KHHDon",docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), ""))
+											.append("NLap", commons.convertStringToLocalDate(nlap, Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+											.append("DVTTe", ltien)
+											.append("TGia", tgia)
 											.append("HTTToanCode", "").append("HTTToan", ""))
 											.append("NDHDon",
-													new Document("NBan", new Document("Ten", docTmp.get("Name", ""))
-															.append("MST", docTmp.get("TaxCode", ""))
-															.append("HDKTSo", HDKTSo)
-															.append("HDKTNgay",
-																	commons.convertStringToLocalDate(HDKTNgay,
-																			Constants.FORMAT_DATE.FORMAT_DATE_WEB))
-															.append("DChi", XTKho)
-															.append("SDThoai", docTmp.get("Phone", ""))
-															.append("TNVChuyen", HVTNVChuyen)
-															.append("PTVChuyen", PTVChuyen).append("TNDDien", TNDDien)
-															.append("DCTDTu", docTmp.get("Email", ""))
-															.append("STKNHang",
-																	docTmp.getEmbedded(Arrays.asList("BankAccount",
-																			"AccountNumber"), ""))
-															.append("TNHang", docTmp.getEmbedded(
-																	Arrays.asList("BankAccount", "BankName"), ""))
-															.append("Fax", docTmp.get("Fax", ""))
-															.append("Website", docTmp.get("Website", "")))
-															.append("NMua", new Document("Ten", TenNM)
-																	.append("MST", MSTNM).append("DChi", NTKhoForm)
-																	.append("NDXKho", NDNKho).append("HDSo", HDSoCheck)
-																	.append("MKHang", "").append("SDThoai", "")
-																	.append("DCTDTu", EmailNM)
-																	.append("HVTNMHang", HVTNXHang)
-																	.append("STKNHang", "").append("TNHang", "")))
-											.append("DSHHDVu", listHHDVus).append("TToan",
-													new Document("TgTCThue", 0.0).append("TgTThue", 0.0)
-															.append("TgTTTBSo", TgTTTBSo).append("TgTTTBChu", TBChu)))
+													new Document("NBan",
+															new Document("Ten", docTmp.get("Name", ""))
+																	.append("MST", docTmp.get("TaxCode", ""))
+																	.append("HDKTSo", hdktso)
+																	.append("HDKTNgay",
+																			commons.convertStringToLocalDate(hdktngay,Constants.FORMAT_DATE.FORMAT_DATE_WEB))
+																	.append("DChi", dcxkho)
+																	.append("SDThoai", docTmp.get("Phone", ""))
+																	.append("TNVChuyen", tnvchuyen)
+																	.append("PTVChuyen", ptvchuyen)
+																	.append("TNDDien", hvtnxkho)
+																	.append("DCTDTu", docTmp.get("Email", ""))
+																	.append("STKNHang",
+																			docTmp.getEmbedded(Arrays.asList("BankAccount",
+																					"AccountNumber"), ""))
+																	.append("TNHang",
+																			docTmp.getEmbedded(Arrays.asList("BankAccount",
+																					"BankName"), ""))
+																	.append("Fax", docTmp.get("Fax", ""))
+																	.append("Website", docTmp.get("Website", "")))
+															.append("NMua",
+																	new Document("Ten", tdvnhap)
+																	.append("MST", mstnnhap)
+																	.append("DChi", dcnkho)
+																	.append("NDXKho", ndnkho)
+																	.append("HDSo", "")
+																	.append("MKHang", "")
+																	.append("SDThoai", sdthoai)
+																	.append("DCTDTu", email)
+																	.append("HVTNMHang", hvtnnhap)
+																	.append("STKNHang", stkhoan)
+																	.append("TNHang", tnhang)))
+											.append("DSHHDVu", listHHDVu)
+											.append("TToan", 
+													new Document("TgTCThue", total_ttien)
+													.append("TgTThue", 0.0)
+													.append("TgTTTBSo", total_ttien)
+													.append("TgTTTBChu", ttbchu)))
 									.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
 									.append("EInvoiceStatus", Constants.INVOICE_STATUS.CREATED)
-									.append("IsDelete", false).append("SecureKey", SecureKey).append("Dir", pathDir)
+									.append("IsDelete", false)
+									.append("SecureKey", secureKey)
+									.append("Dir", pathDir)
 									.append("FileNameXML", fileNameXML).append("InfoCreated",
 											new Document("CreateDate", LocalDateTime.now())
 													.append("CreateUserID", header.getUserId())
@@ -4801,8 +4341,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 							collection.insertOne(docUpsert);
 							mongoClient.close();
 
-							dshhdVuList.clear();
-							listHHDVus.clear();
 							checkMaHD = false;
 						}
 					}
@@ -4826,454 +4364,59 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 
 	/*----------------------------------------------------- End Import excel */
 
-	private static EInvoicePXKDLExcelForm extractInfoFromCell(List<Cell> cells) {
-		EInvoicePXKDLExcelForm eInvoicePXKDLExcelForm = new EInvoicePXKDLExcelForm();
-		// Ma hoa don
-		Cell MaHD = cells.get(0);
-		if (MaHD != null) {
-			switch (MaHD.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setMaHD(MaHD.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setMaHD((NumberToTextConverter.toText(MaHD.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// NGAY LAP
-		Cell NHDon = cells.get(1);
-		if (NHDon != null) {
-			switch (NHDon.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setNHDon(NHDon.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setNHDon((NumberToTextConverter.toText(NHDon.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// NGUOI DIEU DONG
-
-		Cell Cua = cells.get(2);
-		if (Cua != null) {
-			switch (Cua.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setCua(Cua.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setCua((NumberToTextConverter.toText(Cua.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// VE VIEC
-		Cell VViec = cells.get(3);
-		if (VViec != null) {
-			switch (VViec.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setVViec(VViec.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setVViec((NumberToTextConverter.toText(VViec.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-
-		// HDKT SO
-		Cell HDKTSo = cells.get(4);
-		if (HDKTSo != null) {
-			switch (HDKTSo.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setHDKTSo(HDKTSo.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setHDKTSo((NumberToTextConverter.toText(HDKTSo.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// HDKT NGAY
-
-		Cell HDKTNgay = cells.get(5);
-		if (HDKTNgay != null) {
-			switch (HDKTNgay.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setHDKTNgay(HDKTNgay.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setHDKTNgay((NumberToTextConverter.toText(HDKTNgay.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// HO VA TEN NG VC
-		Cell HVTNVChuyen = cells.get(6);
-		if (HVTNVChuyen != null) {
-			switch (HVTNVChuyen.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setHVTNVChuyen(HVTNVChuyen.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm
-						.setHVTNVChuyen((NumberToTextConverter.toText(HVTNVChuyen.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-		// PHUONG TIEN VC
-		Cell PTVChuyen = cells.get(7);
-		if (PTVChuyen != null) {
-			switch (PTVChuyen.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setPTVChuyen(PTVChuyen.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setPTVChuyen((NumberToTextConverter.toText(PTVChuyen.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// XUAT TAI KHO
-		Cell XTKho = cells.get(8);
-		if (XTKho != null) {
-			switch (XTKho.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setXTKho(XTKho.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setXTKho((NumberToTextConverter.toText(XTKho.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// NTkho
-		Cell NTkho = cells.get(9);
-		if (NTkho != null) {
-			switch (NTkho.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setNTkho(NTkho.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setNTkho((NumberToTextConverter.toText(NTkho.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-
-		// MST NG NHAP
-		Cell MSTNNHap = cells.get(10);
-		if (MSTNNHap != null) {
-			switch (MSTNNHap.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setMSTNNhap(MSTNNHap.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setMSTNNhap((NumberToTextConverter.toText(MSTNNHap.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-		// HVTNNHAP
-		Cell HVTNNHang = cells.get(11);
-		if (HVTNNHang != null) {
-			switch (HVTNNHang.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setHVTNNHang(HVTNNHang.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setHVTNNHang((NumberToTextConverter.toText(HVTNNHang.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-		// TEN DON VI
-		Cell TenDV = cells.get(12);
-		if (TenDV != null) {
-			switch (TenDV.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTenDV(TenDV.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTenDV((NumberToTextConverter.toText(TenDV.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-
-		}
-		// MAIL NHAN
-		Cell EmailKNhan = cells.get(13);
-		if (EmailKNhan != null) {
-			switch (EmailKNhan.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setEmailKNhan(EmailKNhan.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setEmailKNhan((NumberToTextConverter.toText(EmailKNhan.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// STT
-		Cell STT = cells.get(14);
-		if (STT != null) {
-			switch (STT.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setSTT(STT.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setSTT((NumberToTextConverter.toText(STT.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// TEN HH
-		Cell THHoa = cells.get(15);
-		if (THHoa != null) {
-			switch (THHoa.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTHHoa(THHoa.getStringCellValue());
-				break;
-			case NUMERIC:
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Don gia
-		Cell MaHHoa = cells.get(16);
-		if (MaHHoa != null) {
-			switch (MaHHoa.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setMaHHoa(MaHHoa.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setMaHHoa((NumberToTextConverter.toText(MaHHoa.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Don vi tinh
-		Cell DVTinh = cells.get(17);
-		if (DVTinh != null) {
-			switch (DVTinh.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setDVTinh(DVTinh.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setDVTinh((NumberToTextConverter.toText(DVTinh.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// Thanh tien
-		Cell TXuat = cells.get(18);
-		if (TXuat != null) {
-			switch (TXuat.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTXuat((Double.valueOf((String) TXuat.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTXuat(TXuat.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// Thue suat
-		Cell TNhap = cells.get(19);
-		if (TNhap != null) {
-			switch (TNhap.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTNhap((Double.valueOf((String) TNhap.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTNhap(TNhap.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-
-		// Don gia
-		Cell DGia = cells.get(20);
-		if (DGia != null) {
-			switch (DGia.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setDGia((Double.valueOf((String) DGia.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setDGia(DGia.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Thanh tien
-		Cell TTien = cells.get(21);
-		if (TTien != null && (TTien.getCellType() == CellType.FORMULA)) {
-			switch (TTien.getCachedFormulaResultType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTTien((Double.valueOf((String) TTien.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTTien(TTien.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		if (TTien != null) {
-			switch (TTien.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTTien((Double.valueOf((String) TTien.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTTien(TTien.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		Cell TgTien = cells.get(22);
-		if (TgTien != null && (TgTien.getCellType() == CellType.FORMULA)) {
-			switch (TgTien.getCachedFormulaResultType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTgTien((Double.valueOf((String) TgTien.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTgTien(TgTien.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		if (TgTien != null) {
-			switch (TgTien.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTgTien((Double.valueOf((String) TgTien.getStringCellValue())));
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTgTien(TgTien.getNumericCellValue());
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Ten hang hoa
-		Cell LHHoa = cells.get(23);
-		if (LHHoa != null) {
-			switch (LHHoa.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setLHHoa(LHHoa.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setLHHoa((NumberToTextConverter.toText(LHHoa.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Tổng tiền ghi bằng chữ
-		Cell TBchu = cells.get(24);
-		if (TBchu != null) {
-			switch (TBchu.getCellType()) {
-			case STRING:
-				eInvoicePXKDLExcelForm.setTBchu(TBchu.getStringCellValue());
-				break;
-			case NUMERIC:
-				eInvoicePXKDLExcelForm.setTBchu((NumberToTextConverter.toText(TBchu.getNumericCellValue())));
-				break;
-			case BLANK:
-				break;
-			default:
-				break;
-			}
-		}
-		// Tra ve danh sach
-		return eInvoicePXKDLExcelForm;
+	private String getCellValueAsString(Cell cell) {
+	    if (cell == null) {
+	        return "";
+	    }
+	    CellType contition = cell.getCellType();
+	    if (contition == CellType.FORMULA) {
+	        contition = cell.getCachedFormulaResultType();
+	    }
+	    
+	    switch (contition) {
+	        case STRING:
+	            return cell.getStringCellValue();
+	        case NUMERIC:
+	            double num = cell.getNumericCellValue();
+	            if (num == Math.floor(num)) {
+	                return String.valueOf((long) num);
+	            } else {
+	                return String.valueOf(num);
+	            }
+	        default:
+	            return "";
+	    }
+	}
+	private EInvoicePXKDLExcelForm extractInfoFromCell(List<Cell> cells) {
+		return EInvoicePXKDLExcelForm.builder()
+				.mphieu(getCellValueAsString(cells.get(0)))
+				.dcxkho(getCellValueAsString(cells.get(1)))
+				.nlap(getCellValueAsString(cells.get(2)))
+				.hvtnxkho(getCellValueAsString(cells.get(3)))
+				.ltien(getCellValueAsString(cells.get(4)))
+				.tnvchuyen(getCellValueAsString(cells.get(5)))
+				.hdktso(getCellValueAsString(cells.get(6)))
+				.hdktngay(getCellValueAsString(cells.get(7)))
+				.ptvchuyen(getCellValueAsString(cells.get(8)))
+				.mstnnhap(getCellValueAsString(cells.get(9)))
+				.hvtnnhap(getCellValueAsString(cells.get(10)))
+				.tdvnhap(getCellValueAsString(cells.get(11)))
+				.dcnkho(getCellValueAsString(cells.get(12)))
+				.ndnkho(getCellValueAsString(cells.get(13)))
+				.email(getCellValueAsString(cells.get(14)))
+				.sdthoai(getCellValueAsString(cells.get(15)))
+				.stkhoan(getCellValueAsString(cells.get(16)))
+				.tnhang(getCellValueAsString(cells.get(17)))
+				.stt(getCellValueAsString(cells.get(18)))
+				.thhoa(getCellValueAsString(cells.get(19)))
+				.mahhoa(getCellValueAsString(cells.get(20)))
+				.dvtinh(getCellValueAsString(cells.get(21)))
+				.sluong(getCellValueAsString(cells.get(22)))
+				.dgia(getCellValueAsString(cells.get(23)))
+				.ttien(getCellValueAsString(cells.get(24)))
+				.tchat(getCellValueAsString(cells.get(25)))
+				.tgia(getCellValueAsString(cells.get(26)))
+				.build();
 	}
 
 	@Override

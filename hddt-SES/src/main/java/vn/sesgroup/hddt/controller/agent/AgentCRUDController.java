@@ -517,10 +517,6 @@ public class AgentCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Ngày lập hóa đơn không đúng định dạng.");
 			}
-//			else if(commons.compareLocalDate(commons.convertStringToLocalDate(ngayLap, Constants.FORMAT_DATE.FORMAT_DATE_WEB), LocalDate.now()) > 0) {
-//				dto.setErrorCode(1);
-//				dto.getErrorMessages().add("Ngày lập hóa đơn không được lớn hơn ngày hiện tại.");
-//			}
 			if("".equals(loaiTienTt)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn loại tiền thanh toán.");
@@ -552,26 +548,6 @@ public class AgentCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Hợp đồng kinh tế số ngày không đúng định dạng.");
 			}
-//			if(!khMst.equals("")) {
-//				if(khMst.length() < 10 || khMst.length() > 14 || khMst.length() == 11 || khMst.length() ==12 || khMst.length() ==13) {
-//					dto.setErrorCode(1);
-//					dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//				}else {					
-//					if(khMst.length() == 14) {
-//						if(!khMst.contains("-")){
-//						dto.setErrorCode(1);
-//						dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//						}else {
-//							String split[] = khMst.split("-");
-//							if(split[1].length() != 3) {
-//								dto.setErrorCode(1);
-//								dto.getErrorMessages().add("Mã số thuế người mua không đúng định dạng.");
-//							}
-//							
-//						}
-//					}
-//				}
-//			}
 			break;
 		case "agent-deleteAll":
 			_token = commons.getParameterFromRequest(req, "_token").replaceAll("\\s", "");
@@ -671,12 +647,6 @@ public class AgentCRUDController extends AbstractController{
 				return dto;
 			}
 		}
-//		if(!check) {
-//			dto.setErrorCode(999);
-//			dto.setResponseData("Vui lòng kiểm tra lại dữ liệu hàng hóa\r\n"
-//					+ "Đơn giá không được để trống. Nếu không có đơn giá vui lòng nhập số 0.");
-//			return dto;
-//		}
 		/*END - KIEM TRA THONG TIN SAN PHAM*/
 		
 		token = commons.csRandomAlphaNumbericString(30);
