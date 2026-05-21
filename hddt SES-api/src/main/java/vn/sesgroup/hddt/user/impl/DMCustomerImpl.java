@@ -1163,13 +1163,12 @@ db.getCollection('DMCustomer').find({
 		try (MongoClient mongoClient = cfg.mongoClient()) {
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("DMCustomer");
 			iter = collection.aggregate(pipeline).allowDiskUse(true).iterator();
+			while (iter.hasNext()) {
+				docTmps.add(iter.next());
+			}
 		} catch (Exception e) {
 		}
-
-		while (iter.hasNext()) {
-			docTmps.add(iter.next());
-		}
-
+		
 		if (docTmps.size() == 0) {
 			out = new ByteArrayOutputStream();
 			wb.write(out);
