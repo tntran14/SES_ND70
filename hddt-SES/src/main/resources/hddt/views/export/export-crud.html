@@ -153,7 +153,7 @@
 											th:readonly="${!_isedit_}" />
 										<fieldset aria-hidden="true" class="c-f__set">
 											<legend class="c-f__legend">
-												<label>Của<span class="text-danger" style="font-size:15px">(*)</span> </label>
+												<label>Họ và tên người xuất hàng<span class="text-danger" style="font-size:15px">(*)</span> </label>
 											</legend>
 										</fieldset>
 									</div>
@@ -683,14 +683,14 @@ $(function(){
 				attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 				template: '#= window.setTemplateForGrid("Unit", data) #'
 			},
-			{field: 'Quantity', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng thực xuất</a>',
+			{field: 'Quantity', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng</a>',
 				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 				template: '#= window.setTemplateForGrid("Quantity", data) #'
 			},
-			{field: 'TNhap', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng thực nhập</a>',
-				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
-				template: '#= window.setTemplateForGrid("TNhap", data) #'
-			},
+// 			{field: 'TNhap', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lượng thực nhập</a>',
+// 				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+// 				template: '#= window.setTemplateForGrid("TNhap", data) #'
+// 			},
 			{field: 'Price', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đơn giá</a>',
 				attributes: {'class': 'table-cell text-right text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 				template: '#= window.setTemplateForGrid("Price", data) #'

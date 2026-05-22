@@ -423,10 +423,10 @@ public class ExportCRUDController extends AbstractController{
 						o.at("/Quantity").isMissingNode()? "":
 						commons.formatNumberReal(o.at("/Quantity").doubleValue())
 					);
-					hItem.put("TNhap", 
-							o.at("/TNhap").isMissingNode()? "":
-							commons.formatNumberReal(o.at("/TNhap").doubleValue())
-						);
+//					hItem.put("TNhap", 
+//							o.at("/TNhap").isMissingNode()? "":
+//							commons.formatNumberReal(o.at("/TNhap").doubleValue())
+//						);
 					hItem.put("Price", 
 						o.at("/Price").isMissingNode()? "":
 						commons.formatNumberReal(o.at("/Price").doubleValue())
@@ -435,20 +435,20 @@ public class ExportCRUDController extends AbstractController{
 						o.at("/Total").isMissingNode()? "":
 						commons.formatNumberReal(o.at("/Total").doubleValue())
 					);
-					if("DETAIL".equals(action))
-						hItem.put("VATRate", 
-							o.at("/VATRate").isMissingNode()? "":
-							Constants.MAP_VAT.get(commons.formatNumberReal(o.at("/VATRate").doubleValue()))
-						);
-					else
-						hItem.put("VATRate", 
-							o.at("/VATRate").isMissingNode()? "":
-							commons.formatNumberReal(o.at("/VATRate").doubleValue())
-						);
-					hItem.put("VATAmount", 
-						o.at("/VATAmount").isMissingNode()? "":
-						commons.formatNumberReal(o.at("/VATAmount").doubleValue())
-					);
+//					if("DETAIL".equals(action))
+//						hItem.put("VATRate", 
+//							o.at("/VATRate").isMissingNode()? "":
+//							Constants.MAP_VAT.get(commons.formatNumberReal(o.at("/VATRate").doubleValue()))
+//						);
+//					else
+//						hItem.put("VATRate", 
+//							o.at("/VATRate").isMissingNode()? "":
+//							commons.formatNumberReal(o.at("/VATRate").doubleValue())
+//						);
+//					hItem.put("VATAmount", 
+//						o.at("/VATAmount").isMissingNode()? "":
+//						commons.formatNumberReal(o.at("/VATAmount").doubleValue())
+//					);
 					hItem.put("Amount", 
 						o.at("/Amount").isMissingNode()? "":
 						commons.formatNumberReal(o.at("/Amount").doubleValue())
@@ -709,21 +709,20 @@ public class ExportCRUDController extends AbstractController{
 			}
 		}
 	
-		if(!"export-deleteAll".equals(transaction)) {			
-		jsonNodeTmp = null;	
-		/*END - KIEM TRA THONG TIN SAN PHAM*/
-		token = commons.csRandomAlphaNumbericString(30);
-		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
-		
-		HashMap<String, String> hInfo = new HashMap<String, String>();
-		hInfo.put("CONFIRM", messageConfirm);
-		hInfo.put("TOKEN", token);
-		
-		dto.setResponseData(hInfo);
-		dto.setErrorCode(0);
-		return dto;
-	}
-		else {
+		if (!"export-deleteAll".equals(transaction)) {
+			jsonNodeTmp = null;
+			/* END - KIEM TRA THONG TIN SAN PHAM */
+			token = commons.csRandomAlphaNumbericString(30);
+			session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
+
+			HashMap<String, String> hInfo = new HashMap<String, String>();
+			hInfo.put("CONFIRM", messageConfirm);
+			hInfo.put("TOKEN", token);
+
+			dto.setResponseData(hInfo);
+			dto.setErrorCode(0);
+			return dto;
+		} else {
 		token = commons.csRandomAlphaNumbericString(30);
 		session.setAttribute(Constants.SESSION_TYPE.SESSION_TOKEN_EXECUTE, token);
 		

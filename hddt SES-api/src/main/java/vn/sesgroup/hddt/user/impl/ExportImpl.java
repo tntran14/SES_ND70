@@ -149,6 +149,8 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 		String tienBangChu = commons.getTextJsonNode(jsonData.at("/TienBangChu")).trim().replaceAll("\\s+", " ");
 
 		String tmp = "";
+		
+		double chietKhauTMTotal	= 0.0;
 
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -474,7 +476,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", khHDS));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 
@@ -521,38 +523,12 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "TransportName", "string", khHoTenNguoiVC));
 			elementTmp.appendChild(elementSubTmp);
 			elementSubContent.appendChild(elementTmp);
-
-			mapVATAmount = new LinkedHashMap<String, Double>();
-			mapAmount = new LinkedHashMap<String, Double>();
+			
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
 
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
@@ -571,23 +547,6 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-
-						// check so luong thuc nhap
-						String check_tn = commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "");
-						if (!check_tn.equals("")) {
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLNhap", "String",
-									commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "")));
-						}
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -603,35 +562,22 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
-
 				}
 			}
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1131,7 +1077,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", khHDS));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 //			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
@@ -1178,38 +1124,11 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(elementSubTmp);
 			elementSubContent.appendChild(elementTmp);
 
-			mapVATAmount = new LinkedHashMap<String, Double>();
-			mapAmount = new LinkedHashMap<String, Double>();
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
-
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
 								commons.getTextJsonNode(o.at("/Feature"))));
@@ -1227,22 +1146,6 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-						// check so luong thuc nhap
-						String check_tn = commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "");
-						if (!check_tn.equals("")) {
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLNhap", "String",
-									commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "")));
-						}
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -1258,7 +1161,9 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
 
 				}
@@ -1266,27 +1171,13 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
@@ -1758,7 +1649,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", docTmp.get("HDSo", "")));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", khHoTenNguoiXuat));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "PTVChuyen", PTVChuyen));
 //			elementTmp.appendChild(commons.createElementWithValue(doc, "TTKhac", ""));
@@ -1805,38 +1696,11 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(elementSubTmp);
 			elementSubContent.appendChild(elementTmp);
 
-			mapVATAmount = new LinkedHashMap<String, Double>();
-			mapAmount = new LinkedHashMap<String, Double>();
+			chietKhauTMTotal = 0.0;
 			elementTmp = doc.createElement("DSHHDVu"); // HH-DV
 			if (!jsonData.at("/DSSanPham").isMissingNode()) {
 				for (JsonNode o : jsonData.at("/DSSanPham")) {
 					if (!"".equals(commons.getTextJsonNode(o.at("/ProductName")))) {
-						tmp = commons.getTextJsonNode(o.at("/VATRate")).replaceAll(",", "");
-						switch (tmp) {
-						case "0":
-						case "5":
-						case "10":
-							tmp += "%";
-							break;
-						case "-1":
-							tmp = "KCT";
-							break;
-						case "-2":
-							tmp = "KKKNT";
-							break;
-						default:
-							break;
-						}
-
-						mapAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
-						});
-						mapVATAmount.compute(tmp, (k, v) -> {
-							return (v == null ? commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount")))
-									: v + commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						});
-
 						elementSubTmp = doc.createElement("HHDVu");
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TChat",
 								commons.getTextJsonNode(o.at("/Feature"))));
@@ -1854,22 +1718,6 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 								commons.getTextJsonNode(o.at("/Price")).replaceAll(",", "")));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
 								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
-						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", "0%"));
-
-						elementSubTmp01 = doc.createElement("TTKhac");
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLXuat", "String",
-								commons.getTextJsonNode(o.at("/Quantity")).replaceAll(",", "")));
-						// check so luong thuc nhap
-						String check_tn = commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "");
-						if (!check_tn.equals("")) {
-							elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "SLNhap", "String",
-									commons.getTextJsonNode(o.at("/TNhap")).replaceAll(",", "")));
-						}
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
-						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
-						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
 
@@ -1885,7 +1733,9 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						listDSHHDVu.add(hItem);
-
+						if ("3".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+							chietKhauTMTotal += commons.ToNumber(commons.getTextJsonNode(o.at("/Total")));
+						}
 					}
 
 				}
@@ -1893,27 +1743,13 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementSubContent.appendChild(elementTmp);
 
 			elementTmp = doc.createElement("TToan"); // Thong tin thanh toan
-			elementSubTmp = doc.createElement("THTTLTSuat");
-			/* DANH SACH CAC LOAI THUE SUAT */
-
-//			https://stackoverflow.com/questions/46898/how-do-i-efficiently-iterate-over-each-entry-in-a-java-map
-			for (Map.Entry<String, Double> pair : mapVATAmount.entrySet()) {
-				elementSubTmp01 = doc.createElement("LTSuat");
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", "KCT"));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-						commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
-						commons.formatNumberReal(mapVATAmount.get(pair.getKey())).replaceAll(",", "")));
-				elementSubTmp.appendChild(elementSubTmp01);
-			}
-			elementTmp.appendChild(elementSubTmp);
 
 			elementTmp.appendChild(
 					commons.createElementWithValue(doc, "TgTCThue", tongTienTruocThue.replaceAll(",", "")));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTThue", tongTienThueGtgt.replaceAll(",", "")));
 			elementTmp.appendChild(
-					commons.createElementWithValue(doc, "TTCKTMai", tongTienTruocThue.replaceAll(",", "")));
+					commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(chietKhauTMTotal)));
 			elementTmp
 					.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", tongTienDaCoThue.replaceAll(",", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", tienBangChu));
