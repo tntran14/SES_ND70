@@ -3833,16 +3833,15 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 							HashMap<String, Object> hItem1 = null;
 							hItem1 = new LinkedHashMap<String, Object>();
 							hItem1.put("STT", eInvoicePXKDLExcelFormList.get(k).getStt());
-							hItem1.put("ProductName", eInvoicePXKDLExcelFormList.get(k).getTchat());
+							hItem1.put("ProductName", eInvoicePXKDLExcelFormList.get(k).getThhoa());
 							hItem1.put("ProductCode", eInvoicePXKDLExcelFormList.get(k).getMahhoa());
 							hItem1.put("Unit", eInvoicePXKDLExcelFormList.get(k).getDvtinh());
-							hItem1.put("Quantity", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getSluong()));
-							hItem1.put("Price", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getDgia()));
-							hItem1.put("Amount", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
-							hItem1.put("Total", Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Quantity", "".equals(eInvoicePXKDLExcelFormList.get(k).getSluong()) ? 0.0 : Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getSluong()));
+							hItem1.put("Price", "".equals(eInvoicePXKDLExcelFormList.get(k).getDgia()) ? 0.0 : Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getDgia()));
+							hItem1.put("Amount", "".equals(eInvoicePXKDLExcelFormList.get(k).getTtien()) ? 0.0 : Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
+							hItem1.put("Total", "".equals(eInvoicePXKDLExcelFormList.get(k).getTtien()) ? 0.0 : Double.valueOf(eInvoicePXKDLExcelFormList.get(k).getTtien()));
 							hItem1.put("Feature", eInvoicePXKDLExcelFormList.get(k).getTchat());
 							listHHDVu.add(hItem1);
-
 						}
 
 						// Thông tin hóa đơn - TTChung
