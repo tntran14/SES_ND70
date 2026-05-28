@@ -3828,7 +3828,6 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				
 				if (checkMaHD == true) {
 					if (dem > 1) {
-
 						for (int k = i; k <= end; k++) {
 							HashMap<String, Object> hItem1 = null;
 							hItem1 = new LinkedHashMap<String, Object>();
@@ -4001,9 +4000,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 						elementTmp.appendChild(commons.createElementWithValue(doc, "TTCKTMai", String.valueOf(total_cktmai)));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBSo", String.valueOf(total_ttien)));
 						
-						
 						ttbchu = commons.moneyToVietnamese(total_ttien, currencyUnit);
-						
 						
 						elementTmp.appendChild(commons.createElementWithValue(doc, "TgTTTBChu", ttbchu));
 
