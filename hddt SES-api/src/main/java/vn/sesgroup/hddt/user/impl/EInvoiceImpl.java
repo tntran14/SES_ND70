@@ -3297,8 +3297,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					if (xPath1.evaluate("DLieu/*/MCCQT", nodeTDiep, XPathConstants.NODE) != null)
 						break;
 				}
-				CQT_MLTDiep = commons.getTextFromNodeXML(
-						(Element) xPath1.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+				if (nodeTDiep != null) {
+					CQT_MLTDiep = commons.getTextFromNodeXML(
+							(Element) xPath1.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
+				}
 
 				if ("202".equals(CQT_MLTDiep)) {
 					codeTTTNhan = MaKetQua;
