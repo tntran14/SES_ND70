@@ -476,7 +476,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
 			// lệnh điều động nội bộ
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", khHDS));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
@@ -486,7 +486,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 
@@ -1077,7 +1077,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
 			// lệnh điều động nội bộ
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", khHDS));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
@@ -1086,7 +1086,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 
@@ -1649,7 +1649,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", docTmp.get("TaxCode", "")));
 			// lệnh điều động nội bộ
 			elementTmp.appendChild(commons.createElementWithValue(doc, "LDDNBo", LDDNBo));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", docTmp.get("Address", "")));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HDSo", docTmp.get("HDSo", "")));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "HVTNXHang", TNDDien));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "TNVChuyen", khHoTenNguoiVC));
@@ -1658,7 +1658,7 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 
 			/* ADD THONG TIN TK NGAN HANG (NEU CO) */
 			elementSubTmp = doc.createElement("TTKhac");
-			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", DChi));
+			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComAddress", "string", docTmp.get("Address", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComPhone", "string", docTmp.get("Phone", "")));
 			elementSubTmp.appendChild(commons.createElementTTKhac(doc, "ComEmail", "string", docTmp.get("Email", "")));
 
