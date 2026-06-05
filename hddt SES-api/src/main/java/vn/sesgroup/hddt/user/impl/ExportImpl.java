@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ import com.mongodb.client.model.UpdateOptions;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
+import vn.sesgroup.hddt.model.CTTNCNExcelForm;
 import vn.sesgroup.hddt.model.DSHHDVu;
 import vn.sesgroup.hddt.model.EInvoicePXKDLExcelForm;
 import vn.sesgroup.hddt.model.EInvoicePXKExcelForm;
@@ -4054,6 +4057,51 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 				}
 			}
 		}
+		
+		String mphieu = "";
+		boolean firstRow = false;
+		StringBuilder errorMsg = new StringBuilder();
+		for (int i = 0; i < eInvoicePXKExcelFormList.size(); i++) {
+			EInvoicePXKExcelForm eInvoicePXKExcelForm = eInvoicePXKExcelFormList.get(i);
+			
+			if (!mphieu.equals(eInvoicePXKExcelForm.getMphieu())) {
+				mphieu = eInvoicePXKExcelForm.getMphieu();
+				firstRow = true;
+			} else {
+				firstRow = false;
+			}
+	
+			if (firstRow) {
+				validateNotEmpty(eInvoicePXKExcelForm.getDcxkho(), "Địa chỉ kho xuất hàng", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getNlap(), "Ngày lập", i + 1, errorMsg);
+				validateDate(eInvoicePXKExcelForm.getNlap(), "Ngày lập", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getLtien(), "Loại tiền", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getLddnbo(), "Lệnh điều động nội bô", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getPtvchuyen(), "Phương tiện vận chuyển", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getDcnkho(), "Địa chỉ kho nhập hàng", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getTgia(), "Tỷ giá", i + 1, errorMsg);
+			}
+
+			if ("1".equals(eInvoicePXKExcelForm.getTchat().trim())) {
+				validateNotEmpty(eInvoicePXKExcelForm.getStt(), "STT", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getThhoa(), "Tên sản phẩm", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getSluong(), "Số lượng", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getSluong(), "Số lượng", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getDgia(), "Đơn giá", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getDgia(), "Đơn giá", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getTtien(), "Thành tiền", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getTtien(), "Thành tiền", i + 1, errorMsg);
+			}
+			
+			validateNotEmpty(eInvoicePXKExcelForm.getTchat(), "Tính chất", i + 1, errorMsg);
+		}
+		
+		if (errorMsg.length() > 0) {
+			responseStatus = new MspResponseStatus(999,
+					"Import không thành công. \r\n" + errorMsg.toString());
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
 
 		boolean checkMaHD = false;
 		boolean checkNullMaHD = false;
@@ -4706,6 +4754,42 @@ public class ExportImpl extends AbstractDAO implements ExportDAO {
 	}
 
 	/*----------------------------------------------------- End Import excel */
+	
+	private void validateNotEmpty(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không được để trống.\r\n");
+	    }
+	}
+	
+	public void validateDate(String dateStr, String fieldName, int row, StringBuilder errorMsg) {
+	    try {
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+	                .withResolverStyle(ResolverStyle.STRICT);
+
+	        LocalDate.parse(dateStr, formatter);
+	    } catch (DateTimeParseException e) {
+	    	  errorMsg.append("- ").append(fieldName)
+              .append(" ở dòng ").append(row)
+              .append(" không đúng định dạng ngày (dd/MM/yyyy).\r\n");
+	    }
+	}
+	
+	private void validateNumber(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        return;
+	    }
+	    
+	    try {
+	        Double.valueOf(value.trim());
+	    } catch (NumberFormatException e) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không đúng định dạng số.\r\n");
+	    }
+	}
+	
 	private String getCellValueAsString(Cell cell) {
 	    if (cell == null) {
 	        return "";
