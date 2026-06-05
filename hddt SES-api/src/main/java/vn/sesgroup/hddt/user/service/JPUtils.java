@@ -1150,7 +1150,7 @@ else {
 			reportParams.put("NhapTaiKho", 
 					commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNMua, XPathConstants.NODE))
 				);
-			reportParams.put("XuatTaiKho",commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNBan, XPathConstants.NODE)));
+			reportParams.put("XuatTaiKho", docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NBan", "DChi"), ""));
 			reportParams.put("NMuaMST", 
 				commons.getTextFromNodeXML((Element) xPath.evaluate("MST", nodeNMua, XPathConstants.NODE))
 			);
