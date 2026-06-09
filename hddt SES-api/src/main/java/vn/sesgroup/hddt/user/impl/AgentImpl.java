@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -19,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,7 +39,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.NumberToTextConverter;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +64,6 @@ import com.mongodb.client.model.UpdateOptions;
 import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.FileInfo;
 import vn.sesgroup.hddt.dto.MailConfig;
-import vn.sesgroup.hddt.model.CTTNCNExcelForm;
-import vn.sesgroup.hddt.model.DSHHDVu;
 import vn.sesgroup.hddt.model.EInvoicePXKDLExcelForm;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.AgentDAO;
@@ -3722,7 +3720,55 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				}
 			}
 		}
+		
+		String mphieu = "";
+		boolean firstRow = false;
+		StringBuilder errorMsg = new StringBuilder();
+		for (int i = 0; i < eInvoicePXKDLExcelFormList.size(); i++) {
+			EInvoicePXKDLExcelForm eInvoicePXKExcelForm = eInvoicePXKDLExcelFormList.get(i);
+			
+			if (!mphieu.equals(eInvoicePXKExcelForm.getMphieu())) {
+				mphieu = eInvoicePXKExcelForm.getMphieu();
+				firstRow = true;
+			} else {
+				firstRow = false;
+			}
+	
+			if (firstRow) {
+				validateNotEmpty(eInvoicePXKExcelForm.getDcxkho(), "Địa chỉ xuất kho", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getNlap(), "Ngày lập", i + 1, errorMsg);
+				validateDate(eInvoicePXKExcelForm.getNlap(), "Ngày lập", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getLtien(), "Loại tiền", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getTnvchuyen(), "Tên người vận chuyển", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getPtvchuyen(), "Phương tiện vận chuyển", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getHdktso(), "Hợp đồng kinh tế số", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getHdktngay(), "Hợp đồng kinh tế ngày", i + 1, errorMsg);
+				validateDate(eInvoicePXKExcelForm.getHdktngay(), "Hợp đồng kinh tế ngày", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getDcnkho(), "Địa chỉ nhập kho", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getTgia(), "Tỷ giá", i + 1, errorMsg);
+			}
 
+			if ("1".equals(eInvoicePXKExcelForm.getTchat().trim())) {
+				validateNotEmpty(eInvoicePXKExcelForm.getStt(), "STT", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getThhoa(), "Tên sản phẩm", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getSluong(), "Số lượng", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getSluong(), "Số lượng", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getDgia(), "Đơn giá", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getDgia(), "Đơn giá", i + 1, errorMsg);
+				validateNotEmpty(eInvoicePXKExcelForm.getTtien(), "Thành tiền", i + 1, errorMsg);
+				validateNumber(eInvoicePXKExcelForm.getTtien(), "Thành tiền", i + 1, errorMsg);
+			}
+			
+			validateNotEmpty(eInvoicePXKExcelForm.getTchat(), "Tính chất", i + 1, errorMsg);
+		}
+		
+		if (errorMsg.length() > 0) {
+			responseStatus = new MspResponseStatus(999,
+					"Import không thành công. \r\n" + errorMsg.toString());
+			rsp.setResponseStatus(responseStatus);
+			return rsp;
+		}
+		
 		boolean checkMaHD = false;
 		boolean checkNullMaHD = false;
 		if (eInvoicePXKDLExcelFormList != null) {
@@ -4383,6 +4429,7 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 	            return "";
 	    }
 	}
+	
 	private EInvoicePXKDLExcelForm extractInfoFromCell(List<Cell> cells) {
 		return EInvoicePXKDLExcelForm.builder()
 				.mphieu(getCellValueAsString(cells.get(0)))
@@ -4413,6 +4460,41 @@ public class AgentImpl extends AbstractDAO implements AgentDAO {
 				.tchat(getCellValueAsString(cells.get(25)))
 				.tgia(getCellValueAsString(cells.get(26)))
 				.build();
+	}
+	
+	private void validateNotEmpty(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không được để trống.\r\n");
+	    }
+	}
+	
+	public void validateDate(String dateStr, String fieldName, int row, StringBuilder errorMsg) {
+	    try {
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+	                .withResolverStyle(ResolverStyle.STRICT);
+
+	        LocalDate.parse(dateStr, formatter);
+	    } catch (DateTimeParseException e) {
+	    	  errorMsg.append("- ").append(fieldName)
+              .append(" ở dòng ").append(row)
+              .append(" không đúng định dạng ngày (dd/MM/yyyy).\r\n");
+	    }
+	}
+	
+	private void validateNumber(String value, String fieldName, int row, StringBuilder errorMsg) {
+	    if (value == null || value.trim().isEmpty()) {
+	        return;
+	    }
+	    
+	    try {
+	        Double.valueOf(value.trim());
+	    } catch (NumberFormatException e) {
+	        errorMsg.append("- ").append(fieldName)
+	                .append(" ở dòng ").append(row)
+	                .append(" không đúng định dạng số.\r\n");
+	    }
 	}
 
 	@Override
