@@ -402,6 +402,7 @@
 							<ul aria-expanded="false" class="collapse">
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tthdon|'): false}"><a th:href="@{/main/tthdon/init}">Quản lý trạng thái hóa đơn</a></li>
 								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|xuly-nghiepvu|'): false}"><a th:href="@{/main/xuly-nghiepvu/init}">Cập nhật mã CQT thủ công</a></li>
+								<li th:if="${UserFullPathRight != null? #strings.contains(UserFullPathRight,'|tracuuthongdiep|'): false}"><a th:href="@{/main/tracuuthongdiep/init}">Tra cứu thông điệp</a></li>
 							</ul>
 						</li>
 						
