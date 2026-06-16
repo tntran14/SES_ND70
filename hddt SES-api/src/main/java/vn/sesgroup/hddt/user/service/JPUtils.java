@@ -1058,7 +1058,7 @@ else {
 					commons.getTextFromNodeXML((Element) xPath.evaluate("HDSo", nodeNBan, XPathConstants.NODE))
 				);
 					
-			reportParams.put("NBanDChi",commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeNBan, XPathConstants.NODE))
+			reportParams.put("NBanDChi",docTmp.getEmbedded(Arrays.asList("Issuer","Address"), "")
 					);
 			reportParams.put("NVanChuyenTen", 
 					commons.getTextFromNodeXML((Element) xPath.evaluate("TNVChuyen", nodeNBan, XPathConstants.NODE))
