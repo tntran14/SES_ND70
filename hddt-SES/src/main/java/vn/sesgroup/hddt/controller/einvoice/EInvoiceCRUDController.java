@@ -825,9 +825,9 @@ public class EInvoiceCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Địa chỉ email người mua không đúng.");
 			}
-			if(!commons.checkStringIsInt(tyGia) || commons.ToNumber(tyGia) < 1) {
+			if(commons.ToNumber(tyGia) < 1) {
 				dto.setErrorCode(1);
-				dto.getErrorMessages().add("Tỷ giá không được nhỏ hơn 1 và phải là số nguyên.");
+				dto.getErrorMessages().add("Tỷ giá không được nhỏ hơn 1.");
 			}
 			if("".equals(tienBangChu)) {
 				dto.setErrorCode(1);
