@@ -247,6 +247,7 @@ public class MainController extends AbstractController {
 					String SoLuongs = commons.getTextJsonNode(row.at("/SoLuong"));
 					String ConLais = commons.getTextJsonNode(row.at("/ConLai"));
 					String namPhatHanh = commons.getTextJsonNode(row.at("/NamPhatHanh"));
+					String isActive = commons.getTextJsonNode(row.at("/IsActive"));
 					String LoaiHD = "";
 					char index1 = KHHDon.charAt(3);
 					String check6 = Character.toString(index1);
@@ -308,6 +309,7 @@ public class MainController extends AbstractController {
 						hTmp.put("PERCENT_DD", PercentDD);
 						hTmp.put("LoaiHD", LoaiHD);
 						hTmp.put("NamPhatHanh", namPhatHanh);
+						hTmp.put("IsActive", isActive);
 						rowsMSKH.add(hTmp);
 
 						dem++;
@@ -342,7 +344,10 @@ public class MainController extends AbstractController {
 					String PERCENT_CL_ = hashMap.get("PERCENT_CL").toString();
 
 					if (Integer.parseInt(PERCENT_CL_) <= 30
-							&& Integer.parseInt(hashMap.get("NamPhatHanh").toString()) == currentYear) {
+							&& Integer.parseInt(hashMap.get("NamPhatHanh").toString()) == currentYear
+							&& "true".equals(hashMap.get("IsActive").toString())
+							) {
+						
 						mshdAboutToExpire += "Mẫu " + MSHD_ + ": số lượng còn lại " + CL_ + " số <br>";
 					}
 					String PERCENT_DD_ = hashMap.get("PERCENT_DD").toString();
@@ -404,8 +409,9 @@ public class MainController extends AbstractController {
 						PercentCL = (CL * 100) / SL;
 						PercentDD = 100 - PercentCL;
 					}
-					String nam = commons.getTextJsonNode(row.at("/Nam"));
-					if (PercentCL <= 30 && Integer.parseInt(commons.getTextJsonNode(row.at("/Nam"))) == currentYear) {
+					if (PercentCL <= 30 
+							&& Integer.parseInt(commons.getTextJsonNode(row.at("/Nam"))) == currentYear 
+							&& "true".equals(commons.getTextJsonNode(row.at("/IsActive")))) {
 						mshdAboutToExpire += "Mẫu " + mstn + ": số lượng còn lại " + CL + " số <br>";
 					}
 					hTmp = new HashMap<String, Object>();
