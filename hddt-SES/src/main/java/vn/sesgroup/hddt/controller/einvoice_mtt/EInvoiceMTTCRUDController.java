@@ -1233,16 +1233,16 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 					hItem.put("STT", commons.getTextJsonNode(row.at("/STT")));
 					 localdatetime = null;
 					String ngay = commons.getTextJsonNode(row.at("/Date"));
-					int nngay = ngay.length();
-					if(nngay == 19) {
+//					int nngay = ngay.length();
+//					if(nngay == 19) {
 						 localdatetime = LocalDateTime.parse(ngay);
 							ngay = commons.convertLocalDateTimeToString(localdatetime, Constants.FORMAT_DATE.FORMAT_DATE_TIME_WEB);
-					}
-					else {
-						localdate = LocalDate.parse(ngay);
-						ngay = commons.convertLocalDateTimeToString(localdate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
-					}
-				
+//					}
+//					else {
+//						localdate = LocalDate.parse(ngay);
+//						ngay = commons.convertLocalDateTimeToString(localdate, Constants.FORMAT_DATE.FORMAT_DATE_WEB);
+//					}
+//				
 				
 					hItem.put("Date", 
 							ngay
