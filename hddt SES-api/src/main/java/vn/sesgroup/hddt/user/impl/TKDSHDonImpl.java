@@ -1238,6 +1238,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 			StringJoiner sj5 = null;
 			StringJoiner sj0 = null;
 			StringJoiner sjKCT = null;
+			StringJoiner sjKKKNT = null;
 
 			double totalBeforTax = 0D;
 			double totalTax = 0D;
@@ -1264,6 +1265,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 				sj8 = new StringJoiner(", ");
 				sj5 = new StringJoiner(", ");
 				sj0 = new StringJoiner(", ");
+				sjKKKNT = new StringJoiner(", ");
 				sjKCT = new StringJoiner(", ");
 				hItem = new HashMap<>();
 //				if(null != prds) {
@@ -1282,6 +1284,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 				Double tax5 = 0.0;
 				Double tax0 = 0.0;
 				Double taxKCT = 0.0;
+				Double taxKKKNT = 0.0;
 
 				Double taxTotal10 = 0.0;
 				Double taxVATAmount10 = 0.0;
@@ -1298,11 +1301,15 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 				Double taxTotalKCT = 0.0;
 				Double taxVATAmountKCT = 0.0;
 
+				Double taxTotalKKKNT = 0.0;
+				Double taxVATAmountKKKNT = 0.0;
+				
 				int dem10 = 0;
 				int dem8 = 0;
 				int dem5 = 0;
 				int dem0 = 0;
 				int demKCT = 0;
+				int demKKKNT = 0;
 				if (null != prds) {
 
 					for (Document doc : prds) {
@@ -1408,6 +1415,17 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 								}
 
 								demKCT++;
+							} else if (tax == -2) {
+								taxKKKNT = tax;
+								sjKKKNT.add(doc.get("ProductName", ""));
+								if(ck.equals("3")) {
+									taxTotalKKKNT -= taxTrThue;
+									taxVATAmountKKKNT -= taxThue;
+								}else {
+									taxTotalKKKNT += taxTrThue;
+									taxVATAmountKKKNT += taxThue;
+								}
+								demKKKNT++;
 							}
 						}
 
@@ -1432,7 +1450,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					taxVATAmount0 = 0.0;
 					taxTotalKCT = 0.0;
 					taxVATAmountKCT = 0.0;
-
+					taxTotalKKKNT = 0.0;
+					taxVATAmountKKKNT = 0.0;
 					Ghichu = "Đã xóa bỏ";
 				} else if ("REPLACED".equals(docTmp.get("EInvoiceStatus"))) {
 //    				totalBeforTax = 0.0;
@@ -1447,7 +1466,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					taxVATAmount0 = 0.0;
 					taxTotalKCT = 0.0;
 					taxVATAmountKCT = 0.0;
-
+					taxTotalKKKNT = 0.0;
+					taxVATAmountKKKNT = 0.0;
 					Ghichu = "Đã thay thế";
 				} else if ("ERROR_CQT".equals(docTmp.get("EInvoiceStatus"))) {
 //    				totalBeforTax = 0.0;
@@ -1462,13 +1482,15 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					taxVATAmount0 = 0.0;
 					taxTotalKCT = 0.0;
 					taxVATAmountKCT = 0.0;
+					taxTotalKKKNT = 0.0;
+					taxVATAmountKKKNT = 0.0;
 					Ghichu = "Lỗi CQT";
 				} else if ("ADJUSTED".equals(docTmp.get("EInvoiceStatus"))) {
 					Ghichu = "Đã điều chỉnh";
 				} else {
 					Ghichu = "Đang sử dụng";
 				}
-				if (tax10 == 10.0 && tax8 == 0.0 && tax5 == 0.0 && tax0 == 0.0 && taxKCT == 0.0) {
+				if (tax10 == 10.0 && tax8 == 0.0 && tax5 == 0.0 && tax0 == 0.0 && taxKCT == 0.0 && taxKKKNT == 0.0) {
 
 					hItem.put("Tax", tax10);
 					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
@@ -1520,7 +1542,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						arrayData.add(hItem);
 					}
 
-				} else if (tax8 == 8 && tax10 == 0.0 && tax5 == 0.0 && tax0 == 0.0 && taxKCT == 0.0) {
+				} else if (tax8 == 8 && tax10 == 0.0 && tax5 == 0.0 && tax0 == 0.0 && taxKCT == 0.0  && taxKKKNT == 0.0) {
 
 					hItem.put("Tax", tax8);
 					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
@@ -1570,7 +1592,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						hItem.put("Col11", Ghichu);
 						arrayData.add(hItem);
 					}
-				} else if (tax5 == 5 && tax10 == 0.0 && tax8 == 0.0 && tax0 == 0.0 && taxKCT == 0.0) {
+				} else if (tax5 == 5 && tax10 == 0.0 && tax8 == 0.0 && tax0 == 0.0 && taxKCT == 0.0 && taxKKKNT == 0.0) {
 
 					hItem.put("Tax", tax5);
 					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
@@ -1620,7 +1642,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						hItem.put("Col11", Ghichu);
 						arrayData.add(hItem);
 					}
-				} else if (tax0 == 0 && tax10 == 0.0 && tax8 == 0.0 && tax5 == 0.0 && taxKCT == 0.0) {
+				} else if (tax0 == 0 && tax10 == 0.0 && tax8 == 0.0 && tax5 == 0.0 && taxKCT == 0.0  && taxKKKNT == 0.0) {
 
 					hItem.put("Tax", tax0);
 					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
@@ -1644,7 +1666,7 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					hItem.put("Col11", Ghichu);
 					arrayData.add(hItem);
 
-				} else if (taxKCT == -1 && tax10 == 0.0 && tax8 == 0.0 && tax5 == 0.0 && tax0 == 0.0) {
+				} else if (taxKCT == -1 && tax10 == 0.0 && tax8 == 0.0 && tax5 == 0.0 && tax0 == 0.0 && taxKKKNT == 0.0) {
 
 					hItem.put("Tax", taxKCT);
 					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
@@ -1694,7 +1716,31 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						hItem.put("Col11", Ghichu);
 						arrayData.add(hItem);
 					}
-				} else if (tax10 == 10 || tax8 == 8 || tax5 == 5 || tax0 == 0 || taxKCT == -1) {
+				} else if (taxKKKNT == -2 && taxKCT == 0 && tax10 == 0.0 && tax8 == 0.0 && tax5 == 0.0 && tax0 == 0.0) {
+
+					hItem.put("Tax", taxKKKNT);
+					hItem.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
+							+ docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHHDon"), ""));
+					hItem.put("Col03", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "SHDon"), 0));
+					hItem.put("Col04",
+							null == docEInvoiceDetail.get("TTChung", "NLap") || !(docEInvoiceDetail
+									.getEmbedded(Arrays.asList("TTChung", "NLap"), Object.class) instanceof Date)
+											? ""
+											: commons.convertLocalDateTimeToString(
+													commons.convertDateToLocalDateTime(docEInvoiceDetail
+															.getEmbedded(Arrays.asList("TTChung", "NLap"), Date.class)),
+													Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					hItem.put("Col05", docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "HVTNMHang"), ""));
+					hItem.put("Col06", docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MST"), ""));
+					hItem.put("Col07", docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "Ten"), ""));
+					hItem.put("Col08", sjKKKNT.toString()); /// LSI SP
+
+					hItem.put("Col09", taxTotalKKKNT);
+					hItem.put("Col10", taxVATAmountKKKNT);
+					hItem.put("Col11", Ghichu);
+					arrayData.add(hItem);
+
+				} else if (tax10 == 10 || tax8 == 8 || tax5 == 5 || tax0 == 0 || taxKCT == -1 || taxKKKNT == -2) {
 					HashMap<String, Object> hItem1 = null;
 					hItem1 = new LinkedHashMap<String, Object>();
 					HashMap<String, Object> hItem2 = null;
@@ -1703,6 +1749,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 					hItem3 = new LinkedHashMap<String, Object>();
 					HashMap<String, Object> hItem4 = null;
 					hItem4 = new LinkedHashMap<String, Object>();
+					HashMap<String, Object> hItem5 = null;
+					hItem5 = new LinkedHashMap<String, Object>();
 
 					if (dem10 > 0) {
 
@@ -1836,6 +1884,32 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 						hItem4.put("Col11", Ghichu);
 						arrayData.add(hItem4);
 					}
+					if (demKKKNT > 0) {
+
+						hItem5.put("Tax", taxKKKNT);
+						hItem5.put("Col02", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHMSHDon"), "")
+								+ docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "KHHDon"), ""));
+						hItem5.put("Col03", docEInvoiceDetail.getEmbedded(Arrays.asList("TTChung", "SHDon"), 0));
+						hItem5.put("Col04",
+								null == docEInvoiceDetail.get("TTChung", "NLap") || !(docEInvoiceDetail
+										.getEmbedded(Arrays.asList("TTChung", "NLap"), Object.class) instanceof Date)
+												? ""
+												: commons.convertLocalDateTimeToString(
+														commons.convertDateToLocalDateTime(
+																docEInvoiceDetail.getEmbedded(
+																		Arrays.asList("TTChung", "NLap"), Date.class)),
+														Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+						hItem5.put("Col05",
+								docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "HVTNMHang"), ""));
+						hItem5.put("Col06", docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "MST"), ""));
+						hItem5.put("Col07", docEInvoiceDetail.getEmbedded(Arrays.asList("NDHDon", "NMua", "Ten"), ""));
+						hItem5.put("Col08", sjKKKNT.toString()); /// LSI SP
+
+						hItem5.put("Col09", taxTotalKKKNT);
+						hItem5.put("Col10", taxVATAmountKKKNT);
+						hItem5.put("Col11", Ghichu);
+						arrayData.add(hItem4);
+					}
 				}
 			}
 
@@ -1953,6 +2027,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 
 					if (-1 == tax)
 						tmp = seq + ". Hàng hoá, dịch vụ không chịu thuế giá trị gia tăng (GTGT)";
+					else if (-2 == tax)
+						tmp = seq + ". Hàng hoá, dịch vụ không kê khai, tính nộp thuế";
 					else if (5 == tax)
 						tmp = seq + ". Hàng hoá, dịch vụ chịu thuế suất thuế GTGT 5%";
 					else if (8 == tax)
