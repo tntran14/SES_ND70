@@ -129,7 +129,7 @@ public class EInvoiceCRUDController extends AbstractController{
 	private List<String> ids = null;
 	private String paramUSD;
 
-	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
+	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action, String method) {
 		try {
 			BaseDTO baseDTO = new BaseDTO(req);
 			Msg msg = baseDTO.createMsg(cup, Constants.MSG_ACTION_CODE.LOAD_PARAMS);
@@ -190,11 +190,18 @@ public class EInvoiceCRUDController extends AbstractController{
 					}
 					req.setAttribute("map_paymenttype", hItem);
 				}
-				if(null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
+				if (null != jsonData.at("/param02") && jsonData.at("/param02") instanceof ArrayNode) {
 					hItem = new LinkedHashMap<String, String>();
-					for(JsonNode o: jsonData.at("/param02")) {
-						if("1".equals(commons.getTextJsonNode(o.get("KHMSHDon"))) && !commons.getTextJsonNode(o.get("KHHDon")).startsWith("M", 3)){
-						hItem.put(commons.getTextJsonNode(o.get("_id")), commons.getTextJsonNode(o.get("KHMSHDon")) + commons.getTextJsonNode(o.get("KHHDon")));
+					for (JsonNode o : jsonData.at("/param02")) {
+						if ("1".equals(commons.getTextJsonNode(o.get("KHMSHDon")))
+//								&& !commons.getTextJsonNode(o.get("KHHDon")).startsWith("M", 3)
+						) {
+							if (!commons.getTextJsonNode(o.get("KHHDon")).startsWith("M", 3)
+									|| "init-tt".equals(method)) {
+								hItem.put(commons.getTextJsonNode(o.get("_id")),
+										commons.getTextJsonNode(o.get("KHMSHDon"))
+												+ commons.getTextJsonNode(o.get("KHHDon")));
+							}
 						}
 					}
 					req.setAttribute("map_mausokyhieu", hItem);
@@ -369,7 +376,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		}
 		
 		if("|einvoice-cre|einvoice-copy|einvoice-edit|".indexOf(transaction) != -1)
-			LoadParameter(cup, locale, req, action);
+			LoadParameter(cup, locale, req, action, method);
 		
 		if("|einvoice-edit|einvoice-copy|einvoice-detail|einvoice-sign|".indexOf(transaction) != -1
 				|| "init-dc".equals(method) || "init-tt".equals(method))
