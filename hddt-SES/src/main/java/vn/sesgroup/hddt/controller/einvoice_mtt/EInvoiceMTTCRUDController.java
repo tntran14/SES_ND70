@@ -104,6 +104,10 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 	private String ngayLap;
 	private String hinhThucThanhToan;
 	private String hinhThucThanhToanText;
+	private String shdontbn;
+	private String nlaptbn;
+	private String mshdontbn;
+	private String tchdontbn;
 //	private String chkXuatTheoLoaiTienTt;
 	private String khMst;
 	private String khMKHang;
@@ -314,7 +318,7 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 	public void execResetProducts(Locale locale, HttpServletRequest req, HttpSession session) {
 	session.removeAttribute(Constants.SESSION_TYPE.SESSION_FORM_ACTION);
 	}
-	@RequestMapping(value = {"/init", "/init-dc", "/init-tt"}, method = {RequestMethod.POST})
+	@RequestMapping(value = {"/init", "/init-dc", "/init-tt", "/init-dctt-tbn"}, method = {RequestMethod.POST})
 	public String init(Locale locale, HttpServletRequest req, HttpSession session
 			, @RequestAttribute(name = "transaction", value = "", required = false) String transaction
 			, @RequestAttribute(name = "method", value = "", required = false) String method
@@ -395,8 +399,13 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		req.setAttribute("_action_", action);
 		req.setAttribute("_isedit_", isEdit);
 		req.setAttribute("_id", _id);
-		
 		req.setAttribute("Param", Param);
+		
+		if ("init-dctt-tbn".equals(method)) {
+			req.setAttribute("IS_DCTTT_TBN", true);
+		} else {
+			req.setAttribute("IS_DCTTT_TBN", false);
+		}
 		if(!"".equals(errorDesc))
 			req.setAttribute("messageError", errorDesc);
 		
@@ -452,6 +461,21 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 							);
 					}
 					req.setAttribute("_notice", notice);
+					if ("true".equals(commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TBN")))) {
+						req.setAttribute("IS_DCTTT_TBN", true);
+						req.setAttribute("SHDonTBN",
+								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/SHDCLQuan")));
+						req.setAttribute("MSHDonTBN", commons
+								.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHMSHDCLQuan"))
+								+ commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/KHHDCLQuan")));
+						req.setAttribute("TCHDonTBN",
+								commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/TCHDon")));
+						req.setAttribute("NLapTBN",
+								commons.convertLocalDateTimeStringToString(
+										commons.getTextJsonNode(jsonData.at("/EInvoiceDetail/TTChung/TTHDLQuan/NLHDCLQuan")),
+										"yyyy-MM-dd",
+										Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+					}
 				}
 			}
 			
@@ -603,6 +627,11 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		loaiHdon = commons.getParameterFromRequest(req, "loai-hd").replaceAll("\\s", "");
 		loaiHdonText = commons.getParameterFromRequest(req, "loai-hd-text").trim().replaceAll("\\s+", " ");
 		
+		shdontbn= commons.getParameterFromRequest(req, "shdon-tbn").replaceAll("\\s", "");
+		nlaptbn = commons.getParameterFromRequest(req, "nlap-tbn").replaceAll("\\s", "");
+		mshdontbn = commons.getParameterFromRequest(req, "mshdon-tbn").replaceAll("\\s", "");
+		tchdontbn = commons.getParameterFromRequest(req, "tchdon-tbn").replaceAll("\\s", "");
+		
 		maHoaDon = commons.getParameterFromRequest(req, "ma-hd").trim().replaceAll("\\s+", " ");
 		tenLoaiHd = commons.getParameterFromRequest(req, "ten-loai-hd").trim().replaceAll("\\s+", " ");
 		ngayLap = commons.getParameterFromRequest(req, "ngay-lap").replaceAll("\\s", "");
@@ -693,7 +722,11 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Tiền bằng chữ không được rỗng.");
 			}
-			
+			if ((!"".equals(shdontbn) || !"".equals(mshdontbn) || !"".equals(tchdontbn))
+					&& ("".equals(shdontbn) || "".equals(mshdontbn) || "".equals(tchdontbn) || "".equals(nlaptbn))) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Kiểm tra lại thông tin hóa đơn Thay thế/Điều chỉnh TBN");
+			}
 			break;
 		
 		default:
@@ -913,6 +946,10 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 		hData.put("NgayLap", ngayLap);
 		hData.put("HinhThucThanhToan", hinhThucThanhToan);
 		hData.put("HinhThucThanhToanText", hinhThucThanhToanText);
+		hData.put("SHDonTBN", shdontbn);
+		hData.put("NLapTBN", nlaptbn);
+		hData.put("MSHDonTBN", mshdontbn);
+		hData.put("TCHDonTBN", tchdontbn);
 		hData.put("KhMst", khMst);
 		hData.put("KhMKHang", khMKHang);
 		hData.put("KhCCCDan", khCCCDan);

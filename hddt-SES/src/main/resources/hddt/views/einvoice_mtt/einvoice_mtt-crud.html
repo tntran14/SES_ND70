@@ -151,6 +151,83 @@
 									</div>
 								</div>
 							</div>
+							
+							
+							
+							<div th:if="${IS_DCTTT_TBN}">
+								<div class="row m-b-12">
+									<div class="col-12 ">
+										<span
+											class="text-middle fw-800 text-uppercase text-decoration-underline color-ses">Thông
+											tin hóa đơn thay thế/điều chỉnh tbn</span>
+									</div>
+								</div>
+								<div class="row m-b-16">
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input id="shdon-tbn" name="shdon-tbn"
+												class="form-control form-control-sm c-f__textbox"
+												type="text" th:value="${SHDonTBN}" autocomplete="off"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Số hóa đơn</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input class="form-control form-control-sm c-f__textbox "
+												id="nlap-tbn" name="nlap-tbn" type="text"
+												autocomplete="off" th:value="${NLapTBN}"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Ngày lập</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+								<div class="row m-b-16">
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input id="mshdon-tbn" name="mshdon-tbn"
+												class="form-control form-control-sm c-f__textbox"
+												type="text" th:value="${MSHDonTBN}" autocomplete="off"
+												th:readonly="${!_isedit_}" />
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Mẫu số hóa đơn (vd: 1C25AAA)</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+									<div class="col-12 col-sm-6 col-md-6 custom-field">
+										<div class="c-f__wrapper">
+											<input class="form-control form-control-sm c-f__textbox"
+												th:value="${TCHDonTBN}" th:readonly="true"
+												th:if="${!_isedit_}" type="text" autocomplete="off" /> 
+											<select
+												class="form-control form-control-sm c-f__textbox" 
+												id="tchdon-tbn"
+												name="tchdon-tbn" th:if="${_isedit_}">
+												<option value="1" th:selected="${TCHDonTBN == '1'}">Thay thế</option>
+												<option value="2" th:selected="${TCHDonTBN == '2'}">Điều chỉnh</option>
+											</select>
+											<fieldset aria-hidden="true" class="c-f__set">
+												<legend class="c-f__legend">
+													<label>Tính chất hóa đơn</label>
+												</legend>
+											</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+							
 							<div class="row m-b-16" th:if="${null != _notice}">
 								<div class="col-12 p-t-0">
 									<span class="fw-800 text-danger fs-i fs-12" th:text="${_notice}"></span>
@@ -534,9 +611,13 @@
 	var sumAmount = 0;
 	var showDiscountDiv = '[[${ShowDiscountDiv}]]';
 	$(function(){
+		let isDCTTT_TBN = '[[${IS_DCTTT_TBN}]]' === 'true';
 		if(vIsEdit){
 			initInputNumber('#f-einvoice_mtt-crud .text-number');
 			dateInputFormat($('#f-einvoice_mtt-crud').find('#ngay-lap'));
+			if (isDCTTT_TBN){
+				dateInputFormat($('#f-einvoice_mtt-crud').find('#nlap-tbn'));		
+			}
 		}
 		
 		_gridSub01.kendoGrid({
@@ -1570,6 +1651,11 @@
 		dataPost['_id_tt_dc'] = $('#f-einvoice_mtt-crud').find('input[name="_id_tt_dc"]').length == 0? '': $('#f-einvoice_mtt-crud').find('input[name="_id_tt_dc"]').val();
         dataPost['_tchdon'] = $('#f-einvoice_mtt-crud').find('input[name="_tchdon"]').length == 0? '': $('#f-einvoice_mtt-crud').find('input[name="_tchdon"]').val();
 		dataPost['ma-hd'] = $('#f-einvoice_mtt-crud').find('#ma-hd').val();
+		
+		dataPost['shdon-tbn'] = $('#f-einvoice_mtt-crud').find('#shdon-tbn').val();
+		dataPost['nlap-tbn'] = $('#f-einvoice_mtt-crud').find('#nlap-tbn').val();
+		dataPost['mshdon-tbn'] = $('#f-einvoice_mtt-crud').find('#mshdon-tbn').val();
+		dataPost['tchdon-tbn'] = $('#f-einvoice_mtt-crud').find('#tchdon-tbn').val();
 		
 		dataPost['kh-mst'] = $('#f-einvoice_mtt-crud').find('#kh-mst').val();
 		dataPost['kh-makhachhang'] = $('#f-einvoice_mtt-crud').find('#kh-makhachhang').val();

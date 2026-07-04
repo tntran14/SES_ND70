@@ -155,6 +155,18 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 		String hinhThucThanhToan = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToan")).replaceAll("\\s", "");
 		String hinhThucThanhToanText = commons.getTextJsonNode(jsonData.at("/HinhThucThanhToanText")).trim()
 				.replaceAll("\\s+", " ");
+		
+		String shdontbn = commons.getTextJsonNode(jsonData.at("/SHDonTBN")).trim().replaceAll("\\s+", " ");
+		String nlaptbn = commons.getTextJsonNode(jsonData.at("/NLapTBN")).trim().replaceAll("\\s+", " ");
+		String mshdontbn = commons.getTextJsonNode(jsonData.at("/MSHDonTBN")).replaceAll("\\s", "");
+		String tchdontbn = commons.getTextJsonNode(jsonData.at("/TCHDonTBN")).replaceAll("\\s", "");
+		String khmshdclquan = ""; 
+		String khhdclquan  = ""; 
+		if (mshdontbn.length() > 2) {
+			khmshdclquan = mshdontbn.substring(0, 1); 
+			khhdclquan  = mshdontbn.substring(1); 
+		}
+		
 		String khMst = commons.getTextJsonNode(jsonData.at("/KhMst")).trim().replaceAll("\\s+", "").replaceAll("[^0-9-]", "");
 		String khMaSoDVQHNS = commons.getTextJsonNode(jsonData.at("/KhMaSoDVQHNS")).trim().replaceAll("\\s+", " ");
 		String khCCCDan = commons.getTextJsonNode(jsonData.at("/KhCCCDan")).trim().replaceAll("\\s+", " ");
@@ -419,6 +431,18 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 								commons.convertDateToLocalDateTime(
 										docEInvoiceTTDC.getEmbedded(Arrays.asList("TT_DC", "NLap"), Date.class)),
 								"yyyy-MM-dd")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
+				elementSubContent.appendChild(elementTmp);
+			}
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				elementTmp = doc.createElement("TTHDLQuan");
+				elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon", tchdontbn));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "LHDCLQuan", "1"));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHMSHDCLQuan", khmshdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHHDCLQuan", khhdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "SHDCLQuan", shdontbn.replaceFirst("^0+", "")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
 				elementSubContent.appendChild(elementTmp);
 			}
@@ -750,6 +774,19 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 								"yyyy-MM-dd"))
 						.append("GChu", "");
 			}
+			
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				docTTHDLQuan = new Document("_id", "")
+						.append("TCHDon", tchdontbn)
+						.append("LHDCLQuan", "1")
+						.append("KHMSHDCLQuan", khmshdclquan)
+						.append("KHHDCLQuan", khhdclquan)
+						.append("SHDCLQuan", shdontbn.replaceFirst("^0+", ""))
+						.append("NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+						.append("GChu", "")
+						.append("TBN", true);
+			}
 
 			docUpsert = new Document("_id", objectIdEInvoice).append("IssuerId", header.getIssuerId())
 					.append("MTDiep", MTDiep)
@@ -1006,6 +1043,19 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						commons.createElementWithValue(doc, "SHDCLQuan", docTTHDLQuan.get("SHDCLQuan", "")));
 				elementTmp.appendChild(
 						commons.createElementWithValue(doc, "NLHDCLQuan", docTTHDLQuan.get("NLHDCLQuan", "")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
+				elementSubContent.appendChild(elementTmp);
+			}
+			
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				elementTmp = doc.createElement("TTHDLQuan");
+				elementTmp.appendChild(commons.createElementWithValue(doc, "TCHDon", tchdontbn));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "LHDCLQuan", "1"));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHMSHDCLQuan", khmshdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "KHHDCLQuan", khhdclquan));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "SHDCLQuan", shdontbn.replaceFirst("^0+", "")));
+				elementTmp.appendChild(commons.createElementWithValue(doc, "NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+						Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false)));
 				elementTmp.appendChild(commons.createElementWithValue(doc, "GChu", ""));
 				elementSubContent.appendChild(elementTmp);
 			}
@@ -1343,6 +1393,19 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				String publishFileName = _id + "_pending.xml";
 				File newPublishFile = new File(pathDir, publishFileName);
 				FileUtils.writeByteArrayToFile(newPublishFile, commons.docW3cToByte(newDoc));
+			}
+			
+			if (!"".equals(shdontbn) && !"".equals(nlaptbn) && !"".equals(mshdontbn) && !"".equals(tchdontbn)) {
+				docTTHDLQuan = new Document("_id", "")
+						.append("TCHDon", tchdontbn)
+						.append("LHDCLQuan", "1")
+						.append("KHMSHDCLQuan", khmshdclquan)
+						.append("KHHDCLQuan", khhdclquan)
+						.append("SHDCLQuan", shdontbn.replaceFirst("^0+", ""))
+						.append("NLHDCLQuan", commons.convertLocalDateTimeStringToString(nlaptbn,
+								Constants.FORMAT_DATE.FORMAT_DATE_WEB, Constants.FORMAT_DATE.FORMAT_DATE_EINVOICE, false))
+						.append("GChu", "")
+						.append("TBN", true);
 			}
 			
 			/* LUU DU LIEU HD */

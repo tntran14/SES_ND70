@@ -346,6 +346,14 @@
 												<i class="mdi mdi-email"> </i><span
 													class="d-none d-md-inline">Gửi mail hàng loạt</span>
 											</button>
+											<button type="button" title="Thêm mới HĐ Điều chỉnh/Thay thế"
+												data-action="einvoice_mtt-cre-dctt-tbn"
+												class="btns coppy_hd hover-up__ses"
+												th:if="${#strings.contains(UserFullPathRight,'|einvoice_mtt-cre-dctt-tbn|')}"
+												>
+												<i class="mdi mdi-contrast"></i><span
+													class="d-none d-md-inline">T.Thế/Đ.chỉnh HĐ BênNgoài</span>
+											</button>
 											<button type="button" title="Thêm mới"
 												data-action="einvoice_mtt-cre"
 												class="btns tmoi_hd hover-up__ses"
@@ -616,6 +624,7 @@
 													callsend_mail(objData);				
 												}else{
 													alertDLSuccess(createObjectError(res).html(), function(){});
+													_gridMain.data("kendoGrid").dataSource.read();
 												}
 											}else{
 												alertDLSuccess('unknown error!!!', function(){});
@@ -2086,8 +2095,10 @@
 							$('#divSubContent').show();$('#divMainContent').hide();
 							submitFormRenderArea(ROOT_PATH + '/main/' + dataAction + '/init', objData, $('#divSubContent'));
 							break;
-							
-						
+						case 'einvoice_mtt-cre-dctt-tbn':
+							$('#divSubContent').show();$('#divMainContent').hide();
+							submitFormRenderArea(ROOT_PATH + '/main/einvoice_mtt-cre/init-dctt-tbn', objData, $('#divSubContent'));
+							break;
 						case 'einvoice_mtt-cre-dc':
 							objData = {};
 							idx = $(checkRows[0].closest("tr")).index();
