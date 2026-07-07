@@ -56,6 +56,7 @@ public class ConfigParamController extends AbstractController{
 	private String tax_invoice;
 	private String payment_invoice;
 	private String readMoneyInEnglish;
+	private String autocreatebbdctt;
 
 	private void LoadParameter(CurrentUserProfile cup, Locale locale, HttpServletRequest req, String action) {
 		try {
@@ -193,6 +194,7 @@ public class ConfigParamController extends AbstractController{
 			}
 			
 			req.setAttribute("ReadMoneyInEnglish", commons.getTextJsonNode(jsonData.at("/ReadMoneyInEnglish")).equals("Y") ? true : false);
+			req.setAttribute("AutoCreateBBDCTT", commons.getTextJsonNode(jsonData.at("/AutoCreateBBDCTT")).equals("Y") ? true : false);
 		}
 		return "system/config-param";
 	}
@@ -211,6 +213,7 @@ public class ConfigParamController extends AbstractController{
 		tax_invoice = commons.getParameterFromRequest(req, "tax_invoice");
 		payment_invoice = commons.getParameterFromRequest(req, "payment_invoice");	
 		readMoneyInEnglish = commons.getParameterFromRequest(req, "readmoneyinenglish");	
+		autocreatebbdctt = commons.getParameterFromRequest(req, "autocreatebbdctt");	
 		if(!commons.checkStringIsInt(VND)) {
 			dto.setErrorCode(1);
 			dto.getErrorMessages().add("Đơn vị tiền tệ phải là số nguyên.");
@@ -308,7 +311,7 @@ public class ConfigParamController extends AbstractController{
 		hData.put("footermail", footermail);
 		hData.put("TaxInvoice", tax_invoice);
 		hData.put("PaymentInvoice", payment_invoice);
-		hData.put("ReadMoneyInEnglish", readMoneyInEnglish);
+		hData.put("AutoCreateBBDCTT", autocreatebbdctt);
 		
 		msg.setObjData(hData);
 		JSONRoot root = new JSONRoot(msg);

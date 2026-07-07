@@ -54,6 +54,7 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 		String tax_invoice = commons.getTextJsonNode(jsonData.at("/TaxInvoice"));
 		String payment_invoice = commons.getTextJsonNode(jsonData.at("/PaymentInvoice"));
 		String readMoneyInEnglish = commons.getTextJsonNode(jsonData.at("/ReadMoneyInEnglish"));
+		String autocreatebbdctt = commons.getTextJsonNode(jsonData.at("/AutoCreateBBDCTT"));
 
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
@@ -85,7 +86,8 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 					.append("NameCD", namecd)
 					.append("TaxInvoice", tax_invoice)
 					.append("PaymentInvoice", payment_invoice)
-					.append("ReadMoneyInEnglish", readMoneyInEnglish);
+					.append("ReadMoneyInEnglish", readMoneyInEnglish)
+					.append("AutoCreateBBDCTT", autocreatebbdctt);
 
 			mongoClient = cfg.mongoClient();
 			collection = mongoClient.getDatabase(cfg.dbName).getCollection("UserConFig");
@@ -106,7 +108,8 @@ public class ConfigParamServerImpl extends AbstractDAO implements ConfigParamDAO
 					.append("NameCD", namecd)
 					.append("TaxInvoice", tax_invoice)
 					.append("PaymentInvoice", payment_invoice)
-					.append("ReadMoneyInEnglish", readMoneyInEnglish);
+					.append("ReadMoneyInEnglish", readMoneyInEnglish)
+					.append("AutoCreateBBDCTT", autocreatebbdctt);
 
 			MongoClient mongoClient2 = cfg.mongoClient();
 			collection = mongoClient2.getDatabase(cfg.dbName).getCollection("UserConFig");

@@ -95,6 +95,23 @@
 											</div>
 										</div>
 										
+										<div class="input-group-sm row m-b-16">
+											<label class="col-5 col-sm-3 form-control-label">Tự động tạo biên bản khi điều chỉnh/thay thế</label>
+											<div class="col-7 col-sm-9">
+												<div class="row">
+													<div class="col-sm-12 d-flex align-items-center">
+														<div class="offset-3 col-9 offset-sm-1 col-sm-11">
+															<label class="ui-switch m-r m-t-sm dark"> <input
+																type="checkbox" class="has-value" id="autocreatebbdctt"
+																name="autocreatebbdctt"
+																th:checked="${AutoCreateBBDCTT != null && AutoCreateBBDCTT}" /> <i></i>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										
 									<div class="row m-b-14">
 											<div class="col-md-6">
 												<label>Cấu hình số thập phân cho đơn vị tiền tệ VND <br><span class="text-danger"> (Tối đa là 8 số thập phân)</span>
@@ -353,7 +370,7 @@
 						
 							dataPost['viewmoney'] = _tmp2;
 							dataPost['readmoneyinenglish'] = $('#f-config-param').find('input[type="checkbox"][name="readmoneyinenglish"]').prop('checked') ? 'Y' : 'N';
-					
+							dataPost['autocreatebbdctt'] = $('#f-config-param').find('input[type="checkbox"][name="autocreatebbdctt"]').prop('checked') ? 'Y' : 'N';
 							return dataPost;
 						}
 					</script>
