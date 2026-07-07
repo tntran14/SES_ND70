@@ -97,6 +97,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		
 		String nm_mst = commons.getTextJsonNode(jsonData.at("/NM_MSThue")).replaceAll("\\s", "");
 		String nm_dvmh = commons.getTextJsonNode(jsonData.at("/NM_DVMHang")).replaceAll("\\s+", " ");
+		String nm_hvtnmh = commons.getTextJsonNode(jsonData.at("/NM_HVTNMHang")).replaceAll("\\s+", " ");
 		String nm_dc = commons.getTextJsonNode(jsonData.at("/NM_DChi")).replaceAll("\\s+", " ");
 		String nm_dd = commons.getTextJsonNode(jsonData.at("/NM_DDien")).replaceAll("\\s+", " ");
 		String nm_sdt = commons.getTextJsonNode(jsonData.at("/NM_SDThoai")).replaceAll("\\s+", " ");
@@ -345,6 +346,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent = doc.createElement("TTNMua");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HVTNMHang", nm_hvtnmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
@@ -455,6 +457,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						new Document()
 						.append("MSThue", nm_mst)
 						.append("DVMHang", nm_dvmh)
+						.append("HVTNMHang", nm_dvmh)
 						.append("DChi", nm_dc)
 						.append("DDien", nm_dd)
 						.append("SDThoai", nm_sdt)
@@ -609,6 +612,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent = doc.createElement("TTNMua");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HVTNMHang", nm_hvtnmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
@@ -823,6 +827,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						new Document()
 						.append("MSThue", nm_mst)
 						.append("DVMHang", nm_dvmh)
+						.append("HVTNMHang", nm_hvtnmh)
 						.append("DChi", nm_dc)
 						.append("DDien", nm_dd)
 						.append("SDThoai", nm_sdt)
@@ -1025,6 +1030,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent = doc.createElement("TTNMua");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HVTNMHang", nm_hvtnmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
@@ -1139,6 +1145,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					new Document()
 					.append("MSThue", nm_mst)
 					.append("DVMHang", nm_dvmh)
+					.append("HVTNMHang", nm_hvtnmh)
 					.append("DChi", nm_dc)
 					.append("DDien", nm_dd)
 					.append("SDThoai", nm_sdt)
@@ -1324,6 +1331,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			elementSubContent = doc.createElement("TTNMua");
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "MSThue", nm_mst));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVMHang", nm_dvmh));
+			elementSubContent.appendChild(commons.createElementWithValue(doc, "HVTNMHang", nm_hvtnmh));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DChi", nm_dc));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "DDien", nm_dd));
 			elementSubContent.appendChild(commons.createElementWithValue(doc, "SDThoai", nm_sdt));
@@ -1531,6 +1539,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					new Document()
 					.append("MSThue", nm_mst)
 					.append("DVMHang", nm_dvmh)
+					.append("HVTNMHang", nm_hvtnmh)
 					.append("DChi", nm_dc)
 					.append("DDien", nm_dd)
 					.append("SDThoai", nm_sdt)

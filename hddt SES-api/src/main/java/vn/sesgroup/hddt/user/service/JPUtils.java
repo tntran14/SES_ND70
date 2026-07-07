@@ -5415,12 +5415,14 @@ else {
 				Node nodeTTNMua = (Node) xPath.evaluate("TTNMua", nodeDLBBDCTThe, XPathConstants.NODE);
 				if (nodeTTNMua != null) {
 					String dvmhang = commons.getTextFromNodeXML((Element) xPath.evaluate("DVMHang", nodeTTNMua, XPathConstants.NODE));
+					String hvtnmhang = commons.getTextFromNodeXML((Element) xPath.evaluate("HVTNMHang", nodeTTNMua, XPathConstants.NODE));
 					String mst = commons.getTextFromNodeXML((Element) xPath.evaluate("MSThue", nodeTTNMua, XPathConstants.NODE));
 					String dc = commons.getTextFromNodeXML((Element) xPath.evaluate("DChi", nodeTTNMua, XPathConstants.NODE));
 					String dd = commons.getTextFromNodeXML((Element) xPath.evaluate("DDien", nodeTTNMua, XPathConstants.NODE));
 					String sdt = commons.getTextFromNodeXML((Element) xPath.evaluate("SDThoai", nodeTTNMua, XPathConstants.NODE));
 					String cv = commons.getTextFromNodeXML((Element) xPath.evaluate("CVu", nodeTTNMua, XPathConstants.NODE));
 					reportParams.put("DVMHang", dvmhang);
+					reportParams.put("HVTNMHang", hvtnmhang);
 			        reportParams.put("NM_MSThue", mst);
 			        reportParams.put("NM_DChi", dc);
 			        reportParams.put("NM_DDien", dd);

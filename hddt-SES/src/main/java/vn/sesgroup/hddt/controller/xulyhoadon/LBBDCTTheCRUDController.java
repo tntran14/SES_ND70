@@ -77,6 +77,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 	private String nm_mst;
 	private String nm_dvmh;
+	private String nm_hvtnmh;
 	private String nm_dc;
 	private String nm_dd;
 	private String nm_sdt;
@@ -191,6 +192,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 			req.setAttribute("NM_MSThue", commons.getTextJsonNode(jsonData.at("/TTNMua/MSThue")));
 			req.setAttribute("NM_DVMHang", commons.getTextJsonNode(jsonData.at("/TTNMua/DVMHang")));
+			req.setAttribute("NM_HVTNMHang", commons.getTextJsonNode(jsonData.at("/TTNMua/HVTNMHang")));
 			req.setAttribute("NM_DChi", commons.getTextJsonNode(jsonData.at("/TTNMua/DChi")));
 			req.setAttribute("NM_DDien", commons.getTextJsonNode(jsonData.at("/TTNMua/DDien")));
 			req.setAttribute("NM_SDThoai", commons.getTextJsonNode(jsonData.at("/TTNMua/SDThoai")));
@@ -329,6 +331,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 		nm_mst = commons.getParameterFromRequest(req, "nm_mst").replaceAll("\\s", "");
 		nm_dvmh = commons.getParameterFromRequest(req, "nm_dvmh").replaceAll("\\s+", " ");
+		nm_hvtnmh = commons.getParameterFromRequest(req, "nm_hvtnmh").replaceAll("\\s+", " ");
 		nm_dc = commons.getParameterFromRequest(req, "nm_dc").replaceAll("\\s+", " ");
 		nm_dd = commons.getParameterFromRequest(req, "nm_dd").replaceAll("\\s+", " ");
 		nm_sdt = commons.getParameterFromRequest(req, "nm_sdt").replaceAll("\\s+", " ");
@@ -526,6 +529,7 @@ public class LBBDCTTheCRUDController extends AbstractController {
 
 		hData.put("NM_MSThue", nm_mst);
 		hData.put("NM_DVMHang", nm_dvmh);
+		hData.put("NM_HVTNMHang", nm_hvtnmh);
 		hData.put("NM_DChi", nm_dc);
 		hData.put("NM_DDien", nm_dd);
 		hData.put("NM_SDThoai", nm_sdt);

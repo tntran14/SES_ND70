@@ -139,6 +139,15 @@
 							</div>
 							<div class="custom-field m-t-16">
 								<div class="c-f__wrapper">
+									<input class="form-control form-control-sm c-f__textbox" id="nm_hvtnmh" name="nm_dvmh"
+										type="text" autocomplete="off" th:value="${NM_HVTNMHang}" th:disabled="${!_isedit_}"/>
+									<fieldset aria-hidden="true" class="c-f__set">
+										<legend class="c-f__legend"><label>Họ và tên người mua hàng</label></legend>
+									</fieldset>
+								</div>
+							</div>
+							<div class="custom-field m-t-16">
+								<div class="c-f__wrapper">
 									<input class="form-control form-control-sm c-f__textbox" id="nm_dc" name="nm_dc"
 										type="text" autocomplete="off" th:value="${NM_DChi}" th:disabled="${!_isedit_}"/>
 									<fieldset aria-hidden="true" class="c-f__set">
@@ -652,7 +661,7 @@
 								item['SHDon'] = value['EInvoiceNumber'];
 								item['Ngay'] = value['NLap'];
 								item['MCQTCap'] = value['MCCQT'];
-								item['HVTNMHang'] = value['HVTNMHang'];
+								item['TNMHang'] = value['HVTNMHang'];
 								item['TgTCThue'] = value['TgTCThue'];
 								item['TgTThue'] = value['TgTThue'];
 								item['TgTTTBSo'] = value['TgTTTBSo'];
@@ -660,6 +669,7 @@
 								objDataJson.push(item);
 								$('#f-lbbdctt-crud').find('#nm_mst').val($('#f-lbbdctt-crud').find('#nm_mst').val() == "" ? value['MSTNMHang']: $('#f-lbbdctt-crud').find('#nm_mst').val());
 								$('#f-lbbdctt-crud').find('#nm_dvmh').val($('#f-lbbdctt-crud').find('#nm_dvmh').val() == "" ? value['TNMHang'] : $('#f-lbbdctt-crud').find('#nm_dvmh').val());
+								$('#f-lbbdctt-crud').find('#nm_hvtnmh').val($('#f-lbbdctt-crud').find('#nm_hvtnmh').val() == "" ? value['HVTNMHang'] : $('#f-lbbdctt-crud').find('#nm_hvtnmh').val());
 								$('#f-lbbdctt-crud').find('#nm_dc').val($('#f-lbbdctt-crud').find('#nm_dc').val() == "" ? value['DCNMHang'] : $('#f-lbbdctt-crud').find('#nm_dc').val());
 							});
 							_gridSub01.data("kendoGrid").dataSource.data(objDataJson);
@@ -680,7 +690,7 @@
 								item['SHDon_N'] = value['EInvoiceNumber'];
 								item['Ngay_N'] = value['NLap'];
 								item['MCQTCap_N'] = value['MCCQT'];
-								item['HVTNMHang_N'] = value['HVTNMHang'];
+								item['TNMHang_N'] = value['HVTNMHang'];
 								item['TgTCThue_N'] = value['TgTCThue'];
 								item['TgTThue_N'] = value['TgTThue'];
 								item['TgTTTBSo_N'] = value['TgTTTBSo'];
@@ -881,6 +891,7 @@
 
 		dataPost['nm_mst'] = $('#f-lbbdctt-crud').find('#nm_mst').val();
 		dataPost['nm_dvmh'] = $('#f-lbbdctt-crud').find('#nm_dvmh').val();
+		dataPost['nm_hvtnmh'] = $('#f-lbbdctt-crud').find('#nm_hvtnmh').val();
 		dataPost['nm_dc'] = $('#f-lbbdctt-crud').find('#nm_dc').val();
 		dataPost['nm_dd'] = $('#f-lbbdctt-crud').find('#nm_dd').val();
 		dataPost['nm_sdt'] = $('#f-lbbdctt-crud').find('#nm_sdt').val();
