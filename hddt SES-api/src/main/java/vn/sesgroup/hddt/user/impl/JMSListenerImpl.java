@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +28,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
 
+import com.api.message.JSONRoot;
+import com.api.message.Msg;
+import com.api.message.MsgHeader;
+import com.api.message.MspResponseStatus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
@@ -34,6 +40,7 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.resource.Emailv31;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 
@@ -41,6 +48,7 @@ import vn.sesgroup.hddt.configuration.ConfigConnectMongo;
 import vn.sesgroup.hddt.dto.MailConfig;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.JMSListenerDAO;
+import vn.sesgroup.hddt.user.dao.LBBDCTTheDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
 import vn.sesgroup.hddt.utility.Commons;
 import vn.sesgroup.hddt.utility.Constants;
@@ -54,6 +62,8 @@ import vn.sesgroup.hddt.utility.SystemParams;
 public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 	
 	@Autowired ConfigConnectMongo cfg;
+	
+	@Autowired LBBDCTTheDAO bbdcttheDAO;
 	
 	Commons commons = new Commons();
 	
@@ -1080,5 +1090,99 @@ public class JMSListenerImpl extends AbstractDAO implements JMSListenerDAO {
 				
 			}
 		}
+	}
+
+
+
+
+	@Override
+	public void createBBDCTT(String infoServerID, String collection, String issuerId, String userId) throws Exception {
+		List<Document> pipeline = new ArrayList<>();
+		/* KIEM TRA XEM THONG TIN TKHAI CO TON TAI KHONG */
+		Document docFind =new Document("_id", new ObjectId(infoServerID))
+				.append("IsDelete", false)
+				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.SIGNED)
+				.append("EInvoiceStatus", Constants.INVOICE_STATUS.COMPLETE);
+
+		pipeline.add(new Document("$match", docFind));
+		pipeline.add(new Document("$lookup", new Document("from", "UserConFig").append("localField", "IssuerId")
+				.append("foreignField", "IssuerId").append("as", "UserConFig")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
+
+		pipeline.add(
+				new Document("$lookup",
+						new Document("from", "EInvoice")
+								.append("let", new Document("id_lquan", "$EInvoiceDetail.TTChung.TTHDLQuan._id"))
+								.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr",
+										new Document("$eq",
+												Arrays.asList("$_id", new Document("$toObjectId", "$$id_lquan")))))))
+								.append("as", "EInvoiceLQuan")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$EInvoiceLQuan").append("preserveNullAndEmptyArrays", true)));
+
+		pipeline.add(
+				new Document("$lookup",
+						new Document("from", "Issuer")
+								.append("let", new Document("issuerId", "$IssuerId"))
+								.append("pipeline", Arrays.asList(new Document("$match", new Document("$expr",
+										new Document("$eq",
+												Arrays.asList("$_id", new Document("$toObjectId", "$$issuerId")))))))
+								.append("as", "IssuerInfo")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$IssuerInfo").append("preserveNullAndEmptyArrays", true)));
+
+		Document doc = null;
+		try (MongoClient mongoClient = cfg.mongoClient()) {
+			MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
+			doc = database.getCollection(collection).aggregate(pipeline).allowDiskUse(true).iterator().next();
+		} catch (Exception e) {
+
+		}
+		
+		if (null == doc) {
+			return;
+		}
+		
+		MsgHeader header = new MsgHeader();
+		header.setActionCode(Constants.MSG_ACTION_CODE.CREATED);
+		header.setIssuerId(issuerId);
+		header.setUserId(userId);
+		header.setUserName("");
+		header.setUserFullName("");
+		Msg msg = new Msg(header);
+		
+		HashMap<String, Object> data = new HashMap<>();
+		HashMap<String, Object> dataHDon = new HashMap<>();
+		HashMap<String, Object> dataNewHDon = new HashMap<>();
+		data.put("NB_MSThue", doc.getEmbedded(Arrays.asList("IssuerInfo", "TaxCode"), ""));
+		data.put("NB_DVBHang", doc.getEmbedded(Arrays.asList("IssuerInfo", "Name"), ""));
+		data.put("NB_DChi", doc.getEmbedded(Arrays.asList("IssuerInfo", "Address"), ""));
+//		data.put("NB_DDien", doc.getEmbedded(Arrays.asList("IssuerInfo", "MainUser"), ""));
+//		data.put("NB_SDThoai", doc.getEmbedded(Arrays.asList("IssuerInfo", "Phone"), ""));
+//		data.put("NB_CVu", doc.getEmbedded(Arrays.asList("IssuerInfo", "Position"), ""));
+		data.put("Email_Recive", doc.getEmbedded(Arrays.asList("IssuerInfo", "Email"), ""));
+
+		data.put("NM_MSThue", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "MST"), ""));
+		data.put("NM_DVMHang", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""));
+		data.put("NM_HVTNMHang", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "HVTNMHang"), ""));
+		data.put("NM_DChi", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "DChi"), ""));
+		data.put("NM_SDThoai", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "SDThoai"), ""));
+		data.put("Email_Send", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "EInvoiceDetail", "NDHDon", "NMua", "DCTDTu"), ""));
+		
+		data.put("LBBan",  doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "TCHDon"), ""));
+		data.put("NLap",  commons.convertLocalDateTimeToString(LocalDateTime.now(), Constants.FORMAT_DATE.FORMAT_DATE_WEB));
+
+		dataHDon.put("MCQTCap", doc.getEmbedded(Arrays.asList("EInvoiceLQuan", "MCCQT"), ""));
+		dataHDon.put("SHDon", doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "SHDCLQuan"), ""));
+		dataHDon.put("MSHDon", doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "KHHDCLQuan"), ""));
+		data.put("HDon", Arrays.asList(dataHDon));
+		dataNewHDon.put("MCQTCap", doc.get("MCCQT", ""));
+		dataNewHDon.put("SHDon", doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""));
+		dataNewHDon.put("MSHDon", doc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""));
+		data.put("HDNew", Arrays.asList(dataNewHDon));
+		msg.setObjData(data);
+		JSONRoot jsonRoot = new JSONRoot(msg);
+		bbdcttheDAO.crud(jsonRoot);
 	}
 }

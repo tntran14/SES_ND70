@@ -30,6 +30,13 @@ public class JMSListener
             try {
             	
             	switch (type) {
+            	case "BBDCTT":
+	            	System.out.println("Dang thuc hien gui ActiveMQ trên BBDCTT");
+	            	String collection = ((ActiveMQTextMessage)jmsMessage).getStringProperty("COLLECTION");
+	            	String issuerId = ((ActiveMQTextMessage)jmsMessage).getStringProperty("ISSUERID");
+	            	String userId = ((ActiveMQTextMessage)jmsMessage).getStringProperty("USERID");
+					this.dao.createBBDCTT(infoServerID, collection, issuerId, userId);
+					break;
 				case "CTTNCN":
 					System.out.println("Dang thuc hien gui ActiveMQ trên CTTNCN");
 					this.dao.sendMailWithQueueBulkMailOnCttncn(infoServerID);

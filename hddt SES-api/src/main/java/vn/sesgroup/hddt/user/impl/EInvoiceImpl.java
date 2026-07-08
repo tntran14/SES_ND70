@@ -90,9 +90,11 @@ import vn.sesgroup.hddt.model.EInvoiceExcelFormMISA;
 import vn.sesgroup.hddt.resources.JmsParams;
 import vn.sesgroup.hddt.user.dao.AbstractDAO;
 import vn.sesgroup.hddt.user.dao.EInvoiceDAO;
+import vn.sesgroup.hddt.user.dao.LBBDCTTheDAO;
 import vn.sesgroup.hddt.user.dao.SendMailAsyncDAO;
 import vn.sesgroup.hddt.user.service.JPUtils;
 import vn.sesgroup.hddt.user.service.TCTNService;
+import vn.sesgroup.hddt.utility.Commons;
 import vn.sesgroup.hddt.utility.Constants;
 import vn.sesgroup.hddt.utility.CurrencyUnit;
 import vn.sesgroup.hddt.utility.Json;
@@ -4503,18 +4505,24 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		}
 
 		FindOneAndUpdateOptions options = null;
+		List<Document> pipeline = new ArrayList<>();
 		/* KIEM TRA XEM THONG TIN TKHAI CO TON TAI KHONG */
-		Document docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId)
-				.append("IsDelete", false).append("SignStatusCode", "SIGNED")
+		Document docFind = new Document("IssuerId", header.getIssuerId())
+				.append("_id", objectId)
+				.append("IsDelete", false)
+				.append("SignStatusCode", "SIGNED")
 				.append("EInvoiceStatus", new Document("$in", Arrays.asList("ERROR_CQT", "PROCESSING")));
 
+		pipeline.add(new Document("$match", docFind));
+		pipeline.add(new Document("$lookup", new Document("from", "UserConFig").append("localField", "IssuerId")
+				.append("foreignField", "IssuerId").append("as", "UserConFig")));
+		pipeline.add(new Document("$unwind",
+				new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
 		Document docTmp = null;
-
-
 		MongoClient mongoClient = cfg.mongoClient();
 		MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
 		try {
-			docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+			docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 		} catch (Exception e) {
 
 		}
@@ -4703,36 +4711,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				}
 			}
 		}
-//		for (int i = 1; i <= 20; i++) {
-//
-//			if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
-//				break;
-//			nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
-//			checkMLTDiep = commons
-//					.getTextFromNodeXML((Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
-//			if (checkMLTDiep.equals("202")) {
-//				break;
-//			}
-//			if (checkMLTDiep.equals("204")) {
-//				check_ = true;
-//				MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
-//						nodeTDiep, XPathConstants.NODE));
-//				MTLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi",
-//						nodeTDiep, XPathConstants.NODE));
-//				CQT_MLTDiep1 = checkMLTDiep;
-//				break;
-//			}
-//			if (checkMLTDiep.equals("-1")) {
-//				check_ = true;
-//				MLoi1 = commons
-//						.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MLoi", nodeTDiep, XPathConstants.NODE));
-//				MTLoi1 = commons
-//						.getTextFromNodeXML((Element) xPath.evaluate("DLieu/MTa", nodeTDiep, XPathConstants.NODE));
-//				CQT_MLTDiep1 = checkMLTDiep;
-//				break;
-//			}
-//
-//		}
 
 		if (nodeTDiep == null) {
 			responseStatus = new MspResponseStatus(9999, "Chưa có kết quả trả về.");
@@ -4795,36 +4773,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		String MCCQT = commons
 				.getTextFromNodeXML((Element) xPath.evaluate("DLieu/HDon/MCCQT", nodeTDiep, XPathConstants.NODE));
 		
-		
-
-//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-//	    		+ "Get mccqttracuuthongdiep - MaMTDiep: "+MTDiep+" MCCQT: "+(MCCQT == null || MCCQT.trim().isEmpty() ? "_Rong_":MCCQT)
-//	    		+" CQT_MLTDiep: "+CQT_MLTDiep+" MTDTChieu: " + MTDTChieu);
-//		
-//		
-//		
 		if (MCCQT == null || MCCQT.trim().isEmpty() || "".equals(MCCQT.trim())) {
-//		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-//		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-//		    
-//		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-//		    		+ "MCCQT khong co du lieu sau khi call:"+MCCQT);
-		    
-		    
+    
 			responseStatus = new MspResponseStatus(999,"CQT chưa cấp mã, vui lòng lấy lại mã sau!");
 			rsp.setResponseStatus(responseStatus);
 			return rsp;
 		}  
-//		else {
-//		    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-//		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
-//		    
-//		    
-//		    log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) 
-//		    		+ "Ma thong diep: "+MTDiep+" MCCQT co du lieu: " + MCCQT);
-//		    
-//		    
-//		}
 
 		String dir = docTmp.get("Dir", "");
 		String fileName = _id + "_" + MCCQT + ".xml";
@@ -4857,12 +4811,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 								.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 				options);
 		mongoClient2.close();
-//		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
-//		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete "+MCCQT);
-//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "id hoa don: "+_id);
-//
-//		log.info(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) + "vua update status tobe complete ");
-//		log.info("MCCQT: "+MCCQT + " MTDTChieu: "+MTDTChieu);
 		String iddc = "";
 		try {
 			iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), "");
@@ -4871,7 +4819,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					.toString();
 		}
 
-		if (!iddc.equals("")) {
+		if (!"".equals(iddc)) {
 			ObjectId objectIddc = null;
 			try {
 				objectIddc = new ObjectId(iddc);
@@ -4918,6 +4866,47 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			            new Document("$push", new Document("AdjustedBy", docTTHDLQuan)), options);
 				mongoClient3.close();
 			}
+			
+			// create BBDCT
+			if ("Y".equals(docTmp.getEmbedded(Arrays.asList("UserConFig", "AutoCreateBBDCTT"), ""))) {
+				// CHECK SERVER ACTIVE MQ
+				boolean checkStatusMQ = false;
+				ConnectionFactory connectionFactory = null;
+				Connection connection = null;
+				Session session = null;
+				Destination destination = null;
+				MessageProducer producer = null;
+
+				try {
+					connectionFactory = jmsTemplate.getConnectionFactory();
+					connection = connectionFactory.createConnection();
+					session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+					destination = session.createQueue(JmsParams.QUEUE_BULK_MAIL);
+					producer = session.createProducer(destination);
+					producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+					checkStatusMQ = true;
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				if (!checkStatusMQ) {
+					responseStatus = new MspResponseStatus(9999, "Kết nối đến Server Send Mail không thành công.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
+				// END CHECK ACTIVE MQ
+				
+				try {
+					TextMessage objectMessage = null;
+					objectMessage = session.createTextMessage(docTmp.get("_id").toString());
+					objectMessage.setStringProperty("TYPE", "BBDCTT");
+					objectMessage.setStringProperty("COLLECTION", "EInvoice");
+					objectMessage.setStringProperty("ISSUERID", header.getIssuerId());
+					objectMessage.setStringProperty("USERID", header.getUserId());
+					producer.send((Message) objectMessage);
+				} catch (Exception e) {
+				}
+			}
+			
 		}
 		DateTimeFormatter format_time2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 		LocalDateTime time_dem2 = LocalDateTime.now();
@@ -10229,6 +10218,14 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 		MsgRsp rsp = new MsgRsp(header);
 		rsp.setMsgPage(page);
 		MspResponseStatus responseStatus = null;
+		List<Document> pipeline = new ArrayList<>();
+		
+		boolean checkStatusMQ = false;
+		ConnectionFactory connectionFactory = null;
+		Connection connection = null;
+		Session session = null;
+		Destination destination = null;
+		MessageProducer producer = null;
 
 		for (int t = 0; t < ids.size(); t++) {
 			_id = ids.get(t);
@@ -10244,14 +10241,17 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			Document docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId)
 					.append("IsDelete", false).append("SignStatusCode", "SIGNED")
 					.append("EInvoiceStatus", new Document("$in", Arrays.asList("ERROR_CQT", "PROCESSING")));
-
+			pipeline.clear();
+			pipeline.add(new Document("$match", docFind));
+			pipeline.add(new Document("$lookup", new Document("from", "UserConFig").append("localField", "IssuerId")
+					.append("foreignField", "IssuerId").append("as", "UserConFig")));
+			pipeline.add(new Document("$unwind",
+					new Document("path", "$UserConFig").append("preserveNullAndEmptyArrays", true)));
 			Document docTmp = null;
-
-
 			MongoClient mongoClient = cfg.mongoClient();
 			MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoice");
 			try {
-				docTmp = collection.find(docFind).allowDiskUse(true).iterator().next();
+				docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 			} catch (Exception e) {
 
 			}
@@ -10386,28 +10386,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 					}
 				}
 			}
-			
-//			for (int i = 1; i <= 20; i++) {
-//
-//				if (xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE) == null)
-//					break;
-//				nodeTDiep = (Node) xPath.evaluate("DuLieu/TDiep[" + i + "]", nodeKetQuaTraCuu, XPathConstants.NODE);
-//				checkMLTDiep = commons.getTextFromNodeXML(
-//						(Element) xPath.evaluate("TTChung/MLTDiep", nodeTDiep, XPathConstants.NODE));
-//				if (checkMLTDiep.equals("202"))
-//					break;
-//				if (checkMLTDiep.equals("204")) {
-//					check_ = true;
-//					MLoi1 = commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MLoi",
-//							nodeTDiep, XPathConstants.NODE));
-//					MTLoi1 = commons.getTextFromNodeXML((Element) xPath
-//							.evaluate("DLieu/TBao/DLTBao/LCMa/DSLDo/LDo/MTLoi", nodeTDiep, XPathConstants.NODE));
-//
-//					CQT_MLTDiep1 = checkMLTDiep;
-//
-//				}
-//
-//			}
 
 			if (nodeTDiep == null) {
 				continue;
@@ -10450,10 +10428,6 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							options);		
 					mongoClient.close();
 
-//			responseStatus = new MspResponseStatus(0,
-//					"".equals(MTLoi) ? "CQT chưa có thông báo kết quả trả về." : MTLoi);
-//			rsp.setResponseStatus(responseStatus);
-//			return rsp;
 			}
 			if ("|202|".indexOf("|" + CQT_MLTDiep + "|") == -1) {
 				continue;
@@ -10488,20 +10462,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 										.append("MTDTChieu", MTDTChieu).append("CQT_Date", LocalDate.now())
 										.append("LDo", new Document("MLoi", "").append("MTLoi", ""))),
 						options);		
-				mongoClient.close();
-				
-			// LƯU ID DE CHECK MAIL CHO HOA DON DA PHAT HANH
-//		if(listSendMail.equals("")) {
-//			listSendMail = _id;
-//		}
-//		else {
-//			listSendMail = listSendMail + _id + ",";	
-//		}		
+				mongoClient.close();	
 
 			listMail_.add(_id);
 			//
 			String iddc = docTmp.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "TTHDLQuan", "_id"), "");
-			if (!iddc.equals("")) {
+			if (!"".equals(iddc)) {
 				ObjectId objectIddc = null;
 				try {
 					objectIddc = new ObjectId(iddc);
@@ -10554,12 +10520,35 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						mongoClient2.close();
 						
 				}
+				
+				if ("Y".equals(docTmp.getEmbedded(Arrays.asList("UserConFig", "AutoCreateBBDCTT"), ""))) {
+					if (!checkStatusMQ) {
+						try {
+							connectionFactory = jmsTemplate.getConnectionFactory();
+							connection = connectionFactory.createConnection();
+							session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+							destination = session.createQueue(JmsParams.QUEUE_BULK_MAIL);
+							producer = session.createProducer(destination);
+							producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+							checkStatusMQ = true;
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+					}
+					
+					try {
+						TextMessage objectMessage = null;
+						objectMessage = session.createTextMessage(docTmp.get("_id").toString());
+						objectMessage.setStringProperty("TYPE", "BBDCTT");
+						objectMessage.setStringProperty("COLLECTION", "EInvoice");
+						objectMessage.setStringProperty("ISSUERID", header.getIssuerId());
+						objectMessage.setStringProperty("USERID", header.getUserId());
+						producer.send((Message) objectMessage);
+					} catch (Exception e) {
+					}
+				}
 			}
-// 		}catch(Exception ex) {}
 		}
-
-		// String a = listSendMail;
-
 		responseStatus = new MspResponseStatus(0, listMail_.toString());
 		rsp.setResponseStatus(responseStatus);
 		return rsp;
