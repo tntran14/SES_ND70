@@ -2221,6 +2221,18 @@ else {
 								}
 							}
 							
+							/*LAY NOI DUNG TTHHDTrung*/
+							NodeList nodeListTTHHDTrung = (NodeList) xPath.evaluate("TTHHDTrung/TTin", nodeTmp, XPathConstants.NODESET);
+							if(nodeListTTHHDTrung != null) {
+								for(int j = 0; j < nodeListTTHHDTrung.getLength(); j++) {
+									Node nodeHHDTrungTmp = nodeListTTHHDTrung.item(j);
+									hItem.put(
+										commons.getTextFromNodeXML((Element) xPath.evaluate("TTruong", nodeHHDTrungTmp, XPathConstants.NODE)),
+										commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu", nodeHHDTrungTmp, XPathConstants.NODE))
+									);
+								}
+							}
+							
 							arrayData.add(hItem);
 							countPrd++;	
 							
@@ -2326,6 +2338,18 @@ else {
 										);
 										break;
 									}
+								}
+							}
+							
+							/*LAY NOI DUNG TTHHDTrung*/
+							NodeList nodeListTTHHDTrung = (NodeList) xPath.evaluate("TTHHDTrung/TTin", nodeTmp, XPathConstants.NODESET);
+							if(nodeListTTHHDTrung != null) {
+								for(int j = 0; j < nodeListTTHHDTrung.getLength(); j++) {
+									Node nodeHHDTrungTmp = nodeListTTHHDTrung.item(j);
+									hItem.put(
+										commons.getTextFromNodeXML((Element) xPath.evaluate("TTruong", nodeHHDTrungTmp, XPathConstants.NODE)),
+										commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu", nodeHHDTrungTmp, XPathConstants.NODE))
+									);
 								}
 							}
 							

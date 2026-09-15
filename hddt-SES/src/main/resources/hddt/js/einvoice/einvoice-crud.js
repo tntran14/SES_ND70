@@ -513,14 +513,16 @@
 			var _val = '';
 			var _numeral = null;
 			var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
-			
+			/*VND: lam tron ve so nguyen, khong thap phan (Nghi dinh 254/2026/ND-CP); ngoai te: giu nguyen quy tac cu*/
+			var soThapPhan = (!loai_tien_tt || loai_tien_tt === 'VND')? 0: 4;
+
 			var dblQuantity = 0;
 			var dblPrice = 0;
 			var dblTotal = 0;
 			var dblVATRate = 0;
 			var dblVATAmount = 0;
 			var dblAmount = 0;
-			
+
 			switch (_name) {
 			case 'chkSTT':
 //				if('' == _val){
@@ -537,16 +539,15 @@
 				dblPrice = _numeral == null? 0: _numeral.value();
 				dblTotal = dblQuantity * dblPrice;
 				
-				$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+				$tr.find('input[name="Total"]').val(dblTotal.toFixed(soThapPhan))
 				FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
-				
+
 				_numeral = numeral($tr.find('select[name="VATRate"]').val());
 				dblVATRate = _numeral == null? 0: _numeral.value();
 				if(dblVATRate < 0) dblVATRate = 0;
-				
+
 				dblVATAmount = dblTotal * dblVATRate / 100;
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(soThapPhan))
 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
 				break;
 			
@@ -569,9 +570,7 @@
 				if(dblVATRate < 0) dblVATRate = 0;
 				
 				dblVATAmount = dblTotal * dblVATRate / 100;
-//				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4));
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(soThapPhan))
 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
 				break;
 			case 'VATRate':
@@ -583,9 +582,7 @@
 				if(dblVATRate < 0) dblVATRate = 0;
 				
 				dblVATAmount = dblTotal * dblVATRate / 100;
-//				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(4));
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(2))
-				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(1))
+				$tr.find('input[name="VATAmount"]').val(dblVATAmount.toFixed(soThapPhan))
 				FormatCurrency($tr.find('input[name="VATAmount"]')[0], loai_tien_tt);
 				break;
 
@@ -664,7 +661,7 @@
 			dblVATAmount = _numeral == null? 0: _numeral.value();
 			
 			dblAmount = dblTotal + dblVATAmount;
-			$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
+			$tr.find('input[name="Amount"]').val(dblAmount.toFixed(soThapPhan))
 			FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 			
 			/*LAY THONG TIN UPDATE LAI DATASOURCE*/
@@ -708,6 +705,8 @@
 
 		function calcTotalAmount(){
 			var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+			/*VND: lam tron ve so nguyen, khong thap phan (Nghi dinh 254/2026/ND-CP); ngoai te: giu nguyen quy tac cu*/
+			var soThapPhan = (!loai_tien_tt || loai_tien_tt === 'VND')? 0: 4;
 			var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 			
 			/*TINH TIEN TRUOC THUE - TIEN THUE - TONG TIEN SAU THUE*/
@@ -754,7 +753,7 @@
 	        // Check if the checkbox is checked and if the select value is not empty
 	        if (checkDiscount.checked && checkThueSuat.value !== '') {
 	            
-	        	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+	        	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(soThapPhan))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
 	        	var tongtien = $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val();
 	        	var thueSuat = $('#f-einvoice-crud').find('#thue-suat').val();
@@ -762,25 +761,25 @@
 	            soTienGiam = Math.abs(Math.round(soTienGiam));
 	            $('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(parseInt(tongtien.replace(/,/g, ''), 10) - soTienGiam);
 	            FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-	            
-	    		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+
+	    		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(soThapPhan))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-	        	
+
 	    		/*$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);*/
 	    		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(parseInt(tongtien.replace(/,/g, ''), 10) - soTienGiam)
     			FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
-	    		sumAmountAfterTax = sumAmountAfterTax - soTienGiam;	
-	    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+	    		sumAmountAfterTax = sumAmountAfterTax - soTienGiam;
+	    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(soThapPhan)), loai_tien_tt));
 	        } else {
-	        	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+	        	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(soThapPhan))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-	    		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+	    		$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(soThapPhan))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-	    		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+	    		$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(soThapPhan))
 	    		FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
-	    			
-	    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(4)), loai_tien_tt));
+
+	    		$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(Math.abs(sumAmountAfterTax.toFixed(soThapPhan)), loai_tien_tt));
 	        }
 			
 			calcTienQuyDoi();

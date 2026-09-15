@@ -429,13 +429,9 @@ public class LBBDCTTheCRUDController extends AbstractController {
 			log.error(" >>>>> An exception occurred!", e);
 		}
 
-		if (null == jsonNodeTmp || jsonNodeTmp.size() == 0) {
-			dto.setErrorCode(999);
-			dto.setResponseData("Vui lòng chọn danh sách hóa đơn điều chỉnh/thay thế để thực hiện.");
-			return dto;
-		}
-
-		if (total != jsonNodeTmp.size()) {
+		/* Hoa don dieu chinh/thay the khong bat buoc phai co ngay - co the tao bien ban truoc, bo sung sau
+		 * (ap dung cho ca man hinh 1-1 "lbbdctt-cre"/"lbbdctt-edit" va man hinh nhieu hoa don "-invs") */
+		if (null != jsonNodeTmp && jsonNodeTmp.size() > 0 && total != jsonNodeTmp.size()) {
 			dto.setErrorCode(999);
 			dto.setResponseData("Số lượng hóa đơn sai sót và hóa đơn điều chỉnh/thay thế phải bằng nhau.");
 			return dto;

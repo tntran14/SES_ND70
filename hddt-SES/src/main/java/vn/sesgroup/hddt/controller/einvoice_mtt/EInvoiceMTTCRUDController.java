@@ -574,10 +574,28 @@ public class EInvoiceMTTCRUDController extends AbstractController{
 						);
 						break;
 					}
-					if("DETAIL".equals(action))
+					String lhhdtrung = commons.getTextJsonNode(o.at("/TTHHDTrung"));
+					if("DETAIL".equals(action)) {
 						hItem.put("Feature", Constants.MAP_PRD_FEATURE.get(commons.getTextJsonNode(o.at("/Feature"))));
-					else
+						hItem.put("LHHDTrung", Constants.MAP_PRD_LHHDTrung.get(lhhdtrung));
+					} else {
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+						hItem.put("LHHDTrung", lhhdtrung);
+					}
+
+					if ("1".equals(lhhdtrung)) {
+						hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+						hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+					}
+					if ("2".equals(lhhdtrung)) {
+						hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+					}
+					if ("3".equals(lhhdtrung)) {
+						hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+						hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+						hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+						hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
+					}
 					
 					prds.add(hItem);
 				}

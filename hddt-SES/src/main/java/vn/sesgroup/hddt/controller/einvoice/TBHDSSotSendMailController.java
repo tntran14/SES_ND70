@@ -169,6 +169,7 @@ public class TBHDSSotSendMailController extends AbstractController{
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>3.  Mã của CƠ QUAN THUẾ: "+cqt +" </span></p>\n");
 //			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Trạng thái:<label style='font-weight: bold;'>"+tctb+"</label></span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>4.  Thời gian: "+ngay+"</span></p>\n");
+			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>5.  Lý do: "+lido+"</span></p>\n");
 			sb.append("<p><span style='font-family: Times New Roman;font-size: 13px;'>Trân trọng kính chào!</span></p>");
 			sb.append("<hr style='margin: 5px 0 5px 0;'>");
 			sb.append("<p style='margin-bottom: 3px;'><span style='font-family: Times New Roman;font-size: 13px;color:red;font-weight: bold;'>QUÝ KHÁCH HÀNG VUI LÒNG KHÔNG REPLY EMAIL NÀY!</span></p>");

@@ -538,7 +538,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 //									if(!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) {		// || "4".equals(commons.getTextJsonNode(o.at("/Feature")))
 						if ("1".equals(commons.getTextJsonNode(o.at("/Feature")))
 								|| "3".equals(commons.getTextJsonNode(o.at("/Feature")))
-								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))
+								|| "5".equals(commons.getTextJsonNode(o.at("/Feature")))) {
 							mapAmount.compute(tmp, (k, v) -> {
 								return (v == null
 										? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
@@ -585,6 +586,61 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							}
 
 						}
+						if (!"".equals(commons.getTextJsonNode(o.at("/LHHDTrung")))) {
+							Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+							Element elementTTin = null;
+							String lhhdtrung = commons.getTextJsonNode(o.at("/LHHDTrung"));
+							if ("1".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SKhung"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SKhung"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SMay"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SMay"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("2".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/BKSPTVChuyen"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("3".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "TNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/TNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "DCNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/DCNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MSTNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MSTNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MDDNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MDDNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							
+							elementSubTmp.appendChild(elementTTHHDTrung);
+						}
 						if (!loaiHoaDon.equals("2")) {
 							elementSubTmp01 = doc.createElement("TTKhac");
 
@@ -624,6 +680,22 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						} else {
 							elementSubTmp01 = doc.createElement("TTKhac");
@@ -657,6 +729,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", null);
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						}
 					}
@@ -1148,7 +1228,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 //									if(!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) {	// || "4".equals(commons.getTextJsonNode(o.at("/Feature")))
 						if ("1".equals(commons.getTextJsonNode(o.at("/Feature")))
 								|| "3".equals(commons.getTextJsonNode(o.at("/Feature")))
-								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))
+								|| "5".equals(commons.getTextJsonNode(o.at("/Feature")))) {
 							mapAmount.compute(tmp, (k, v) -> {
 								return (v == null
 										? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
@@ -1195,6 +1276,61 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							}
 						}
 
+						if (!"".equals(commons.getTextJsonNode(o.at("/LHHDTrung")))) {
+							Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+							Element elementTTin = null;
+							String lhhdtrung = commons.getTextJsonNode(o.at("/LHHDTrung"));
+							if ("1".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SKhung"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SKhung"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SMay"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SMay"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("2".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/BKSPTVChuyen"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("3".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "TNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/TNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "DCNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/DCNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MSTNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MSTNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MDDNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MDDNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							
+							elementSubTmp.appendChild(elementTTHHDTrung);
+						}
 						
 						
 						if (!loaiHoaDon.equals("2")) {
@@ -1236,6 +1372,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						} else {
 							elementSubTmp01 = doc.createElement("TTKhac");
@@ -1269,6 +1413,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", null);
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						}
 					}
@@ -1754,7 +1906,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 //									if(!("2".equals(commons.getTextJsonNode(o.at("/Feature"))))) {	// || "4".equals(commons.getTextJsonNode(o.at("/Feature")))
 						if ("1".equals(commons.getTextJsonNode(o.at("/Feature")))
 								|| "3".equals(commons.getTextJsonNode(o.at("/Feature")))
-								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))) {
+								|| "4".equals(commons.getTextJsonNode(o.at("/Feature")))
+								|| "5".equals(commons.getTextJsonNode(o.at("/Feature")))) {
 							mapAmount.compute(tmp, (k, v) -> {
 								return (v == null
 										? commons.ToNumber(commons.getTextJsonNode(o.at("/Total")))
@@ -1801,6 +1954,62 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							}
 						}
 
+						if (!"".equals(commons.getTextJsonNode(o.at("/LHHDTrung")))) {
+							Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+							Element elementTTin = null;
+							String lhhdtrung = commons.getTextJsonNode(o.at("/LHHDTrung"));
+							if ("1".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SKhung"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SKhung"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "SMay"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/SMay"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("2".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/BKSPTVChuyen"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							if ("3".equals(lhhdtrung)) {
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "TNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/TNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "DCNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/DCNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MSTNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MSTNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+								elementTTin = doc.createElement("TTin");
+								elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "MDDNGHang"));
+								elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu", 
+										commons.getTextJsonNode(o.at("/MDDNGHang"))));
+								elementTTHHDTrung.appendChild(elementTTin);
+							}
+							
+							elementSubTmp.appendChild(elementTTHHDTrung);
+						}
+
 						if (!loaiHoaDon.equals("2")) {
 							elementSubTmp01 = doc.createElement("TTKhac");
 
@@ -1840,6 +2049,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						} else {
 							elementSubTmp01 = doc.createElement("TTKhac");
@@ -1873,6 +2090,14 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem.put("VATAmount", null);
 							hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
 							hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
+							hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
+							hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
+							hItem.put("SMay", commons.getTextJsonNode(o.at("/SMay")));
+							hItem.put("BKSPTVChuyen", commons.getTextJsonNode(o.at("/BKSPTVChuyen")));
+							hItem.put("TNGHang", commons.getTextJsonNode(o.at("/TNGHang")));
+							hItem.put("DCNGHang", commons.getTextJsonNode(o.at("/DCNGHang")));
+							hItem.put("MSTNGHang", commons.getTextJsonNode(o.at("/MSTNGHang")));
+							hItem.put("MDDNGHang", commons.getTextJsonNode(o.at("/MDDNGHang")));
 							listDSHHDVu.add(hItem);
 						}
 					}

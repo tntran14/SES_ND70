@@ -19,9 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -227,20 +224,25 @@ public class CommonController extends AbstractController{
 		file = commons.getParameterFromRequest(req, "SerialNumber");
 		cks = commons.getParameterFromRequest(req, "xmlFile");
 		try {
-		 HttpClient client = HttpClient.newHttpClient();
-	        HttpRequest request = HttpRequest.newBuilder()
-	                .uri(URI.create("http://localhost:11284/signXML"))
-					/* .POST(HttpRequest.BodyPublishers.ofString(getFormDataAsString(formData))) */
-	                .build();
-	        HttpResponse<String> response = client.send(request,
-	                HttpResponse.BodyHandlers.ofString());
-	        if(response.body().equals("")) {
+			URL url = new URL("http://localhost:11284/signXML");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+			String inputLine;
+			StringBuilder responseBody = new StringBuilder();
+			while ((inputLine = in.readLine()) != null) {
+				responseBody.append(inputLine);
+			}
+			in.close();
+			String responseString = responseBody.toString();
+
+	        if(responseString.equals("")) {
 	        	dtoRes.setErrorCode(999);
 	    		return dtoRes;
 	        }
 	        
 			HashMap<String, String> hR = new HashMap<String, String>();
-			hR.put("cert", response.body());				
+			hR.put("cert", responseString);				
 			dtoRes.setErrorCode(0);
 			dtoRes.setResponseData(hR);
 		}catch (Exception e) {
@@ -1931,14 +1933,20 @@ public class CommonController extends AbstractController{
       BaseDTO dtoRes = new BaseDTO();
       dtoRes = new BaseDTO(req);
       String mst  = commons.getParameterFromRequest(req, "kh-mst").replaceAll("\\s", "");
-       HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://thongtindoanhnghiep.co/api/company/"+mst))
-                    .build();
-            HttpResponse<String> response = client.send(request,
-                    HttpResponse.BodyHandlers.ofString());
+			URL url = new URL("https://thongtindoanhnghiep.co/api/company/" + mst);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+			String inputLine;
+			StringBuilder responseBody = new StringBuilder();
+			while ((inputLine = in.readLine()) != null) {
+				responseBody.append(inputLine);
+			}
+			in.close();
+			String responseString = responseBody.toString();
            ObjectMapper mapper = new ObjectMapper();
-           JsonNode jsonData = mapper.readTree(response.body());
+           JsonNode jsonData = mapper.readTree(responseString);
           String title = commons.getTextJsonNode(jsonData.at("/Title"));
           if(!title.equals(""))
           {

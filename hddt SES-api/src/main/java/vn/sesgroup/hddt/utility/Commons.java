@@ -351,6 +351,37 @@ public class Commons {
 			return Double.parseDouble(strDouble);
 		}
 	}
+
+	/**
+	 * Làm tròn số tiền/tiền thuế về số nguyên, không thập phân (theo Nghị định 254/2026/NĐ-CP).
+	 */
+	public double ToNumberRounded(String strDouble){
+		return Math.round(ToNumber(strDouble));
+	}
+
+	public double ToNumberRounded(double dblNumber){
+		return Math.round(dblNumber);
+	}
+
+	/**
+	 * Làm tròn về số nguyên chỉ áp dụng cho hóa đơn VND (Nghị định 254/2026/NĐ-CP);
+	 * hóa đơn ngoại tệ giữ nguyên giá trị gốc để không làm sai lệch số tiền.
+	 */
+	public double ToNumberRoundedByCurrency(String strDouble, String currencyCode){
+		double val = ToNumber(strDouble);
+		if(currencyCode == null || "".equals(currencyCode) || "VND".equals(currencyCode)){
+			return Math.round(val);
+		}
+		return val;
+	}
+
+	public String ToNumberStringRoundedByCurrency(String strDouble, String currencyCode){
+		double val = ToNumber(strDouble);
+		if(currencyCode == null || "".equals(currencyCode) || "VND".equals(currencyCode)){
+			return String.valueOf(Math.round(val));
+		}
+		return String.valueOf(val);
+	}
 	
 	public float ToNumberFloat(String strFloat) {
 	    if (strFloat == null) strFloat = "0";

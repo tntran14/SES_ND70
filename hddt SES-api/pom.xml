@@ -309,7 +309,7 @@
 			<artifactId>jasperreports-fonts-ext</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>D:/WorkSpace Eclipse/ses inv 25.11.2024/hddt SES-api/lib-ext/jasperreports-fonts-ext.jar</systemPath>
+			<systemPath>D:\WorkSpace Eclipse\hoadon78 ses 2025.01.21\ses-invoice-2025\hddt SES-api\lib-ext\jasperreports-fonts-ext.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

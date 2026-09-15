@@ -476,12 +476,14 @@ function calcAmountInGrid($obj){
 	var _val = '';
 	var _numeral = null;
 	var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
-	
+	/*VND: lam tron ve so nguyen, khong thap phan (Nghi dinh 254/2026/ND-CP); ngoai te: giu nguyen quy tac cu*/
+	var soThapPhan = (!loai_tien_tt || loai_tien_tt === 'VND')? 0: 4;
+
 	var dblQuantity = 0;
 	var dblPrice = 0;
 	var dblTotal = 0;
 	var dblAmount = 0;
-	
+
 	switch (_name) {
 	case 'Quantity':
 	case 'Price':
@@ -490,10 +492,10 @@ function calcAmountInGrid($obj){
 		_numeral = numeral($tr.find('input[name="Price"]').val());
 		dblPrice = _numeral == null? 0: _numeral.value();
 		dblTotal = dblQuantity * dblPrice;
-		
-		$tr.find('input[name="Total"]').val(dblTotal.toFixed(4))
+
+		$tr.find('input[name="Total"]').val(dblTotal.toFixed(soThapPhan))
 		FormatCurrency($tr.find('input[name="Total"]')[0], loai_tien_tt);
-		
+
 		break;
 	case 'Total':
 		$tr.find('input[name="Quantity"],input[name="Price"]').val('');
@@ -541,7 +543,7 @@ function calcAmountInGrid($obj){
 	dblTotal = _numeral == null? 0: _numeral.value();
 	
 	dblAmount = dblTotal+ 0;
-	$tr.find('input[name="Amount"]').val(dblAmount.toFixed(4))
+	$tr.find('input[name="Amount"]').val(dblAmount.toFixed(soThapPhan))
 	FormatCurrency($tr.find('input[name="Amount"]')[0], loai_tien_tt);
 	
 	/*LAY THONG TIN UPDATE LAI DATASOURCE*/
@@ -584,6 +586,8 @@ function setSTTinGrid(){
 
 function calcTotalAmount(){
 	var loai_tien_tt = $('#f-einvoice-crud').find('#loai-tien-tt').val();
+	/*VND: lam tron ve so nguyen, khong thap phan (Nghi dinh 254/2026/ND-CP); ngoai te: giu nguyen quy tac cu*/
+	var soThapPhan = (!loai_tien_tt || loai_tien_tt === 'VND')? 0: 4;
 	var objDataJson = _gridSub01.data("kendoGrid").dataSource.data();
 	
 	/*TINH TIEN TRUOC THUE - TIEN THUE - TONG TIEN SAU THUE*/
@@ -622,14 +626,14 @@ function calcTotalAmount(){
 		}
 	});
 	
-	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(4))
+	$('#f-einvoice-crud').find('#tong-tien-truoc-thue').val(sumAmount.toFixed(soThapPhan))
 	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-truoc-thue')[0], loai_tien_tt);
-	$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(4))
+	$('#f-einvoice-crud').find('#tong-tien-thue-gtgt').val(sumAmountVAT.toFixed(soThapPhan))
 	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-thue-gtgt')[0], loai_tien_tt);
-	$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(4))
+	$('#f-einvoice-crud').find('#tong-tien-da-co-thue').val(sumAmountAfterTax.toFixed(soThapPhan))
 	FormatCurrency($('#f-einvoice-crud').find('#tong-tien-da-co-thue')[0], loai_tien_tt);
-	
-	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(4), loai_tien_tt));
+
+	$('#f-einvoice-crud').find('#tien-bang-chu').val(readMoneyInWords(sumAmountAfterTax.toFixed(soThapPhan), loai_tien_tt));
 }
 
 

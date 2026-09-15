@@ -1860,7 +1860,7 @@ else {
 	               hItem.put("KHMSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("KHHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("SHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
-	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");
+	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định số 254/2026/NĐ-CP và Thông tư 91/2026/TT-BTC");
 	               ngayc = this.commons.getTextFromNodeXML((Element)xPath.evaluate("Ngay", nodeTmp, XPathConstants.NODE));
 	               String ngayky = (String) docTmp.get("NTBao");
 	               words = ngayc.split("-");
@@ -1972,7 +1972,7 @@ else {
 	               hItem.put("KHMSHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHMSHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("KHHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("KHHDon", nodeTmp, XPathConstants.NODE)));
 	               hItem.put("SHDon", this.commons.getTextFromNodeXML((Element)xPath.evaluate("SHDon", nodeTmp, XPathConstants.NODE)));
-	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");
+	               hItem.put("LADHDDT", "Hóa đơn điện tử theo Nghị định số 254/2026/NĐ-CP và Thông tư 91/2026/TT-BTC");
 	               ngayc = this.commons.getTextFromNodeXML((Element)xPath.evaluate("Ngay", nodeTmp, XPathConstants.NODE));
 	            String ngayky = (String) docTmp.get("NTBao");
 	               
@@ -5210,6 +5210,18 @@ else {
 								}
 							}
 							
+							/*LAY NOI DUNG TTHHDTrung*/
+							NodeList nodeListTTHHDTrung = (NodeList) xPath.evaluate("TTHHDTrung/TTin", nodeTmp, XPathConstants.NODESET);
+							if(nodeListTTHHDTrung != null) {
+								for(int j = 0; j < nodeListTTHHDTrung.getLength(); j++) {
+									Node nodeHHDTrungTmp = nodeListTTHHDTrung.item(j);
+									hItem.put(
+										commons.getTextFromNodeXML((Element) xPath.evaluate("TTruong", nodeHHDTrungTmp, XPathConstants.NODE)),
+										commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu", nodeHHDTrungTmp, XPathConstants.NODE))
+									);
+								}
+							}
+							
 							arrayData.add(hItem);
 							countPrd++;	
 							
@@ -5315,6 +5327,18 @@ else {
 										);
 										break;
 									}
+								}
+							}
+							
+							/*LAY NOI DUNG TTHHDTrung*/
+							NodeList nodeListTTHHDTrung = (NodeList) xPath.evaluate("TTHHDTrung/TTin", nodeTmp, XPathConstants.NODESET);
+							if(nodeListTTHHDTrung != null) {
+								for(int j = 0; j < nodeListTTHHDTrung.getLength(); j++) {
+									Node nodeHHDTrungTmp = nodeListTTHHDTrung.item(j);
+									hItem.put(
+										commons.getTextFromNodeXML((Element) xPath.evaluate("TTruong", nodeHHDTrungTmp, XPathConstants.NODE)),
+										commons.getTextFromNodeXML((Element) xPath.evaluate("DLieu", nodeHHDTrungTmp, XPathConstants.NODE))
+									);
 								}
 							}
 							

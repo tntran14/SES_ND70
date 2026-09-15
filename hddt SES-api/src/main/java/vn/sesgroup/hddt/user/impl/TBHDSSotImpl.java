@@ -4277,10 +4277,17 @@ db.getCollection('EInvoiceHDSS').find({
 //		Iterable<Document> cursor = null;
 //		Iterator<Document> iter = null;
 
+		ObjectId objectIdIssu = null;
+		try {
+			objectIdIssu = new ObjectId(header.getIssuerId());
+		} catch (Exception e) {
+		}
+
 		docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId);
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docFind));
-		pipeline.add(new Document("$project", new Document("DSHDon", 1).append("Dir", 1).append("IssuerId", 1).append("NTBao", 1)));
+		pipeline.add(new Document("$lookup", (new Document("from", "Issuer")).append("pipeline", Arrays.asList(new Document("$match", (new Document("_id", objectIdIssu)).append("IsDelete", new Document("$ne", true))))).append("as", "Issuer")));
+		pipeline.add(new Document("$unwind", (new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
 		pipeline.add(new Document("$lookup", new Document("from", "ConfigEmail")
 				.append("let", new Document("vIssuerId", "$IssuerId"))
 				.append("pipeline",

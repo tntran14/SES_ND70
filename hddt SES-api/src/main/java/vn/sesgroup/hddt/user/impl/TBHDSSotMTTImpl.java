@@ -2290,6 +2290,12 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 		} catch (Exception e) {
 		}
 
+		ObjectId objectIdIssu = null;
+		try {
+			objectIdIssu = new ObjectId(header.getIssuerId());
+		} catch (Exception e) {
+		}
+
 		Document docFind = null;
 		Document docTmp = null;
 		List<Document> pipeline = null;
@@ -2297,6 +2303,8 @@ public class TBHDSSotMTTImpl extends AbstractDAO implements TBHDSSotMTTDAO{
 		docFind = new Document("IssuerId", header.getIssuerId()).append("_id", objectId);
 		pipeline = new ArrayList<Document>();
 		pipeline.add(new Document("$match", docFind));
+		pipeline.add(new Document("$lookup", (new Document("from", "Issuer")).append("pipeline", Arrays.asList(new Document("$match", (new Document("_id", objectIdIssu)).append("IsDelete", new Document("$ne", true))))).append("as", "Issuer")));
+		pipeline.add(new Document("$unwind", (new Document("path", "$Issuer")).append("preserveNullAndEmptyArrays", true)));
 		pipeline.add(new Document("$lookup", new Document("from", "ConfigEmail")
 				.append("let", new Document("vIssuerId", "$IssuerId"))
 				.append("pipeline",

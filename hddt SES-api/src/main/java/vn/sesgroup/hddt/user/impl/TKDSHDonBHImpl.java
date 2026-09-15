@@ -1376,12 +1376,16 @@ public class TKDSHDonBHImpl extends AbstractDAO implements TKDSHDonBHDAO{
 			font.setItalic(false);
 			font.setBold(true);
 
-			CellStyle cellStyleNumFooter = wb.createCellStyle();	
+			CellStyle cellStyleNumFooter = wb.createCellStyle();
 			cellStyleNumFooter.setFont(font);
 			cellStyleNumFooter.setWrapText(true);
 //			cellStyleNumFooter.setAlignment(HorizontalAlignment.LEFT);
 			cellStyleNumFooter.setVerticalAlignment(VerticalAlignment.CENTER);
-			
+
+			CellStyle cellStyleNumFooterAmount = wb.createCellStyle();
+			cellStyleNumFooterAmount.cloneStyleFrom(cellStyleNumFooter);
+			cellStyleNumFooterAmount.setDataFormat(df);
+
 			posRow++;
 			row = sheet.getRow(posRow);
 			if(null == row) row = sheet.createRow(posRow);
@@ -1398,8 +1402,9 @@ public class TKDSHDonBHImpl extends AbstractDAO implements TKDSHDonBHDAO{
 			
 			cell = row.getCell(7);
 			if(cell == null) cell = row.createCell(7);
-			cell.setCellValue(total);
-			
+			cell.setCellValue(Math.round(total));
+			cell.setCellStyle(cellStyleNumFooterAmount);
+
 			posRow++;
 			row = sheet.getRow(posRow);
 			if(null == row) row = sheet.createRow(posRow);

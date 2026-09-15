@@ -123,21 +123,24 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 		String new_mccqt="";
 		int new_shdon = 0;
 		String new_khhdon= "";
-		if (!jsonNodeHDons.isMissingNode() && !jsonNodeHDNews.isMissingNode()) {
+		/* Hoa don goc (bi thay the/dieu chinh) - bat buoc phai co */
+		if (!jsonNodeHDons.isMissingNode() && jsonNodeHDons.size() > 0) {
 			JsonNode jsonNodeHDon = jsonData.at("/HDon").get(0);
-			JsonNode jsonNodeHDNew = jsonData.at("/HDNew").get(0);
 			old_mccqt = commons.getTextJsonNode(jsonNodeHDon.at("/MCQTCap"));
 			if(!"".equals(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")))) {
 				old_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDon.at("/SHDon")));
 			}
 			old_khhdon = commons.getTextJsonNode(jsonNodeHDon.at("/MSHDon")).replaceFirst("^\\d", "");
-			
+		}
+
+		/* Hoa don moi (thay the/dieu chinh) - khong bat buoc, co the bo sung sau */
+		if (!jsonNodeHDNews.isMissingNode() && jsonNodeHDNews.size() > 0) {
+			JsonNode jsonNodeHDNew = jsonData.at("/HDNew").get(0);
 			new_mccqt = commons.getTextJsonNode(jsonNodeHDNew.at("/MCQTCap"));
 			if (!"".equals(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")))) {
 				new_shdon = Integer.parseInt(commons.getTextJsonNode(jsonNodeHDNew.at("/SHDon")));
 			}
 			new_khhdon = commons.getTextJsonNode(jsonNodeHDNew.at("/MSHDon")).replaceFirst("^\\d", "");
-
 		}
 		
 		ObjectId objectId = null;
@@ -248,51 +251,54 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				return rsp;
 			}
 			
-			docFind1 = new Document("IssuerId", header.getIssuerId())
-					.append("HDSS.TCTBao", new Document("$ne", "1"))
-					.append("EInvoiceStatus",
-							new Document("$in",
-									Arrays.asList("COMPLETE", "ADJUSTED", "REPLACED")))
-					.append("MCCQT", new_mccqt)
-					.append("EInvoiceDetail.TTChung.SHDon", new_shdon)
-					.append("EInvoiceDetail.TTChung.KHHDon", new_khhdon);
-			
-			newInvoiceDoc = getDocuments(docFind, filter, docFind1, filter1, null, null);
-			
-			if (newInvoiceDoc == null) {
-				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
-			}
-			
-			newCollectionName = "";
-			if (newInvoiceDoc.get("EInvoice") != null) {
-				newCollectionName = "EInvoice";
-			}
-			if (newInvoiceDoc.get("EInvoicePXK") != null) {
-				newCollectionName = "EInvoicePXK";
-			}
-			if (newInvoiceDoc.get("EInvoiceBH") != null) {
-				newCollectionName = "EInvoiceBH";
-			}
-			if (newInvoiceDoc.get("EInvoicePXKDL") != null) {
-				newCollectionName = "EInvoicePXKDL";
-			}
-			if (newInvoiceDoc.get("EInvoiceMTT") != null) {
-				newCollectionName = "EInvoiceMTT";
-			}
+			/* Hoa don moi (thay the/dieu chinh) khong bat buoc phai co ngay khi tao bien ban - co the bo sung sau (MODIFY) */
+			if (!jsonNodeHDNews.isMissingNode() && jsonNodeHDNews.size() > 0) {
+				docFind1 = new Document("IssuerId", header.getIssuerId())
+						.append("HDSS.TCTBao", new Document("$ne", "1"))
+						.append("EInvoiceStatus",
+								new Document("$in",
+										Arrays.asList("COMPLETE", "ADJUSTED", "REPLACED")))
+						.append("MCCQT", new_mccqt)
+						.append("EInvoiceDetail.TTChung.SHDon", new_shdon)
+						.append("EInvoiceDetail.TTChung.KHHDon", new_khhdon);
 
-			if (newCollectionName.equals("")) {
-				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn mới.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
-			}
+				newInvoiceDoc = getDocuments(docFind, filter, docFind1, filter1, null, null);
 
-			if (!newCollectionName.equals(oldCollectionName)) {
-				responseStatus = new MspResponseStatus(9999,
-						"Hóa đơn cần điều chỉnh/thay thế và hóa đơn mới không cùng loại.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
+				if (newInvoiceDoc == null) {
+					responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin khách hàng.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
+
+				newCollectionName = "";
+				if (newInvoiceDoc.get("EInvoice") != null) {
+					newCollectionName = "EInvoice";
+				}
+				if (newInvoiceDoc.get("EInvoicePXK") != null) {
+					newCollectionName = "EInvoicePXK";
+				}
+				if (newInvoiceDoc.get("EInvoiceBH") != null) {
+					newCollectionName = "EInvoiceBH";
+				}
+				if (newInvoiceDoc.get("EInvoicePXKDL") != null) {
+					newCollectionName = "EInvoicePXKDL";
+				}
+				if (newInvoiceDoc.get("EInvoiceMTT") != null) {
+					newCollectionName = "EInvoiceMTT";
+				}
+
+				if (newCollectionName.equals("")) {
+					responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn mới.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
+
+				if (!newCollectionName.equals(oldCollectionName)) {
+					responseStatus = new MspResponseStatus(9999,
+							"Hóa đơn cần điều chỉnh/thay thế và hóa đơn mới không cùng loại.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
 			}
 
 			taxCode = oldInvoiceDoc.getString("TaxCode");
@@ -306,7 +312,7 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			fileNameXML = objectId.toString() + ".xml";
 
 			oldDoc = oldInvoiceDoc.get(oldCollectionName, Document.class);
-			newDoc = newInvoiceDoc.get(newCollectionName, Document.class);
+			newDoc = (newInvoiceDoc != null) ? newInvoiceDoc.get(newCollectionName, Document.class) : null;
 
 			dbf = DocumentBuilderFactory.newInstance();
 			db = dbf.newDocumentBuilder();
@@ -390,39 +396,41 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 
 			elementContent.appendChild(elementSubContent);
 
-			elementSubContent = doc.createElement("HDDCTThe");
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-					commons.convertLocalDateTimeToString(
-							commons.convertDateToLocalDateTime(
-									newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-							"yyyy-MM-dd")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
-			elementSubContent.appendChild(
-					commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
-			elementContent.appendChild(elementSubContent);
+			if (newDoc != null) {
+				elementSubContent = doc.createElement("HDDCTThe");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementContent.appendChild(elementSubContent);
+			}
 
 			isSaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
 			if (!isSaveFile) {
@@ -481,7 +489,24 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
 						.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
 						)
-				.append("HDDCTThe", 
+				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+				.append("ClientSignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
+				.append("Status", Constants.INVOICE_STATUS.CREATED)
+				.append("IsDelete", false)
+				.append("SecureKey", secureKey)
+				.append("Dir", pathDir)
+				.append("FileNameXML", fileNameXML)
+				.append("InfoCreated",
+						new Document()
+						.append("CreateDate", LocalDateTime.now())
+						.append("CreateUserID", header.getUserId())
+						.append("CreateUserName", header.getUserName())
+						.append("CreateUserFullName", header.getUserFullName())
+					)
+				;
+			/* Chi ghi HDDCTThe khi da co hoa don moi - de trong (khong tao field) neu bien ban moi chi co hoa don goc */
+			if (newDoc != null) {
+				docInsert.append("HDDCTThe",
 						new Document()
 						.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
 						.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
@@ -497,23 +522,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
 						.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
 						.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-						)
-
-				.append("SignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
-				.append("ClientSignStatusCode", Constants.INVOICE_SIGN_STATUS.NOSIGN)
-				.append("Status", Constants.INVOICE_STATUS.CREATED)
-				.append("IsDelete", false)
-				.append("SecureKey", secureKey)
-				.append("Dir", pathDir)
-				.append("FileNameXML", fileNameXML)
-				.append("InfoCreated", 
-						new Document()
-						.append("CreateDate", LocalDateTime.now())
-						.append("CreateUserID", header.getUserId())
-						.append("CreateUserName", header.getUserName())
-						.append("CreateUserFullName", header.getUserFullName())
-					)
-				;
+						);
+			}
 			try (MongoClient mongoClient = cfg.mongoClient()){
 				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
 				collection.insertOne(docInsert);
@@ -636,16 +646,17 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", false);
 			filter = new Document("_id", 1).append("TaxCode", 1);
 			while (index < jsonNodeHDons.size()) {
+				/* Hoa don moi (dieu chinh/thay the) tai vi tri nay khong bat buoc phai co - co the bo sung sau */
+				boolean hasNewAtIndex = index < jsonNodeHDNews.size();
 				ObjectId old_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDons.get(index).at("/_id")));
-				ObjectId new_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id")));
+				ObjectId new_objectId = hasNewAtIndex ? new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id"))) : null;
 				docFind1 = new Document("_id", old_objectId);
-				docFind2 = new Document("_id", new_objectId);
 				filter1 = filter2 = new Document("MCCQT", 1).append("EInvoiceDetail", 1);
-				
+
 				pipeline.clear();
 				pipeline.add(new Document("$match", docFind));
 				pipeline.add(new Document("$project", filter));
-				
+
 				pipeline.add(new Document("$lookup",
 						new Document("from", collectionName)
 								.append("pipeline",
@@ -653,25 +664,28 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 								.append("as", "EInvoice1")));
 				pipeline.add(new Document("$unwind",
 						new Document("path", "$EInvoice1").append("preserveNullAndEmptyArrays", true)));
-				
-				pipeline.add(new Document("$lookup",
-						new Document("from", collectionName)
-								.append("pipeline",
-										Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
-								.append("as", "EInvoice2")));
-				pipeline.add(new Document("$unwind",
-						new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
 
-				
+				if (hasNewAtIndex) {
+					docFind2 = new Document("_id", new_objectId);
+					pipeline.add(new Document("$lookup",
+							new Document("from", collectionName)
+									.append("pipeline",
+											Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
+									.append("as", "EInvoice2")));
+					pipeline.add(new Document("$unwind",
+							new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
+				}
+
+
 				try (MongoClient mongoClient = cfg.mongoClient()) {
 					MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
 					MongoCollection<Document> collection = database.getCollection("Issuer");
 					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 				}
-				
-				
+
+
 				oldDoc = docTmp.get("EInvoice1", Document.class);
-				newDoc = docTmp.get("EInvoice2", Document.class);
+				newDoc = hasNewAtIndex ? docTmp.get("EInvoice2", Document.class) : null;
 				
 				elementSubContentItem = doc.createElement("HDon");
 				elementSubContent = doc.createElement("HDSSot");
@@ -708,39 +722,41 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						commons.createElementWithValue(doc, "MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
 				elementSubContentItem.appendChild(elementSubContent);
 
-				elementSubContent = doc.createElement("HDDCTThe");
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-						commons.convertLocalDateTimeToString(
-								commons.convertDateToLocalDateTime(
-										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-								"yyyy-MM-dd")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
-				elementSubContent.appendChild(
-						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
-				elementSubContentItem.appendChild(elementSubContent);
+				if (newDoc != null) {
+					elementSubContent = doc.createElement("HDDCTThe");
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+							commons.convertLocalDateTimeToString(
+									commons.convertDateToLocalDateTime(
+											newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+									"yyyy-MM-dd")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+					elementSubContent.appendChild(
+							commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+					elementSubContentItem.appendChild(elementSubContent);
+				}
 				
 				elementSubContents.appendChild(elementSubContentItem);
 
@@ -762,25 +778,28 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 								.append("TgTTTBSo", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
 								.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
 								.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-								)
-						.append("HDDCTThe", 
-								new Document()
-								.append("_id", newDoc.get("_id", ObjectId.class).toString())
-								.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
-								.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
-								.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
-								.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
-								.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
-								.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
-								.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
-								.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
-								.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
-								.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
-								.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
-								.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
-								.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
-								.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-								);
+				);
+				/* Chi ghi HDDCTThe khi hang nay da co hoa don moi */
+				if (newDoc != null) {
+					docData.append("HDDCTThe", 
+									new Document()
+									.append("_id", newDoc.get("_id", ObjectId.class).toString())
+									.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+									.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+									.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+									.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+									.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+									.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+									.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+									.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+									.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+									.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+									.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+									.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+									.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+									.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+									);
+				}
 				dshdons.add(docData);
 				index++;
 			}
@@ -971,17 +990,20 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 				return rsp;
 			}
 
-			if (newCollectionName.equals("")) {
-				responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn mới.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
-			}
+			/* Hoa don moi (thay the/dieu chinh) khong bat buoc phai co - co the bo sung sau (chi validate khi co gui len) */
+			if (!jsonNodeHDNews.isMissingNode() && jsonNodeHDNews.size() > 0) {
+				if (newCollectionName.equals("")) {
+					responseStatus = new MspResponseStatus(9999, "Không tìm thấy thông tin hóa đơn mới.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
 
-			if (!newCollectionName.equals(oldCollectionName)) {
-				responseStatus = new MspResponseStatus(9999,
-						"Hóa đơn cần điều chỉnh/thay thế và hóa đơn mới không cùng loại.");
-				rsp.setResponseStatus(responseStatus);
-				return rsp;
+				if (!newCollectionName.equals(oldCollectionName)) {
+					responseStatus = new MspResponseStatus(9999,
+							"Hóa đơn cần điều chỉnh/thay thế và hóa đơn mới không cùng loại.");
+					rsp.setResponseStatus(responseStatus);
+					return rsp;
+				}
 			}
 			secureKey = newInvoiceDoc.getEmbedded(Arrays.asList("EInvoiceBBDCTT", "SecureKey"), "");
 			pathDir = newInvoiceDoc.getEmbedded(Arrays.asList("EInvoiceBBDCTT", "Dir"), "");
@@ -1074,39 +1096,41 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 
 			elementContent.appendChild(elementSubContent);
 
-			elementSubContent = doc.createElement("HDDCTThe");
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-					commons.convertLocalDateTimeToString(
-							commons.convertDateToLocalDateTime(
-									newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-							"yyyy-MM-dd")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
-					newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
-			elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
-					String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
-			elementSubContent.appendChild(
-					commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
-			elementContent.appendChild(elementSubContent);
+			if (newDoc != null) {
+				elementSubContent = doc.createElement("HDDCTThe");
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+						commons.convertLocalDateTimeToString(
+								commons.convertDateToLocalDateTime(
+										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+								"yyyy-MM-dd")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+				elementSubContent.appendChild(
+						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+				elementContent.appendChild(elementSubContent);
+			}
 
 			isSaveFile = commons.docW3cToFile(doc, pathDir, fileNameXML);
 			if (!isSaveFile) {
@@ -1169,29 +1193,32 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
 					.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
 					)
-			.append("HDDCTThe", 
-					new Document()
-					.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
-					.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
-					.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
-					.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
-					.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
-					.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
-					.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
-					.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
-					.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
-					.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
-					.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
-					.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
-					.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
-					.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-					)
-			.append("InfoUpdated", 
+			.append("InfoUpdated",
 					new Document("UpdatedDate", LocalDateTime.now())
 					.append("UpdatedUserID", header.getUserId())
 					.append("UpdatedUserName", header.getUserName())
 					.append("UpdatedUserFullName", header.getUserFullName())
 					);
+			/* Hoa don moi chi duoc ghi/ghi de khi client co gui len - tranh xoa mat du lieu HDDCTThe da luu truoc do khi chi sua cac truong khac */
+			if (newDoc != null) {
+				docUpdate.append("HDDCTThe",
+						new Document()
+						.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+						.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+						.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+						.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+						.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+						.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+						.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+						.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+						.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+						.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+						.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+						.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+						.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+						.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+						);
+			}
 			
 			try (MongoClient mongoClient = cfg.mongoClient()){
 				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
@@ -1355,16 +1382,17 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 			docFind = new Document("_id", objectId).append("IsActive", true).append("IsDelete", false);
 			filter = new Document("_id", 1).append("TaxCode", 1);
 			while (index < jsonNodeHDons.size()) {
+				/* Hoa don moi (dieu chinh/thay the) tai vi tri nay khong bat buoc phai co - co the bo sung sau */
+				boolean hasNewAtIndex = index < jsonNodeHDNews.size();
 				ObjectId old_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDons.get(index).at("/_id")));
-				ObjectId new_objectId = new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id")));
+				ObjectId new_objectId = hasNewAtIndex ? new ObjectId(commons.getTextJsonNode(jsonNodeHDNews.get(index).at("/_id"))) : null;
 				docFind1 = new Document("_id", old_objectId);
-				docFind2 = new Document("_id", new_objectId);
 				filter1 = filter2 = new Document("MCCQT", 1).append("EInvoiceDetail", 1).append("_id", 1);
-				
+
 				pipeline.clear();
 				pipeline.add(new Document("$match", docFind));
 				pipeline.add(new Document("$project", filter));
-				
+
 				pipeline.add(new Document("$lookup",
 						new Document("from", collectionName)
 								.append("pipeline",
@@ -1372,26 +1400,29 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 								.append("as", "EInvoice1")));
 				pipeline.add(new Document("$unwind",
 						new Document("path", "$EInvoice1").append("preserveNullAndEmptyArrays", true)));
-				
-				pipeline.add(new Document("$lookup",
-						new Document("from", collectionName)
-								.append("pipeline",
-										Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
-								.append("as", "EInvoice2")));
-				pipeline.add(new Document("$unwind",
-						new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
 
-				
+				if (hasNewAtIndex) {
+					docFind2 = new Document("_id", new_objectId);
+					pipeline.add(new Document("$lookup",
+							new Document("from", collectionName)
+									.append("pipeline",
+											Arrays.asList(new Document("$match", docFind2), new Document("$project", filter2)))
+									.append("as", "EInvoice2")));
+					pipeline.add(new Document("$unwind",
+							new Document("path", "$EInvoice2").append("preserveNullAndEmptyArrays", true)));
+				}
+
+
 				try (MongoClient mongoClient = cfg.mongoClient()) {
 					MongoDatabase database = mongoClient.getDatabase(cfg.dbName);
 					MongoCollection<Document> collection = database.getCollection("Issuer");
 					docTmp = collection.aggregate(pipeline).allowDiskUse(true).iterator().next();
 				}
-				
-				
+
+
 				oldDoc = docTmp.get("EInvoice1", Document.class);
-				newDoc = docTmp.get("EInvoice2", Document.class);
-				
+				newDoc = hasNewAtIndex ? docTmp.get("EInvoice2", Document.class) : null;
+
 				elementSubContentItem = doc.createElement("HDon");
 				elementSubContent = doc.createElement("HDSSot");
 				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
@@ -1427,39 +1458,41 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						commons.createElementWithValue(doc, "MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
 				elementSubContentItem.appendChild(elementSubContent);
 
-				elementSubContent = doc.createElement("HDDCTThe");
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
-						commons.convertLocalDateTimeToString(
-								commons.convertDateToLocalDateTime(
-										newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
-								"yyyy-MM-dd")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
-						newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
-				elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
-						String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
-				elementSubContent.appendChild(
-						commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
-				elementSubContentItem.appendChild(elementSubContent);
+				if (newDoc != null) {
+					elementSubContent = doc.createElement("HDDCTThe");
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "THDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "MaHD",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "MauSoHD",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "KHMSHDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "KHHDon",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "DVTTe",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "NLap",
+							commons.convertLocalDateTimeToString(
+									commons.convertDateToLocalDateTime(
+											newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class)),
+									"yyyy-MM-dd")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "SHDon",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TNMua",
+							newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), "")));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTCThue",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTThue",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBSo",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))));
+					elementSubContent.appendChild(commons.createElementWithValue(doc, "TgTTTBChu",
+							String.valueOf(newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))));
+					elementSubContent.appendChild(
+							commons.createElementWithValue(doc, "MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), "")));
+					elementSubContentItem.appendChild(elementSubContent);
+				}
 				
 				elementSubContents.appendChild(elementSubContentItem);
 
@@ -1481,25 +1514,28 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 								.append("TgTTTBSo", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
 								.append("TgTTTBChu", oldDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
 								.append("MCCQT", oldDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-								)
-						.append("HDDCTThe", 
-								new Document()
-								.append("_id", newDoc.get("_id", ObjectId.class).toString())
-								.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
-								.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
-								.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
-								.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
-								.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
-								.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
-								.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
-								.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
-								.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
-								.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
-								.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
-								.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
-								.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
-								.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
-								);
+				);
+				/* Chi ghi HDDCTThe khi hang nay da co hoa don moi */
+				if (newDoc != null) {
+					docData.append("HDDCTThe", 
+									new Document()
+									.append("_id", newDoc.get("_id", ObjectId.class).toString())
+									.append("THDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "THDon"), ""))
+									.append("MaHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MaHD"), ""))
+									.append("MauSoHD", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "MauSoHD"), ""))
+									.append("KHMSHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHMSHDon"), ""))
+									.append("KHHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "KHHDon"), ""))
+									.append("DVTTe", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "DVTTe"), ""))
+									.append("NLap", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "NLap"), Date.class))
+									.append("SHDon", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TTChung", "SHDon"), ""))
+									.append("TNMua", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "NDHDon", "NMua", "Ten"), ""))
+									.append("TgTCThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTCThue"), ""))
+									.append("TgTThue", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTThue"), ""))
+									.append("TgTTTBSo", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBSo"), ""))
+									.append("TgTTTBChu", newDoc.getEmbedded(Arrays.asList("EInvoiceDetail", "TToan", "TgTTTBChu"), ""))
+									.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
+									);
+				}
 				dshdons.add(docData);
 				index++;
 			}

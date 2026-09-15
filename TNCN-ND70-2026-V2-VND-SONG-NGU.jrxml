@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="INV-VAT" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="412917b4-e706-4e02-a405-eaecf786809f">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="LicenseDate" class="java.lang.String"/>
+	<parameter name="LicenseMonth" class="java.lang.String"/>
+	<parameter name="LicenseYear" class="java.lang.String"/>
+	<parameter name="MauSo" class="java.lang.String"/>
+	<parameter name="KHHDon" class="java.lang.String"/>
+	<parameter name="SHDon" class="java.lang.String"/>
+	<parameter name="SHDonOrigin" class="java.lang.String"/>
+	<parameter name="MCCQT" class="java.lang.String"/>
+	<parameter name="TChucCNTen" class="java.lang.String"/>
+	<parameter name="TChucCNMST" class="java.lang.String"/>
+	<parameter name="TChucCNDChi" class="java.lang.String"/>
+	<parameter name="TChucCNSDThoai" class="java.lang.String"/>
+	<parameter name="NNThueTen" class="java.lang.String"/>
+	<parameter name="NNThueMST" class="java.lang.String"/>
+	<parameter name="NNThueQTich" class="java.lang.String"/>
+	<parameter name="UrlImageChecked" class="java.lang.String"/>
+	<parameter name="isNNThueCuTru" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isNNThueKCuTru" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NNThueDChiORSDThoai" class="java.lang.String"/>
+	<parameter name="NNThueCMND" class="java.lang.String"/>
+	<parameter name="NNThueCMNDNoiCap" class="java.lang.String"/>
+	<parameter name="NNThueCMNDNgayCap" class="java.lang.String"/>
+	<parameter name="CNhanTNhap" class="java.lang.String"/>
+	<parameter name="CNhanBHiem" class="java.lang.String"/>
+	<parameter name="CNTraTNhapMonth" class="java.lang.String"/>
+	<parameter name="CNTraTNhapYear" class="java.lang.String"/>
+	<parameter name="CNTongTNhapChiuThue" class="java.lang.String"/>
+	<parameter name="CNTongTNhapTinhThue" class="java.lang.String"/>
+	<parameter name="CNTNhapDaKhauTru" class="java.lang.String"/>
+	<parameter name="PortalLink" class="java.lang.String"/>
+	<parameter name="SecureKey" class="java.lang.String"/>
+	<parameter name="IsSigned" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SignDesc" class="java.lang.String"/>
+	<parameter name="SignName" class="java.lang.String"/>
+	<parameter name="SignDate" class="java.lang.String"/>
+	<parameter name="UrlImageVerify" class="java.lang.String"/>
+	<parameter name="URL_IMG_LOGO" class="java.lang.String"/>
+	<parameter name="URL_IMG_BACKGROUND" class="java.lang.String"/>
+	<parameter name="TOTAL_PAGE" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IsConvert" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNTraTNhapFrom" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNTraTNhapTo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NNSDTLienHe" class="java.lang.String"/>
+	<parameter name="CNTThienNDaoKhuyenHoc" class="java.lang.String"/>
+	<parameter name="UrlImageInvDeleted" class="java.lang.String"/>
+	<parameter name="IsDeleted" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NNThueDChi" class="java.lang.String"/>
+	<parameter name="UrlImageCTuThayThe" class="java.lang.String"/>
+	<parameter name="UrlImageCTUDieuChinh" class="java.lang.String"/>
+	<parameter name="IsThayThe" class="java.lang.Boolean"/>
+	<parameter name="IsDieuChinh" class="java.lang.Boolean"/>
+	<parameter name="NoticeTTDC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="GroupPageIDX" class="java.lang.Integer"/>
+	<field name="TChat" class="java.lang.String"/>
+	<field name="STT" class="java.lang.String"/>
+	<field name="MHHDVu" class="java.lang.String"/>
+	<field name="THHDVu" class="java.lang.String"/>
+	<field name="DVTinh" class="java.lang.String"/>
+	<field name="SLuong" class="java.lang.Double"/>
+	<field name="DGia" class="java.lang.Double"/>
+	<field name="ThTien" class="java.lang.Double"/>
+	<field name="TSuat" class="java.lang.String"/>
+	<field name="VATAmount" class="java.lang.Double"/>
+	<field name="Amount" class="java.lang.Double"/>
+	<group name="GroupPageIDX" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{GroupPageIDX}]]></groupExpression>
+		<groupHeader>
+			<band height="174">
+				<textField>
+					<reportElement x="130" y="10" width="300" height="15" forecolor="#000000" uuid="93289b32-19c4-4afb-a8db-aff11db9efff"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="430" y="48" width="116" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="87c9a73a-f7ca-48d7-92b3-7d9fc96f0c79"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Ký hiệu <style isItalic='true' size='7' >(Code)</style>: " + "<b>" + (null == $P{KHHDon}? "": $P{KHHDon}) + "</b>"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="431" y="66" width="36" height="15" forecolor="#000000" uuid="94e0d55d-a626-415b-af24-1b1512633cee"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Số <style isItalic='true' size='7' >(No.)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="160" y="25" width="239" height="15" forecolor="#000000" uuid="fb9bc917-1867-4180-ab6d-3d47e374e965"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Độc lập - Tự do - Hạnh phúc"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="467" y="66" width="79" height="15" forecolor="#FF0000" uuid="e23a89a0-1111-4206-8c12-79b16048cb83"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="13" isBold="true" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{SHDonOrigin} || "".equals($P{SHDonOrigin})? "0": $P{SHDonOrigin}.replaceAll("\\s" , "" ))]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="205" y="45" width="150" height="1" uuid="f9b5127c-5d6d-4c14-902d-6d4067966fb1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="80" y="110" width="400" height="20" forecolor="#000000" uuid="c4f2d9ed-2431-4632-8ab5-d98f56c0a65f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="15" isBold="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CHỨNG TỪ KHẤU TRỪ THUẾ THU NHẬP CÁ NHÂN"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="430" y="30" width="116" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="ec8694b2-5baa-4b32-a0b1-a330ac968346"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Mẫu số <style isItalic='true' size='7' >(From No)</style>: " + "<b>" + (null == $P{MauSo}? "": $P{MauSo}) + "</b>"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="160" width="555" height="14" forecolor="#FF0000" uuid="5f2af132-dd0c-4e8f-b507-b2cdf1f84c0c">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{NoticeTTDC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="158" y="65" width="238" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="929ce562-cd61-4b49-bc40-b94395367b97"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Independence – Freedom - Happiness"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="158" y="50" width="238" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="a095d108-f62a-4458-a9ed-62c6c9bbcc8b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SOCIALIST REPUBLIC OF VIETNAM"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="157" y="130" width="239" height="15" forecolor="#000000" uuid="b9211f48-683c-4ac3-81fd-092121670ce8"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" isBold="false" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CERTIFICATE OF PERSONAL INCOME TAX WITHHOLDING"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="103">
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="5" width="197" height="17" forecolor="#000000" uuid="a59db015-6b4d-4021-a19e-49dd6d19b928"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["I. THÔNG TIN TỔ CHỨC TRẢ THU NHẬP"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="27" width="510" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="ff4049ac-9ebe-4178-84ac-2007f1833f1e">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[01] Tên tổ chức, cá nhân trả thu nhập <style isItalic='true' size='7' >(Name of the income paying organization)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="28" y="41" width="510" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="ea512151-86e6-4dcc-89da-502110da9fbb">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{TChucCNTen}? "": $P{TChucCNTen})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="28" y="55" width="152" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="4286548d-8d7c-4971-8f0d-595d6fb55393">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[02] Mã số thuế <style isItalic='true' size='7' >(Tax identification number)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="28" y="69" width="89" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="bf6949d6-437e-4d89-aa2c-5a4bb67b3079">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[03] Địa chỉ <style isItalic='true' size='7' >(Address)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="117" y="69" width="422" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="73b1c68a-8e19-404f-9832-14cebe6bd063">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="1.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{TChucCNDChi}? "": $P{TChucCNDChi})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="180" y="55" width="358" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="2f07525a-351c-4373-9b76-5a8bf3df1a21">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="true" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{TChucCNMST}? "": $P{TChucCNMST})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="28" y="83" width="119" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="170131b7-3bcf-450c-8bef-3b3aee6ebadb">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[04] Điện thoại <style isItalic='true' size='7' >(Phone number)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="147" y="83" width="392" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="c904018f-78bf-41af-b2f8-bf49f6f8fba0">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{TChucCNSDThoai}? "": $P{TChucCNSDThoai})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="217" y="5" width="333" height="17" forecolor="#000000" uuid="a34aac6b-8059-44df-9b1b-6f0974948528"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Information of the income paying organization)"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="105">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="332" height="17" forecolor="#000000" uuid="e366911b-62d7-496e-a490-9cc0cfa07b93"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["II. THÔNG TIN CÁ NHÂN, HỘ KINH DOANH, CÁ NHÂN KINH DOANH"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="49" width="153" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="29ad86a2-ec71-4ab2-b25e-954edd708acd">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[06] Mã số thuế <style isItalic='true' size='7' >(Tax identification number)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="63" width="105" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="617ed576-1846-44a6-aa19-c451acf57d88">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[07] Quốc tịch  <style isItalic='true' size='7' >(Nationlaty)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="133" y="63" width="405" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="9c8ea20b-f6ea-4984-8300-0200047c0008">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNThueQTich}? "": $P{NNThueQTich})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="77" width="170" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="63fad67f-5ac2-47a1-b42d-c4480b664721">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[08] Cá nhân cư trú <style isItalic='true' size='7' >(Resident individual)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="35" width="107" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="32134427-6765-4950-b275-110635e1ccd3">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[05] Họ và tên  <style isItalic='true' size='7' >(Full name)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="135" y="35" width="402" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="e00c7004-4664-4342-8ca2-54f570d604f7">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNThueTen}? "": $P{NNThueTen})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="247" y="77" width="194" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="b2a6940a-056a-42c1-b2b5-04805f05cf7e">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[09] Cá nhân không cư trú <style isItalic='true' size='7' >(Non-resident individual)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="116" y="91" width="424" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="e0eda9ed-684e-4a92-a6a9-26277673d900">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNThueDChi}? "": $P{NNThueDChi})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="91" width="88" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="d52dc6fd-6751-4b81-82f4-c5e8898c4f36">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[10] Địa chỉ <style isItalic='true' size='7' >(Address)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="181" y="49" width="358" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="366e107c-eaac-4563-8f64-da75f381c6a2">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNThueMST}? "": $P{NNThueMST})]]></textFieldExpression>
+				</textField>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement x="198" y="77" width="20" height="14" uuid="f4080dda-50f2-4da1-b85b-9caae2577efa">
+						<printWhenExpression><![CDATA[$P{isNNThueCuTru}]]></printWhenExpression>
+					</reportElement>
+					<imageExpression><![CDATA[$P{UrlImageChecked}]]></imageExpression>
+				</image>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement x="441" y="77" width="20" height="14" uuid="15feef64-ba44-4130-8679-0ec7df6f2367">
+						<printWhenExpression><![CDATA[$P{isNNThueKCuTru}]]></printWhenExpression>
+					</reportElement>
+					<imageExpression><![CDATA[$P{UrlImageChecked}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="352" y="0" width="198" height="17" forecolor="#000000" uuid="60d90b9a-0e6c-4146-a890-28096752aced"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Personal, household business, individual"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="27" y="18" width="198" height="12" forecolor="#000000" uuid="40aae442-1f6a-45b8-8c32-440dea2421da"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["business information)"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="49">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="50" y="29" width="488" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="3e7fb645-4408-484e-8582-d67aa67cadad">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNThueCMND}? "": $P{NNThueCMND})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="28" y="15" width="510" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="282cd098-cf95-4a68-8c47-b3bda09cc24a">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[12] Số định danh cá nhân, giấy tờ tùy thân hoặc số hộ chiếu <style isItalic='true' size='10'>(Trường hợp chưa đăng ký thuế)</style><style isItalic='true' size='7' > (ID/Passport Number, if not yet registered for tax):</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="1" width="147" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="1702dae6-154d-4c0f-883d-b2b0d64060fc">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[11] Điện thoại liên hệ <style isItalic='true' size='7' >(Phone number)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="175" y="1" width="365" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="e280913d-d529-4a6c-a47e-fcdaabc9f732">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{NNSDTLienHe}? "": $P{NNSDTLienHe})]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="129">
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="270" height="17" forecolor="#000000" uuid="2127c86c-a3fc-4411-b7c0-979a3cc8d616"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["III. THÔNG TIN THUẾ THU NHẬP CÁ NHÂN KHẤU TRỪ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="20" width="142" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="e09b0f10-0b84-4310-b83f-cdcd6cc51b1f">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[13] Khoản thu nhập <style isItalic='true' size='7' >(Type of income) </style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="170" y="20" width="368" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="a287d38a-a709-44f2-8437-d1be19b34b0c">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{CNhanTNhap}? "": $P{CNhanTNhap})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="34" width="290" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="a1c4ab45-8bfc-47ec-a272-79b13bfce2ef">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[14] Khoản đóng bảo hiểm bắt buộc <style isItalic='true' size='7' >(The aforesaid deductible insurance premiums)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="318" y="34" width="219" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="ebc6ed49-0685-4a1e-bd64-beec7d066a20">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[null == $P{CNhanBHiem} || $P{CNhanBHiem}.isEmpty() 
+  ? "0  VNĐ" 
+  : new java.text.DecimalFormat("#,##0.#####")
+      .format(new java.math.BigDecimal($P{CNhanBHiem}.replace(",", ".")))
+      .replaceAll(",", "#")
+      .replaceAll("\\.", ",")
+      .replaceAll("#", "\\.") +" VNĐ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="62" width="192" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="8f18d084-8e1c-4a2d-9903-fd8da64e74d4">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[16] Thời điểm trả thu nhập <style isItalic='true' size='7' >(Time of income payment) </style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="76" width="292" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="b5045a53-39d2-4ab9-8568-55f89032bf4b">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[17] Tổng thu nhập chịu thuế phải khấu trừ <style isItalic='true' size='7' >(Total taxable income to be withheld)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Page" isBlankWhenNull="true">
+					<reportElement x="320" y="76" width="220" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="478bc65f-6148-4627-9ddf-96da4a9d77e6">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[null == $P{CNTongTNhapChiuThue} || $P{CNTongTNhapChiuThue}.isEmpty() 
+  ? "0 VNĐ" 
+  : new java.text.DecimalFormat("#,##0.#####")
+      .format(new java.math.BigDecimal($P{CNTongTNhapChiuThue}.replace(",", ".")))
+      .replaceAll(",", "#")
+      .replaceAll("\\.", ",")
+      .replaceAll("#", "\\.") +" VNĐ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="90" width="213" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="ac74b0eb-3eed-485c-861d-d6559824189a">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[18] Tổng thu nhập tính thuế <style isItalic='true' size='7' >(Total tax calculation income)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="241" y="90" width="298" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="f64aee7a-128a-47cf-8795-8ef8fdc3da61">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[null == $P{CNTongTNhapTinhThue} || $P{CNTongTNhapTinhThue}.isEmpty() 
+  ? "0 VNĐ" 
+  : new java.text.DecimalFormat("#,##0.#####")
+      .format(new java.math.BigDecimal($P{CNTongTNhapTinhThue}.replace(",", ".")))
+      .replaceAll(",", "#")
+      .replaceAll("\\.", ",")
+      .replaceAll("#", "\\.") + " VNĐ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="104" width="297" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="a3548428-8815-4c2a-a180-6ee892934793">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[19] Số thuế thu nhập cá nhân đã khấu trừ <style isItalic='true' size='7' >(Amount of personal income tax withheld)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="325" y="104" width="215" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="84938b89-c55b-4887-a60d-4d1e898066ac">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[null == $P{CNTNhapDaKhauTru} || $P{CNTNhapDaKhauTru}.isEmpty() 
+  ? "0 VNĐ" 
+  : new java.text.DecimalFormat("#,##0.#####")
+      .format(new java.math.BigDecimal($P{CNTNhapDaKhauTru}.replace(",", ".")))
+      .replaceAll(",", "#")
+      .replaceAll("\\.", ",")
+      .replaceAll("#", "\\.") + " VNĐ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="294" y="62" width="30" height="14" forecolor="#000000" uuid="c46acad5-133b-47af-a513-5e7db3deaee3"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(null == $P{CNTraTNhapFrom} ?"":$P{CNTraTNhapFrom})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="468" y="62" width="51" height="14" forecolor="#000000" uuid="18bf5c0d-1f97-4dc8-af1c-abb92fdd7af7"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CNTraTNhapYear}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="28" y="48" width="371" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="eb645440-47e1-4377-8ac6-cc07f8fd47bc">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[15] Khoảng đóng từ thiện, nhân đạo, khuyến học <style isItalic='true' size='7' >(Charity, humanitarian, and educational contributions)</style>: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="399" y="48" width="134" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="17a4571e-1b4e-4de5-bbb8-15114026c9ba">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<box topPadding="1">
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph lineSpacing="Fixed" lineSpacingSize="10.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[null == $P{CNTThienNDaoKhuyenHoc} || $P{CNTThienNDaoKhuyenHoc}.isEmpty() 
+  ? "0 VNĐ" 
+  : new java.text.DecimalFormat("#,##0.#####")
+      .format(new java.math.BigDecimal($P{CNTThienNDaoKhuyenHoc}.replace(",", ".")))
+      .replaceAll(",", "#")
+      .replaceAll("\\.", ",")
+      .replaceAll("#", "\\.") +" VNĐ"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="389" y="62" width="30" height="14" forecolor="#000000" uuid="d6db71d6-3766-4ded-81e4-f3b57dae2d50"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CNTraTNhapTo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="290" y="0" width="224" height="17" forecolor="#000000" uuid="745196d9-b2f1-4063-9d0a-721a60321c87"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Information of personal income tax withholding)"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="220" y="62" width="74" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="8698099d-09d2-4a31-a3f5-79b7eb8e8194">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Từ tháng <style isItalic='true' size='7' >(From) </style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="324" y="62" width="65" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="b0ec98a2-7fc5-47c1-9dd5-1c1ec444252a">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["đến tháng <style isItalic='true' size='7' >(to) </style>: "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="419" y="62" width="49" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="79cc4d56-2f03-42d2-b2b3-c44e1b51f838">
+						<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="10" isBold="false" pdfEncoding="Identity-H"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["năm <style isItalic='true' size='7' >(year) </style>: "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="132">
+				<printWhenExpression><![CDATA[1 == $P{TOTAL_PAGE} || ($V{PAGE_NUMBER} > 1 && new Boolean($P{TOTAL_PAGE}.equals($V{PAGE_NUMBER})))]]></printWhenExpression>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="332" y="20" width="205" height="12" forecolor="#000000" uuid="d081d17c-bad1-4aaf-a62a-9ed875bfd807"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="10" isBold="true" isItalic="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["ĐẠI DIỆN TỔ CHỨC KHẤU TRỪ"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="332" y="42" width="205" height="11" forecolor="#000000" uuid="81ab5536-4840-4dc6-9443-829ee51b1816"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Chữ ký điện tử, chữ ký số)"]]></textFieldExpression>
+				</textField>
+				<rectangle radius="0">
+					<reportElement x="331" y="70" width="206" height="52" uuid="9d4fbe95-67b7-4f91-8734-ed052f8f0343"/>
+					<graphicElement>
+						<pen lineStyle="Solid" lineColor="#000000"/>
+					</graphicElement>
+				</rectangle>
+				<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+					<reportElement x="331" y="81" width="206" height="30" uuid="0527856a-9442-4c81-92c6-cb836ad2d4c5"/>
+					<imageExpression><![CDATA[$P{UrlImageVerify}]]></imageExpression>
+				</image>
+				<textField isBlankWhenNull="true">
+					<reportElement x="331" y="84" width="206" height="12" forecolor="#FF0000" uuid="a653c758-eb2b-4b8d-a73d-0449b6310751"/>
+					<box leftPadding="5" rightPadding="5"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Ngày ký: " + (null == $P{SignDate}? "": $P{SignDate})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="331" y="98" width="206" height="24" forecolor="#FF0000" uuid="178d5329-06ae-48bc-93cd-7fdba1bec110"/>
+					<box leftPadding="5" rightPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Ký bởi: " + (null == $P{SignName}? "": $P{SignName})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="331" y="70" width="206" height="12" forecolor="#FF0000" uuid="042df511-68f1-4131-9a3a-3c263121316e"/>
+					<box leftPadding="5" rightPadding="5"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="false" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{SignDesc}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="332" y="32" width="205" height="10" forecolor="#000000" uuid="abf7c9be-40ae-4162-9a62-0c70e655bbb0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="true" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Representative of the withholding organization)"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="332" y="53" width="205" height="10" forecolor="#000000" uuid="fd5f2b3a-f02e-495c-b591-7979464a1cfd"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(Electionic signature, digital signature)"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="370" y="0" width="21" height="12" forecolor="#000000" uuid="d6975a8e-20ff-4ef5-9581-7eae532543b1"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{LicenseDate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="391" y="0" width="45" height="12" forecolor="#000000" uuid="cc3547cd-5d66-4bdd-acf5-100017910403">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="8" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<text><![CDATA[tháng <style isItalic='true' isBold='false' size='7'>(month)</style>]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="456" y="0" width="39" height="12" forecolor="#000000" uuid="70069b54-3e92-4bad-b862-2c0a9c6fc294">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="8" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<text><![CDATA[năm <style isItalic='true' isBold='false' size='7'>(year)</style>]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="495" y="0" width="31" height="12" forecolor="#000000" uuid="fdd96504-591a-4c7a-a6fc-fd84e2b0728b"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{LicenseYear}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="332" y="0" width="38" height="12" forecolor="#000000" uuid="053a5bf7-b180-4f77-af10-f6d737b1ccf7">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font fontName="Times New Roman" size="8" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<text><![CDATA[Ngày <style isItalic='true' isBold='false' size='7'>(day)</style>]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="436" y="0" width="20" height="12" forecolor="#000000" uuid="a9006971-d76a-4b14-adf8-f7954d70d96d"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" pdfEncoding="Identity-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{LicenseMonth}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="802" splitType="Stretch">
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement x="0" y="0" width="555" height="770" uuid="6b24e526-35d7-485d-bcbe-a8e2f6aff225">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://hoadon78.sesgroup.vn/hddt/static/images/vien-khung/vien-9.jpg"]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="25" y="25" width="80" height="80" forecolor="#E6DFDF" uuid="9d326aff-178e-4e50-9bab-bb0111372ed2"/>
+				<imageExpression><![CDATA[$P{URL_IMG_LOGO}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement positionType="Float" x="75" y="220" width="401" height="400" forecolor="#E6DFDF" uuid="0fddf2e1-f9b0-492a-bfb2-1579ea0a18e2">
+					<printWhenExpression><![CDATA[$P{IsThayThe}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{UrlImageCTuThayThe}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="75" y="220" width="401" height="400" forecolor="#E6DFDF" uuid="a1d761bd-1d7b-4ce8-8971-31f10c62675f">
+					<printWhenExpression><![CDATA[$P{IsDieuChinh}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{UrlImageCTUDieuChinh}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="555" height="12" isPrintWhenDetailOverflows="true" printWhenGroupChanges="GroupPageIDX" forecolor="#000000" uuid="66576da4-3648-40a4-982d-286e63c9d396">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="11.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tra cứu hđđt tại website: " + $P{PortalLink}+ ". Mã số bí mật: " + $P{SecureKey}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+		</band>
+	</summary>
+</jasperReport>

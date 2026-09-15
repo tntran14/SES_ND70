@@ -225,6 +225,26 @@
 									</div>
 								</div>
 							</div>
+							<div class="row c-f__bottom">
+								<div class="col-xs-12 col-sm-12 col-md-6 p-l__md">
+									<div class="checkbox1">
+										<label
+											class="custom-control custom-checkbox d-inline-block m-r-10 m-b-0">
+											<th:block th:if="${checkProductExtension == 'true'}">
+												<input name="checkProductExtension"
+													id="checkProductExtension" type="checkbox"
+													th:checked="${checkProductExtension}"
+													class="custom-control-input">
+											</th:block> <input name="checkProductExtension"
+											id="checkProductExtension" type="checkbox"
+											class="custom-control-input"> <span
+											class="custom-control-label p-t-5"></span>Mở rộng thông tin
+											sản phẩm
+										</label>
+
+									</div>
+								</div>
+							</div>
 							
 							
 							
@@ -668,6 +688,14 @@
 					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("ProductCode", data) #'
 				},			
+				{field: 'SLo', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số lô</a>',
+					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("SLo", data) #'
+				},
+				{field: 'HanSD', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Hạn sử dụng</a>',
+					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("HanSD", data) #'
+				},
 				{field: 'Unit', title: '', width: '100px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Đơn vị<br>tính</a>',
 					attributes: {'class': 'table-cell text-left text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("Unit", data) #'
@@ -704,15 +732,234 @@
 					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
 					template: '#= window.setTemplateForGrid("Feature", data) #'
 				},
+				// hanghoadactrung
+				{field: 'LHHDTrung', title: '', width: '295px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Loại hàng hóa đặc trưng</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("LHHDTrung", data) #'
+				},
+				{field: 'SKhung', title: '', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số Khung</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("SKhung", data) #'
+				},
+				{field: 'SMay', title: '', width: '200px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số Máy</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("SMay", data) #'
+				},
+				{field: 'BKSPTVChuyen', title: '', width: '160px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Biển kiểm soát<br>phương tiện vận chuyển</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("BKSPTVChuyen", data) #'
+				},
+				{field: 'TNGHang', title: '', width: '150px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Tên<br>người gửi hàng</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("TNGHang", data) #'
+				},
+				{field: 'DCNGHang', title: '', width: '250px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Địa<br>chỉ người gửi hàng</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("DCNGHang", data) #'
+				},
+				{field: 'MSTNGHang', title: '', width: '110px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">MST<br>người gửi hàng</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("MSTNGHang", data) #'
+				},
+				{field: 'MDDNGHang', title: '', width: '110px', encoded: false, headerTemplate: '<a class="k-link" href="javascript:void(0);">Số định danh<br>người gửi hàng</a>',
+					attributes: {'class': 'table-cell text-center text-nowrap'}, headerAttributes: {'class': 'table-header-cell text-center'},
+					template: '#= window.setTemplateForGrid("MDDNGHang", data) #'
+				},
+				// end hanghoadactrung
 			],
 			dataBound: function(e) {
+	        	var checkProductExtension = $('#f-einvoice_mtt-crud').find('input[type="checkbox"][name="checkProductExtension"]').prop('checked');
+	    		if(undefined == checkProductExtension) checkProductExtension = false;
+    			if(checkProductExtension){
+    				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(5);
+	    			$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(6);
+        		}else{
+        			$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(5);
+	    			$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(6);
+        		}
 				
 				var check = '[[${LoaiHDonCode}]]';
 				if(check == "2"){
-				  	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(8);
-					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(9);
-					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(10);
+				  	$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(10);
+					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(11);
+					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(12);
 				}
+				
+				// hanghoadactrung
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(16);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(17);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(18);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(19);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(20);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(21);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(22);
+				$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(23);
+
+				var gridTemp = e.sender;
+				var dataItems = gridTemp.dataSource.view();
+				dataItems.forEach(function (item, index) {
+					var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + index + ')');
+					if (item['Feature'] == 'Hàng hóa đặc trưng' || item['Feature'] == '5') {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(16);
+						if (vIsEdit) {
+							$tr.find('select[name="LHHDTrung"]').prop("disabled", false);
+						}
+					}
+					if (item['SKhung'] !== undefined && item['SKhung'] !== null && item['SKhung'] !== '') {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(17);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(18);
+						if (vIsEdit) {
+							$tr.find('input[name="SKhung"]').prop("disabled", false);
+							$tr.find('input[name="SMay"]').prop("disabled", false);
+						}
+					}
+					if (item['BKSPTVChuyen'] !== undefined && item['BKSPTVChuyen'] !== null && item['BKSPTVChuyen'] !== '') {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(19);
+						if (vIsEdit) {
+							$tr.find('input[name="BKSPTVChuyen"]').prop("disabled", false);
+						}
+					}
+					if (item['TNGHang'] !== undefined && item['TNGHang'] !== null && item['TNGHang'] !== '') {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(20);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(21);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(22);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(23);
+						if (vIsEdit) {
+							$tr.find('input[name="TNGHang"]').prop("disabled", false);
+							$tr.find('input[name="DCNGHang"]').prop("disabled", false);
+							$tr.find('input[name="MSTNGHang"]').prop("disabled", false);
+							$tr.find('input[name="MDDNGHang"]').prop("disabled", false);
+						}
+					}
+				});
+
+				$("#f-einvoice_mtt-crud").find(".input-grid-feature").off("change").on("change", function () {
+					const RowsIndexWithFeature5 = [];
+					let hasFeature5 = false;
+					$("#f-einvoice_mtt-crud").find(".input-grid-feature").each(function () {
+						const row = $(this).closest("tr").index();
+						var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + row + ')');
+						var lhhdtrung = $tr.find('select[name="LHHDTrung"]').val();
+						if ($(this).val() === "5") {
+							$tr.find('select[name="LHHDTrung"]').prop("disabled", false);
+							RowsIndexWithFeature5.push(row);
+							if (lhhdtrung === "1") {
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(16);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(17);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(18);
+
+								$tr.find('input[name="SKhung"]').prop("disabled", false);
+								$tr.find('input[name="SMay"]').prop("disabled", false);
+							}
+							if (lhhdtrung === "2") {
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(16);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(19);
+							}
+							if (lhhdtrung === "3") {
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(16);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(20);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(21);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(22);
+								$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(23);
+							}
+						}
+
+					});
+					if (RowsIndexWithFeature5.length < 1) {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(16);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(17);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(18);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(19);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(20);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(21);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(22);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(23);
+					}
+					scrollToRight();
+				});
+
+				$("#f-einvoice_mtt-crud").find(".input-grid-lhhdtrung").off("change").on("change", function () {
+					let haslhhdtrung1 = false;
+					let haslhhdtrung2 = false;
+					let haslhhdtrung3 = false;
+					$("#f-einvoice_mtt-crud").find(".input-grid-lhhdtrung").each(function () {
+						const row = $(this).closest("tr").index();
+						var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + row + ')');
+						var feature = $tr.find('select[name="Feature"]').val();
+
+						if ($(this).val() === "1" && feature === "5") {
+							haslhhdtrung1 = true;
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(17);
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(18);
+
+							$tr.find('input[name="SKhung"]').prop("disabled", false);
+							$tr.find('input[name="SMay"]').prop("disabled", false);
+
+							$tr.find('input[name="BKSPTVChuyen"]').val('').prop("disabled", true);
+							$tr.find('input[name="TNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="DCNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="MSTNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="MDDNGHang"]').val('').prop("disabled", true);
+						}
+						if ($(this).val() === "2" && feature === "5") {
+							haslhhdtrung2 = true;
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(19);
+							$tr.find('input[name="BKSPTVChuyen"]').prop("disabled", false);
+
+							$tr.find('input[name="SKhung"]').val('').prop("disabled", true);
+							$tr.find('input[name="SMay"]').val('').prop("disabled", true);
+							$tr.find('input[name="TNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="DCNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="MSTNGHang"]').val('').prop("disabled", true);
+							$tr.find('input[name="MDDNGHang"]').val('').prop("disabled", true);
+
+						}
+						if ($(this).val() === "3" && feature === "5") {
+							haslhhdtrung3 = true;
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(20);
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(21);
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(22);
+							$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").showColumn(23);
+
+							$tr.find('input[name="TNGHang"]').prop("disabled", false);
+							$tr.find('input[name="DCNGHang"]').prop("disabled", false);
+							$tr.find('input[name="MSTNGHang"]').prop("disabled", false);
+							$tr.find('input[name="MDDNGHang"]').prop("disabled", false);
+
+							$tr.find('input[name="SKhung"]').val('').prop("disabled", true);
+							$tr.find('input[name="SMay"]').val('').prop("disabled", true);
+							$tr.find('input[name="BKSPTVChuyen"]').val('').prop("disabled", true);
+						}
+					});
+
+					if (!haslhhdtrung1) {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(17);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(18);
+					}
+					if (!haslhhdtrung2) {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(19);
+					}
+					if (!haslhhdtrung3) {
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(20);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(21);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(22);
+						$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").hideColumn(23);
+					}
+					scrollToRight();
+				});
+				
+				function scrollToRight() {
+					const gridScrollable = $("#f-einvoice_mtt-crud").find(".k-grid-content");
+					if(gridScrollable.length > 0) {
+						const scrollWidth = gridScrollable[0].scrollWidth;
+						const clientWidth = gridScrollable[0].clientWidth;
+						gridScrollable.animate({
+							scrollLeft: scrollWidth - clientWidth
+						}, 500);
+					}
+				}
+				// end hanghoadactrung
+
 				initInputNumber('#f-einvoice_mtt-crud #grid .input-grid-number');	
 				autoCompleteProducts(_gridSub01.find('tbody[role="rowgroup"]').find('tr[data-uid]').find('input[name="ProductName"]'), function(e){
 					var $tr = _gridSub01.find('tbody[role="rowgroup"]').find('tr:eq(' + rowSelect + ')');
@@ -881,6 +1128,24 @@
 			calcTienQuyDoi();
 		});
 		
+		//VIEW SLO AND HSD IN GRID
+		$('#f-einvoice_mtt-crud').find('input[type="checkbox"][name="checkProductExtension"]').click(function (event) {
+			$.ajax({
+				type: "POST",
+				url: ROOT_PATH + '/main/reset',
+				data: _csrf_name + '=' + _csrf_value,
+				beforeSend: function(req) {
+				},
+				success:function(res) {
+					$("#f-einvoice_mtt-crud").find("#grid").data("kendoGrid").dataSource.page(1);
+				},
+				error:function (xhr, ajaxOptions, thrownError){
+		        }
+			});
+			setTimeout(function(){$("#f-einvoice_mtt-crud").find('#grid').find(".k-pager-refresh").trigger('click');}, 1000);	
+		});
+		
+
 
 		$('#f-einvoice_mtt-crud').find('button[data-action]').click(function (event) {
 			event.preventDefault();/*event.stopPropagation();*/
@@ -1242,6 +1507,18 @@
 			});
 			text += '</select>';
 			break;
+			// hanghoadactrung
+		case 'LHHDTrung':
+			_valTmp = null == data[key]? '': data[key];
+			if('' == _valTmp) _valTmp = '';
+			
+			text += '<select class="input-grid form-control form-control-sm input-grid-lhhdtrung" name="' + key + '" style="height: 100%;" disabled>';
+			$.each(objLHHDTrung, function(k, v){
+				text += '<option value="' + k + '" ' + (k == _valTmp? 'selected="selected" ': '') + ' >' + v + '</option>';
+			});
+			text += '</select>';
+			break;
+			// end hanghoadactrung
 		case 'STT':
 			text += '<div class="input-group">';
 			text += '	<div class="input-group-prepend">';		
@@ -1258,6 +1535,17 @@
 // 		           + (null == data[key]? '': data[key]) 
 // 		           + '</textarea>';
 // 		    break;
+			// hanghoadactrung
+		case 'SKhung':
+		case 'SMay':
+		case 'BKSPTVChuyen':
+		case 'TNGHang':
+		case 'DCNGHang':
+		case 'MSTNGHang':
+		case 'MDDNGHang':
+			text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm text-right input-grid-disable" disabled>';
+			break;
+			// end hanghoadactrung
 		default:
 			text = '<input type="text" name="' + key + '" value="' + (null == data[key]? '': data[key]) + '" class="input-grid k-input form-control form-control-sm" >';
 			break;
@@ -1636,8 +1924,15 @@
 	});
 	
 	function getDataToSave(){
+		calcSTTInGrid();
+		
 		var dataPost = {};
 		
+		var checkProductExtension = $('#f-einvoice_mtt-crud').find('input[type="checkbox"][name="checkProductExtension"]').prop('checked');
+		if(undefined == checkProductExtension) checkProductExtension = false;
+		if(checkProductExtension)
+		dataPost['checkProductExtension'] = $('#f-einvoice_mtt-crud').find('#checkProductExtension').val();
+
 		dataPost['_id'] = $('#f-einvoice_mtt-crud').find('input[name="_id"]').val();
 		dataPost['mau-so-hdon'] = $('#f-einvoice_mtt-crud').find('#mau-so-hdon').val();	
 		
@@ -1756,6 +2051,27 @@
 				rowData['Total'] = $tr.find('input[name="Total"]').val();
 				rowData['Amount'] = $tr.find('input[name="Amount"]').val();
 				rowData['Feature'] = $tr.find('select[name="Feature"]').val();
+				
+				// hanghoadactrung
+				if (rowData['Feature'] == '5' || rowData['Feature'] == 'Hàng hóa đặc trưng') {
+					rowData['LHHDTrung'] = $tr.find('select[name="LHHDTrung"]').val();
+					rowData['SKhung'] = $tr.find('input[name="SKhung"]').val();
+					rowData['SMay'] = $tr.find('input[name="SMay"]').val();
+					rowData['BKSPTVChuyen'] = $tr.find('input[name="BKSPTVChuyen"]').val();
+					rowData['TNGHang'] = $tr.find('input[name="TNGHang"]').val();
+					rowData['DCNGHang'] = $tr.find('input[name="DCNGHang"]').val();
+					rowData['MSTNGHang'] = $tr.find('input[name="MSTNGHang"]').val();
+					rowData['MDDNGHang'] = $tr.find('input[name="MDDNGHang"]').val();
+				} else {
+					delete rowData['LHHDTrung'];
+					delete rowData['SKhung'];
+					delete rowData['SMay'];
+					delete rowData['BKSPTVChuyen'];
+					delete rowData['TNGHang'];
+					delete rowData['DCNGHang'];
+					delete rowData['MSTNGHang'];
+					delete rowData['MDDNGHang'];
+				}
 				
 				_gridSub01.data("kendoGrid").dataSource.data()[indexRow] = rowData;
 			}catch(err){

@@ -191,6 +191,12 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				" ");
 		String tongTienDaCoThue = commons.getTextJsonNode(jsonData.at("/TongTienDaCoThue")).trim().replaceAll("\\s+",
 				" ");
+		// Lam tron thanh tien/tien thue ve so nguyen, khong thap phan (Nghi dinh 254/2026/ND-CP), chi ap dung cho VND
+		if (loaiTienTt == null || "".equals(loaiTienTt) || "VND".equals(loaiTienTt)) {
+			tongTienTruocThue = String.valueOf(Math.round(commons.ToNumber(tongTienTruocThue)));
+			tongTienThueGtgt = String.valueOf(Math.round(commons.ToNumber(tongTienThueGtgt)));
+			tongTienDaCoThue = String.valueOf(Math.round(commons.ToNumber(tongTienDaCoThue)));
+		}
 		String tongTienQuyDoi = commons.getTextJsonNode(jsonData.at("/TongTienQuyDoi")).trim().replaceAll("\\s+", " ");
 		String tienBangChu = commons.getTextJsonNode(jsonData.at("/TienBangChu")).trim().replaceAll("\\s+", " ");
 		String checkProductExtension = commons.getTextJsonNode(jsonData.at("/checkProductExtension")).trim()
@@ -731,7 +737,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt)));
 
 						if (!tmp.equals("-1")) {
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
@@ -795,9 +801,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 						elementSubTmp01 = doc.createElement("TTKhac");
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt)));
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt)));
 						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
@@ -813,7 +819,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 						hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 						hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
-						hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
+						hItem.put("Total", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt));
 						double vatRate = 0.0;
 						if (a == 0.0) {
 
@@ -823,8 +829,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							hItem.put("VATRate", commons.ToNumber(commons.getTextJsonNode(o.at("/VATRate"))));
 						}
 
-						hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
+						hItem.put("VATAmount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt));
+						hItem.put("Amount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
 						hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
 						hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
@@ -857,10 +863,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							elementSubTmp01 = doc.createElement("LTSuat");
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", pair.getKey()));
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""))));
 							hItemVAT.put("VatName", pair.getKey().replace("%", ""));
 							hItemVAT.put("VATAmount",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
 							if (loaiTienTt.equals("VND")) {
 								elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
 										String.format("%.0f", mapVATAmount.get(pair.getKey()))));
@@ -1641,7 +1647,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt)));
 						if (!tmp.equals("-1")) {
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
 						}
@@ -1704,9 +1710,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						
 						elementSubTmp01 = doc.createElement("TTKhac");
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt)));
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt)));
 						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
@@ -1722,7 +1728,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 						hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 						hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
-						hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
+						hItem.put("Total", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt));
 
 						double vatRate = 0.0;
 						if (a == 0.0) {
@@ -1732,8 +1738,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						} else {
 							hItem.put("VATRate", commons.ToNumber(commons.getTextJsonNode(o.at("/VATRate"))));
 						}
-						hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
+						hItem.put("VATAmount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt));
+						hItem.put("Amount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
                         hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
                         hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
@@ -1767,10 +1773,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							elementSubTmp01 = doc.createElement("LTSuat");
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", pair.getKey()));
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""))));
 							hItemVAT.put("VatName", pair.getKey().replace("%", ""));
 							hItemVAT.put("VATAmount",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
 
 							if (loaiTienTt.equals("VND")) {
 								elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",
@@ -2563,7 +2569,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "TLCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "STCKhau", ""));
 						elementSubTmp.appendChild(commons.createElementWithValue(doc, "ThTien",
-								commons.getTextJsonNode(o.at("/Total")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt)));
 						if (!tmp.equals("-1")) {
 							elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
 						}
@@ -2626,9 +2632,9 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 						elementSubTmp01 = doc.createElement("TTKhac");
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "VATAmount", "decimal",
-								commons.getTextJsonNode(o.at("/VATAmount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt)));
 						elementSubTmp01.appendChild(commons.createElementTTKhac(doc, "Amount", "decimal",
-								commons.getTextJsonNode(o.at("/Amount")).replaceAll(",", "")));
+								commons.ToNumberStringRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt)));
 						elementSubTmp.appendChild(elementSubTmp01);
 
 						elementTmp.appendChild(elementSubTmp);
@@ -2644,7 +2650,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						hItem.put("Unit", commons.getTextJsonNode(o.at("/Unit")));
 						hItem.put("Quantity", commons.ToNumber(commons.getTextJsonNode(o.at("/Quantity"))));
 						hItem.put("Price", commons.ToNumber(commons.getTextJsonNode(o.at("/Price"))));
-						hItem.put("Total", commons.ToNumber(commons.getTextJsonNode(o.at("/Total"))));
+						hItem.put("Total", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Total")), loaiTienTt));
 						double vatRate = 0.0;
 						if (a == 0.0) {
 
@@ -2653,8 +2659,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						} else {
 							hItem.put("VATRate", commons.ToNumber(commons.getTextJsonNode(o.at("/VATRate"))));
 						}
-						hItem.put("VATAmount", commons.ToNumber(commons.getTextJsonNode(o.at("/VATAmount"))));
-						hItem.put("Amount", commons.ToNumber(commons.getTextJsonNode(o.at("/Amount"))));
+						hItem.put("VATAmount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/VATAmount")), loaiTienTt));
+						hItem.put("Amount", commons.ToNumberRoundedByCurrency(commons.getTextJsonNode(o.at("/Amount")), loaiTienTt));
 						hItem.put("Feature", commons.getTextJsonNode(o.at("/Feature")));
                         hItem.put("TTHHDTrung", commons.getTextJsonNode(o.at("/LHHDTrung")));
                         hItem.put("SKhung", commons.getTextJsonNode(o.at("/SKhung")));
@@ -2689,10 +2695,10 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							elementSubTmp01 = doc.createElement("LTSuat");
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TSuat", pair.getKey()));
 							elementSubTmp01.appendChild(commons.createElementWithValue(doc, "ThTien",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""))));
 							hItemVAT.put("VatName", pair.getKey().replace("%", ""));
 							hItemVAT.put("VATAmount",
-									commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", ""));
+									(loaiTienTt.equals("VND") ? String.valueOf(Math.round(mapAmount.get(pair.getKey()))) : commons.formatNumberReal(mapAmount.get(pair.getKey())).replaceAll(",", "")));
 
 							if (loaiTienTt.equals("VND")) {
 								elementSubTmp01.appendChild(commons.createElementWithValue(doc, "TThue",

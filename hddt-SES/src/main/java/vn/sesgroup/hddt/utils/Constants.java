@@ -221,7 +221,7 @@ public class Constants {
 	
 	public static final HashMap<String, String> MAP_HDSS_LOAI_AD_HDDT = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
-		{put("1", "Theo Nghị định 123/2020/NĐ-CP, Nghị định 70/2025/NĐ-CP");}
+		{put("1", "Theo Nghị định số 254/2026/NĐ-CP và Thông tư 91/2026/TT-BTC");}
 	};
 	public static final HashMap<String, String> MAP_HDSS_TCTBAO = new LinkedHashMap<String, String>(){
 		private static final long serialVersionUID = 1L;

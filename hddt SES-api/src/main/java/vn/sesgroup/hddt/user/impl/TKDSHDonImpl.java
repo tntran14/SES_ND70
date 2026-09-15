@@ -2159,6 +2159,10 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 //			cellStyleNumFooter.setAlignment(HorizontalAlignment.LEFT);
 			cellStyleNumFooter.setVerticalAlignment(VerticalAlignment.CENTER);
 
+			CellStyle cellStyleNumFooterAmount = wb.createCellStyle();
+			cellStyleNumFooterAmount.cloneStyleFrom(cellStyleNumFooter);
+			cellStyleNumFooterAmount.setDataFormat(df);
+
 			posRow++;
 			row = sheet.getRow(posRow);
 			if (null == row)
@@ -2179,7 +2183,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 			cell = row.getCell(7);
 			if (cell == null)
 				cell = row.createCell(7);
-			cell.setCellValue(total);
+			cell.setCellValue(Math.round(total));
+			cell.setCellStyle(cellStyleNumFooterAmount);
 
 			posRow++;
 			row = sheet.getRow(posRow);
@@ -2201,7 +2206,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 			cell = row.getCell(7);
 			if (cell == null)
 				cell = row.createCell(7);
-			cell.setCellValue(totalHasVAT);
+			cell.setCellValue(Math.round(totalHasVAT));
+			cell.setCellStyle(cellStyleNumFooterAmount);
 
 			posRow++;
 			row = sheet.getRow(posRow);
@@ -2223,7 +2229,8 @@ public class TKDSHDonImpl extends AbstractDAO implements TKDSHDonDAO {
 			cell = row.getCell(7);
 			if (cell == null)
 				cell = row.createCell(7);
-			cell.setCellValue(totalVATAmount);
+			cell.setCellValue(Math.round(totalVATAmount));
+			cell.setCellStyle(cellStyleNumFooterAmount);
 
 			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 			evaluator.evaluateAll(); // TINH GIA TRI LAI CAC CONG THUC
