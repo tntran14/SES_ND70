@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="f25becc0-9af3-4d1c-ac60-3153254c1ca6">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="Day" class="java.lang.String"/>
+	<parameter name="Year" class="java.lang.String"/>
+	<parameter name="Month" class="java.lang.String"/>
+	<parameter name="IsThayThe" class="java.lang.Boolean"/>
+	<parameter name="NB_MSThue" class="java.lang.String"/>
+	<parameter name="DVBHang" class="java.lang.String"/>
+	<parameter name="NB_DChi" class="java.lang.String"/>
+	<parameter name="NB_DDien" class="java.lang.String"/>
+	<parameter name="NB_CVu" class="java.lang.String"/>
+	<parameter name="DVMHang" class="java.lang.String"/>
+	<parameter name="NM_MSThue" class="java.lang.String"/>
+	<parameter name="NM_DChi" class="java.lang.String"/>
+	<parameter name="NM_DDien" class="java.lang.String"/>
+	<parameter name="NM_CVu" class="java.lang.String"/>
+	<parameter name="HDSS_SHDon" class="java.lang.String"/>
+	<parameter name="HDSS_MSHDon" class="java.lang.String"/>
+	<parameter name="HDSS_NPHanh" class="java.lang.String"/>
+	<parameter name="HDSS_MCCQT" class="java.lang.String"/>
+	<parameter name="NDSai" class="java.lang.String"/>
+	<parameter name="NDDung" class="java.lang.String"/>
+	<parameter name="NDTNhat" class="java.lang.String"/>
+	<parameter name="HDDCTT_SHDon" class="java.lang.String"/>
+	<parameter name="HDDCTT_MSHDon" class="java.lang.String"/>
+	<parameter name="HDDCTT_NPHanh" class="java.lang.String"/>
+	<parameter name="HDDCTT_MCCQT" class="java.lang.String"/>
+	<parameter name="SignDesc" class="java.lang.String"/>
+	<parameter name="SignDate" class="java.lang.String"/>
+	<parameter name="SignName" class="java.lang.String"/>
+	<parameter name="UrlImageVerify" class="java.lang.String"/>
+	<parameter name="NM_SignDesc" class="java.lang.String"/>
+	<parameter name="NM_SignDate" class="java.lang.String"/>
+	<parameter name="NM_SignName" class="java.lang.String"/>
+	<parameter name="NM_UrlImageVerify" class="java.lang.String"/>
+	<parameter name="SBBan" class="java.lang.String"/>
+	<parameter name="NB_SDThoai" class="java.lang.String"/>
+	<parameter name="NM_SDThoai" class="java.lang.String"/>
+	<parameter name="LDo" class="java.lang.String"/>
+	<parameter name="HVTNMHang" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<textField>
+				<reportElement mode="Transparent" x="121" y="0" width="312" height="20" uuid="314884fe-bdbe-45a5-a569-5615b758e203"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true" pdfEncoding="Identity-H"/>
+					<paragraph lineSpacing="AtLeast"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="20" width="165" height="15" uuid="5a78ff73-d562-4cb1-95b4-374c460f2b01"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Độc lập - Tự do - Hạnh phúc"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="35" width="100" height="13" uuid="25e3364f-cdcf-4b95-942b-37549c6536c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["----------------"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="48" width="438" height="20" uuid="4272a2a6-55ba-4afb-bfbc-cbebb9d56581"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="14" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BIÊN BẢN "+ (($P{IsThayThe} != null && $P{IsThayThe}) ? "THAY THẾ" : "ĐIỀU CHỈNH") +" HÓA ĐƠN ĐIỆN TỬ CÓ SAI SÓT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="68" width="268" height="15" uuid="70b7046d-7079-4e0c-872d-e645f5d7607b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(Số  "+(null == $P{SBBan} ? "....." : $P{SBBan})+")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="109" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="1" width="534" height="88" uuid="ef3f8064-3358-41a2-8699-ff9802a8853b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["- Căn cứ Thông tư 91/2026/TT-BTC quy định một số điều của Luật Quản lý thuế, hướng dẫn thi hành Nghị định số 254/2026/NĐ-CP của Chính phủ quy định chi tiết một số điều về hóa đơn điện tử, chứng từ điện tử, có hiệu lực kể từ ngày 01/07/2026."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="89" width="534" height="16" uuid="35e44d4f-38f0-4f19-870d-5b2a9d84702b"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hôm nay, ngày " + (null == $P{Day} ? "....." : $P{Day}) + " tháng " + (null == $P{Month} ? "....." : $P{Month}) + " năm " + (null == $P{Year} ? "....." : $P{Year}) + " hai bên chúng tôi gồm có:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="506" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="10" y="0" width="534" height="16" uuid="11310ae8-cbbb-4acd-8e74-aadf8e106144"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bên A: " + (null == $P{DVBHang} ? "" : $P{DVBHang})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="40" y="16" width="504" height="16" uuid="cbda1759-f28e-4e2d-9be9-15dce9c5d78d"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Địa chỉ: " + (null == $P{NB_DChi} ? "" : $P{NB_DChi})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="40" y="48" width="286" height="16" uuid="81cdab9d-4b5c-474c-a5c0-facd88191f0f"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Đại diện: " + (null == $P{NB_DDien} ? "" : $P{NB_DDien})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="326" y="48" width="216" height="16" uuid="d78ffb74-0092-4f44-914d-eec67d430c57"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Chức vụ: " + (null == $P{NB_CVu} ? "" : $P{NB_CVu})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="323" y="118" width="218" height="16" uuid="5e108814-73a3-4f50-88f0-5ad7f4d21bd6"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Chức vụ: " + (null == $P{NM_CVu} ? "" : $P{NM_CVu})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="38" y="118" width="286" height="16" uuid="a114e10b-3b3b-4c94-927a-0c734e0ca521"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Đại diện: " + (null == $P{NM_DDien} ? "" : $P{NM_DDien})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="8" y="70" width="534" height="16" uuid="0ad3d489-9cce-499d-94af-ffd34bcc2494"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bên B: " + (null == $P{DVMHang} || "".equals($P{DVMHang}) ? (null == $P{HVTNMHang} || "".equals($P{HVTNMHang}) ? "" : $P{HVTNMHang}) : $P{DVMHang})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="38" y="86" width="504" height="16" uuid="dfe9877d-02eb-4bbf-b19a-391d98a869a9"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Địa chỉ: " + (null == $P{NM_DChi} ? "" : $P{NM_DChi})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="165" width="534" height="16" uuid="eabd4742-9bd2-4e1b-ace0-5cfdd3f1422c"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lý do " + (($P{IsThayThe} != null && $P{IsThayThe}) ? "thay thế" : "điều chỉnh") +" là: " + (null == $P{LDo} ? "" : $P{LDo})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="190" width="534" height="16" isRemoveLineWhenBlank="true" uuid="99ce966d-4cd2-487c-accf-3224cbfb439f">
+					<printWhenExpression><![CDATA[$P{NDSai} != null && !$P{NDSai}.trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Nội dung trước khi "+ (($P{IsThayThe} != null && $P{IsThayThe}) ? "thay thế" : "điều chỉnh") +" là:</style> " + (null == $P{NDSai} ? "" : $P{NDSai})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="5" y="276" width="534" height="16" uuid="f3d3cb00-f1ba-414e-8c2b-e0e1cc257b2e"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Biên bản này lập thành 02 bản, có giá trị pháp lý như nhau. Bên A giữ 01 bản, Bên B giữ 01 bản."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="260" width="534" height="16" uuid="c4a750ce-2d2e-4810-b2db-44990abe7455"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Chúng tôi cam kết và hoàn toàn chịu trách nhiệm về việc điều chỉnh hóa đơn này. "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="365" y="310" width="172" height="12" forecolor="#000000" uuid="05021d79-38a3-4b15-bc71-91a503e51dda"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(Ký, ghi rõ họ tên)]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement positionType="Float" x="5" y="352" width="172" height="30" uuid="5373bd94-a306-4af5-8a63-56ef1a3033ca"/>
+				<imageExpression><![CDATA[$P{UrlImageVerify}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="5" y="355" width="172" height="12" forecolor="#FF0000" uuid="21beffc2-db62-443e-b76b-7e2ea4b98d22"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ngày ký: " + (null == $P{SignDate}? "": $P{SignDate})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="5" y="369" width="172" height="24" forecolor="#FF0000" uuid="59f4bafa-de7c-4fd0-b509-6f65ff2e2f6f"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ký bởi: " + (null == $P{SignName}? "": $P{SignName})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="5" y="341" width="172" height="12" forecolor="#FF0000" uuid="d5d68fb1-ce16-4da5-960d-14c7a2c97fa3"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SignDesc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="365" y="323" width="172" height="12" forecolor="#000000" uuid="890f4c33-c120-459e-b265-f200d72554a4"/>
+				<box leftPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="10" isItalic="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[<style isItalic='true' isBold='false' size='7'>(Sign, with full name)</style>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="365" y="297" width="172" height="12" forecolor="#000000" uuid="7d1d5d78-a5e0-45ce-bf72-9113ba3863a1"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Đại diện bên B]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="5" y="310" width="172" height="12" forecolor="#000000" uuid="9c61f79a-d690-4675-9489-3095535da894"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[(Ký, ghi rõ họ tên)]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement positionType="Float" stretchType="ElementGroupBottom" x="365" y="352" width="172" height="30" uuid="cb444d1c-1fc3-4da9-88c1-6ffea652635f"/>
+				<imageExpression><![CDATA[$P{NM_UrlImageVerify}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="365" y="355" width="172" height="12" forecolor="#FF0000" uuid="66f791e9-d688-42b6-931e-cec8b7f57179"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ngày ký: " + (null == $P{NM_SignDate}? "": $P{NM_SignDate})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="365" y="369" width="172" height="24" forecolor="#FF0000" uuid="ace2c24d-6d3b-407e-ab0e-bb3eb9b39996"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="9" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ký bởi: " + (null == $P{NM_SignName}? "": $P{NM_SignName})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="365" y="341" width="172" height="12" forecolor="#FF0000" uuid="12176912-658c-4575-bae8-a4b3671a8cd1"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NM_SignDesc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="5" y="323" width="172" height="12" forecolor="#000000" uuid="354ca7f8-8a57-413b-8227-5b8194d73498"/>
+				<box leftPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="10" isItalic="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[<style isItalic='true' isBold='false' size='7'>(Sign, with full name)</style>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="5" y="297" width="172" height="12" forecolor="#000000" uuid="8166d6b1-d174-41bd-bec0-2660b66bb59f"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[Đại diện bên A]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="40" y="32" width="250" height="16" uuid="027e0958-0553-4057-beaf-29ce3b24b33b"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Điện thoại: " + (null == $P{NB_SDThoai} ? "" : $P{NB_SDThoai})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="38" y="102" width="250" height="16" uuid="126a6e35-fab8-4a02-a469-696ae7bbae39"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Điện thoại: " + (null == $P{NM_SDThoai} ? "" : $P{NM_SDThoai})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="290" y="32" width="252" height="16" uuid="2a5af246-1bdb-4fd1-8e97-b57ff5d634f1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Mã số thuế: " + (null == $P{NB_MSThue} ? "" : $P{NB_MSThue})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="288" y="102" width="254" height="16" uuid="fa88d6a8-0816-4a87-bd18-ec3d3ce2fc8d"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Mã số thuế: " + (null == $P{NM_MSThue} ? "" : $P{NM_MSThue})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="140" width="534" height="16" uuid="6077ffad-bb7c-4202-992a-f942afaba83b"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hai bên cùng thống nhất lập bản ghi nhận sai sót do bên bán xuất bán hàng cho bên mua tại hóa đơn số " + (null == $P{HDSS_SHDon} ? ".........." : $P{HDSS_SHDon}) +
+", ký hiệu " + (null == $P{HDSS_MSHDon} ? ".........." : $P{HDSS_MSHDon}) +
+", lập ngày " + (null == $P{HDSS_NPHanh} ? ".........." : $P{HDSS_NPHanh}) +
+". Nay lập hóa đơn "+ (($P{IsThayThe} != null && $P{IsThayThe}) ? "thay thế" : "điều chỉnh") +
+" số " + (null == $P{HDDCTT_SHDon} ? ".........." : $P{HDDCTT_SHDon}) +
+", ký hiệu " +  (null == $P{HDDCTT_MSHDon} ? ".........." : $P{HDDCTT_MSHDon}) +
+", ngày  " + (null == $P{HDDCTT_NPHanh} ? ".........." : $P{HDDCTT_NPHanh}) +"."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="213" width="534" height="16" isRemoveLineWhenBlank="true" uuid="e9a60b1a-2436-4abe-a35a-e7352a154320">
+					<printWhenExpression><![CDATA[$P{NDDung} != null && !$P{NDDung}.trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Nội dung đúng là: </style> " + (null == $P{NDDung} ? "" : $P{NDDung})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="5" y="238" width="534" height="16" isRemoveLineWhenBlank="true" uuid="e9182d3b-d501-4cec-8c14-fbac970b6b40">
+					<printWhenExpression><![CDATA[$P{NDTNhat} != null && !$P{NDTNhat}.trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="12" isBold="false" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Hai bên thống nhất như sau: </style> " + (null == $P{NDTNhat} ? "" : $P{NDTNhat})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
