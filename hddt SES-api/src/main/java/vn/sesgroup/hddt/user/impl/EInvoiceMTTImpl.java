@@ -6341,7 +6341,7 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				}
 
 				List<Cell> cells = new ArrayList<Cell>();
-				int lastColumn = Math.max(row1.getLastCellNum(), 27);
+				int lastColumn = Math.max(row1.getLastCellNum(), 29);
 
 				for (int cn = 0; cn < lastColumn; cn++) {
 					Cell c = row1.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -6472,6 +6472,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							dshhdVu.setVATAmount(tienThue);
 							dshhdVu.setAmount(tongtien);
 							dshhdVu.setFeature(eInvoiceMTTExcelFormList.get(k).getTinhChat());
+							dshhdVu.setLHHDTrung(eInvoiceMTTExcelFormList.get(k).getLHHDTrung());
+							dshhdVu.setBKSPTVChuyen(eInvoiceMTTExcelFormList.get(k).getBKSPTVChuyen());
 
 							dshhdVuList.add(dshhdVu);
 
@@ -6490,6 +6492,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 							hItem1.put("VATAmount", dshhdVu.getVATAmount());
 							hItem1.put("Amount", dshhdVu.getAmount());
 							hItem1.put("Feature", dshhdVu.getFeature());
+							hItem1.put("TTHHDTrung", dshhdVu.getLHHDTrung());
+							hItem1.put("BKSPTVChuyen", dshhdVu.getBKSPTVChuyen());
 
 							listHHDVu.add(hItem1);
 						}
@@ -6753,6 +6757,21 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									}
 								}
 
+								if ("5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+									Element elementTTin = null;
+									String lhhdtrung = commons.getTextJsonNode(h.at("/TTHHDTrung"));
+									if ("2".equals(lhhdtrung)) {
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu",
+												commons.getTextJsonNode(h.at("/BKSPTVChuyen"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+									}
+									elementSubTmp.appendChild(elementTTHHDTrung);
+								}
+
 								if (!tempLoaiHoaDon.equals("2")) {
 									elementSubTmp01 = doc.createElement("TTKhac");
 
@@ -6962,6 +6981,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						dshhdVu.setVATAmount(eInvoiceMTTExcelFormList.get(k).getTienThue());
 						dshhdVu.setAmount(tongTien);
 						dshhdVu.setFeature(eInvoiceMTTExcelFormList.get(k).getTinhChat());
+						dshhdVu.setLHHDTrung(eInvoiceMTTExcelFormList.get(k).getLHHDTrung());
+						dshhdVu.setBKSPTVChuyen(eInvoiceMTTExcelFormList.get(k).getBKSPTVChuyen());
 
 						dshhdVuList.add(dshhdVu);
 
@@ -6981,6 +7002,8 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 						hItem1.put("VATAmount", dshhdVu.getVATAmount());
 						hItem1.put("Amount", dshhdVu.getAmount());
 						hItem1.put("Feature", dshhdVu.getFeature());
+						hItem1.put("TTHHDTrung", dshhdVu.getLHHDTrung());
+						hItem1.put("BKSPTVChuyen", dshhdVu.getBKSPTVChuyen());
 						listHHDVus.add(hItem1);
 
 						thanhTien = Math.round(thanhTien);
@@ -7238,6 +7261,21 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 									if (!tmp.equals("-1") && !tempLoaiHoaDon.equals("2")) {
 										elementSubTmp.appendChild(commons.createElementWithValue(doc, "TSuat", tmp));
 									}
+								}
+
+								if ("5".equals(commons.getTextJsonNode(h.at("/Feature")))) {
+									Element elementTTHHDTrung = doc.createElement("TTHHDTrung");
+									Element elementTTin = null;
+									String lhhdtrung = commons.getTextJsonNode(h.at("/TTHHDTrung"));
+									if ("2".equals(lhhdtrung)) {
+										elementTTin = doc.createElement("TTin");
+										elementTTin.appendChild(commons.createElementWithValue(doc, "LHHDTrung", lhhdtrung));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "TTruong", "BKSPTVChuyen"));
+										elementTTin.appendChild(commons.createElementWithValue(doc, "DLieu",
+												commons.getTextJsonNode(h.at("/BKSPTVChuyen"))));
+										elementTTHHDTrung.appendChild(elementTTin);
+									}
+									elementSubTmp.appendChild(elementTTHHDTrung);
 								}
 
 								if (!tempLoaiHoaDon.equals("2")) {
@@ -7917,6 +7955,40 @@ public class EInvoiceMTTImpl extends AbstractDAO implements EInvoiceMTTDAO {
 				default:
 					break;
 				}
+			}
+		}
+
+		// Loai hang hoa dac trung (Tinh chat HHDT)
+		Cell lhhdTrung = cells.get(27);
+		if (lhhdTrung != null) {
+			switch (lhhdTrung.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setLHHDTrung(lhhdTrung.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setLHHDTrung((NumberToTextConverter.toText(lhhdTrung.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Bien so xe (BKSPTVChuyen)
+		Cell bksptvChuyen = cells.get(28);
+		if (bksptvChuyen != null) {
+			switch (bksptvChuyen.getCellType()) {
+			case STRING:
+				eInvoiceMTTExcelForm.setBKSPTVChuyen(bksptvChuyen.getStringCellValue().trim());
+				break;
+			case NUMERIC:
+				eInvoiceMTTExcelForm.setBKSPTVChuyen((NumberToTextConverter.toText(bksptvChuyen.getNumericCellValue())));
+				break;
+			case BLANK:
+				break;
+			default:
+				break;
 			}
 		}
 

@@ -28,7 +28,9 @@ public class EInvoiceMTTExcelForm {
 	    private String tinhChat;
 	    private String tyGia;
 	    private Double tongTien;
-	    
+	    private String lHHDTrung;
+	    private String bKSPTVChuyen;
+
 		public EInvoiceMTTExcelForm() {
 			super();
 		}
@@ -314,6 +316,22 @@ public class EInvoiceMTTExcelForm {
 
 		public void setMailCC(String mailCC) {
 			this.mailCC = mailCC;
+		}
+
+		public String getLHHDTrung() {
+			return lHHDTrung;
+		}
+
+		public void setLHHDTrung(String lHHDTrung) {
+			this.lHHDTrung = lHHDTrung;
+		}
+
+		public String getBKSPTVChuyen() {
+			return bKSPTVChuyen;
+		}
+
+		public void setBKSPTVChuyen(String bKSPTVChuyen) {
+			this.bKSPTVChuyen = bKSPTVChuyen;
 		}
 
 		@Override

@@ -1,6 +1,6 @@
 # Tracking yêu cầu chỉnh sửa (theo 3 file docx) — 2026-09-15
 
-Trạng thái chung: **ĐÃ CODE XONG toàn bộ mục 1, 2, 3** (kể cả 1.5). Đã commit + push lên GitHub (`https://github.com/tntran14/SES_ND70.git`, branch `dev`, commit `979a86e` + 1 commit tiếp theo cho 1.5). Còn lại: file template MULTI/-101 (nếu cần), và anh tự copy file `BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml` đã sửa lên server. Chưa build/test thực tế trên môi trường đủ dependency.
+Trạng thái chung: **ĐÃ CODE XONG toàn bộ mục 1, 2, 3** (kể cả 1.5). Đã commit local (commit `979a86e` + `210c961`) nhưng **push commit `210c961` lên GitHub bị chặn bởi bộ lọc bảo mật** — cần anh tự push hoặc cho phép lại (xem log tiến độ cuối file). Còn lại: file template MULTI/-101 (nếu cần), và anh tự copy file `BIEN-BAN-DIEU-CHINH-THAY-THE.jrxml` đã sửa lên server. Chưa build/test thực tế trên môi trường đủ dependency.
 
 > Lưu ý quan trọng: nhánh `dev` hiện có 9 file đang sửa dở (uncommitted), nhưng khảo sát xác nhận **không liên quan** đến 3 yêu cầu dưới đây — đó là tính năng "Hàng hóa đặc trưng" (LHHDTrung/SKhung/SMay/BKSPTVChuyen...) đang làm dở + 1 refactor HttpClient→HttpURLConnection trong CommonController.java. Sẽ không đụng vào các file đó trừ khi anh yêu cầu.
 
