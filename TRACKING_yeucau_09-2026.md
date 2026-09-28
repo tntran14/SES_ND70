@@ -80,11 +80,11 @@ Quy định: thẻ `SHChieu` trong `NMua`, chuỗi, tối đa 20 ký tự. Phạ
 - Mục 3: text 04/SS đổi đủ ở `JPUtils` (2 chỗ), `Constants` (hddt-SES), `custom.hddt.js`; `$lookup` Issuer + dòng "Lý do" trong mail ở cả bản thường và MTT.
 - `CommonController`: refactor `HttpClient` → `HttpURLConnection` là cần thiết (module `hddt-SES` build Java 1.8, không có `java.net.http`).
 
-**Cần anh xác nhận:**
-- **C1 — cấu hình bị commit nhầm trong `979a86e`**: `hddt SES-api/src/main/resources/mongodb.properties` đổi từ DB server (`103.144.86.137` / `hddt-ses`) sang DB máy cá nhân (`127.0.0.1` / `hddt-demo`); `hddt SES-api/pom.xml` đổi `systemPath` jar font theo đường dẫn máy cá nhân. Module `SES-pdf` vẫn trỏ DB server. Nếu build/deploy API từ `dev` sẽ kết nối sai DB. Có trả 2 file này về như trước `979a86e` không?
-- **C2 — bảo mật**: repo đang public, `mongodb.properties` (2 module) và `activemq.properties` chứa mật khẩu dạng rõ, nằm cả trong lịch sử git. Nên đổi mật khẩu DB/ActiveMQ và chuyển repo sang private.
-- **C3** Hóa đơn mới trên biên bản có cần cho phép chọn hóa đơn *chưa ký* không (xem đính chính 1.4)? Hiện chỉ chọn được hóa đơn đã ký.
-- **C4 (MTT, commit `126a9a3`)**: import Excel MTT với Tính chất = 5 nhưng loại hàng hóa đặc trưng khác 2 sẽ sinh thẻ `<TTHHDTrung/>` rỗng — có thể bị CQT từ chối.
+**Anh đã trả lời (2026-09-28):**
+- **C1 — ĐÃ SỬA**: trả `mongodb.properties` của SES-api về DB server (`103.144.86.137` / `hddt-ses`) như trước `979a86e`; `pom.xml` SES-api đổi `systemPath` jar font sang `${basedir}/lib-ext/jasperreports-fonts-ext.jar` (giống SES-pdf, không phụ thuộc máy). Nội dung cũ: cấu hình bị commit nhầm trong `979a86e`: `hddt SES-api/src/main/resources/mongodb.properties` đổi từ DB server (`103.144.86.137` / `hddt-ses`) sang DB máy cá nhân (`127.0.0.1` / `hddt-demo`); `hddt SES-api/pom.xml` đổi `systemPath` jar font theo đường dẫn máy cá nhân. Module `SES-pdf` vẫn trỏ DB server. Nếu build/deploy API từ `dev` sẽ kết nối sai DB. Có trả 2 file này về như trước `979a86e` không?
+- **C2 — anh chọn chuyển repo sang private** (anh tự làm trên GitHub; vẫn nên đổi mật khẩu DB/ActiveMQ vì đã lộ trong lịch sử git). Nội dung cũ: repo đang public, `mongodb.properties` (2 module) và `activemq.properties` chứa mật khẩu dạng rõ, nằm cả trong lịch sử git. Nên đổi mật khẩu DB/ActiveMQ và chuyển repo sang private.
+- **C3 — GIỮ NGUYÊN hiện tại.** Nội dung cũ: Hóa đơn mới trên biên bản có cần cho phép chọn hóa đơn *chưa ký* không (xem đính chính 1.4)? Hiện chỉ chọn được hóa đơn đã ký.
+- **C4 — GIỮ NGUYÊN.** Nội dung cũ (MTT, commit `126a9a3`): import Excel MTT với Tính chất = 5 nhưng loại hàng hóa đặc trưng khác 2 sẽ sinh thẻ `<TTHHDTrung/>` rỗng — có thể bị CQT từ chối.
 
 ---
 
@@ -114,3 +114,4 @@ Quy định: thẻ `SHChieu` trong `NMua`, chuỗi, tối đa 20 ký tự. Phạ
 - 2026-09-22: Commit `210c961` (mục 1.5 căn cứ pháp lý biên bản) và `126a9a3` (Tính chất hàng hóa đặc trưng + Biển số xe cho import Excel MTT) — đã có trên GitHub.
 - 2026-09-28: Mục 4 (số hộ chiếu SHChieu, thứ tự thẻ NMua, bỏ "TT 78" hóa đơn GTGT) — commit `bf7841e`, `94797a8`, `4879d4a`, merge vào `dev`.
 - 2026-09-28: Rà soát toàn bộ file này với source: sửa R1, R2; đính chính 1.2, 1.4, Q7, trạng thái chung; ghi các điểm C1-C4 cần anh xác nhận. Đã kiểm tra cú pháp Java (javac) các file sửa; chưa build đầy đủ (không tải được thư viện Maven).
+- 2026-09-28: Anh trả lời C1-C4. Sửa C1 (DB SES-api trỏ về server, pom dùng `${basedir}`); C2 anh tự chuyển repo sang private; C3, C4 giữ nguyên.
