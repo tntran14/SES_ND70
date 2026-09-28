@@ -809,6 +809,10 @@ public class EInvoiceCRUDController extends AbstractController{
 						"Mã số đơn vị có quan hệ với ngân sách (Mã số ĐVQHNS) chỉ chứa ký tự số và không lớn lơn 7 ký tự.");
 
 			}
+			if (khSoHoChieu.length() > 20) {
+				dto.setErrorCode(1);
+				dto.getErrorMessages().add("Số hộ chiếu người mua không được vượt quá 20 ký tự.");
+			}
 			if("".equals(mauSoHdon)) {
 				dto.setErrorCode(1);
 				dto.getErrorMessages().add("Vui lòng chọn mẫu số hóa đơn.");
