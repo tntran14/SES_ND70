@@ -333,7 +333,7 @@ public class EInvoiceCRUDController extends AbstractController{
 		req.setAttribute("NbanMst", ii.getTaxCode());
 		req.setAttribute("NbanTen", ii.getName());
 		req.setAttribute("NbanDchi", ii.getAddress());
-		req.setAttribute("THDon", "Hóa đơn giá trị gia tăng TT 78");
+		req.setAttribute("THDon", "Hóa đơn giá trị gia tăng");
 		
 		_id = commons.getParameterFromRequest(req, "_id");
 		String header = "Thêm mới hóa đơn";

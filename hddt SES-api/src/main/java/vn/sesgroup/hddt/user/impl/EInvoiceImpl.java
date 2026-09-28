@@ -5639,7 +5639,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						// ObjectId.class).toString()
 						// Thông tin hóa đơn - TTChung
 						String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
-						String THDon = "Hóa đơn giá trị gia tăng TT 78";
+						String THDon = "Hóa đơn giá trị gia tăng";
 //                        String MauSoHD = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 						String MauSoHD = mauSoHdon;
 						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
@@ -6107,7 +6107,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 							// Thông tin hóa đơn - TTChung
 							String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
-							String THDon = "Hóa đơn giá trị gia tăng TT 78";
+							String THDon = "Hóa đơn giá trị gia tăng";
 //                            String MauSoHD = "62610fc6dd79cb7e4571890f";
 //                            String MauSoHD = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 							String MauSoHD = mauSoHdon;
@@ -7537,7 +7537,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						
 						// Thông tin hóa đơn - TTChung
 						String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
-						String THDon = "Hóa đơn giá trị gia tăng TT 78";
+						String THDon = "Hóa đơn giá trị gia tăng";
 //	                        String MauSoHD = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 						String MauSoHD = mauSoHdon;
 						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
@@ -8129,7 +8129,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							
 							// Thông tin hóa đơn - TTChung
 							String MaHD = eInvoiceExcelFormList.get(i).getMaHD();
-							String THDon = "Hóa đơn giá trị gia tăng TT 78";
+							String THDon = "Hóa đơn giá trị gia tăng";
 //	                            String MauSoHD = "62610fc6dd79cb7e4571890f";
 //	                            String MauSoHD = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "_id"), ObjectId.class).toString();
 							String MauSoHD = mauSoHdon;
@@ -11220,7 +11220,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 
 						// Thông tin hóa đơn - TTChung
 						String MaHD = eInvoiceExcelFormList.get(i).getSHD();
-						String THDon = "Hóa đơn giá trị gia tăng TT 78";
+						String THDon = "Hóa đơn giá trị gia tăng";
 						String MauSoHD = mauSoHdon;
 						String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "").toString();
 						String KHHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHHDon"), "").toString();
@@ -11680,7 +11680,7 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							String TongTienBangchu = TTBCHU.substring(0, 1).toUpperCase() + TTBCHU.substring(1) + ".";
 							// Thông tin hóa đơn - TTChung
 							String MaHD = eInvoiceExcelFormList.get(i).getSHD();
-							String THDon = "Hóa đơn giá trị gia tăng TT 78";
+							String THDon = "Hóa đơn giá trị gia tăng";
 							String MauSoHD = mauSoHdon;
 							String KHMSHDon = docTmp.getEmbedded(Arrays.asList("DMMauSoKyHieu", "KHMSHDon"), "")
 									.toString();
