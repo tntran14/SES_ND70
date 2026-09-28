@@ -1199,7 +1199,8 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 					.append("UpdatedUserName", header.getUserName())
 					.append("UpdatedUserFullName", header.getUserFullName())
 					);
-			/* Hoa don moi chi duoc ghi/ghi de khi client co gui len - tranh xoa mat du lieu HDDCTThe da luu truoc do khi chi sua cac truong khac */
+			/* Form luon gui len toan bo luoi hoa don moi: co thi ghi de, khong co (user da xoa dong) thi bo HDDCTThe
+			 * de du lieu DB khop voi file XML bien ban vua ghi lai o tren */
 			if (newDoc != null) {
 				docUpdate.append("HDDCTThe",
 						new Document()
@@ -1219,10 +1220,14 @@ public class LBBDCTTheImpl extends AbstractDAO implements LBBDCTTheDAO {
 						.append("MCCQT", newDoc.getEmbedded(Arrays.asList("MCCQT"), ""))
 						);
 			}
-			
+			Document docUpdateOps = new Document("$set", docUpdate);
+			if (newDoc == null) {
+				docUpdateOps.append("$unset", new Document("HDDCTThe", ""));
+			}
+
 			try (MongoClient mongoClient = cfg.mongoClient()){
 				MongoCollection<Document> collection = mongoClient.getDatabase(cfg.dbName).getCollection("EInvoiceBBDCTT");
-				collection.findOneAndUpdate(docFind, new Document("$set", docUpdate), options);
+				collection.findOneAndUpdate(docFind, docUpdateOps, options);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

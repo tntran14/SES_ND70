@@ -376,11 +376,16 @@ public class Commons {
 	}
 
 	public String ToNumberStringRoundedByCurrency(String strDouble, String currencyCode){
-		double val = ToNumber(strDouble);
-		if(currencyCode == null || "".equals(currencyCode) || "VND".equals(currencyCode)){
-			return String.valueOf(Math.round(val));
+		/* Giu nguyen gia tri rong (dong ghi chu/khuyen mai khong co thanh tien) nhu truoc khi lam tron */
+		String raw = strDouble == null ? "" : strDouble.replaceAll(",", "").trim();
+		if("".equals(raw)) {
+			return raw;
 		}
-		return String.valueOf(val);
+		if(currencyCode == null || "".equals(currencyCode) || "VND".equals(currencyCode)){
+			return String.valueOf(Math.round(ToNumber(raw)));
+		}
+		/* Ngoai te: tra ve dung chuoi goc (khong qua double -> tranh dang so mu 1.2E7 lam sai XML) */
+		return raw;
 	}
 	
 	public float ToNumberFloat(String strFloat) {
