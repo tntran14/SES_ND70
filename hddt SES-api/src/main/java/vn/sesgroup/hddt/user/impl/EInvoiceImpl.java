@@ -1526,8 +1526,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			elementTmp = doc.createElement("NMua"); // NGUOI MUA
 			elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", khTenDonVi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", khMst));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", madvqhns));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", madvqhns));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMKHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCD));
@@ -2447,8 +2447,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 			elementTmp = doc.createElement("NMua"); // NGUOI MUA
 			elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", khTenDonVi));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MST", khMst));
-			elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", madvqhns));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", khDiaChi));
+			elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", madvqhns));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", khMKHang));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", khSoDT));
 			elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", khSoCCCD));
@@ -7334,6 +7334,22 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 				rsp.setResponseStatus(responseStatus);
 				return rsp;
 			}
+			/* KIEM TRA SO HO CHIEU (SHChieu) TOI DA 20 KY TU */
+			List<String> listMaHDSaiSHChieu = new ArrayList<>();
+			for (EInvoiceExcelForm excelForm : eInvoiceExcelFormList) {
+				String soHoChieu = excelForm.getSoHoChieu() == null ? "" : excelForm.getSoHoChieu().trim();
+				excelForm.setSoHoChieu(soHoChieu);
+				if (soHoChieu.length() > 20 && !listMaHDSaiSHChieu.contains(excelForm.getMaHD())) {
+					listMaHDSaiSHChieu.add(excelForm.getMaHD());
+				}
+			}
+			if (!listMaHDSaiSHChieu.isEmpty()) {
+				responseStatus = new MspResponseStatus(999,
+						"Import không thành công. \r\n" + "Số hộ chiếu người mua không được vượt quá 20 ký tự. \r\n"
+								+ "Mã HĐ: " + String.join(", ", listMaHDSaiSHChieu));
+				rsp.setResponseStatus(responseStatus);
+				return rsp;
+			}
 			String tempTen = "";
 			String tempMST = "";
 			String tempMDVQHNS = "";
@@ -7723,8 +7739,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 						elementTmp = doc.createElement("NMua"); // NGUOI MUA
 						elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", TenNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MSTNM));
-						elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", MDVQHNSNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
+						elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", MDVQHNSNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", MaKHangNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoaiNM));
 						elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", SCCCDanNMForm));
@@ -8310,8 +8326,8 @@ public class EInvoiceImpl extends AbstractDAO implements EInvoiceDAO {
 							elementTmp = doc.createElement("NMua"); // NGUOI MUA
 							elementTmp.appendChild(commons.createElementWithValue(doc, "Ten", TenNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "MST", MSTNM));
-							elementTmp.appendChild(commons.createElementWithValue(doc, "MSVQHNSNM", MDVQHNSNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "DChi", DChiNM));
+							elementTmp.appendChild(commons.createElementWithValue(doc, "MDVQHNSach", MDVQHNSNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "MKHang", MaKHangNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "SDThoai", SDThoaiNM));
 							elementTmp.appendChild(commons.createElementWithValue(doc, "CCCDan", SCCCDanNMForm));
